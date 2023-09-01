@@ -17,6 +17,16 @@
     <BaseOutputPath></BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Views\Components\**" />
+    <Compile Remove="Views\SubPages\**" />
+    <EmbeddedResource Remove="Views\Components\**" />
+    <EmbeddedResource Remove="Views\SubPages\**" />
+    <None Remove="Views\Components\**" />
+    <None Remove="Views\SubPages\**" />
+    <Page Remove="Views\Components\**" />
+    <Page Remove="Views\SubPages\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Remove="Assets\characters.json" />
     <Content Remove="Assets\Images\Character_Albedo_Thumb.png" />
     <Content Remove="Assets\Images\Character_Alhaitham_Thumb.png" />
@@ -388,11 +398,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Components\" />
-    <Folder Include="Views\SubPages\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="Assets\Images\Character_Others.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -410,4 +415,12 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PRIResource Remove="Views\Components\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PRIResource Remove="Views\SubPages\**" />
+  </ItemGroup>
 </Project>

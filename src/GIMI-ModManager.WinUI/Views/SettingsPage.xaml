@@ -133,11 +133,11 @@
                     <HyperlinkButton
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                         Content="Just Another Skin Manager Github"
-                        NavigateUri="" />
+                        NavigateUri="https://github.com/Jorixon/JASM" />
                     <HyperlinkButton
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                         Content="Just Another Skin Manager GameBanana"
-                        NavigateUri="" />
+                        NavigateUri="https://gamebanana.com/tools/14574" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
