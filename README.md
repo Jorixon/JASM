@@ -6,7 +6,7 @@ I made this for fun, for myself and to learn WinUI, but it kinda took off over t
 There may be some "GIMI-ModManager" references throughout the app, that is what I originally called this project. I'll change them eventually.
 
 
-Download link and images are also available over at GameBanana
+Download link and images are also available over at [GameBanana](https://gamebanana.com/tools/14574)
 
 **This is still in an early stage of development. Make backups and use at your own risk ⚠️** 
 
@@ -30,7 +30,7 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - "CTRL + F" - In character overview, focus on the search bar
 
 ## Download
-Latest version can be downloaded either from GameBanana or from the [Releases]() page.
+Latest version can be downloaded either from GameBanana or from the [Releases](https://github.com/Jorixon/JASM/releases) page. To start the app run ```GIMI-ModManager.WinUI.exe``` in ```JASM/``` folder, I suggest creating a shortcut to it.
 
 ## Requirements
 - Windows 10, version 1809 or higher ([supposedly](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/))
