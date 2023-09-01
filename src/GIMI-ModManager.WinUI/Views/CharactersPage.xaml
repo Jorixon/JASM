@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.CharactersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:entities="using:GIMI_ModManager.Core.Entities"
+    xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <helpers:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
+    </Page.Resources>
+
+    <Grid Margin="0,-24,0,0">
+        <Grid.Resources>
+            <MenuFlyout x:Name="ImageCommandsFlyout" Opening="ImageCommandsFlyout_OnOpening">
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.PinCharacterCommand}"
+                    CommandParameter="{Binding}"
+                    Text="{x:Bind ViewModel.PinText, Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="{x:Bind ViewModel.PinGlyph, Mode=OneWay}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <!--<MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.HideCharacterCommand}"
+                    CommandParameter="{Binding}"
+                    Text="Hide Character">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xED1A;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>-->
+            </MenuFlyout>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Column="0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Command="{x:Bind ViewModel.RefreshModsInGameCommand}"
+                Content="Refresh Mods"
+                IsHitTestVisible="True" />
+            <Button
+                Margin="32,0,32,0"
+                Command="{x:Bind ViewModel.Start3DmigotoCommand}"
+                Content="Start 3Dmigoto" />
+            <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,4,0" Text="Start Genshin" />
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="../Assets/Images/Start_Genshin.png" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Column="0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center">
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="28"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="Character Overview" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ToggleButton
+                    Margin="0,0,8,0"
+                    Command="{x:Bind ViewModel.ShowCharactersWithModsCommand}"
+                    IsChecked="{x:Bind ViewModel.ShowOnlyCharactersWithMods, Mode=OneWay}">
+                    Show only characters with mods
+                </ToggleButton>
+
+                <AutoSuggestBox
+                    x:Name="SearchBox"
+                    Width="400"
+                    Margin="0,8,0,8"
+                    HorizontalAlignment="Left"
+                    ItemsSource="{x:Bind ViewModel.SuggestionsBox, Mode=OneWay}"
+                    PlaceholderText="Search Characters..."
+                    QueryIcon="Find"
+                    QuerySubmitted="SearchBox_OnQuerySubmitted"
+                    SuggestionChosen="AutoSuggestBox_OnSuggestionChosen"
+                    TextChanged="AutoSuggestBox_TextChanged">
+                    <AutoSuggestBox.KeyboardAccelerators>
+                        <KeyboardAccelerator
+                            Key="F"
+                            Invoked="CharacterSearchKeyShortcut"
+                            Modifiers="Control" />
+                    </AutoSuggestBox.KeyboardAccelerators>
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="entities:GenshinCharacter">
+                            <TextBlock Text="{x:Bind DisplayName}" />
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+            </StackPanel>
+        </Grid>
+
+
+        <controls:AdaptiveGridView
+            Grid.Row="2"
+            animations:Connected.ListItemElementName="itemThumbnail"
+            animations:Connected.ListItemKey="animationKeyContentGrid"
+            animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+            DesiredWidth="200"
+            IsItemClickEnabled="True"
+            ItemClickCommand="{x:Bind ViewModel.CharacterClickedCommand}"
+            ItemHeight="150"
+            ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
+            SelectionMode="None"
+            StretchContentForSingleRow="False">
+            <controls:AdaptiveGridView.ItemTemplate>
+                <DataTemplate x:DataType="entities:GenshinCharacter">
+                    <Grid
+                        x:Name="itemThumbnail"
+                        Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        ContextFlyout="{Binding ElementName=ImageCommandsFlyout}">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <FontIcon
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Glyph="&#xE840;"
+                                Visibility="{x:Bind IsPinned, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                            <Image VerticalAlignment="Top" Source="{x:Bind ImageUri}" />
+                            <TextBlock
+                                Grid.Row="1"
+                                Margin="{StaticResource XXSmallTopMargin}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                Text="{x:Bind DisplayName}" />
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </controls:AdaptiveGridView.ItemTemplate>
+        </controls:AdaptiveGridView>
+    </Grid>
+</Page>

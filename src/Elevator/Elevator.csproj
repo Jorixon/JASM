@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
+		<StripSymbols>true</StripSymbols>
+		<Platforms>x64</Platforms>
+		<BaseOutputPath></BaseOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="H.InputSimulator" Version="1.4.0" />
+		<PackageReference Include="NamedPipeServerStream.NetFrameworkVersion" Version="1.1.13" />
+	</ItemGroup>
+
+</Project>
