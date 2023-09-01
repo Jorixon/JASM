@@ -30,7 +30,7 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - "CTRL + F" - In character overview, focus on the search bar
 
 ## Download
-Latest version can be downloaded either from GameBanana or from the [Releases]() page.
+Latest version can be downloaded either from GameBanana or from the [Releases]() page. To start the app run ```GIMI-ModManager.WinUI.exe``` in ```JASM/``` folder, I suggest creating a shortcut to it.
 
 ## Requirements
 - Windows 10, version 1809 or higher ([supposedly](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/))
