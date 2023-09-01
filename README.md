@@ -28,6 +28,7 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - "F10" - Refresh Mods in the game, if the elevator process and a certain game is running
 - "F5" - In character view, refresh the character's mods from disk
 - "CTRL + F" - In character overview, focus on the search bar
+- "ESCAPE" - In character view, Go back to character overview
 
 ## Download
 Latest version can be downloaded either from GameBanana or from the [Releases](https://github.com/Jorixon/JASM/releases) page. To start the app run ```GIMI-ModManager.WinUI.exe``` in ```JASM/``` folder, I suggest creating a shortcut to it.
