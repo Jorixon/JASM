@@ -61,6 +61,13 @@ If you want to contribute to this project, feel free to do so. I am not a profes
 
 **Just be aware that the code is not super clean...**
 
+### Building from source
+- I suggest following the [Install tools for the Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/set-up-your-development-environment?tabs=cs-vs-community%2Ccpp-vs-community%2Cvs-2022-17-1-a%2Cvs-2022-17-1-b) tutorial.
+- From then on it should be a simple git clone https://github.com/Jorixon/JASM
+- Then inside the cloned folder, click on JASM\src\GIMI-ModManager.sln or open it trough Visual Studio.
+- Then right click GIMI-ModManager.WinUI project in the sidebar and then click publish and click publish again.
+- In the target location the application should have been built.
+
 ## FAQ
 
 ### I Get the error: An error occurred while adding the storage items. Mod may have been partially copied. Could not find a part of the path "C:\Users\\AppData\Local\Temp\7z..." When draging mods from 7z
