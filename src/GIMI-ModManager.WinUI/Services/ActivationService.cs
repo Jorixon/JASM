@@ -29,6 +29,7 @@ public class ActivationService : IActivationService
     private readonly ElevatorService _elevatorService;
     private readonly GenshinProcessManager _genshinProcessManager;
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
+    private readonly UpdateChecker _updateChecker;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -37,7 +38,7 @@ public class ActivationService : IActivationService
         IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService,
         ILocalSettingsService localSettingsService,
         IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
-        ThreeDMigtoProcessManager threeDMigtoProcessManager)
+        ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -47,6 +48,7 @@ public class ActivationService : IActivationService
         _elevatorService = elevatorService;
         _genshinProcessManager = genshinProcessManager;
         _threeDMigtoProcessManager = threeDMigtoProcessManager;
+        _updateChecker = updateChecker;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -108,6 +110,7 @@ public class ActivationService : IActivationService
         await InitCharacterOverviewSettings();
         await _genshinProcessManager.TryInitialize();
         await _threeDMigtoProcessManager.TryInitialize();
+        await _updateChecker.InitializeAsync();
     }
 
     private async Task SetScreenSize()

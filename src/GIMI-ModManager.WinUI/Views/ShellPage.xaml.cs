@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.System;
 using Windows.UI.Core;
+using Microsoft.UI.Xaml.Data;
 using WindowActivatedEventArgs = Microsoft.UI.Xaml.WindowActivatedEventArgs;
 
 namespace GIMI_ModManager.WinUI.Views;
@@ -35,6 +36,25 @@ public sealed partial class ShellPage : Page
         App.MainWindow.Activated += MainWindow_Activated;
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
         this.KeyDown += GlobalKeyHandler_Invoked;
+
+        Loaded += (sender, args) =>
+        {
+            var bindings = new Binding()
+            {
+                Source = ViewModel,
+                Path = new PropertyPath(nameof(ViewModel.SettingsInfoBadgeOpacity)),
+                Mode = BindingMode.OneWay
+            };
+
+            var settingsItem = (NavigationViewItem)NavigationViewControl.SettingsItem;
+            var infoBadge = new InfoBadge() { Opacity = 0, Value = 1 };
+            settingsItem.InfoBadge = infoBadge;
+
+
+            BindingOperations.SetBinding(settingsItem.InfoBadge, InfoBadge.OpacityProperty, bindings);
+
+            Bindings.Update();
+        };
     }
 
 

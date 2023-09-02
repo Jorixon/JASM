@@ -10,6 +10,7 @@
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <helpers:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -138,6 +139,21 @@
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                         Content="Just Another Skin Manager GameBanana"
                         NavigateUri="https://gamebanana.com/tools/14574" />
+                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind ViewModel.ShowNewVersionAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}">
+                        <TextBlock VerticalAlignment="Center" Text="New Update Available on GitHub:" />
+                        <TextBlock
+                            Margin="8,0"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind ViewModel.LatestVersion, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <Button
+                        Margin="0,16,0,16"
+                        VerticalAlignment="Center"
+                        Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                        Command="{x:Bind ViewModel.IgnoreNewVersionCommand}"
+                        Content="Ignore Current Update?"
+                        Visibility="{x:Bind ViewModel.ShowNewVersionAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
