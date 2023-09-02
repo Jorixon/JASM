@@ -18,7 +18,7 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - Pretty UI 👀
 - Drag And Drop files directly into the app
 - Automatically sort unsorted mods into respective character's folders
-- Move Mods betwee characters
+- Move Mods between characters
 - Start a 3Dmigto launcher and/or a certain game straight from the app
 - Refresh mods using F10 or the refresh button in app. (Requires an elevated side process, see description bellow)
 - The app watches character folders and automaticly updates if skins are added or removed from folders.
