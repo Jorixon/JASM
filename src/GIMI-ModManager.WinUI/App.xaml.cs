@@ -78,6 +78,8 @@ public partial class App : Application
                 services.AddSingleton<GenshinProcessManager>();
                 services.AddSingleton<ThreeDMigtoProcessManager>();
 
+                services.AddSingleton<UpdateChecker>();
+
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
                 services.AddSingleton<IGenshinService, GenshinService>();

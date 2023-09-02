@@ -29,18 +29,23 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IWindowManagerService _windowManagerService;
 
     private readonly NotificationManager _notificationManager;
+    private readonly UpdateChecker _updateChecker;
 
     [ObservableProperty] private ElementTheme _elementTheme;
 
     [ObservableProperty] private string _versionDescription;
+
+    [ObservableProperty] private string _latestVersion = string.Empty;
+    [ObservableProperty] private bool _showNewVersionAvailable = false;
+
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(IgnoreNewVersionCommand))]
+    private bool _CanIgnoreUpdate = false;
 
 
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
 
     public ElevatorService ElevatorService;
-
-    public ICommand SwitchThemeCommand { get; }
 
     private static bool _showElevatorStartDialog = true;
 
@@ -50,7 +55,7 @@ public partial class SettingsViewModel : ObservableRecipient
     public SettingsViewModel(IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService,
         ElevatorService elevatorService, ILogger logger, NotificationManager notificationManager,
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
-        ISkinManagerService skinManagerService)
+        ISkinManagerService skinManagerService, UpdateChecker updateChecker)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -59,40 +64,21 @@ public partial class SettingsViewModel : ObservableRecipient
         _navigationViewService = navigationViewService;
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
+        _updateChecker = updateChecker;
         _logger = logger.ForContext<SettingsViewModel>();
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
 
-        SwitchThemeCommand = new RelayCommand<ElementTheme>(
-            async (param) =>
-            {
-                if (ElementTheme != param)
-                {
-                    var result = await _windowManagerService.ShowDialogAsync(new ContentDialog()
-                    {
-                        Title = "Restart required",
-                        Content = new TextBlock()
-                        {
-                            Text =
-                                "You'll need to restart the application for the theme to take effect or else the application will become unstable. " +
-                                "This is most likely me not configuring the theming correctly. Dark Mode is the recommended theme.\n\n" +
-                                "Sorry for the inconvenience.",
-                            TextWrapping = TextWrapping.Wrap
-                        },
-                        PrimaryButtonText = "Restart",
-                        CloseButtonText = "Cancel",
-                        DefaultButton = ContentDialogButton.Primary
-                    });
+        _updateChecker.NewVersionAvailable += UpdateCheckerOnNewVersionAvailable;
 
-                    if (result != ContentDialogResult.Primary) return;
-
-                    ElementTheme = param;
-                    await _themeSelectorService.SetThemeAsync(param);
-                    _notificationManager.ShowNotification("Restarting...", "The application will restart now.",
-                        null);
-                    await RestartApp();
-                }
-            });
+        if (_updateChecker.LatestRetrievedVersion is not null &&
+            _updateChecker.LatestRetrievedVersion != _updateChecker.CurrentVersion)
+        {
+            LatestVersion = VersionFormatter(_updateChecker.LatestRetrievedVersion);
+            ShowNewVersionAvailable = true;
+            if (_updateChecker.LatestRetrievedVersion != _updateChecker.IgnoredVersion)
+                CanIgnoreUpdate = true;
+        }
 
 
         _modManagerOptions = localSettingsService.ReadSetting<ModManagerOptions>(ModManagerOptions.Section);
@@ -122,6 +108,38 @@ public partial class SettingsViewModel : ObservableRecipient
         ElevatorService.CheckStatus();
     }
 
+
+    [RelayCommand]
+    private async Task SwitchThemeAsync(ElementTheme param)
+    {
+        if (ElementTheme != param)
+        {
+            var result = await _windowManagerService.ShowDialogAsync(new ContentDialog()
+            {
+                Title = "Restart required",
+                Content = new TextBlock()
+                {
+                    Text =
+                        "You'll need to restart the application for the theme to take effect or else the application will become unstable. " +
+                        "This is most likely me not configuring the theming correctly. Dark Mode is the recommended theme.\n\n" +
+                        "Sorry for the inconvenience.",
+                    TextWrapping = TextWrapping.Wrap
+                },
+                PrimaryButtonText = "Restart",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            });
+
+            if (result != ContentDialogResult.Primary) return;
+
+            ElementTheme = param;
+            await _themeSelectorService.SetThemeAsync(param);
+            _notificationManager.ShowNotification("Restarting...", "The application will restart now.",
+                null);
+            await RestartApp();
+        }
+    }
+
     private static string GetVersionDescription()
     {
         Version version;
@@ -138,7 +156,7 @@ public partial class SettingsViewModel : ObservableRecipient
         }
 
         return
-            $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+            $"{"AppDisplayName".GetLocalized()} - {VersionFormatter(version)}";
     }
 
 
@@ -349,5 +367,30 @@ public partial class SettingsViewModel : ObservableRecipient
                               new ProcessOptions();
         processSettings.MigotoExePath = null;
         await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processSettings);
+    }
+
+    private void UpdateCheckerOnNewVersionAvailable(object? sender, UpdateChecker.NewVersionEventArgs e)
+    {
+        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (e.Version == new Version())
+            {
+                CanIgnoreUpdate = _updateChecker.LatestRetrievedVersion != _updateChecker.IgnoredVersion;
+                return;
+            }
+
+            LatestVersion = VersionFormatter(e.Version);
+        });
+    }
+
+    private static string VersionFormatter(Version version)
+    {
+        return $"v{version.Major}.{version.Minor}.{version.Build}";
+    }
+
+    [RelayCommand(CanExecute = nameof(CanIgnoreUpdate))]
+    private async Task IgnoreNewVersion()
+    {
+        await _updateChecker.IgnoreCurrentVersionAsync();
     }
 }

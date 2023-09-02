@@ -12,22 +12,42 @@ namespace GIMI_ModManager.WinUI.ViewModels;
 
 public partial class ShellViewModel : ObservableRecipient
 {
+    private readonly UpdateChecker _updateChecker;
     [ObservableProperty] private bool isBackEnabled;
     [ObservableProperty] private bool isNotFirstTimeStartupPage = true;
     [ObservableProperty] private object? selected;
+    [ObservableProperty] private int settingsInfoBadgeOpacity = 0;
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
     public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService,
-        NotificationManager notificationManager, ElevatorService elevatorService)
+        NotificationManager notificationManager, ElevatorService elevatorService, UpdateChecker updateChecker)
     {
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
         NotificationManager = notificationManager;
         ElevatorService = elevatorService;
+        _updateChecker = updateChecker;
+        _updateChecker.NewVersionAvailable += OnNewVersionAvailable;
+    }
+
+    public event EventHandler<bool>? ShowSettingsInfoBadge;
+
+    private async void OnNewVersionAvailable(object? sender, UpdateChecker.NewVersionEventArgs e)
+    {
+        if (_updateChecker.IgnoredVersion == e.Version)
+            return;
+
+
+        var show = e.Version != new Version();
+        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            SettingsInfoBadgeOpacity = show ? 1 : 0;
+            ShowSettingsInfoBadge?.Invoke(this, show);
+        });
     }
 
     private void OnNavigated(object sender, NavigationEventArgs e)
@@ -72,7 +92,8 @@ public partial class ShellViewModel : ObservableRecipient
 
         if (ElevatorService.ElevatorStatus == ElevatorStatus.NotRunning)
         {
-            NotificationManager.ShowNotification("Elevator is not running", "Please start the Elevator first in the Settings page",
+            NotificationManager.ShowNotification("Elevator is not running",
+                "Please start the Elevator first in the Settings page",
                 TimeSpan.FromSeconds(5));
         }
         else
