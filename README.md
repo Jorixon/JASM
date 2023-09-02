@@ -57,6 +57,6 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 - App settings are stored here ```C:\Users\<username>\AppData\Local\JASM\ApplicationData```
 
 ### Contributing
-If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively  learning.
+If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively learning.
 
 **Just be aware that the code is not super clean...**
