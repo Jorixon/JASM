@@ -201,12 +201,15 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             return;
 
         SuggestedCharacters.Clear();
-        var eligibleCharacters =
+        var searchResultKeyValue =
             await Task.Run(() =>
                 _genshinService.GetCharacters(searchString, fuzzRatio: 40).OrderByDescending(kv => kv.Value));
+        var eligibleCharacters = searchResultKeyValue.Select(kv => kv.Key).Where(ch => ch != _shownCharacter).Take(5);
+
 
         foreach (var eligibleCharacter in eligibleCharacters)
-            SuggestedCharacters.Add(eligibleCharacter.Key);
+            SuggestedCharacters.Add(eligibleCharacter);
+        
 
 
         if (SuggestedCharacters.Count == 0)
@@ -221,12 +224,20 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SearchText = string.Empty;
     }
 
-    [RelayCommand]
-    private void SelectCharacter(GenshinCharacter character)
+    public bool SelectCharacter(GenshinCharacter? character)
     {
-        if (character == _noCharacterFound) return;
+        if (character == _noCharacterFound) return false;
+        if (character is null)
+        {
+            if (SuggestedCharacters.Any(ch => ch != _noCharacterFound))
+                character = SuggestedCharacters.First(ch => ch != _noCharacterFound);
+            else
+                return false;
+        }
+
         SuggestedCharacters.Clear();
         SelectedCharacter = character;
         SearchText = character.DisplayName;
+        return true;
     }
 }

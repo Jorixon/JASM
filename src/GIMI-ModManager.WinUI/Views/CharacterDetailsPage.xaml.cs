@@ -334,8 +334,10 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void MoveModSearch_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
+        var anyCharacterFound = ViewModel.MoveModsFlyoutVM.SelectCharacter(args.ChosenSuggestion as GenshinCharacter);
+        if (!anyCharacterFound)
+            return;
         sender.IsEnabled = false;
-        ViewModel.MoveModsFlyoutVM.SelectCharacterCommand.Execute(args.ChosenSuggestion);
         MoveModsButton.Focus(FocusState.Programmatic);
     }
 }
