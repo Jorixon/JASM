@@ -313,13 +313,13 @@ public sealed partial class CharacterDetailsPage : Page
     }
 
     private bool userScrolling = false;
+
     private async void MoveModSearch_OnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if (sender.IsEnabled && args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && userScrolling == false)
             await ViewModel.MoveModsFlyoutVM.TextChangedCommand.ExecuteAsync(sender.Text);
 
         userScrolling = false;
-
     }
 
     private void MoveRowFlyout_OnClosed(object? sender, object e)
@@ -334,5 +334,6 @@ public sealed partial class CharacterDetailsPage : Page
     {
         sender.IsEnabled = false;
         ViewModel.MoveModsFlyoutVM.SelectCharacterCommand.Execute(args.ChosenSuggestion);
+        MoveModsButton.Focus(FocusState.Programmatic);
     }
 }

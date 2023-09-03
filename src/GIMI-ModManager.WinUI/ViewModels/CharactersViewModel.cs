@@ -272,7 +272,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        _characters = _genshinService.GetCharacters().OrderBy(g => g.Id).ToArray();
+        var characters = _genshinService.GetCharacters().OrderBy(g => g.DisplayName).ToList();
+        var others = characters.FirstOrDefault(ch => ch.Id == _genshinService.OtherCharacterId);
+        if (others is not null)
+        {
+            characters.Remove(others);
+            characters.Insert(0, others);
+        }
+
+        _characters = characters.ToArray();
 
         var pinnedCharactersOptions = await ReadCharacterSettings();
 

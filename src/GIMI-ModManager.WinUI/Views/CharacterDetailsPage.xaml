@@ -51,6 +51,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
                         <Button
+                            x:Name="MoveModsButton"
                             Margin="0,8,16,0"
                             Command="{x:Bind ViewModel.MoveModsFlyoutVM.MoveModsCommand}"
                             Content="Move" />

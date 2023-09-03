@@ -16,6 +16,7 @@ using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using Windows.ApplicationModel.Core;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -222,8 +223,8 @@ public partial class SettingsViewModel : ObservableRecipient
             {
                 Text =
                     "Do you want to reorganize the Mods folder?\n" +
-                    "This will prompt the application to sort existing mods into folders assigned to their respective characters.\n\n" +
-                    "Any mods that can't be reasonably matched will be placed in an 'Others' folder.",
+                    "This will prompt the application to sort existing mods that are directly in the Mods folder and Others folder, into folders assigned to their respective characters.\n\n" +
+                    "Any mods that can't be reasonably matched will be placed in an 'Others' folder. While the mods already in 'Others' folder will remain there.",
                 TextWrapping = TextWrapping.WrapWholeWords,
                 IsTextSelectionEnabled = true
             },
@@ -236,10 +237,16 @@ public partial class SettingsViewModel : ObservableRecipient
         if (result == ContentDialogResult.Primary)
         {
             _navigationViewService.IsEnabled = false;
+            var genshinService = App.GetService<IGenshinService>();
 
             try
             {
-                var movedModsCount = await Task.Run(() => _skinManagerService.ReorganizeMods());
+                var movedModsCount = await Task.Run(() =>
+                    _skinManagerService.ReorganizeMods()); // Mods folder
+
+                movedModsCount += await Task.Run(() =>
+                    _skinManagerService.ReorganizeMods(
+                        genshinService.GetCharacter(genshinService.OtherCharacterId))); // Others folder
 
                 if (movedModsCount == -1)
                     _notificationManager.ShowNotification("Mods reorganization failed.",

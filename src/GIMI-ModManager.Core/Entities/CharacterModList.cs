@@ -48,7 +48,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     private void OnModDeleted(object sender, FileSystemEventArgs e)
     {
-        _logger?.Information("Mod {ModName} deleted", e.FullPath);
+        _logger?.Information("Mod {ModName} in {characterFolder} folder was deleted", e.Name, Character.DisplayName);
         if (_mods.Any(mod => mod.Mod.FullPath == e.FullPath))
         {
             var mod = _mods.First(mod => mod.Mod.FullPath == e.FullPath);
@@ -62,10 +62,11 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     private void OnModCreated(object sender, FileSystemEventArgs e)
     {
-        _logger?.Information("Mod {ModName} created", e.FullPath);
+        _logger?.Information("Mod {ModName} was created in {characterFolder} created", e.Name, Character.DisplayName);
         var mod = new Mod(new DirectoryInfo(e.FullPath));
         if (ModAlreadyAdded(mod))
-            _logger?.Warning("Created folder {Folder} was already tracked in mod list", e.FullPath);
+            _logger?.Warning("Created folder {Folder} was already tracked in {characterFolder} mod list", e.Name,
+                Character.DisplayName);
         else
             TrackMod(mod);
         ModFolderChanged();
