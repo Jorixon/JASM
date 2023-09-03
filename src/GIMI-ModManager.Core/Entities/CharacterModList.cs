@@ -17,7 +17,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     internal CharacterModList(GenshinCharacter character, string absPath, ILogger? logger = null)
     {
-        _logger = logger;
+        _logger = logger?.ForContext<CharacterModList>();
         Character = character;
         AbsModsFolderPath = absPath;
         _watcher = new(AbsModsFolderPath);

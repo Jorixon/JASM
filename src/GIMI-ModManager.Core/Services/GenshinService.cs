@@ -18,12 +18,12 @@ public class GenshinService : IGenshinService
 
     public GenshinService(ILogger? logger = null)
     {
-        _logger = logger;
+        _logger = logger?.ForContext<GenshinService>();
     }
 
     public async Task InitializeAsync(string assetsUriPath)
     {
-        _logger?.Information("Initializing GenshinService");
+        _logger?.Debug("Initializing GenshinService");
         var uri = new Uri(Path.Combine(assetsUriPath, "characters.json"));
         _assetsUriPath = assetsUriPath;
         var json = await File.ReadAllTextAsync(uri.LocalPath);

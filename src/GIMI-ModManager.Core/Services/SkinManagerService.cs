@@ -21,7 +21,7 @@ public class SkinManagerService : ISkinManagerService
     public SkinManagerService(IGenshinService genshinService, ILogger logger)
     {
         _genshinService = genshinService;
-        _logger = logger;
+        _logger = logger.ForContext<SkinManagerService>();
     }
 
     public string UnloadedModsFolderPath => _unloadedModsFolder.FullName;
@@ -39,7 +39,7 @@ public class SkinManagerService : ISkinManagerService
             var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
             if (!characterModFolder.Exists)
             {
-                _logger.Warning("Character mod folder for {Character} does not exist", character.DisplayName);
+                _logger.Warning("Character mod folder for '{Character}' does not exist", character.DisplayName);
                 continue;
             }
 
@@ -112,7 +112,7 @@ public class SkinManagerService : ISkinManagerService
                     $"Mod {mod.Name} already exists in destination character mod list {destination.Character.DisplayName}");
         }
 
-        _logger.Information("Transferring {ModsCount} mods from {SourceCharacter} to {DestinationCharacter}",
+        _logger.Information("Transferring {ModsCount} mods from '{SourceCharacter}' to '{DestinationCharacter}'",
             mods.Count, source.Character.DisplayName, destination.Character.DisplayName);
 
         using var sourceDisabled = source.DisableWatcher();
@@ -166,7 +166,10 @@ public class SkinManagerService : ISkinManagerService
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
-        _logger.Information("Reorganizing mods");
+        if (characterFolderToReorganize is null)
+            _logger.Information("Reorganizing mods");
+        else
+            _logger.Information("Reorganizing mods for '{Character}'", characterFolderToReorganize.DisplayName);
 
         _activeModsFolder.Refresh();
         var characters = _genshinService.GetCharacters().ToArray();
@@ -186,7 +189,8 @@ public class SkinManagerService : ISkinManagerService
         foreach (var folder in folderToReorganize.EnumerateDirectories())
         {
             // Is a character folder continue
-            var character = characters.FirstOrDefault(x => x.DisplayName == folder.Name);
+            var character = characters.FirstOrDefault(x =>
+                x.DisplayName.Equals(folder.Name, StringComparison.InvariantCultureIgnoreCase));
             if (character is not null)
                 continue;
 
@@ -196,7 +200,7 @@ public class SkinManagerService : ISkinManagerService
             {
                 case null when characterFolderToReorganize is null:
                     _logger.Information(
-                        "Mod folder {ModFolder} does not seem to belong to a character. Moving to 'Others' folder",
+                        "Mod folder '{ModFolder}' does not seem to belong to a character. Moving to 'Others' folder",
                         folder.Name);
                     closestMatchCharacter = othersCharacter;
                     break;
@@ -211,13 +215,13 @@ public class SkinManagerService : ISkinManagerService
             {
                 using var disableWatcher = modList.DisableWatcher();
                 mod.MoveTo(GetCharacterModList(closestMatchCharacter).AbsModsFolderPath);
-                _logger.Information("Moved mod {ModName} to {CharacterFolder} mod folder", mod.FullPath,
+                _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder", mod.Name,
                     closestMatchCharacter.DisplayName);
                 movedMods++;
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Failed to move mod {ModName} to {CharacterFolder}", mod.FullPath,
+                _logger.Error(e, "Failed to move mod '{ModName}' to '{CharacterFolder}'", mod.FullPath,
                     closestMatchCharacter.DisplayName);
                 continue;
             }

@@ -19,7 +19,8 @@
                 x:Name="ModRowFlyout"
                 Closed="MoveRowFlyout_OnClosed"
                 Opening="ModRowFlyout_OnOpening"
-                Placement="RightEdgeAlignedBottom">
+                Placement="RightEdgeAlignedBottom"
+                Opened="ModRowFlyout_OnOpened">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />

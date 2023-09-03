@@ -32,12 +32,14 @@
                 <TextBlock
                     Margin="0,0,8,0"
                     VerticalAlignment="Center"
-                    Text="{x:Bind ViewModel.LogFilePath}" />
+                    IsTextSelectionEnabled="True"
+                    Text="{x:Bind ViewModel.LogFilePath}"
+                    TextWrapping="Wrap" />
                 <Button
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     Command="{x:Bind ViewModel.CopyLogFilePathCommand}">
-                    <FontIcon FontSize="12" Glyph="&#xE8C8;" />
+                    <FontIcon FontSize="12" Glyph="&#xE8A7;" />
                 </Button>
             </Grid>
         </StackPanel>

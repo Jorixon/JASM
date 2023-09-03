@@ -53,6 +53,7 @@ public class ActivationService : IActivationService
 
     public async Task ActivateAsync(object activationArgs)
     {
+        _logger.Information("JASM starting up...");
         // Execute tasks before activation.
         await InitializeAsync();
 
@@ -118,7 +119,7 @@ public class ActivationService : IActivationService
         var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSize>(ScreenSize.Key);
         if (screenSize != null)
         {
-            _logger.Debug($"Screen size loaded: {screenSize.Width}x{screenSize.Height}");
+            _logger.Debug($"Window size loaded: {screenSize.Width}x{screenSize.Height}");
             App.MainWindow.SetWindowSize(screenSize.Width, screenSize.Height);
             App.MainWindow.CenterOnScreen();
         }
@@ -166,7 +167,7 @@ public class ActivationService : IActivationService
         var width = App.MainWindow.Width;
         var height = App.MainWindow.Height;
         var isFullScreen = false; // TODO: Implement fullscreen
-        _logger.Debug($"Screen size saved: {width}x{height}\t\nIsFullscreen: {isFullScreen}");
+        _logger.Debug($"Window size saved: {width}x{height}\t\nIsFullscreen: {isFullScreen}");
         Task.Run(async () => await App.GetService<ILocalSettingsService>()
             .SaveSettingAsync(ScreenSize.Key, new ScreenSize(width, height) { IsFullScreen = isFullScreen }));
         _timer?.Stop();

@@ -47,7 +47,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager)
     {
         _genshinService = genshinService;
-        _logger = logger;
+        _logger = logger.ForContext<CharactersViewModel>();
         _navigationService = navigationService;
         _skinManagerService = skinManagerService;
         _localSettingsService = localSettingsService;
@@ -328,7 +328,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void CharacterClicked(GenshinCharacter character)
     {
-        _logger.Debug($"Character {character.DisplayName} clicked");
         _navigationService.SetListDataItemForNextConnectedAnimation(character);
         _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
     }

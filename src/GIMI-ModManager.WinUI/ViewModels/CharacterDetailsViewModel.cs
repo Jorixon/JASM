@@ -42,7 +42,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         NotificationManager notificationService, ILocalSettingsService localSettingsService)
     {
         _genshinService = genshinService;
-        _logger = logger;
+        _logger = logger.ForContext<CharacterDetailsViewModel>();
         _navigationService = navigationService;
         _skinManagerService = skinManagerService;
         _notificationService = notificationService;

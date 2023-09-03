@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Microsoft.UI.Xaml.Controls;
+using Serilog.Templates;
 
 namespace GIMI_ModManager.WinUI;
 
@@ -51,8 +52,10 @@ public partial class App : Application
             .UseSerilog((context, configuration) =>
             {
                 configuration.ReadFrom.Configuration(context.Configuration);
-                configuration.WriteTo.Debug();
-                configuration.WriteTo.File("logs\\log.txt");
+                configuration.Enrich.FromLogContext();
+                var mt = new ExpressionTemplate(
+                    "[{@t:yyyy-MM-dd'T'HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
+                configuration.WriteTo.File(formatter: mt, "logs\\log.txt");
             })
             .ConfigureServices((context, services) =>
             {

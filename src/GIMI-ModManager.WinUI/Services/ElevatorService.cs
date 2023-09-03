@@ -25,13 +25,13 @@ public partial class ElevatorService : ObservableRecipient
 
     public ElevatorService(ILogger logger)
     {
-        _logger = logger;
+        _logger = logger.ForContext<ElevatorService>();
     }
 
     public void Initialize()
     {
         if (_IsInitialized) throw new InvalidOperationException("ElevatorService is already initialized");
-        _logger.Information("Initializing ElevatorService");
+        _logger.Debug("Initializing ElevatorService");
         var elevatorPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ElevatorProcessName);
         if (Path.Exists(elevatorPath))
         {

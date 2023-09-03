@@ -43,6 +43,7 @@ public sealed class UpdateChecker : IDisposable
         }
 
         CurrentVersion = version;
+        App.MainWindow.Closed += (sender, args) => Dispose();
     }
 
     public async Task InitializeAsync()
@@ -88,6 +89,11 @@ public sealed class UpdateChecker : IDisposable
                     _logger.Debug(e, "Update checker stopped");
                     break;
                 }
+                catch (OperationCanceledException e)
+                {
+                    _logger.Debug(e, "Update checker canceled");
+                    break;
+                }
                 catch (Exception e)
                 {
                     _logger.Error(e, "Failed to check for updates. Stopping Update checker");
@@ -112,7 +118,10 @@ public sealed class UpdateChecker : IDisposable
         }
 
         if (CurrentVersion == latestVersion || LatestRetrievedVersion == latestVersion)
+        {
+            _logger.Debug("No new version available");
             return;
+        }
 
 
         if (CurrentVersion < latestVersion)
@@ -154,6 +163,7 @@ public sealed class UpdateChecker : IDisposable
     public void Dispose()
     {
         _cancellationTokenSource.Cancel();
+        _httpClient.CancelPendingRequests();
         _httpClient.Dispose();
         _cancellationTokenSource.Dispose();
     }

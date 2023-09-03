@@ -6,12 +6,15 @@ using Microsoft.UI.Xaml;
 
 namespace GIMI_ModManager.WinUI.Activation;
 
+/// <summary>
+/// FirstTimeStartupActivationHandler is completely wrong name for this class. This is the default startup handler.
+/// </summary>
 public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
     private readonly INavigationService _navigationService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly ISkinManagerService _skinManagerService;
-    public override string ActivationName { get; } = nameof(FirstTimeStartupActivationHandler);
+    public override string ActivationName { get; } = "RegularStartup";
 
     public FirstTimeStartupActivationHandler(INavigationService navigationService,
         ILocalSettingsService localSettingsService,

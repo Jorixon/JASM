@@ -340,4 +340,9 @@ public sealed partial class CharacterDetailsPage : Page
         sender.IsEnabled = false;
         MoveModsButton.Focus(FocusState.Programmatic);
     }
+
+    private void ModRowFlyout_OnOpened(object? sender, object e)
+    {
+        MoveModSearchBox.Focus(FocusState.Programmatic);
+    }
 }

@@ -24,7 +24,7 @@ public partial class NotificationManager : ObservableObject
 
     public NotificationManager(ILogger? logger = null)
     {
-        _logger = logger;
+        _logger = logger?.ForContext<NotificationManager>();
     }
 
     public void ShowNotification(string title, string message, TimeSpan? duration)
@@ -37,7 +37,7 @@ public partial class NotificationManager : ObservableObject
             ActiveNotification = notification;
 
         });
-        _logger?.Information("Notification: {Title}\n\t{Message}", title, message);
+        _logger?.Information("Title: {Title} | Body: {Message}", title, message);
 
         if (duration is not null)
         {

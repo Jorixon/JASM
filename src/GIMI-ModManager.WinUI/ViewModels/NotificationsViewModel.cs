@@ -1,7 +1,9 @@
 ﻿using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.WinUI.Services;
+using Windows.System;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -9,7 +11,8 @@ public partial class NotificationsViewModel : ObservableRecipient
 {
     public readonly NotificationManager NotificationManager;
 
-    [ObservableProperty] private string _logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "log.txt");
+    [ObservableProperty]
+    private string _logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "log.txt");
 
     public NotificationsViewModel(NotificationManager notificationManager)
     {
@@ -17,10 +20,16 @@ public partial class NotificationsViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private void CopyLogFilePath()
+    private async Task CopyLogFilePathAsync()
     {
-        var package = new DataPackage();
-        package.SetText(LogFilePath);
-        Clipboard.SetContent(package);
+        if (!File.Exists(LogFilePath))
+        {
+            NotificationManager.ShowNotification("Log file not found", "", null);
+            return;
+        }
+
+        var openResult = await Launcher.LaunchFileAsync(await StorageFile.GetFileFromPathAsync(LogFilePath));
+        if (!openResult)
+            NotificationManager.ShowNotification("Log file could not be opened", "", null);
     }
 }
