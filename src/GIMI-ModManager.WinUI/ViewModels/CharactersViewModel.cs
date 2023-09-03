@@ -274,10 +274,17 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     {
         var characters = _genshinService.GetCharacters().OrderBy(g => g.DisplayName).ToList();
         var others = characters.FirstOrDefault(ch => ch.Id == _genshinService.OtherCharacterId);
-        if (others is not null)
+        if (others is not null) // Add to front
         {
             characters.Remove(others);
             characters.Insert(0, others);
+        }
+
+        var gliders = characters.FirstOrDefault(ch => ch.Id == _genshinService.GlidersCharacterId);
+        if (gliders is not null) // Add to end
+        {
+            characters.Remove(gliders);
+            characters.Add(gliders);
         }
 
         _characters = characters.ToArray();

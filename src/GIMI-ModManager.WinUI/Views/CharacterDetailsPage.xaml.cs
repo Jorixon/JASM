@@ -68,6 +68,8 @@ public sealed partial class CharacterDetailsPage : Page
         {
             var modEntry = ModListGrid.ItemsSource.OfType<NewModModel>()?.FirstOrDefault(mod => mod.IsEnabled);
             ModListGrid.SelectedItem = modEntry;
+            // set focus to the first item
+            ModListGrid.Focus(FocusState.Programmatic);
         };
     }
 

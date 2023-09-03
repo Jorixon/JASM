@@ -11,6 +11,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     public string AbsModsFolderPath { get; }
     private readonly List<CharacterSkinEntry> _mods = new();
     public const string DISABLED_PREFIX = "DISABLED_";
+    public string DisabledPrefix => DISABLED_PREFIX;
     private readonly FileSystemWatcher _watcher;
     public GenshinCharacter Character { get; }
 
@@ -102,7 +103,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         _mods.Add(mod.Name.StartsWith(DISABLED_PREFIX)
             ? new CharacterSkinEntry(mod, this, false)
             : new CharacterSkinEntry(mod, this, true));
-        _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.FullPath, Character.DisplayName);
+        _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
     }
 
     // Untrack
@@ -116,6 +117,8 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         }
 
         _mods.Remove(_mods.First(m => m.Mod == mod));
+        _logger?.Debug("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
+
     }
 
     public void EnableMod(Guid modId)

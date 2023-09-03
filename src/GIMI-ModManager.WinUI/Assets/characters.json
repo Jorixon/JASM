@@ -386,22 +386,6 @@
     "IsPinned": false
   },
   {
-    "Id": 74,
-    "DisplayName": "Gliders",
-    "Keys": [
-      "glider",
-      "gliders",
-      "wings"
-    ],
-    "ReleaseDate": "0001-01-01T00:00:00",
-    "ImageUri": "Character_Gliders_Thumb.webp",
-    "Rarity": 0,
-    "Element": "",
-    "Weapon": "",
-    "Region": [],
-    "IsPinned": false
-  },
-  {
     "Id": 21,
     "DisplayName": "Gorou",
     "Keys": [
