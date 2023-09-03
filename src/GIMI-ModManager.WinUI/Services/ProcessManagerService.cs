@@ -122,7 +122,7 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
         }
         catch (Win32Exception e)
         {
-            _logger.Error(e, $"Failed to start {ProcessName}");
+            _logger.Error(e, $"Failed to start {ProcessName}, this is likely due to the user cancelling the UAC (admin) prompt");
             ErrorMessage = $"Failed to start {ProcessName}";
             return;
         }
