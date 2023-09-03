@@ -116,9 +116,9 @@
                     <StackPanel Margin="0,16,0,0" Orientation="Horizontal">
                         <Button
                             Margin="0,0,8,0"
-                            Command="{x:Bind ViewModel.ResetGenshinExePathCommand}"
-                            Content="Reset Genshin Exe Path" />
-                        <Button Command="{x:Bind ViewModel.Reset3DmigotoPathCommand}" Content="Reset 3Dmigoto Exe Path" />
+                            Command="{x:Bind ViewModel.Reset3DmigotoPathCommand}"
+                            Content="Reset 3Dmigoto Exe Path" />
+                        <Button Command="{x:Bind ViewModel.ResetGenshinExePathCommand}" Content="Reset Genshin Exe Path" />
                     </StackPanel>
                 </StackPanel>
 

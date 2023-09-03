@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Security.Principal;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -9,12 +10,13 @@ using Windows.Storage.Pickers;
 
 namespace GIMI_ModManager.WinUI.Services;
 
-public abstract partial class BaseProcessManager : ObservableObject
+public abstract partial class BaseProcessManager<TProcessOptions> : ObservableObject
+    where TProcessOptions : ProcessOptionsBase, new()
 {
     private protected readonly ILogger _logger;
     private protected readonly ILocalSettingsService _localSettingsService;
 
-    private  Process? _process;
+    private Process? _process;
     private protected string _prcoessPath = null!;
     private protected string _workingDirectory = string.Empty;
 
@@ -35,21 +37,63 @@ public abstract partial class BaseProcessManager : ObservableObject
         _localSettingsService = localSettingsService;
     }
 
-    public abstract Task<bool> TryInitialize();
-
-    private protected bool _tryInitialize(string? processPath)
+    // Runs on JASM startup
+    public async Task<bool> TryInitialize()
     {
-        if (!File.Exists(processPath))
+        var processOptions = await ReadProcessOptions();
+
+        if (processOptions.GetType() == typeof(GenshinProcessOptions))
+        {
+            _isGenshinClass = true;
+        }
+
+        if (!File.Exists(processOptions.ProcessPath))
         {
             return false;
         }
 
-        _prcoessPath = processPath;
+        _prcoessPath = processOptions.ProcessPath;
         ProcessStatus = ProcessStatus.NotRunning;
         return true;
     }
 
-    public abstract Task SetPath(string processName, string path, string? workingDirectory = null);
+    public async Task ResetProcessOptions()
+    {
+        await _SetStartupPath(null!, null!, null);
+        ProcessStatus = ProcessStatus.NotInitialized;
+        _logger.Information($"Reset {typeof(TProcessOptions).Name} path settings");
+    }
+
+
+    // Runs when the start process is clicked and options are not set
+    public async Task SetPath(string processName, string path, string? workingDirectory = null)
+    {
+        await _SetStartupPath(processName, path, workingDirectory);
+        ProcessStatus = ProcessStatus.NotRunning;
+        _logger.Information($"Saved {typeof(TProcessOptions).Name} path to settings");
+    }
+
+    private async Task _SetStartupPath(string processName, string path, string? workingDirectory = null)
+    {
+        ProcessName = processName;
+        _prcoessPath = path;
+        _workingDirectory = workingDirectory ?? Path.GetDirectoryName(path) ?? "";
+
+        var processOptions = await ReadProcessOptions();
+
+        processOptions.ProcessPath = path;
+        processOptions.WorkingDirectory = _workingDirectory;
+
+        await _localSettingsService.SaveSettingAsync(processOptions.Key, processOptions);
+    }
+
+    private async Task<TProcessOptions> ReadProcessOptions()
+    {
+        var processOptions = new TProcessOptions();
+        processOptions = await _localSettingsService.ReadSettingAsync<TProcessOptions>(processOptions.Key) ??
+                         new TProcessOptions();
+        return processOptions;
+    }
 
     public void StartProcess()
     {
@@ -65,14 +109,24 @@ public abstract partial class BaseProcessManager : ObservableObject
             return;
         }
 
-
-        _process = Process.Start(new ProcessStartInfo(_prcoessPath)
+        try
         {
-            WorkingDirectory = _workingDirectory == string.Empty ? Path.GetDirectoryName(_prcoessPath) ?? "" : _workingDirectory,
-            Arguments = _isGenshinClass ? "runas" : "",
-            UseShellExecute = _isGenshinClass
-            
-        });
+            _process = Process.Start(new ProcessStartInfo(_prcoessPath)
+            {
+                WorkingDirectory = _workingDirectory == string.Empty
+                    ? Path.GetDirectoryName(_prcoessPath) ?? ""
+                    : _workingDirectory,
+                Arguments = _isGenshinClass ? "runas" : "",
+                UseShellExecute = _isGenshinClass
+            });
+        }
+        catch (Win32Exception e)
+        {
+            _logger.Error(e, $"Failed to start {ProcessName}");
+            ErrorMessage = $"Failed to start {ProcessName}";
+            return;
+        }
+
 
         if (_process == null || _process.HasExited)
         {
@@ -93,8 +147,8 @@ public abstract partial class BaseProcessManager : ObservableObject
         if (_exitHandlerRegistered) return;
 
 
-        App.MainWindow.Closed += MainWindowExitHandler;
-        _exitHandlerRegistered = true;
+        //App.MainWindow.Closed += MainWindowExitHandler;
+        //_exitHandlerRegistered = true;
     }
 
     private void MainWindowExitHandler(object sender, WindowEventArgs args)
@@ -103,9 +157,8 @@ public abstract partial class BaseProcessManager : ObservableObject
 
     public void CheckStatus()
     {
-
         if (ProcessStatus == ProcessStatus.NotInitialized) return;
-        ProcessStatus = _process is { HasExited: false }  ? ProcessStatus.Running : ProcessStatus.NotRunning;
+        ProcessStatus = _process is { HasExited: false } ? ProcessStatus.Running : ProcessStatus.NotRunning;
     }
 
     public void StopProcess()
@@ -155,66 +208,36 @@ public abstract partial class BaseProcessManager : ObservableObject
 
 public enum ProcessStatus
 {
+    /// <summary>
+    /// Process path not set and process is not running
+    /// </summary>
     NotInitialized,
+
+    /// <summary>
+    /// Path set but process not running
+    /// </summary>
     NotRunning,
+
+    /// <summary>
+    /// Path set and process running
+    /// </summary>
     Running,
 }
 
-public class GenshinProcessManager : BaseProcessManager
+public class GenshinProcessManager : BaseProcessManager<GenshinProcessOptions>
 {
-    public GenshinProcessManager(ILogger logger, ILocalSettingsService localSettingsService) : base(logger,
+    public GenshinProcessManager(ILogger logger, ILocalSettingsService localSettingsService) : base(
+        logger.ForContext<GenshinProcessManager>(),
         localSettingsService)
     {
-    }
-
-    public override async Task<bool> TryInitialize()
-    {
-        var processOptions = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                             new ProcessOptions();
-        _isGenshinClass = true;
-        return _tryInitialize(processOptions.GenshinExePath);
-    }
-
-    public override async Task SetPath(string processName, string path, string? workingDirectory = null)
-    {
-        ProcessName = processName;
-        _prcoessPath = path;
-        _workingDirectory = workingDirectory ?? Path.GetDirectoryName(path) ?? "";
-        var processOptions = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                             new ProcessOptions();
-        processOptions.GenshinExePath = path;
-
-        await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processOptions);
-        _logger.Information("Saved Genshin path to settings");
-        ProcessStatus = ProcessStatus.NotRunning;
     }
 }
 
-public class ThreeDMigtoProcessManager : BaseProcessManager
+public class ThreeDMigtoProcessManager : BaseProcessManager<MigotoProcessOptions>
 {
-    public ThreeDMigtoProcessManager(ILogger logger, ILocalSettingsService localSettingsService) : base(logger,
+    public ThreeDMigtoProcessManager(ILogger logger, ILocalSettingsService localSettingsService) : base(
+        logger.ForContext<ThreeDMigtoProcessManager>(),
         localSettingsService)
     {
-    }
-
-    public override async Task<bool> TryInitialize()
-    {
-        var processOptions = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                             new ProcessOptions();
-        return _tryInitialize(processOptions.MigotoExePath);
-    }
-
-    public override async Task SetPath(string processName, string path, string? workingDirectory = null)
-    {
-        ProcessName = processName;
-        _prcoessPath = path;
-        _workingDirectory = workingDirectory ?? Path.GetDirectoryName(path) ?? "";
-        var processOptions = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                             new ProcessOptions();
-        processOptions.MigotoExePath = path;
-
-        await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processOptions);
-        _logger.Information("Saved 3Dmigoto path to settings");
-        ProcessStatus = ProcessStatus.NotRunning;
     }
 }

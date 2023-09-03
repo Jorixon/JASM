@@ -28,9 +28,19 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly ILocalSettingsService _localSettingsService;
     private readonly INavigationViewService _navigationViewService;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly ISkinManagerService _skinManagerService;
+
 
     private readonly NotificationManager _notificationManager;
     private readonly UpdateChecker _updateChecker;
+    public ElevatorService ElevatorService;
+
+    [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
+    public GenshinProcessManager GenshinProcessManager;
+
+    [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
+    public ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+
 
     [ObservableProperty] private ElementTheme _elementTheme;
 
@@ -46,17 +56,16 @@ public partial class SettingsViewModel : ObservableRecipient
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
 
-    public ElevatorService ElevatorService;
 
     private static bool _showElevatorStartDialog = true;
 
     private ModManagerOptions? _modManagerOptions = null!;
-    private readonly ISkinManagerService _skinManagerService;
 
     public SettingsViewModel(IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService,
         ElevatorService elevatorService, ILogger logger, NotificationManager notificationManager,
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
-        ISkinManagerService skinManagerService, UpdateChecker updateChecker)
+        ISkinManagerService skinManagerService, UpdateChecker updateChecker,
+        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -66,6 +75,8 @@ public partial class SettingsViewModel : ObservableRecipient
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
         _updateChecker = updateChecker;
+        GenshinProcessManager = genshinProcessManager;
+        ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
@@ -358,22 +369,20 @@ public partial class SettingsViewModel : ObservableRecipient
         }
     }
 
-    [RelayCommand]
+    private bool CanResetGenshinExePath() => GenshinProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+
+    [RelayCommand(CanExecute = nameof(CanResetGenshinExePath))]
     private async Task ResetGenshinExePath()
     {
-        var processSettings = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                              new ProcessOptions();
-        processSettings.GenshinExePath = null;
-        await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processSettings);
+        await GenshinProcessManager.ResetProcessOptions();
     }
 
-    [RelayCommand]
+    private bool CanReset3DmigotoPath() => ThreeDMigtoProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+
+    [RelayCommand(CanExecute = nameof(CanReset3DmigotoPath))]
     private async Task Reset3DmigotoPath()
     {
-        var processSettings = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                              new ProcessOptions();
-        processSettings.MigotoExePath = null;
-        await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processSettings);
+        await ThreeDMigtoProcessManager.ResetProcessOptions();
     }
 
     private void UpdateCheckerOnNewVersionAvailable(object? sender, UpdateChecker.NewVersionEventArgs e)
