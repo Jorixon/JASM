@@ -34,8 +34,8 @@ public partial class NewModModel : ObservableObject
         var name = modEntry.Mod.Name;
         if (!string.IsNullOrWhiteSpace(name))
         {
-            name = modEntry.Mod.Name.Replace("DISABLED_", "");
-            name = modEntry.Mod.Name.Replace("DISABLED", "");
+            name = modEntry.Mod.Name.Replace(
+                name.StartsWith(CharacterModList.DISABLED_PREFIX) ? "DISABLED_" : "DISABLED", "");
         }
 
         return new NewModModel

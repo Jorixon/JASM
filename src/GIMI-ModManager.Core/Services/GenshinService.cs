@@ -43,6 +43,7 @@ public class GenshinService : IGenshinService
         }
 
         _characters.AddRange(characters);
+        _characters.Add(getGlidersCharacter(assetsUriPath));
         _characters.Add(getOthersCharacter(assetsUriPath));
     }
 
@@ -97,7 +98,6 @@ public class GenshinService : IGenshinService
 
         foreach (var character in restrictToGenshinCharacters ?? _characters)
         {
-
             Debug.Assert(searchResult.Count(x => x.Value == 100) <= 1,
                 "searchResult.Count(x => x.Value == 100) <= 1, Multiple 100 results");
 
@@ -110,6 +110,7 @@ public class GenshinService : IGenshinService
                 searchResult.Add(character, 100);
                 continue;
             }
+
             if (keywords.ToLower().Split().Any(modKeyWord =>
                     character.Keys.Any(characterKeyWord => characterKeyWord.ToLower() == modKeyWord)))
             {
@@ -148,6 +149,24 @@ public class GenshinService : IGenshinService
         return character;
     }
 
+    private const int _glidersCharacterId = -1235;
+    public int GlidersCharacterId => _glidersCharacterId;
+
+    private static GenshinCharacter getGlidersCharacter(string assetsUriPath)
+    {
+        var character = new GenshinCharacter
+        {
+            Id = _glidersCharacterId,
+            DisplayName = "Gliders",
+            ReleaseDate = DateTime.MinValue,
+            Rarity = -1,
+            Keys = new[] { "gliders", "glider", "wings" },
+            ImageUri = "Character_Gliders_Thumb.webp"
+        };
+        SetImageUriForCharacter(assetsUriPath, character);
+        return character;
+    }
+
     public GenshinCharacter? GetCharacter(int id)
         => _characters.FirstOrDefault(c => c.Id == id);
 }
@@ -165,6 +184,7 @@ public interface IGenshinService
 
     public GenshinCharacter? GetCharacter(int id);
     public int OtherCharacterId { get; }
+    public int GlidersCharacterId { get; }
 }
 
 internal static class GenshinCharacters

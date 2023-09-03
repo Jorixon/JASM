@@ -11,6 +11,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     public string AbsModsFolderPath { get; }
     private readonly List<CharacterSkinEntry> _mods = new();
     public const string DISABLED_PREFIX = "DISABLED_";
+    public string DisabledPrefix => DISABLED_PREFIX;
     private readonly FileSystemWatcher _watcher;
     public GenshinCharacter Character { get; }
 
@@ -48,7 +49,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     private void OnModDeleted(object sender, FileSystemEventArgs e)
     {
-        _logger?.Information("Mod {ModName} deleted", e.FullPath);
+        _logger?.Information("Mod {ModName} in {characterFolder} folder was deleted", e.Name, Character.DisplayName);
         if (_mods.Any(mod => mod.Mod.FullPath == e.FullPath))
         {
             var mod = _mods.First(mod => mod.Mod.FullPath == e.FullPath);
@@ -62,10 +63,11 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     private void OnModCreated(object sender, FileSystemEventArgs e)
     {
-        _logger?.Information("Mod {ModName} created", e.FullPath);
+        _logger?.Information("Mod {ModName} was created in {characterFolder} created", e.Name, Character.DisplayName);
         var mod = new Mod(new DirectoryInfo(e.FullPath));
         if (ModAlreadyAdded(mod))
-            _logger?.Warning("Created folder {Folder} was already tracked in mod list", e.FullPath);
+            _logger?.Warning("Created folder {Folder} was already tracked in {characterFolder} mod list", e.Name,
+                Character.DisplayName);
         else
             TrackMod(mod);
         ModFolderChanged();
@@ -101,7 +103,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         _mods.Add(mod.Name.StartsWith(DISABLED_PREFIX)
             ? new CharacterSkinEntry(mod, this, false)
             : new CharacterSkinEntry(mod, this, true));
-        _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.FullPath, Character.DisplayName);
+        _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
     }
 
     // Untrack
@@ -115,6 +117,8 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         }
 
         _mods.Remove(_mods.First(m => m.Mod == mod));
+        _logger?.Debug("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
+
     }
 
     public void EnableMod(Guid modId)

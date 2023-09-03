@@ -16,6 +16,7 @@ using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using Windows.ApplicationModel.Core;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -27,9 +28,19 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly ILocalSettingsService _localSettingsService;
     private readonly INavigationViewService _navigationViewService;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly ISkinManagerService _skinManagerService;
+
 
     private readonly NotificationManager _notificationManager;
     private readonly UpdateChecker _updateChecker;
+    public ElevatorService ElevatorService;
+
+    [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
+    public GenshinProcessManager GenshinProcessManager;
+
+    [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
+    public ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+
 
     [ObservableProperty] private ElementTheme _elementTheme;
 
@@ -45,17 +56,16 @@ public partial class SettingsViewModel : ObservableRecipient
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
 
-    public ElevatorService ElevatorService;
 
     private static bool _showElevatorStartDialog = true;
 
     private ModManagerOptions? _modManagerOptions = null!;
-    private readonly ISkinManagerService _skinManagerService;
 
     public SettingsViewModel(IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService,
         ElevatorService elevatorService, ILogger logger, NotificationManager notificationManager,
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
-        ISkinManagerService skinManagerService, UpdateChecker updateChecker)
+        ISkinManagerService skinManagerService, UpdateChecker updateChecker,
+        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -65,6 +75,8 @@ public partial class SettingsViewModel : ObservableRecipient
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
         _updateChecker = updateChecker;
+        GenshinProcessManager = genshinProcessManager;
+        ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
@@ -222,8 +234,8 @@ public partial class SettingsViewModel : ObservableRecipient
             {
                 Text =
                     "Do you want to reorganize the Mods folder?\n" +
-                    "This will prompt the application to sort existing mods into folders assigned to their respective characters.\n\n" +
-                    "Any mods that can't be reasonably matched will be placed in an 'Others' folder.",
+                    "This will prompt the application to sort existing mods that are directly in the Mods folder and Others folder, into folders assigned to their respective characters.\n\n" +
+                    "Any mods that can't be reasonably matched will be placed in an 'Others' folder. While the mods already in 'Others' folder will remain there.",
                 TextWrapping = TextWrapping.WrapWholeWords,
                 IsTextSelectionEnabled = true
             },
@@ -236,10 +248,16 @@ public partial class SettingsViewModel : ObservableRecipient
         if (result == ContentDialogResult.Primary)
         {
             _navigationViewService.IsEnabled = false;
+            var genshinService = App.GetService<IGenshinService>();
 
             try
             {
-                var movedModsCount = await Task.Run(() => _skinManagerService.ReorganizeMods());
+                var movedModsCount = await Task.Run(() =>
+                    _skinManagerService.ReorganizeMods()); // Mods folder
+
+                movedModsCount += await Task.Run(() =>
+                    _skinManagerService.ReorganizeMods(
+                        genshinService.GetCharacter(genshinService.OtherCharacterId))); // Others folder
 
                 if (movedModsCount == -1)
                     _notificationManager.ShowNotification("Mods reorganization failed.",
@@ -351,22 +369,20 @@ public partial class SettingsViewModel : ObservableRecipient
         }
     }
 
-    [RelayCommand]
+    private bool CanResetGenshinExePath() => GenshinProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+
+    [RelayCommand(CanExecute = nameof(CanResetGenshinExePath))]
     private async Task ResetGenshinExePath()
     {
-        var processSettings = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                              new ProcessOptions();
-        processSettings.GenshinExePath = null;
-        await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processSettings);
+        await GenshinProcessManager.ResetProcessOptions();
     }
 
-    [RelayCommand]
+    private bool CanReset3DmigotoPath() => ThreeDMigtoProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+
+    [RelayCommand(CanExecute = nameof(CanReset3DmigotoPath))]
     private async Task Reset3DmigotoPath()
     {
-        var processSettings = await _localSettingsService.ReadSettingAsync<ProcessOptions>(ProcessOptions.Key) ??
-                              new ProcessOptions();
-        processSettings.MigotoExePath = null;
-        await _localSettingsService.SaveSettingAsync(ProcessOptions.Key, processSettings);
+        await ThreeDMigtoProcessManager.ResetProcessOptions();
     }
 
     private void UpdateCheckerOnNewVersionAvailable(object? sender, UpdateChecker.NewVersionEventArgs e)

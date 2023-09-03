@@ -38,7 +38,9 @@
     <Content Remove="Assets\Images\Character_Beidou_Thumb.png" />
     <Content Remove="Assets\Images\Character_Bennett_Thumb.png" />
     <Content Remove="Assets\Images\Character_Candace_Thumb.png" />
+    <Content Remove="Assets\Images\Character_Charlotte_Thumb.webp" />
     <Content Remove="Assets\Images\Character_Chongyun_Thumb.png" />
+    <Content Remove="Assets\Images\Character_Clorinde_Thumb.webp" />
     <Content Remove="Assets\Images\Character_Collei_Thumb.png" />
     <Content Remove="Assets\Images\Character_Cyno_Thumb.png" />
     <Content Remove="Assets\Images\Character_Dehya_Thumb.png" />
@@ -49,7 +51,9 @@
     <Content Remove="Assets\Images\Character_Eula_Thumb.png" />
     <Content Remove="Assets\Images\Character_Faruzan_Thumb.png" />
     <Content Remove="Assets\Images\Character_Fischl_Thumb.png" />
+    <Content Remove="Assets\Images\Character_Furina_Thumb.webp" />
     <Content Remove="Assets\Images\Character_Ganyu_Thumb.png" />
+    <Content Remove="Assets\Images\Character_Gliders_Thumb.webp" />
     <Content Remove="Assets\Images\Character_Gorou_Thumb.png" />
     <Content Remove="Assets\Images\Character_Hu_Tao_Thumb.png" />
     <Content Remove="Assets\Images\Character_Jean_Thumb.png" />
@@ -72,6 +76,7 @@
     <Content Remove="Assets\Images\Character_Mika_Thumb.png" />
     <Content Remove="Assets\Images\Character_Mona_Thumb.png" />
     <Content Remove="Assets\Images\Character_Nahida_Thumb.png" />
+    <Content Remove="Assets\Images\Character_Navia_Thumb.webp" />
     <Content Remove="Assets\Images\Character_Nilou_Thumb.png" />
     <Content Remove="Assets\Images\Character_Ningguang_Thumb.png" />
     <Content Remove="Assets\Images\Character_Noelle_Thumb.png" />
@@ -122,6 +127,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Layout" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Primitives" Version="7.1.2" />
     <PackageReference Include="FluentValidation" Version="11.7.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
@@ -146,7 +152,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\characters.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\Character_Albedo_Thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -178,7 +184,13 @@
     <None Update="Assets\Images\Character_Candace_Thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Images\Character_Charlotte_Thumb.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Images\Character_Chongyun_Thumb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\Character_Clorinde_Thumb.webp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\Character_Collei_Thumb.png">
@@ -211,7 +223,13 @@
     <None Update="Assets\Images\Character_Fischl_Thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Images\Character_Furina_Thumb.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Images\Character_Ganyu_Thumb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\Character_Gliders_Thumb.webp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\Character_Gorou_Thumb.png">
@@ -278,6 +296,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\Character_Nahida_Thumb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\Character_Navia_Thumb.webp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\Character_Nilou_Thumb.png">
@@ -402,6 +423,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Images\Character_Others_Unused.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\Images\Character_Paimon_Thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\Images\Start_Genshin.png">

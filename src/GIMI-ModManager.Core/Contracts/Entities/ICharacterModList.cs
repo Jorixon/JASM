@@ -5,6 +5,7 @@ namespace GIMI_ModManager.Core.Contracts.Entities;
 public interface ICharacterModList
 {
     public string AbsModsFolderPath { get; }
+    public string DisabledPrefix { get; }
 
     /// <summary>
     /// All mods for this character that have added to the mod list.

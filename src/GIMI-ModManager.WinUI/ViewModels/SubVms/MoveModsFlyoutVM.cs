@@ -139,7 +139,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         {
             Title = $"Delete These {selectedModsCount} Mods?",
             Content = stackPanel,
-            PrimaryButtonText = "Delete?",
+            PrimaryButtonText = "Delete",
             SecondaryButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Secondary
         });

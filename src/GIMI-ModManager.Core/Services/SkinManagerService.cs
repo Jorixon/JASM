@@ -162,7 +162,7 @@ public class SkinManagerService : ISkinManagerService
         }
     }
 
-    public int ReorganizeMods()
+    public int ReorganizeMods(GenshinCharacter? characterFolderToReorganize = null)
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
@@ -179,7 +179,11 @@ public class SkinManagerService : ISkinManagerService
 
         var movedMods = 0;
 
-        foreach (var folder in _activeModsFolder.EnumerateDirectories())
+        var folderToReorganize = characterFolderToReorganize is null
+            ? _activeModsFolder
+            : new DirectoryInfo(GetCharacterModFolderPath(characterFolderToReorganize));
+
+        foreach (var folder in folderToReorganize.EnumerateDirectories())
         {
             // Is a character folder continue
             var character = characters.FirstOrDefault(x => x.DisplayName == folder.Name);
@@ -188,13 +192,18 @@ public class SkinManagerService : ISkinManagerService
 
             // Is a mod folder, determine which character it belongs to
             var closestMatchCharacter = _genshinService.GetCharacter(folder.Name);
-            if (closestMatchCharacter is null)
+            switch (closestMatchCharacter)
             {
-                _logger.Information(
-                    "Mod folder {ModFolder} does not seem to belong to a character. Moving to 'Others' folder",
-                    folder.Name);
-                closestMatchCharacter = othersCharacter;
+                case null when characterFolderToReorganize is null:
+                    _logger.Information(
+                        "Mod folder {ModFolder} does not seem to belong to a character. Moving to 'Others' folder",
+                        folder.Name);
+                    closestMatchCharacter = othersCharacter;
+                    break;
+                case null:
+                    continue; // Mod folder does not belong to this character, but we cant determine which character it belongs to. Move on
             }
+
 
             var modList = GetCharacterModList(closestMatchCharacter);
             var mod = new Mod(folder, folder.Name);
