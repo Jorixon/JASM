@@ -1,451 +1,459 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>GIMI_ModManager.WinUI</RootNamespace>
-    <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;arm64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-    <PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
-	<ImplicitUsings>enable</ImplicitUsings>
-	<Nullable>enable</Nullable>
-	<UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <WindowsPackageType>None</WindowsPackageType>
-    <BaseOutputPath></BaseOutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Views\Components\**" />
-    <Compile Remove="Views\SubPages\**" />
-    <EmbeddedResource Remove="Views\Components\**" />
-    <EmbeddedResource Remove="Views\SubPages\**" />
-    <None Remove="Views\Components\**" />
-    <None Remove="Views\SubPages\**" />
-    <Page Remove="Views\Components\**" />
-    <Page Remove="Views\SubPages\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Assets\characters.json" />
-    <Content Remove="Assets\Images\Character_Albedo_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Alhaitham_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Aloy_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Amber_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Arataki_Itto_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Baizhu_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Barbara_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Beidou_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Bennett_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Candace_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Charlotte_Thumb.webp" />
-    <Content Remove="Assets\Images\Character_Chongyun_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Clorinde_Thumb.webp" />
-    <Content Remove="Assets\Images\Character_Collei_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Cyno_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Dehya_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Diluc_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Diona_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Dori_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Eula_Card.png" />
-    <Content Remove="Assets\Images\Character_Eula_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Faruzan_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Fischl_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Furina_Thumb.webp" />
-    <Content Remove="Assets\Images\Character_Ganyu_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Gliders_Thumb.webp" />
-    <Content Remove="Assets\Images\Character_Gorou_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Hu_Tao_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Jean_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kaedehara_Kazuha_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kaeya_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kamisato_Ayaka_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kamisato_Ayato_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kaveh_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kazuha_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Keqing_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kirara_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Klee_Card.jpg" />
-    <Content Remove="Assets\Images\Character_Klee_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kujou_Sara_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Kuki_Shinobu_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Layla_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Lisa_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Lynette_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Lyney_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Mika_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Mona_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Nahida_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Navia_Thumb.webp" />
-    <Content Remove="Assets\Images\Character_Nilou_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Ningguang_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Noelle_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Qiqi_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Raiden_Shogun_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Razor_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Rosaria_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Sangonomiya_Kokomi_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Sayu_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Shenhe_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Shikanoin_Heizou_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Sucrose_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Tartaglia_Card.png" />
-    <Content Remove="Assets\Images\Character_Tartaglia_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Thoma_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Tighnari_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Traveler_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Venti_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Wanderer_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Xiangling_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Xiao_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Xingqiu_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Xinyan_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Yae_Miko_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Yanfei_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Yaoyao_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Yelan_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Yoimiya_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Yun_Jin_Thumb.png" />
-    <Content Remove="Assets\Images\Character_Zhongli_Card.png" />
-    <Content Remove="Assets\Images\Character_Zhongli_Thumb.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Assets\Images\characters.json" />
-    <None Remove="Views\CharacterDetailsPage.xaml" />
-    <None Remove="Views\CharactersPage.xaml" />
-    <None Remove="Views\Controls\FolderSelector.xaml" />
-    <None Remove="Views\Controls\ModListOverview.xaml" />
-    <None Remove="Views\DebugPage.xaml" />
-    <None Remove="Views\NotificationsPage.xaml" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>GIMI_ModManager.WinUI</RootNamespace>
+		<ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>x86;x64;arm64</Platforms>
+		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseWinUI>true</UseWinUI>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<WindowsPackageType>None</WindowsPackageType>
+		<BaseOutputPath></BaseOutputPath>
+		<!-- x-release-please-start-version -->
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<!-- x-release-please-end -->
+		<Title>JASM - Just Another Skin Manager</Title>
+		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Layout" Version="7.1.2" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Primitives" Version="7.1.2" />
-    <PackageReference Include="FluentValidation" Version="11.7.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-    <PackageReference Include="Serilog" Version="3.0.1" />
-    <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
-    <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
-    <PackageReference Include="Serilog.Sinks.EventLog" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
-    <PackageReference Include="WinUIEx" Version="2.2" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\characters.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Albedo_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Alhaitham_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Aloy_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Amber_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Arataki_Itto_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Baizhu_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Barbara_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Beidou_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Bennett_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Candace_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Charlotte_Thumb.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Chongyun_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Clorinde_Thumb.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Collei_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Cyno_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Dehya_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Diluc_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Diona_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Dori_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Eula_Card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Eula_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Faruzan_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Fischl_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Furina_Thumb.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Ganyu_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Gliders_Thumb.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Gorou_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Hu_Tao_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Jean_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kaedehara_Kazuha_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kaeya_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kamisato_Ayaka_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kamisato_Ayato_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kaveh_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kazuha_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Keqing_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kirara_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Klee_Card.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Klee_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kujou_Sara_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Kuki_Shinobu_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Layla_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Lisa_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Lynette_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Lyney_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Mika_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Mona_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Nahida_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Navia_Thumb.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Nilou_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Ningguang_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Noelle_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Qiqi_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Raiden_Shogun_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Razor_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Rosaria_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Sangonomiya_Kokomi_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Sayu_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Shenhe_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Shikanoin_Heizou_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Sucrose_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Tartaglia_Card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Tartaglia_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Thoma_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Tighnari_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Traveler_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Venti_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Wanderer_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Xiangling_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Xiao_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Xingqiu_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Xinyan_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Yae_Miko_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Yanfei_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Yaoyao_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Yelan_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Yoimiya_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Yun_Jin_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Zhongli_Card.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Images\Character_Zhongli_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Page Update="Views\Controls\ModListOverview.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\DebugPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CharacterDetailsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CharactersPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\NotificationsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Controls\FolderSelector.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Views\Components\**" />
+		<Compile Remove="Views\SubPages\**" />
+		<EmbeddedResource Remove="Views\Components\**" />
+		<EmbeddedResource Remove="Views\SubPages\**" />
+		<None Remove="Views\Components\**" />
+		<None Remove="Views\SubPages\**" />
+		<Page Remove="Views\Components\**" />
+		<Page Remove="Views\SubPages\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Remove="Assets\characters.json" />
+		<Content Remove="Assets\Images\Character_Albedo_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Alhaitham_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Aloy_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Amber_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Arataki_Itto_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Baizhu_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Barbara_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Beidou_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Bennett_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Candace_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Charlotte_Thumb.webp" />
+		<Content Remove="Assets\Images\Character_Chongyun_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Clorinde_Thumb.webp" />
+		<Content Remove="Assets\Images\Character_Collei_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Cyno_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Dehya_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Diluc_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Diona_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Dori_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Eula_Card.png" />
+		<Content Remove="Assets\Images\Character_Eula_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Faruzan_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Fischl_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Furina_Thumb.webp" />
+		<Content Remove="Assets\Images\Character_Ganyu_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Gliders_Thumb.webp" />
+		<Content Remove="Assets\Images\Character_Gorou_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Hu_Tao_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Jean_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kaedehara_Kazuha_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kaeya_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kamisato_Ayaka_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kamisato_Ayato_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kaveh_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kazuha_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Keqing_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kirara_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Klee_Card.jpg" />
+		<Content Remove="Assets\Images\Character_Klee_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kujou_Sara_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Kuki_Shinobu_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Layla_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Lisa_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Lynette_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Lyney_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Mika_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Mona_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Nahida_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Navia_Thumb.webp" />
+		<Content Remove="Assets\Images\Character_Nilou_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Ningguang_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Noelle_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Qiqi_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Raiden_Shogun_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Razor_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Rosaria_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Sangonomiya_Kokomi_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Sayu_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Shenhe_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Shikanoin_Heizou_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Sucrose_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Tartaglia_Card.png" />
+		<Content Remove="Assets\Images\Character_Tartaglia_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Thoma_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Tighnari_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Traveler_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Venti_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Wanderer_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Xiangling_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Xiao_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Xingqiu_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Xinyan_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Yae_Miko_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Yanfei_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Yaoyao_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Yelan_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Yoimiya_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Yun_Jin_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Zhongli_Card.png" />
+		<Content Remove="Assets\Images\Character_Zhongli_Thumb.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Assets\Images\characters.json" />
+		<None Remove="Views\CharacterDetailsPage.xaml" />
+		<None Remove="Views\CharactersPage.xaml" />
+		<None Remove="Views\Controls\FolderSelector.xaml" />
+		<None Remove="Views\Controls\ModListOverview.xaml" />
+		<None Remove="Views\DebugPage.xaml" />
+		<None Remove="Views\NotificationsPage.xaml" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
+	<ItemGroup>
+		<Manifest Include="$(ApplicationManifest)" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Update="Assets\Images\Character_Others.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Images\Character_Others_Unused.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Images\Character_Paimon_Thumb.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\Images\Start_Genshin.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\WindowIcon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  
-  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PRIResource Remove="Views\Components\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PRIResource Remove="Views\SubPages\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Layout" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Primitives" Version="7.1.2" />
+		<PackageReference Include="FluentValidation" Version="11.7.1" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
+		<PackageReference Include="Serilog" Version="3.0.1" />
+		<PackageReference Include="Serilog.Expressions" Version="3.4.1" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+		<PackageReference Include="Serilog.Sinks.EventLog" Version="3.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
+		<PackageReference Include="WinUIEx" Version="2.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\characters.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Albedo_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Alhaitham_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Aloy_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Amber_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Arataki_Itto_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Baizhu_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Barbara_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Beidou_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Bennett_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Candace_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Charlotte_Thumb.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Chongyun_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Clorinde_Thumb.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Collei_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Cyno_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Dehya_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Diluc_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Diona_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Dori_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Eula_Card.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Eula_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Faruzan_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Fischl_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Furina_Thumb.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Ganyu_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Gliders_Thumb.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Gorou_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Hu_Tao_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Jean_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kaedehara_Kazuha_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kaeya_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kamisato_Ayaka_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kamisato_Ayato_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kaveh_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kazuha_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Keqing_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kirara_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Klee_Card.jpg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Klee_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kujou_Sara_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Kuki_Shinobu_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Layla_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Lisa_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Lynette_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Lyney_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Mika_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Mona_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Nahida_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Navia_Thumb.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Nilou_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Ningguang_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Noelle_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Qiqi_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Raiden_Shogun_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Razor_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Rosaria_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Sangonomiya_Kokomi_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Sayu_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Shenhe_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Shikanoin_Heizou_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Sucrose_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Tartaglia_Card.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Tartaglia_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Thoma_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Tighnari_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Traveler_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Venti_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Wanderer_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Xiangling_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Xiao_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Xingqiu_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Xinyan_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Yae_Miko_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Yanfei_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Yaoyao_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Yelan_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Yoimiya_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Yun_Jin_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Zhongli_Card.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Zhongli_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<Page Update="Views\Controls\ModListOverview.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\DebugPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\CharacterDetailsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\CharactersPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\NotificationsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Controls\FolderSelector.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="Assets\Images\Character_Others.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\Images\Character_Others_Unused.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\Images\Character_Paimon_Thumb.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\Images\Start_Genshin.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\WindowIcon.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PRIResource Remove="Views\Components\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PRIResource Remove="Views\SubPages\**" />
+	</ItemGroup>
 </Project>
