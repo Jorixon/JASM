@@ -34,12 +34,13 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly NotificationManager _notificationManager;
     private readonly UpdateChecker _updateChecker;
     public ElevatorService ElevatorService;
-
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
-    public GenshinProcessManager GenshinProcessManager;
+    public GenshinProcessManager _genshinProcessManager;
 
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
-    public ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+    public ThreeDMigtoProcessManager _threeDMigtoProcessManager;
 
 
     [ObservableProperty] private ElementTheme _elementTheme;
