@@ -83,7 +83,7 @@ For some reason when you drag and drop 7z contents into, let’s say file explor
 
 This process is similar for this application. The problem is that for some reason 7z seems to delete the extracted contents in “/Temp/7z…” before JASM can copy/move the files to the mod’s directory. This took quite a while to debug and a lot of trial and error until I got to something that worked (during development?).
 
-I believe it has something to do with IPC between 7z process and JASM. I’ve read some posts on Github of others having similar problems with drag and drop.
+I believe it has something to do with IPC (Inter Process Communication) between 7z process and JASM. I’ve read some posts on Github of others having similar problems with drag and drop.
 
 At the moment I don’t know what makes it sometimes fail, but I know it happens sometimes. I would really like to fix this, I just don’t how yet.
 
