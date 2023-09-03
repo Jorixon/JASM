@@ -19,4 +19,4 @@ jobs:
           release-type: simple
           package-name: jasm
           extra-files: |
-                        src/GIMI-ModManager.WinUI/app.manifest
+                        src/GIMI-ModManager.WinUI/GIMI-ModManager.WinUI.csproj
