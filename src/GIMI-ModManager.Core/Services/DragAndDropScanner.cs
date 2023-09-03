@@ -17,7 +17,7 @@ public sealed class DragAndDropScanner : IDisposable
     {
     }
 
-    public IMod Scan(string path)
+    public DragAndDropScanResult Scan(string path)
     {
         PrepareWorkFolder();
 
@@ -40,15 +40,25 @@ public sealed class DragAndDropScanner : IDisposable
         }
 
 
-        var extractedDir = new DirectoryInfo(_workFolder).EnumerateDirectories().FirstOrDefault();
-        if (extractedDir is null)
-            throw new Exception("No extracted folder found");
 
-        var newMod = new Mod(extractedDir);
 
-        newMod.MoveTo(_tmpFolder);
+        var extractedDirs = new DirectoryInfo(_workFolder).EnumerateDirectories().ToArray();
+        if (extractedDirs is null || !extractedDirs.Any())
+            throw new Exception("No valid mod folder found in archive. Loose files are ignored");
 
-        return newMod;
+        var ignoredDirs = new List<DirectoryInfo>();
+        if (extractedDirs.Length > 1)
+            ignoredDirs.AddRange(extractedDirs.Skip(1));
+
+        var newMod = new Mod(extractedDirs.First());
+
+        //newMod.MoveTo(_tmpFolder);
+
+        return new DragAndDropScanResult()
+        {
+            ExtractedMod = newMod,
+            IgnoredMods = ignoredDirs.Select(dir => dir.Name).ToArray()
+        };
     }
 
     private void PrepareWorkFolder()
@@ -138,6 +148,8 @@ public sealed class DragAndDropScanner : IDisposable
 
 public class DragAndDropScanResult
 {
-    public IMod Mod { get; set; } = null!;
+    public IMod ExtractedMod { get; init; } = null!;
+    public string[] IgnoredMods { get; init; } = Array.Empty<string>();
+    public string[] IgnoredFiles { get; init; } = Array.Empty<string>();
     public string? ThumbnailPath { get; set; }
 }

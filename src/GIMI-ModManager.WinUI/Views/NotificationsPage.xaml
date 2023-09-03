@@ -69,7 +69,8 @@
                             Grid.Row="1"
                             IsTextSelectionEnabled="True"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind Message}" />
+                            Text="{x:Bind Message}"
+                            TextWrapping="WrapWholeWords" />
                         <TextBlock
                             Grid.Row="2"
                             HorizontalTextAlignment="Right"

@@ -198,8 +198,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         catch (Exception e)
         {
             _logger.Error(e, "Error while adding storage items.");
-            _notificationService.ShowNotification("Error while adding storage items.",
-                $"An error occurred while adding the storage items. Mod may have been partially copied.\n{e.Message}",
+            _notificationService.ShowNotification("Drag And Drop operation failed",
+                $"An error occurred while adding the storage items. Mod may have been partially copied. Reason:\n{e.Message}",
                 TimeSpan.FromSeconds(5));
         }
         finally
@@ -240,8 +240,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             if (storageItem is StorageFile)
             {
                 using var scanner = new DragAndDropScanner();
-                var mod = scanner.Scan(storageItem.Path);
-                mod.MoveTo(destDirectoryInfo.FullName);
+                var extractResult = scanner.Scan(storageItem.Path);
+                extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
+                if (extractResult.IgnoredMods.Any())
+                    App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                        _notificationService.ShowNotification("Multiple folders detected during extraction, first one was extracted",
+                            $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
+                            TimeSpan.FromSeconds(7)));
                 continue;
             }
 
