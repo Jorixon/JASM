@@ -15,9 +15,9 @@
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<WindowsPackageType>None</WindowsPackageType>
 		<BaseOutputPath></BaseOutputPath>
-		<VersionPrefix>
-		<!-- x-release-please-start-version -->1.0.0<!-- x-release-please-end -->
-		</VersionPrefix>
+		<!-- x-release-please-start-version -->
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<!-- x-release-please-end -->
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
 	</PropertyGroup>
