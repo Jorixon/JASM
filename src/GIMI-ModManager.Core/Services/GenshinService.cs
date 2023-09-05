@@ -98,8 +98,7 @@ public class GenshinService : IGenshinService
 
         foreach (var character in restrictToGenshinCharacters ?? _characters)
         {
-            Debug.Assert(searchResult.Count(x => x.Value == 100) <= 1,
-                "searchResult.Count(x => x.Value == 100) <= 1, Multiple 100 results");
+
 
             var result = Fuzz.Ratio(keywords.ToLower(), character.DisplayName.ToLower());
 
@@ -111,8 +110,8 @@ public class GenshinService : IGenshinService
                 continue;
             }
 
-            if (keywords.ToLower().Split().Any(modKeyWord =>
-                    character.Keys.Any(characterKeyWord => characterKeyWord.ToLower() == modKeyWord)))
+            if (keywords.Split().Any(modKeyWord =>
+                    character.Keys.Any(characterKeyWord => characterKeyWord.Equals(modKeyWord,StringComparison.OrdinalIgnoreCase))))
             {
                 searchResult.Add(character, 100);
                 continue;
@@ -121,9 +120,16 @@ public class GenshinService : IGenshinService
 
             if (result > fuzzRatio)
             {
+                if (searchResult.ContainsKey(character))
+                {
+                    searchResult[character] += result;
+                    continue;
+                }
                 searchResult.Add(character, result);
             }
         }
+        Debug.Assert(searchResult.Count(x => x.Value == 100) <= 1,
+            $"searchResult.Count(x => x.Value == 100) <= 1, Multiple 100 results, {string.Join("\n",searchResult.Where(kv => kv.Value == 100).Select(kv => kv.Key))}");
 
         return searchResult;
     }

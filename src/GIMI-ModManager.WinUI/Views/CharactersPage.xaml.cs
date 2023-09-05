@@ -19,14 +19,15 @@ public sealed partial class CharactersPage : Page
     }
 
 
-    private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private async void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        var suitableItemsCount = ViewModel.AutoSuggestBox_TextChanged(sender.Text);
+        ViewModel.AutoSuggestBox_TextChanged(sender.Text);
     }
 
     private void AutoSuggestBox_OnSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
-        ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.SelectedItem);
+        if (!ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.SelectedItem)) return;
+
         sender.IsEnabled = false;
         sender.Text = string.Empty;
     }
@@ -39,11 +40,13 @@ public sealed partial class CharactersPage : Page
     private void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         if (args.ChosenSuggestion is not null)
-            ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.ChosenSuggestion);
+            if (!ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.ChosenSuggestion))
+                return;
+
 
         if (ViewModel.SuggestionsBox.Count > 0)
         {
-            ViewModel.SuggestionBox_Chosen(ViewModel.SuggestionsBox[0]);
+            if (!ViewModel.SuggestionBox_Chosen(ViewModel.SuggestionsBox[0])) return;
             sender.IsEnabled = false;
             sender.Text = string.Empty;
         }
@@ -51,14 +54,12 @@ public sealed partial class CharactersPage : Page
 
     private void ImageCommandsFlyout_OnOpening(object? sender, object e)
     {
-
         if (sender is not MenuFlyout menuFlyout)
             return;
-        
+
         if (menuFlyout.Target.DataContext is not GenshinCharacter character)
             return;
 
         ViewModel.OnRightClickContext(character);
-
     }
 }
