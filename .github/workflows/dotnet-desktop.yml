@@ -1,7 +1,7 @@
 # This workflow will build and publish a WinUI 3 unpackaged desktop application
 # built on .NET.
 
-name: WinUI 3 unpackaged app
+name: Test,Build And Release JASM
 
 on:
   workflow_dispatch:
