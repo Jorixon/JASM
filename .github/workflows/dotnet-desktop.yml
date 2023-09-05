@@ -38,7 +38,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Build, publish and zip the app
-      run: pthon ${{ github.workspace }}\Build\Release.py
+      run: python ${{ github.workspace }}\Build\Release.py
       shell: cmd
 
     # Upload the app
