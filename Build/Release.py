@@ -35,12 +35,16 @@ if versionNumber is None or len(versionNumber) == 0:
 versionNumber = versionNumber[0]
 
 print("Building Elevator...")
-checkSucssfulExitCode(os.system("dotnet publish " + ELEVATOR_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release "))
+elevatorPublishCommand = "dotnet publish " + ELEVATOR_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release"
+print(elevatorPublishCommand)
+checkSucssfulExitCode(os.system(elevatorPublishCommand))
 print()
 print("Finished building Elevator")
 
 print("Building JASM...")
-checkSucssfulExitCode(os.system("dotnet publish " + JASM_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release "))
+jasmPublishCommand = "dotnet publish " + JASM_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release"
+print(jasmPublishCommand)
+checkSucssfulExitCode(os.system(jasmPublishCommand))
 print()
 print("Finished building JASM")
 
@@ -77,7 +81,7 @@ if env_file is None:
 	exit(1)
 
 with open(env_file, "a") as myfile:
-    myfile.write(f"zipFile=releaseArhciveName")
+    myfile.write(f"zipFile={releaseArhciveName}")
 
 exit(0)
 
