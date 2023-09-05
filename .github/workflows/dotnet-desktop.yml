@@ -23,12 +23,9 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
-    - name: PreList
-      run: dir .; dir src
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -40,36 +37,14 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.1
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild src\\$env:Solution_Name.sln /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
-
-    - name: Restore the application dotnet
-      run: dotnet restore src\\
-      env:
-        Configuration: ${{ matrix.configuration }}
-
-    # Create the app by building and publishing the project
-    - name: Create the app
-      run: msbuild src\\$env:Solution_Name.sln /t:Publish /p:Configuration=$env:Configuration /p:Platform=$env:Platform
-      env:
-        Configuration: ${{ matrix.configuration }}
-        Platform: ${{ matrix.platform }}
+    - name: Build, publish and zip the app
+      run: pthon ${{ github.workspace }}\Build\Release.py
+      shell: cmd
 
     # Upload the app
     - name: Upload JASM
       uses: actions/upload-artifact@v3
       with:
         name: Upload JASM
-        path: ${{ github.workspace }}\\src\\GIMI-ModManager.WinUI\\bin
+        path: ${{ github.workspace }}\\${{ env.zipFile }}
         
-    - name: Upload Elevator
-      uses: actions/upload-artifact@v3
-      with:
-        name: Upload \Elevator
-        path: ${{ github.workspace }}\\src\\\Elevator\\bin
-        
-    - name: PostList
-      run: dir .; dir src
