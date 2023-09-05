@@ -31,7 +31,9 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - "ESCAPE" - In character view, Go back to character overview
 
 ## Download
-Latest version can be downloaded either from GameBanana or from the [Releases](https://github.com/Jorixon/JASM/releases) page. To start the app run ```GIMI-ModManager.WinUI.exe``` in ```JASM/``` folder, I suggest creating a shortcut to it.
+Latest release can be downloaded either from GameBanana or from the [Releases](https://github.com/Jorixon/JASM/releases) page. To start the app run ```GIMI-ModManager.WinUI.exe``` in ```JASM/``` folder, I suggest creating a shortcut to it.
+
+Latest development release can be downloaded from [Actions Tab](https://github.com/Jorixon/JASM/actions/workflows/dotnet-desktop.yml?query=branch%3Amain+is%3Asuccess) these are automatically built from the main branch and are '''usually stable''' but not necessarily ⚠️
 
 ## Requirements
 - Windows 10, version 1809 or higher ([supposedly](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/))
