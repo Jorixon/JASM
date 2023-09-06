@@ -1,10 +1,13 @@
 ﻿#nullable enable
 using GIMI_ModManager.Core.Contracts.Entities;
 using Microsoft.VisualBasic.FileIO;
+using System.Security.Cryptography;
+using System.Text;
+using SearchOption = System.IO.SearchOption;
 
 namespace GIMI_ModManager.Core.Entities;
 
-public sealed class Mod : IMod
+public class Mod : IMod
 {
     private DirectoryInfo _modDirectory;
     public string FullPath => _modDirectory.FullName;
@@ -58,6 +61,7 @@ public sealed class Mod : IMod
             FileSystem.DeleteDirectory(FullPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             return;
         }
+
         _modDirectory.Delete(true);
     }
 
@@ -85,10 +89,34 @@ public sealed class Mod : IMod
         return string.Equals(x.FullPath, y.FullPath, StringComparison.InvariantCultureIgnoreCase);
     }
 
-    public bool DeepEquals(Mod? x, Mod? y)
+    public bool DeepEquals(IMod? x, IMod? y)
     {
-        if (!Equals(x, y)) return false;
+        if (Equals(x, y)) return true;
+        if (x is null || y is null) return false;
         throw new NotImplementedException();
+    }
+
+    // https://stackoverflow.com/a/31349703
+    public byte[] GetContentsHash()
+    {
+        _modDirectory.Refresh();
+        var filePaths = Directory.GetFiles(_modDirectory.FullName, "*", SearchOption.AllDirectories).ToArray();
+        using var md5 = MD5.Create();
+        foreach (var filePath in filePaths)
+        {
+            // hash path
+            var pathBytes = Encoding.UTF8.GetBytes(filePath);
+            md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
+
+            // hash contents
+            var contentBytes = File.ReadAllBytes(filePath);
+
+            md5.TransformBlock(contentBytes, 0, contentBytes.Length, contentBytes, 0);
+        }
+
+        md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+
+        return md5.Hash ?? Array.Empty<byte>();
     }
 
     public int GetHashCode(IMod obj)
