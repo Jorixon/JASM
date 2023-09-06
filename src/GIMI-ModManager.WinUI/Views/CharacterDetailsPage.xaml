@@ -206,130 +206,167 @@
                     </Grid>
 
                 </Grid>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="7*" />
-                        <ColumnDefinition Width="3*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid
-                        x:Name="ModListArea"
-                        AllowDrop="True"
-                        Background="Transparent"
-                        DragOver="ModListArea_OnDragOver"
-                        Drop="ModListArea_OnDrop">
-                        <controls:DataGrid
-                            x:Name="ModListGrid"
+                <Grid
+                    x:Name="MainContentArea"
+                    Grid.Row="1"
+                    AllowDrop="True"
+                    Background="Transparent"
+                    DragOver="ModListArea_OnDragOver"
+                    Drop="ModListArea_OnDrop">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            x:Name="ModListArea"
                             AllowDrop="False"
-                            AutoGenerateColumns="False"
-                            CanUserReorderColumns="False"
-                            CanUserResizeColumns="True"
-                            CellEditEnded="ModListGrid_OnCellEditEnded"
-                            ContextFlyout="{Binding ElementName=ModRowFlyout}"
-                            GridLinesVisibility="All"
-                            ItemsSource="{x:Bind ViewModel.ModListVM.Mods, Mode=OneWay}"
-                            KeyDown="ModListGrid_OnKeyDown"
-                            SelectionChanged="ModListGrid_OnSelectionChanged"
-                            SelectionMode="Extended"
-                            Sorting="ModListGrid_OnSorting">
-                            <controls:DataGrid.Columns>
-                                <controls:DataGridTemplateColumn
-                                    Width="SizeToCells"
-                                    CanUserResize="False"
-                                    CanUserSort="True"
-                                    Header="ModEnabled"
-                                    Tag="IsEnabled">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:NewModModel">
-                                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <CheckBox
-                                                    Command="{x:Bind ToggleModCommand}"
-                                                    IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
-                                                    IsTabStop="False" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <controls:DataGridTextColumn
-                                    Width="SizeToCells"
-                                    Binding="{Binding Name, Mode=OneWay}"
-                                    CanUserSort="True"
-                                    Header="Mod Name"
-                                    Tag="Name" />
+                            Background="Transparent"
+                            CornerRadius="10">
+                            <controls:DataGrid
+                                x:Name="ModListGrid"
+                                AllowDrop="False"
+                                AutoGenerateColumns="False"
+                                CanUserReorderColumns="False"
+                                CanUserResizeColumns="True"
+                                CellEditEnded="ModListGrid_OnCellEditEnded"
+                                ContextFlyout="{Binding ElementName=ModRowFlyout}"
+                                GridLinesVisibility="All"
+                                ItemsSource="{x:Bind ViewModel.ModListVM.Mods, Mode=OneWay}"
+                                KeyDown="ModListGrid_OnKeyDown"
+                                SelectionChanged="ModListGrid_OnSelectionChanged"
+                                SelectionMode="Extended"
+                                Sorting="ModListGrid_OnSorting">
+                                <controls:DataGrid.Columns>
+                                    <controls:DataGridTemplateColumn
+                                        Width="SizeToCells"
+                                        CanUserResize="False"
+                                        CanUserSort="True"
+                                        Header="ModEnabled"
+                                        Tag="IsEnabled">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:NewModModel">
+                                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <CheckBox
+                                                        Command="{x:Bind ToggleModCommand}"
+                                                        IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
+                                                        IsTabStop="False" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <controls:DataGridTextColumn
+                                        Width="SizeToCells"
+                                        Binding="{Binding Name, Mode=OneWay}"
+                                        CanUserSort="True"
+                                        Header="Mod Name"
+                                        IsReadOnly="True"
+                                        Tag="Name" />
 
-                                <controls:DataGridTextColumn
-                                    Width="SizeToCells"
-                                    Binding="{Binding FolderName, Mode=OneWay}"
-                                    CanUserSort="True"
-                                    Header="Mod Folder Name"
-                                    IsReadOnly="True"
-                                    Tag="Folder Name" />
-                                <controls:DataGridTextColumn
-                                    Width="SizeToHeader"
-                                    Binding="{Binding ModUrl, Mode=OneWay}"
-                                    CanUserSort="True"
-                                    Header="Mod Url"
-                                    IsReadOnly="True"
-                                    Tag="Mod Url" />
-                            </controls:DataGrid.Columns>
-                        </controls:DataGrid>
-                    </Grid>
-
-                    <Grid Grid.Column="1" Background="{ThemeResource ControlFillColorDefaultBrush}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid VerticalAlignment="Top">
-                            <Button HorizontalAlignment="Right" Content="Open In New Window" />
+                                    <controls:DataGridTextColumn
+                                        Width="SizeToCells"
+                                        Binding="{Binding FolderName, Mode=OneWay}"
+                                        CanUserSort="True"
+                                        Header="Mod Folder Name"
+                                        IsReadOnly="True"
+                                        Tag="Folder Name" />
+                                </controls:DataGrid.Columns>
+                            </controls:DataGrid>
                         </Grid>
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+
+                        <Grid
+                            x:Name="ModDetailsPane"
+                            Grid.Column="1"
+                            Margin="0,0,0,8"
+                            Padding="5,5,5,5"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            CornerRadius="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid Margin="0,0,0,8" VerticalAlignment="Top">
+                                <Button HorizontalAlignment="Right" Content="Open In New Window" />
+                            </Grid>
                             <Grid
+                                Grid.Row="1"
                                 Width="400"
                                 Height="400"
-                                Background="Black">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Text="Mod image" />
-                            </Grid>
-                            <TextBlock HorizontalAlignment="Center" Text="ModName" />
-
-
-                            <Grid>
-                                <TextBox
-                                    Width="100"
-                                    HorizontalAlignment="Left"
-                                    Header="Some Key"
-                                    Text="CTRL - J" />
-                                <TextBox
-                                    Width="100"
+                                Background="{ThemeResource ControlFillColorTertiaryBrush}"
+                                CornerRadius="10">
+                                <Button
+                                    Margin="0,20,20,0"
                                     HorizontalAlignment="Right"
-                                    Header="Some Key"
-                                    IsEnabled="False"
-                                    PlaceholderText="Not In Use" />
+                                    VerticalAlignment="Top"
+                                    Command="{x:Bind ViewModel.ModPaneVM.SetImageUriCommand}"
+                                    Content="Edit" />
+                                <Image Source="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ImageUri, Mode=OneWay}" />
                             </Grid>
+                            <TextBlock
+                                Grid.Row="2"
+                                Margin="0,8"
+                                HorizontalAlignment="Center"
+                                IsTextSelectionEnabled="True"
+                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=OneWay}" />
 
+                            <TextBox
+                                Grid.Row="3"
+                                Header="Mod Url:"
+                                Text="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ModUrl, Mode=TwoWay}" />
+                            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                                <TextBlock Text="Latest Version:" />
+                                <TextBlock Text="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ModUrl}" />
 
-                            <Grid>
-                                <TextBox
-                                    Width="100"
-                                    HorizontalAlignment="Left"
-                                    Header="Some Key"
-                                    Text="CTRL - J" />
-                                <TextBox
-                                    Width="100"
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Row="5"
+                                Margin="0,12,0,0"
+                                HorizontalAlignment="Center">
+                                <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPaneVM.SkinModKeySwaps, Mode=OneWay}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="models:SkinModKeySwapModel">
+                                            <Grid Margin="0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox
+                                                    Width="100"
+                                                    HorizontalAlignment="Left"
+                                                    Header="Forward Key"
+                                                    Text="{x:Bind ForwardHotkey, Mode=TwoWay}" />
+                                                <TextBox
+                                                    Grid.Column="1"
+                                                    Width="100"
+                                                    HorizontalAlignment="Right"
+                                                    Header="Backward Key"
+                                                    Text="{x:Bind BackwardHotkey, Mode=TwoWay}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </StackPanel>
+
+                            <Grid Grid.Row="6" Padding="0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Button Background="{ThemeResource SystemFillColorAttentionBrush}" Content="Save" />
+
+                                <Button
+                                    Grid.Column="1"
                                     HorizontalAlignment="Right"
-                                    Header="Some Key"
-                                    IsEnabled="False"
-                                    PlaceholderText="Not In Use" />
+                                    Content="Open Mod Folder..." />
                             </Grid>
-
-                            <TextBox Header="Mod Url:" />
-
-                            <TextBlock Text="Latest Version: v1.21" />
-
-
-                        </StackPanel>
+                        </Grid>
                     </Grid>
                 </Grid>
 

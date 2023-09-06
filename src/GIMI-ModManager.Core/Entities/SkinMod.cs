@@ -1,8 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
+﻿using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -11,9 +8,9 @@ public class SkinMod
 {
     private readonly IMod _mod;
     private const string ModIniString = "merged.ini";
-    private readonly string _modIniPath;
+    private string _modIniPath = string.Empty;
     private const string configFileName = ".JASM_ModConfig.json";
-    private readonly string _configFilePath;
+    private string _configFilePath = string.Empty;
     public bool HasMergedInI { get; private set; }
 
     private readonly List<SkinModKeySwap> _keySwaps = new();
@@ -26,16 +23,17 @@ public class SkinMod
         if (!modFolderAttributes.HasFlag(FileAttributes.Directory))
             throw new ArgumentException("Mod must be a folder.", nameof(mod));
         _mod = mod;
-        IsValidFolder();
-        HasMergedInI = HasMergedInIFile(_mod);
-        _configFilePath = Path.Combine(_mod.FullPath, configFileName);
-        _modIniPath = Path.Combine(_mod.FullPath, ModIniString);
+        Refresh();
     }
 
-    public async Task Refresh()
+    public void Refresh()
     {
         if (!IsValidFolder())
             throw new InvalidOperationException("Mod folder is no longer valid.");
+
+        _configFilePath = Path.Combine(_mod.FullPath, configFileName);
+        _modIniPath = Path.Combine(_mod.FullPath, ModIniString);
+
         HasMergedInI = HasMergedInIFile(_mod);
     }
 
@@ -50,27 +48,35 @@ public class SkinMod
 
     public async Task<OperationResult> ReadKeySwapConfiguration(CancellationToken cancellationToken = default)
     {
-        await Refresh();
+        Refresh();
         if (!HasMergedInI)
             throw new InvalidOperationException("Mod has no merged.ini file.");
 
         List<string> keySwapLines = new();
         List<SkinModKeySwap> keySwaps = new();
         var keySwapBlockStarted = false;
-        await foreach (var line in File.ReadLinesAsync(_configFilePath, cancellationToken))
+        await foreach (var line in File.ReadLinesAsync(_modIniPath, cancellationToken))
         {
-            if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && !keySwapBlockStarted)
+            if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && keySwapBlockStarted || keySwapBlockStarted && keySwapLines.Count > 9)
             {
                 keySwapBlockStarted = false;
                 var keySwap = ParseKeySwap(keySwapLines);
                 if (keySwap is not null)
                     keySwaps.Add(keySwap);
                 keySwapLines.Clear();
+                continue;
             }
 
             if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase))
             {
                 keySwapBlockStarted = true;
+                continue;
+            }
+
+            if (keySwapLines.Count > 10 && !line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && keySwapBlockStarted)
+            {
+                keySwapBlockStarted = false;
+                keySwapLines.Clear();
                 continue;
             }
 
@@ -82,6 +88,22 @@ public class SkinMod
         _keySwaps.AddRange(keySwaps);
         var message = $"Loaded {_keySwaps.Count} key swaps.";
         return new OperationResult(true, message);
+    }
+
+    public async Task SaveKeySwapConfiguration(ICollection<SkinModKeySwap> updatedKeySwaps,
+        CancellationToken cancellationToken = default)
+    {
+        Refresh();
+        if (!HasMergedInI)
+            throw new InvalidOperationException("Mod has no merged.ini file.");
+
+        if (updatedKeySwaps.Count == 0)
+            throw new ArgumentException("No key swaps to save.", nameof(updatedKeySwaps));
+
+        if (updatedKeySwaps.Count != _keySwaps.Count)
+            throw new ArgumentException("Key swap count mismatch.", nameof(updatedKeySwaps));
+
+        throw new NotImplementedException();
     }
 
     private static SkinModKeySwap? ParseKeySwap(ICollection<string> fileLines)
@@ -120,7 +142,10 @@ public class SkinMod
 
     public async Task<SkinModSettings> ReadSkinModSettings(CancellationToken cancellationToken = default)
     {
-        await Refresh();
+        Refresh();
+
+        if (!File.Exists(_configFilePath))
+            return new SkinModSettings();
 
         var fileContents = await File.ReadAllTextAsync(_configFilePath, cancellationToken);
         var options = new JsonSerializerOptions
@@ -135,7 +160,7 @@ public class SkinMod
     public async Task WriteSkinModSettings(SkinModSettings skinModSettings,
         CancellationToken cancellationToken = default)
     {
-        await Refresh();
+        Refresh();
 
         var options = new JsonSerializerOptions
         {
@@ -158,6 +183,7 @@ public class SkinModSettings
     public string? Version { get; set; }
     public Uri? ModUrl { get; set; }
     public Uri? ImageUri { get; set; }
+    public string? RelativeImagePath { get; set; }
 }
 
 public class SkinModKeySwap
@@ -167,9 +193,4 @@ public class SkinModKeySwap
     public string? BackwardHotkey { get; set; }
     public string? Type { get; set; }
     public string[]? SwapVar { get; set; }
-}
-
-public class MergedIniSettings
-{
-    public SkinModKeySwap[] KeySwaps { get; init; }
 }

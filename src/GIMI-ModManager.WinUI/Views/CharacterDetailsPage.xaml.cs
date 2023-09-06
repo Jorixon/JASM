@@ -98,17 +98,19 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (ViewModel.ModListVM.BackendMods.Any())
         {
-            var stackPanel = ModListArea.FindName("NoModsStackPanel") as StackPanel;
+            var stackPanel = MainContentArea.FindName("NoModsStackPanel") as StackPanel;
             if (stackPanel != null)
             {
                 stackPanel.Visibility = Visibility.Collapsed;
             }
 
             ModListGrid.Visibility = Visibility.Visible;
+            ModDetailsPane.Visibility = Visibility.Visible;
         }
-        else if (ModListArea.FindName("NoModsStackPanel") is null)
+        else if (MainContentArea.FindName("NoModsStackPanel") is null)
         {
             ModListGrid.Visibility = Visibility.Collapsed;
+            ModDetailsPane.Visibility = Visibility.Collapsed;
             var stackPanel = new StackPanel()
             {
                 Name = "NoModsStackPanel",
@@ -168,7 +170,7 @@ public sealed partial class CharacterDetailsPage : Page
             backgroundGrid.Children.Add(dottedLineBox);
             dottedLineBox.Child = dropText;
 
-            ModListArea.Children.Add(stackPanel);
+            MainContentArea.Children.Add(stackPanel);
         }
     }
 
