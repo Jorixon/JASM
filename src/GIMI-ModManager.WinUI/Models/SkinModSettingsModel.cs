@@ -25,17 +25,6 @@ public partial class SkinModSettingsModel : ObservableObject
         };
     }
 
-    public SkinModSettings ToModSettings()
-    {
-        return new SkinModSettings
-        {
-            CustomName = CustomName?.Trim(),
-            Author = Author?.Trim(),
-            Version = Version?.Trim(),
-            ModUrl = ModUrl?.Trim(),
-            ImagePath = string.IsNullOrEmpty(ImageUri) ? " " : ImageUri,
-        };
-    }
 
     protected bool Equals(SkinModSettingsModel other)
     {

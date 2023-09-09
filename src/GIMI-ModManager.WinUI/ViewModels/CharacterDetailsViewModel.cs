@@ -53,13 +53,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             var selectedMod = args.Mods.FirstOrDefault();
             var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
-            if (mod is null)
+            if (mod is null || selectedMod is null)
             {
                 ModPaneVM.UnloadMod();
                 return;
             }
 
-            await ModPaneVM.LoadMod(mod.Mod, selectedMod!);
+            await ModPaneVM.LoadMod(selectedMod);
         };
 
         ModPaneVM = new(skinManagerService);

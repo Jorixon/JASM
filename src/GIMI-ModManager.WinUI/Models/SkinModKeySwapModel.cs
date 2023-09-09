@@ -26,18 +26,6 @@ public partial class SkinModKeySwapModel : ObservableObject
     public static SkinModKeySwapModel[] FromKeySwapSettings(SkinModKeySwap[] skinSwapSettings)
         => skinSwapSettings.Select(FromKeySwapSettings).ToArray();
 
-    public SkinModKeySwap ToKeySwapSettings()
-    {
-        return new SkinModKeySwap
-        {
-            Condition = Condition,
-            ForwardHotkey = ForwardHotkey,
-            BackwardHotkey = BackwardHotkey,
-            Type = Type,
-            SwapVar = SwapVar
-        };
-    }
-
     protected bool Equals(SkinModKeySwapModel other)
     {
         return Condition == other.Condition && ForwardHotkey == other.ForwardHotkey &&

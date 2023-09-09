@@ -309,6 +309,7 @@
                                 MaxWidth="400"
                                 Background="{ThemeResource ControlFillColorTertiaryBrush}"
                                 CornerRadius="10">
+                                <Image Source="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ImagePath, Mode=OneWay}" Stretch="Uniform" />
                                 <Button
                                     Margin="0,20,20,0"
                                     HorizontalAlignment="Right"
@@ -317,7 +318,6 @@
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
                                     <FontIcon Glyph="&#xE70F;" />
                                 </Button>
-                                <Image Source="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ImageUri, Mode=OneWay}" Stretch="Uniform" />
                             </Grid>
                             <TextBlock
                                 Grid.Row="2"
@@ -331,10 +331,10 @@
                                 Grid.Row="3"
                                 Header="Mod Url:"
                                 IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
-                                Text="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ModUrl, Mode=TwoWay}" />
+                                Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=TwoWay}" />
                             <StackPanel Grid.Row="4" Orientation="Horizontal">
                                 <TextBlock Text="Latest Version:" Visibility="Collapsed" />
-                                <TextBlock Text="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ModUrl}" />
+                                <TextBlock Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl}" />
 
                             </StackPanel>
 
@@ -342,7 +342,7 @@
                                 Grid.Row="5"
                                 Margin="0,12,0,0"
                                 HorizontalAlignment="Center">
-                                <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPaneVM.SkinModKeySwaps, Mode=OneWay}">
+                                <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.SkinModKeySwaps, Mode=OneWay}">
                                     <ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="models:SkinModKeySwapModel">
                                             <Grid Margin="0,0">

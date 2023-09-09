@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Helpers;
 using SharpCompress.IO;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -11,10 +12,12 @@ public class SkinMod : Mod, ISkinMod
     private string _modIniPath = string.Empty;
     private const string configFileName = ".JASM_ModConfig.json";
     private string _configFilePath = string.Empty;
-    public bool HasMergedInI { get; private set; }
+    private readonly List<SkinModKeySwap>? _keySwaps = new();
 
-    private readonly List<SkinModKeySwap> _keySwaps = new();
-    public IReadOnlyList<SkinModKeySwap> KeySwaps => _keySwaps.AsReadOnly();
+    public IReadOnlyList<SkinModKeySwap> KeySwaps => _keySwaps?.AsReadOnly() ?? new List<SkinModKeySwap>().AsReadOnly();
+    public SkinModSettings? CachedSkinModSettings { get; } = null;
+    public IReadOnlyCollection<SkinModKeySwap>? CachedKeySwaps => _keySwaps?.AsReadOnly();
+    public bool HasMergedInI { get; private set; }
 
 
     public SkinMod(IMod mod) : base(new DirectoryInfo(mod.FullPath), mod.CustomName)
@@ -59,7 +62,8 @@ public class SkinMod : Mod, ISkinMod
 
     public bool IsValidFolder() => Exists() && !IsEmpty();
 
-    public async Task<OperationResult> ReadKeySwapConfiguration(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<SkinModKeySwap>> ReadKeySwapConfiguration(
+        CancellationToken cancellationToken = default)
     {
         Refresh();
         if (!HasMergedInI)
@@ -70,18 +74,18 @@ public class SkinMod : Mod, ISkinMod
         var keySwapBlockStarted = false;
         await foreach (var line in File.ReadLinesAsync(_modIniPath, cancellationToken))
         {
-            if (IsSection(line, "[KeySwap]") && keySwapBlockStarted ||
+            if (IniConfigHelpers.IsSection(line, "[KeySwap]") && keySwapBlockStarted ||
                 keySwapBlockStarted && keySwapLines.Count > 9)
             {
                 keySwapBlockStarted = false;
-                var keySwap = ParseKeySwap(keySwapLines);
+                var keySwap = IniConfigHelpers.ParseKeySwap(keySwapLines);
                 if (keySwap is not null)
                     keySwaps.Add(keySwap);
                 keySwapLines.Clear();
                 continue;
             }
 
-            if (IsSection(line, "[KeySwap]"))
+            if (IniConfigHelpers.IsSection(line, "[KeySwap]"))
             {
                 keySwapBlockStarted = true;
                 continue;
@@ -101,8 +105,7 @@ public class SkinMod : Mod, ISkinMod
 
         _keySwaps.Clear();
         _keySwaps.AddRange(keySwaps);
-        var message = $"Loaded {_keySwaps.Count} key swaps.";
-        return new OperationResult(true, message);
+        return KeySwaps;
     }
 
     // It is what it is
@@ -133,7 +136,7 @@ public class SkinMod : Mod, ISkinMod
         var sectionStartIndexes = new List<int>();
         for (var i = 0; i < fileLines.Count; i++)
         {
-            if (IsSection(fileLines[i], SkinModKeySwap.KeySwapIniSection))
+            if (IniConfigHelpers.IsSection(fileLines[i], SkinModKeySwap.KeySwapIniSection))
                 sectionStartIndexes.Add(i);
         }
 
@@ -153,47 +156,47 @@ public class SkinMod : Mod, ISkinMod
             {
                 var line = fileLines[j];
 
-                if (IsIniKey(line, SkinModKeySwap.ForwardIniKey))
+                if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ForwardIniKey))
                 {
-                    var value = FormatIniKey(SkinModKeySwap.ForwardIniKey, keySwap.ForwardHotkey);
+                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.ForwardIniKey, keySwap.ForwardHotkey);
                     if (value is null)
                         continue;
                     fileLines[j] = value;
                 }
 
-                else if (IsIniKey(line, SkinModKeySwap.BackwardIniKey))
+                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.BackwardIniKey))
                 {
-                    var value = FormatIniKey(SkinModKeySwap.BackwardIniKey, keySwap.BackwardHotkey);
+                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.BackwardIniKey, keySwap.BackwardHotkey);
                     if (value is null)
                         continue;
                     fileLines[j] = value;
                 }
 
-                else if (IsIniKey(line, SkinModKeySwap.TypeIniKey))
+                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.TypeIniKey))
                 {
-                    var value = FormatIniKey(SkinModKeySwap.TypeIniKey, keySwap.Type);
+                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.TypeIniKey, keySwap.Type);
                     if (value is null)
                         continue;
                     fileLines[j] = value;
                 }
-                else if (IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
+                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
                 {
-                    var value = FormatIniKey(SkinModKeySwap.SwapVarIniKey,
+                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.SwapVarIniKey,
                         string.Join(",", keySwap.SwapVar ?? new string[] { "" }));
                     if (value is null)
                         continue;
                     fileLines[j] = value;
                 }
 
-                else if (IsIniKey(line, SkinModKeySwap.ConditionIniKey))
+                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ConditionIniKey))
                 {
-                    var value = FormatIniKey(SkinModKeySwap.ConditionIniKey, keySwap.Condition);
+                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.ConditionIniKey, keySwap.Condition);
                     if (value is null)
                         continue;
                     fileLines[j] = value;
                 }
 
-                else if (IsSection(line))
+                else if (IniConfigHelpers.IsSection(line))
                     break;
             }
         }
@@ -207,53 +210,6 @@ public class SkinMod : Mod, ISkinMod
             await writer.WriteLineAsync(line);
     }
 
-    private static SkinModKeySwap? ParseKeySwap(ICollection<string> fileLines)
-    {
-        var skinModKeySwap = new SkinModKeySwap();
-
-        foreach (var line in fileLines)
-        {
-            if (IsIniKey(line, SkinModKeySwap.ForwardIniKey))
-                skinModKeySwap.ForwardHotkey = GetIniValue(line);
-
-            else if (IsIniKey(line, SkinModKeySwap.BackwardIniKey))
-                skinModKeySwap.BackwardHotkey = GetIniValue(line);
-
-            else if (IsIniKey(line, SkinModKeySwap.TypeIniKey))
-                skinModKeySwap.Type = GetIniValue(line);
-
-            else if (IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
-                skinModKeySwap.SwapVar = GetIniValue(line)?.Split(',');
-
-            else if (IsIniKey(line, SkinModKeySwap.ConditionIniKey))
-                skinModKeySwap.Condition = GetIniValue(line);
-            else if (IsSection(line))
-                break;
-        }
-
-        return skinModKeySwap;
-    }
-
-    private static string? GetIniValue(string line)
-    {
-        var split = line.Split('=');
-        return split.Length != 2 ? null : split[1].Trim();
-    }
-
-    private static bool IsSection(string line, string? sectionKey = null)
-    {
-        line = line.Trim();
-        if (!line.StartsWith("[") && !line.EndsWith("]"))
-            return false;
-
-        return sectionKey is null || line.Equals($"[{sectionKey}]", StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    private static bool IsIniKey(string line, string key) =>
-        line.Trim().StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
-
-    private static string? FormatIniKey(string key, string? value) =>
-        value is not null ? $"{key} = {value}" : null;
 
     public async Task<SkinModSettings> ReadSkinModSettings(CancellationToken cancellationToken = default)
     {
@@ -270,6 +226,22 @@ public class SkinMod : Mod, ISkinMod
         };
 
         return JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
+    }
+
+
+    public async Task SetModImage(string imagePath)
+    {
+        var uri = Uri.TryCreate(imagePath, UriKind.Absolute, out var result) && result.Scheme == Uri.UriSchemeFile
+            ? result
+            : throw new ArgumentException("Invalid image path.", nameof(imagePath));
+
+        if (!File.Exists(uri.LocalPath))
+            throw new FileNotFoundException("Image file not found.", uri.LocalPath);
+
+        var skinModSettings = CachedSkinModSettings ?? await ReadSkinModSettings();
+
+        skinModSettings.ImagePath = uri.ToString();
+        await SaveSkinModSettings(skinModSettings).ConfigureAwait(false);
     }
 
     public async Task SaveSkinModSettings(SkinModSettings skinModSettings,
@@ -304,7 +276,7 @@ public class SkinMod : Mod, ISkinMod
 
 public record OperationResult(bool Success, string? Message = null);
 
-public class SkinModSettings
+public class SkinModSettings // Setting internal sett messes with the json serializer
 {
     public string? CustomName { get; set; }
     public string? Author { get; set; }
@@ -318,13 +290,13 @@ public class SkinModKeySwap
 {
     public const string KeySwapIniSection = "KeySwap";
     public const string ConditionIniKey = "condition";
-    public string? Condition { get; set; }
+    public string? Condition { get; internal set; }
     public const string ForwardIniKey = "key";
-    public string? ForwardHotkey { get; set; }
+    public string? ForwardHotkey { get; internal set; }
     public const string BackwardIniKey = "back";
-    public string? BackwardHotkey { get; set; }
+    public string? BackwardHotkey { get; internal set; }
     public const string TypeIniKey = "type";
-    public string? Type { get; set; }
+    public string? Type { get; internal set; }
     public const string SwapVarIniKey = "$swapvar";
-    public string[]? SwapVar { get; set; }
+    public string[]? SwapVar { get; internal set; }
 }
