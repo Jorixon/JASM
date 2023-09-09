@@ -16,6 +16,7 @@
     <Page.Resources>
         <helpers:BoolInverterConverter x:Name="BoolInverter" />
         <helpers:ValueToBoolConverter x:Name="ValueToBoolConverter" />
+        <helpers:StringToUri x:Name="StringToUri" />
     </Page.Resources>
 
     <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}">
@@ -267,6 +268,7 @@
                                         Binding="{Binding Name, Mode=OneWay}"
                                         CanUserSort="True"
                                         Header="Mod Name"
+                                        IsReadOnly="True"
                                         Tag="Name" />
 
                                     <controls:DataGridTextColumn
@@ -332,11 +334,28 @@
                                 Style="{ThemeResource SubtitleTextBlockStyle}"
                                 Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=OneWay}" />
 
-                            <TextBox
-                                Grid.Row="3"
-                                Header="Mod Url:"
-                                IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
-                                Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=TwoWay}" />
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    VerticalAlignment="Center"
+                                    Header="Mod Url:"
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
+                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=TwoWay}" />
+
+                                <HyperlinkButton
+                                    Grid.Column="1"
+                                    VerticalAlignment="Bottom"
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
+                                    NavigateUri="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=OneWay, Converter={StaticResource StringToUri}}">
+                                    <FontIcon FontSize="18" Glyph="&#xE8A7;" />
+                                </HyperlinkButton>
+
+                            </Grid>
+
+
                             <StackPanel Grid.Row="4" Orientation="Horizontal">
                                 <TextBlock Text="Latest Version:" Visibility="Collapsed" />
                                 <TextBlock Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl}" />
