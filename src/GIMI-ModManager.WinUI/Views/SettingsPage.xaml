@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     xmlns:xaml="using:Microsoft.UI.Xaml"
     mc:Ignorable="d">
     <Page.Resources>
@@ -13,10 +14,82 @@
         <helpers:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
     </Page.Resources>
     <Grid>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <!--  Only the  "ContentDialog.ContentTemplate" xaml markup i used  -->
+        <ContentDialog x:Name="ExportDialog">
+            <ContentDialog.ContentTemplate>
+                <DataTemplate x:DataType="viewModels:ExportModsDialogModel">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <!--<RowDefinition Height="*" />
+                            <RowDefinition />-->
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords">
+                            <TextBlock.Text>
+                                This will export all mods that JASM is managing to a an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder.
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <CheckBox IsChecked="{x:Bind KeepFolderStructure, Mode=TwoWay}" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Text="Keep folder structure of CharacterName/Mods in export folder"
+                                TextWrapping="WrapWholeWords" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <CheckBox IsChecked="{x:Bind RemoveJasmSettings, Mode=TwoWay}" />
+                            <TextBlock IsTextSelectionEnabled="True" Text="Removes JASM configuration files from the exported Mods" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                            <ComboBox ItemsSource="{x:Bind SetModStatuses, Mode=TwoWay}" SelectedItem="{x:Bind SetModStatus, Mode=TwoWay}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                IsTextSelectionEnabled="True"
+                                Text="Change status of exported mods" />
+                        </StackPanel>
+                        <!--<ScrollViewer Grid.Row="3">
+
+                            <StackPanel>
+                                <TextBlock Text="Select which character's mods to export:" />
+
+                                <ListView ItemsSource="{x:Bind CharacterModsToBackup, Mode=OneWay}" SelectionMode="None">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="viewModels:CharacterCheckboxModel">
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
+                                                <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Character.DisplayName, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <StackPanel Grid.Row="4" Orientation="Horizontal">
+                            <Button Content="Select All" />
+                            <Button Content="Disble All" />
+
+                        </StackPanel>-->
+
+
+
+                    </Grid>
+                </DataTemplate>
+            </ContentDialog.ContentTemplate>
+        </ContentDialog>
 
         <TextBlock
             x:Uid="Settings_Title"
@@ -124,8 +197,8 @@
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Export/Backup Mods" />
 
-                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                    <Button>
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}" Orientation="Horizontal">
+                    <Button Command="{x:Bind ViewModel.ExportModsCommand}" CommandParameter="{x:Bind ExportDialog}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 Margin="0,0,8,0"
@@ -138,6 +211,7 @@
                         </StackPanel>
 
                     </Button>
+                    <ProgressRing Margin="12,0" IsActive="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" />
                 </StackPanel>
 
 

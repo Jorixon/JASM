@@ -31,10 +31,19 @@ public interface ISkinManagerService
     /// </summary>
     /// <param name="characterModLists">Mods from characters to export</param>
     /// <param name="exportPath">Folder to extract to</param>
-    /// <param name="keepLocalJasmSettings"></param>
+    /// <param name="removeLocalJasmSettings"></param>
     /// <param name="zip"></param>
     /// <param name="keepCharacterFolderStructure"></param>
+    /// <param name="setModStatus"></param>
     /// <returns></returns>
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
-        bool keepLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false);
+        bool removeLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false,
+        SetModStatus setModStatus = SetModStatus.KeepCurrent);
+}
+
+public enum SetModStatus
+{
+    KeepCurrent,
+    EnableAllMods,
+    DisableAllMods
 }

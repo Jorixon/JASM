@@ -131,7 +131,8 @@ public class SkinManagerService : ISkinManagerService
 
 
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
-        bool keepLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false)
+        bool removeLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false,
+        SetModStatus setModStatus = SetModStatus.KeepCurrent)
     {
         if (characterModLists.Count == 0)
             throw new ArgumentException("Value cannot be an empty collection.", nameof(characterModLists));
@@ -161,14 +162,12 @@ public class SkinManagerService : ISkinManagerService
             foreach (var characterSkinEntry in modsToExport)
             {
                 var mod = characterSkinEntry.Mod;
-                if (exportFolder.EnumerateDirectories().Any(folder =>
-                        folder.FullName.Equals(Path.Combine(exportPath, mod.Name),
-                            StringComparison.CurrentCultureIgnoreCase)))
+                if (CheckForDuplicates(exportFolder, mod)) // Handle duplicate mod names
                 {
                     _logger.Warning("Mod '{ModName}' already exists in export folder, appending GUID to folder name",
                         characterSkinEntry.Mod.Name);
                     var oldName = mod.Name;
-                    mod.Rename(mod.Name + Guid.NewGuid().ToString("N"));
+                    mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(exportFolder.FullName));
                     mod.Rename(oldName);
                     continue;
@@ -177,15 +176,10 @@ public class SkinManagerService : ISkinManagerService
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(exportFolder.FullName));
             }
 
-            if (!keepLocalJasmSettings)
-            {
-                foreach (var file in exportedMods.Select(mod => new DirectoryInfo(mod.FullPath))
-                             .SelectMany(folder => folder.EnumerateFileSystemInfos(".JASM_*")))
-                {
-                    _logger.Debug("Deleting local jasm file '{JasmFile}' in modFolder", file.FullName);
-                    file.Delete();
-                }
-            }
+            RemoveJASMSettings(removeLocalJasmSettings, exportedMods);
+
+
+            SetModsStatus(setModStatus, exportedMods);
 
             return;
         }
@@ -193,16 +187,24 @@ public class SkinManagerService : ISkinManagerService
         if (keepCharacterFolderStructure && !zip) // Copy mods organized by character
         {
             var characterToFolder = new Dictionary<GenshinCharacter, DirectoryInfo>();
+            var emptyFoldersCount = 0;
 
             foreach (var characterModList in characterModLists)
             {
+                if (!characterModList.Mods.Any())
+                {
+                    emptyFoldersCount++;
+                    continue; // Skip empty character folders
+                }
+
                 var characterFolder = new DirectoryInfo(Path.Combine(exportFolder.FullName,
                     characterModList.Character.DisplayName));
-                characterFolder.Create();
+
                 characterToFolder.Add(characterModList.Character, characterFolder);
+                characterFolder.Create();
             }
 
-            if (characterToFolder.Count != _genshinService.GetCharacters().Count())
+            if (characterToFolder.Count != _genshinService.GetCharacters().Count() - emptyFoldersCount)
                 throw new InvalidOperationException(
                     "Failed to create character folders in export folder, character mismatch");
 
@@ -212,15 +214,13 @@ public class SkinManagerService : ISkinManagerService
                 var mod = characterSkinEntry.Mod;
                 var destinationFolder = characterToFolder[characterSkinEntry.ModList.Character];
 
-                if (destinationFolder.EnumerateDirectories().Any(folder =>
-                        folder.FullName.Equals(Path.Combine(destinationFolder.FullName, mod.Name),
-                            StringComparison.CurrentCultureIgnoreCase)))
+                if (CheckForDuplicates(destinationFolder, mod)) // Handle duplicate mod names
                 {
                     _logger.Warning("Mod '{ModName}' already exists in export folder, appending GUID to folder name",
                         characterSkinEntry.Mod.Name);
 
                     var oldName = mod.Name;
-                    mod.Rename(mod.Name + Guid.NewGuid().ToString("N"));
+                    mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(destinationFolder.FullName));
                     mod.Rename(oldName);
                     continue;
@@ -229,21 +229,72 @@ public class SkinManagerService : ISkinManagerService
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
             }
 
-            if (!keepLocalJasmSettings)
-            {
-                foreach (var file in exportedMods.Select(mod => new DirectoryInfo(mod.FullPath))
-                             .SelectMany(folder => folder.EnumerateFileSystemInfos(".JASM_*")))
-                {
-                    _logger.Debug("Deleting local jasm file '{JasmFile}' in modFolder", file.FullName);
-                    file.Delete();
-                }
-            }
+            RemoveJASMSettings(removeLocalJasmSettings, exportedMods);
+
+            SetModsStatus(setModStatus, exportedMods);
+
 
             return;
         }
 
         if (zip)
             throw new NotImplementedException();
+    }
+
+    private static bool CheckForDuplicates(DirectoryInfo destinationFolder, IMod mod)
+    {
+        destinationFolder.Refresh();
+        foreach (var directory in destinationFolder.EnumerateDirectories())
+        {
+            if (directory.Name.Equals(mod.Name, StringComparison.CurrentCultureIgnoreCase))
+                return true;
+
+            if (directory.Name.EndsWith(mod.Name, StringComparison.CurrentCultureIgnoreCase))
+                return true;
+
+            if (mod.Name.Replace(CharacterModList.DISABLED_PREFIX, "") == directory.Name ||
+                mod.Name.Replace("DISABLED", "") == directory.Name)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static void SetModsStatus(SetModStatus setModStatus, IEnumerable<IMod> mods)
+    {
+        if (setModStatus == SetModStatus.EnableAllMods)
+        {
+            foreach (var mod in mods)
+            {
+                var enabledName = mod.Name;
+                enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
+                enabledName = enabledName.Replace("DISABLED", "");
+                if (enabledName != mod.Name)
+                    mod.Rename(enabledName);
+            }
+        }
+
+        if (setModStatus == SetModStatus.DisableAllMods)
+        {
+            foreach (var mod in mods)
+            {
+                if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
+                    mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
+            }
+        }
+    }
+
+    private void RemoveJASMSettings(bool removeLocalJasmSettings, IEnumerable<IMod> exportedMods)
+    {
+        if (removeLocalJasmSettings)
+        {
+            foreach (var file in exportedMods.Select(mod => new DirectoryInfo(mod.FullPath))
+                         .SelectMany(folder => folder.EnumerateFileSystemInfos(".JASM_*")))
+            {
+                _logger.Debug("Deleting local jasm file '{JasmFile}' in modFolder", file.FullName);
+                file.Delete();
+            }
+        }
     }
 
     public ICharacterModList GetCharacterModList(GenshinCharacter character)

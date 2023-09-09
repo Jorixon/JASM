@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
@@ -15,7 +16,10 @@ using Serilog;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using Windows.ApplicationModel.Core;
+using Windows.Storage.Pickers;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 
@@ -29,18 +33,17 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly INavigationViewService _navigationViewService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
+    private readonly IGenshinService _genshinService;
 
 
     private readonly NotificationManager _notificationManager;
     private readonly UpdateChecker _updateChecker;
     public ElevatorService ElevatorService;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
     public GenshinProcessManager _genshinProcessManager;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
     public ThreeDMigtoProcessManager _threeDMigtoProcessManager;
 
 
@@ -67,7 +70,8 @@ public partial class SettingsViewModel : ObservableRecipient
         ElevatorService elevatorService, ILogger logger, NotificationManager notificationManager,
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
-        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager)
+        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
+        IGenshinService genshinService)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -77,6 +81,7 @@ public partial class SettingsViewModel : ObservableRecipient
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
         _updateChecker = updateChecker;
+        _genshinService = genshinService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -410,5 +415,108 @@ public partial class SettingsViewModel : ObservableRecipient
     private async Task IgnoreNewVersion()
     {
         await _updateChecker.IgnoreCurrentVersionAsync();
+    }
+
+    [ObservableProperty] private bool _exportingMods = false;
+
+    [RelayCommand]
+    private async Task ExportMods(ContentDialog contentDialog)
+    {
+
+
+        var dialog = new ContentDialog()
+        {
+            PrimaryButtonText = "Export",
+            IsPrimaryButtonEnabled = true,
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        dialog.Title = "Export Mods";
+
+        dialog.ContentTemplate = contentDialog.ContentTemplate;
+
+        var model = new ExportModsDialogModel(_genshinService.GetCharacters());
+        dialog.DataContext = model;
+        var result = await _windowManagerService.ShowDialogAsync(dialog);
+
+        if (result != ContentDialogResult.Primary)
+            return;
+        
+        var folderPicker = new FolderPicker();
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+        WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
+        folderPicker.FileTypeFilter.Add("*");
+        var folder = await folderPicker.PickSingleFolderAsync();
+        if (folder == null)
+            return;
+
+        ExportingMods = true;
+        _navigationViewService.IsEnabled = false;
+
+        var charactersToExport = model.CharacterModsToBackup.Where(modList => modList.IsChecked).Select(ch => ch.Character);
+        var modsList = new List<ICharacterModList>();
+        foreach (var character in charactersToExport)
+        {
+            modsList.Add(_skinManagerService.GetCharacterModList(character));
+        }
+
+        try
+        {
+            await Task.Run(() =>
+            {
+                _skinManagerService.ExportMods(modsList, folder.Path, removeLocalJasmSettings: model.RemoveJasmSettings, zip: false, keepCharacterFolderStructure: model.KeepFolderStructure, setModStatus: model.SetModStatus);
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error exporting mods");
+            _notificationManager.ShowNotification("Error exporting mods", e.Message, TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            ExportingMods = false;
+            _navigationViewService.IsEnabled = true;
+        }
+    }
+}
+
+public partial class ExportModsDialogModel : ObservableObject
+{
+    [ObservableProperty] private bool _zipMods = false;
+    [ObservableProperty] private bool _keepFolderStructure = true;
+
+    [ObservableProperty] private bool _removeJasmSettings = false;
+
+    public ObservableCollection<CharacterCheckboxModel> CharacterModsToBackup { get; set; } = new();
+
+    public ObservableCollection<SetModStatus> SetModStatuses { get; set; } = new()
+    {
+        SetModStatus.KeepCurrent,
+        SetModStatus.EnableAllMods,
+        SetModStatus.DisableAllMods
+    };
+
+    [ObservableProperty]
+    private SetModStatus _setModStatus = SetModStatus.KeepCurrent;
+
+    public ExportModsDialogModel(IEnumerable<GenshinCharacter> characters)
+    {
+        SetModStatus = SetModStatus.KeepCurrent;
+        foreach (var character in characters)
+        {
+            CharacterModsToBackup.Add(new CharacterCheckboxModel(character));
+        }
+    }
+}
+
+public partial class CharacterCheckboxModel : ObservableObject
+{
+    [ObservableProperty] private bool _isChecked = true;
+    [ObservableProperty] private GenshinCharacter _character;
+
+    public CharacterCheckboxModel(GenshinCharacter character)
+    {
+        _character = character;
     }
 }
