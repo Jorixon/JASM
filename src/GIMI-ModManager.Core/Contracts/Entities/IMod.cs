@@ -42,6 +42,12 @@ public interface IMod : IEqualityComparer<IMod>
     /// This needs to be an absolute path to the folder you want to move the mod to.
     /// </param>
     public void MoveTo(string absPath);
+    /// <summary>
+    /// Copies the mod to the specified folder. This does not change the folder name.
+    /// </summary>
+    /// <param name="absPath"></param>
+    /// <returns>The new copied IMod instance</returns>
+    public IMod CopyTo(string absPath);
 
     /// <summary>
     /// Rename the modFolder. This does not change the folder path.

@@ -122,6 +122,24 @@
                     </StackPanel>
                 </StackPanel>
 
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Export/Backup Mods" />
+
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <Button>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                Text="Export Mods" />
+                            <FontIcon
+                                VerticalAlignment="Bottom"
+                                FontSize="16"
+                                Glyph="&#xEDE1;" />
+                        </StackPanel>
+
+                    </Button>
+                </StackPanel>
+
 
                 <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">

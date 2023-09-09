@@ -27,7 +27,7 @@ public sealed partial class CharactersPage : Page
 
     private void AutoSuggestBox_OnSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
-        ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.SelectedItem);
+        ViewModel.SuggestionBox_Chosen((CharacterGridItemModel)args.SelectedItem);
         sender.IsEnabled = false;
         sender.Text = string.Empty;
     }
@@ -40,7 +40,7 @@ public sealed partial class CharactersPage : Page
     private void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         if (args.ChosenSuggestion is not null)
-            ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.ChosenSuggestion);
+            ViewModel.SuggestionBox_Chosen((CharacterGridItemModel)args.ChosenSuggestion);
 
         if (ViewModel.SuggestionsBox.Count > 0)
         {

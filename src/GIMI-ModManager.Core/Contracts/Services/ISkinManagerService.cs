@@ -25,4 +25,16 @@ public interface ISkinManagerService
     public void RefreshMods(GenshinCharacter? refreshForCharacter = null);
 
     public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
+
+    /// <summary>
+    /// Exports mods to a user specified folder.
+    /// </summary>
+    /// <param name="characterModLists">Mods from characters to export</param>
+    /// <param name="exportPath">Folder to extract to</param>
+    /// <param name="keepLocalJasmSettings"></param>
+    /// <param name="zip"></param>
+    /// <param name="keepCharacterFolderStructure"></param>
+    /// <returns></returns>
+    public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
+        bool keepLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false);
 }

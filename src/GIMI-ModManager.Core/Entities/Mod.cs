@@ -49,6 +49,16 @@ public class Mod : IMod
         _modDirectory.MoveTo(Path.Combine(absPath, Name));
     }
 
+    public virtual IMod CopyTo(string absPath)
+    {
+        if (!Path.IsPathFullyQualified(absPath))
+            throw new ArgumentException("Path must be absolute.", nameof(absPath));
+
+        var newModDirectory = new DirectoryInfo(Path.Combine(absPath, Name));
+        RecursiveCopyTo(_modDirectory, newModDirectory);
+        return new Mod(newModDirectory, CustomName);
+    }
+
     public void Rename(string newName)
     {
         _modDirectory.Refresh();

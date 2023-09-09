@@ -30,7 +30,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private GenshinCharacter[] _characters = Array.Empty<GenshinCharacter>();
     public ObservableCollection<CharacterGridItemModel> Characters { get; } = new();
 
-    public ObservableCollection<GenshinCharacter> SuggestionsBox { get; } = new();
+    public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
 
     public ObservableCollection<CharacterGridItemModel> PinnedCharacters { get; } = new();
 
@@ -94,14 +94,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return 0;
         }
 
-        suitableItems.ForEach(suggestion => SuggestionsBox.Add(suggestion.Character));
+        suitableItems.ForEach(suggestion => SuggestionsBox.Add(suggestion));
 
         ShowOnlyCharacters(suitableItems);
         return suitableItems.Count;
     }
 
 
-    public void SuggestionBox_Chosen(GenshinCharacter character)
+    public void SuggestionBox_Chosen(CharacterGridItemModel character)
     {
         _navigationService.SetListDataItemForNextConnectedAnimation(character);
         _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
@@ -295,7 +295,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             var character = _characters.FirstOrDefault(x => x.Id == pinedCharacterId);
             if (character is not null)
             {
-                character.IsPinned = true;
                 PinnedCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
             }
         }
@@ -311,7 +310,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         ResetContent();
 
-        // Modlist where more than 1 skin is enabled
+        // Character Ids where more than 1 skin is enabled
         var charactersWithMultipleActiveSkins = _skinManagerService.CharacterModLists
             .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1).Select(x => x.Character.Id);
 
