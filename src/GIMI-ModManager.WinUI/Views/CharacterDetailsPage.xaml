@@ -214,7 +214,7 @@
                 <Grid
                     x:Name="MainContentArea"
                     Grid.Row="1"
-                    AllowDrop="True"
+                    AllowDrop="False"
                     Background="Transparent"
                     DragOver="ModListArea_OnDragOver"
                     Drop="ModListArea_OnDrop">
@@ -225,9 +225,11 @@
                         </Grid.ColumnDefinitions>
                         <Grid
                             x:Name="ModListArea"
-                            AllowDrop="False"
+                            AllowDrop="True"
                             Background="Transparent"
-                            CornerRadius="10">
+                            CornerRadius="10"
+                            DragOver="ModListArea_OnDragOver"
+                            Drop="ModListArea_OnDrop">
                             <controls:DataGrid
                                 x:Name="ModListGrid"
                                 AllowDrop="False"
@@ -387,7 +389,12 @@
                                     Background="{ThemeResource SystemFillColorAttentionBrush}"
                                     Command="{x:Bind ViewModel.ModPaneVM.SaveModSettingsCommand}"
                                     Content="Save"
-                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}" />
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
+                                    <Button.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="S" Modifiers="Control" />
+                                    </Button.KeyboardAccelerators>
+
+                                </Button>
 
                                 <Button
                                     Grid.Column="1"

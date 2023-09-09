@@ -66,6 +66,16 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
         return this;
     }
 
+    public SkinModSettings ToModSettings() =>
+        new()
+        {
+            CustomName = Name,
+            Author = Author,
+            Version = ModVersion,
+            ModUrl = ModUrl,
+            ImagePath = ImagePath
+        };
+
     public void SetKeySwaps(IEnumerable<SkinModKeySwap> keySwaps)
     {
         SkinModKeySwaps.Clear();

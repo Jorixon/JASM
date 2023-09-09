@@ -74,6 +74,7 @@ public class SkinManagerService : ISkinManagerService
                     if (x.Mod.FullPath == modDirectory.FullName)
                     {
                         mod = x;
+                        mod.Mod.ClearCache();
                         orphanedMods.Remove(x);
                         break;
                     }
@@ -82,6 +83,7 @@ public class SkinManagerService : ISkinManagerService
                     if (x.Mod.FullPath == Path.Combine(modDirectory.Parent!.FullName, disabledName))
                     {
                         mod = x;
+                        mod.Mod.ClearCache();
                         orphanedMods.Remove(x);
                         break;
                     }

@@ -141,3 +141,10 @@ public partial class ModListVM : ObservableRecipient
         IsInfoBarOpen = false;
     }
 }
+
+
+
+public class SortMethod
+{
+    public bool IsDescending { get; set; }
+}

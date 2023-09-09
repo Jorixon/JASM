@@ -106,11 +106,17 @@ public sealed partial class CharacterDetailsPage : Page
 
             ModListGrid.Visibility = Visibility.Visible;
             ModDetailsPane.Visibility = Visibility.Visible;
+            ModListArea.AllowDrop = true;
+            MainContentArea.AllowDrop = false;
         }
         else if (MainContentArea.FindName("NoModsStackPanel") is null)
         {
             ModListGrid.Visibility = Visibility.Collapsed;
             ModDetailsPane.Visibility = Visibility.Collapsed;
+
+            ModListArea.AllowDrop = false;
+            MainContentArea.AllowDrop = true;
+
             var stackPanel = new StackPanel()
             {
                 Name = "NoModsStackPanel",

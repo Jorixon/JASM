@@ -3,7 +3,7 @@ using GIMI_ModManager.Core.Entities;
 
 namespace GIMI_ModManager.WinUI.Models;
 
-public partial class SkinModKeySwapModel : ObservableObject
+public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModKeySwapModel>
 {
     [ObservableProperty] private string? _condition;
     [ObservableProperty] private string? _forwardHotkey;
@@ -26,18 +26,29 @@ public partial class SkinModKeySwapModel : ObservableObject
     public static SkinModKeySwapModel[] FromKeySwapSettings(SkinModKeySwap[] skinSwapSettings)
         => skinSwapSettings.Select(FromKeySwapSettings).ToArray();
 
-    protected bool Equals(SkinModKeySwapModel other)
+    public SkinModKeySwap ToKeySwapSettings()
     {
+        return new()
+        {
+            Condition = Condition,
+            ForwardHotkey = ForwardHotkey,
+            BackwardHotkey = BackwardHotkey,
+            Type = Type,
+            SwapVar = SwapVar
+        };
+    }
+
+    public bool Equals(SkinModKeySwapModel other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
         return Condition == other.Condition && ForwardHotkey == other.ForwardHotkey &&
                BackwardHotkey == other.BackwardHotkey && Type == other.Type && Equals(SwapVar, other.SwapVar);
     }
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
-        return Equals((SkinModKeySwapModel)obj);
+        return ReferenceEquals(this, obj) || obj is SkinModKeySwapModel other && Equals(other);
     }
 
     public override int GetHashCode()

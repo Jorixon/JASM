@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,6 +20,7 @@ public partial class ModPaneVM : ObservableRecipient
     private ISkinMod _selectedSkinMod = null!;
     private ICharacterModList _modList = null!;
 
+    private NewModModel _backendModModel = null!;
 
     [ObservableProperty] private NewModModel _selectedModModel = null!;
     [ObservableProperty] private bool _isReadOnlyMode = true;
@@ -33,37 +35,57 @@ public partial class ModPaneVM : ObservableRecipient
     {
         if (modModel.Id == SelectedModModel?.Id) return;
         UnloadMod();
-        _selectedSkinMod = _skinManagerService.GetCharacterModList(modModel.Character).Mods
-            .First(x => x.Id == modModel.Id).Mod;
+        var skinEntry = _skinManagerService.GetCharacterModList(modModel.Character).Mods
+            .First(x => x.Id == modModel.Id);
+        _selectedSkinMod = skinEntry.Mod;
 
+        _backendModModel = NewModModel.FromMod(skinEntry);
         SelectedModModel = modModel;
+        SelectedModModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
 
         await ReloadModSettings(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ReloadModSettings(CancellationToken cancellationToken = default)
     {
-        var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken);
+        var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
 
+        _backendModModel.WithModSettings(skinModSettings);
         SelectedModModel.WithModSettings(skinModSettings);
 
+        Debug.Assert(_backendModModel.Equals(SelectedModModel));
+
+
+        if (!_selectedSkinMod.HasMergedInI)
+        {
+            IsReadOnlyMode = false;
+            return;
+        }
+
+        var keySwaps = await _selectedSkinMod.ReadKeySwapConfiguration(cancellationToken: cancellationToken);
+        _backendModModel.SetKeySwaps(keySwaps);
+        SelectedModModel.SetKeySwaps(keySwaps);
+        foreach (var skinModKeySwapModel in SelectedModModel.SkinModKeySwaps)
+        {
+            skinModKeySwapModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
+        }
 
         IsReadOnlyMode = false;
 
-
-        if (!_selectedSkinMod.HasMergedInI) return;
-
-        var keySwaps = await _selectedSkinMod.ReadKeySwapConfiguration(cancellationToken);
-
-        SelectedModModel.SetKeySwaps(keySwaps);
+        Debug.Assert(_backendModModel.Equals(SelectedModModel));
     }
 
     public void UnloadMod()
     {
+        // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
+        SelectedModModel.PropertyChanged -= (_, _) => SettingsPropertiesChanged();
+        SelectedModModel.SkinModKeySwaps.Clear();
         IsReadOnlyMode = true;
         _selectedSkinMod = null!;
-        SelectedModModel = null!;
+        _backendModModel = null!;
+        SelectedModModel = new NewModModel();
         _modList = null!;
+        SettingsPropertiesChanged();
     }
 
 
@@ -93,11 +115,27 @@ public partial class ModPaneVM : ObservableRecipient
         await Launcher.LaunchFolderAsync(
             await StorageFolder.GetFolderFromPathAsync(_selectedSkinMod.FullPath));
 
-    private bool ModSettingsChanged() => false;
+    private bool ModSettingsChanged() =>
+        _backendModModel is not null && !_backendModModel.SettingsEquals(SelectedModModel);
 
     [RelayCommand(CanExecute = nameof(ModSettingsChanged))]
-    private async Task SaveModSettingsAsync()
+    private async Task SaveModSettingsAsync(CancellationToken cancellationToken = default)
     {
+        IsReadOnlyMode = true;
+        await Task.Run(async () =>
+        {
+            var skinModSettings = SelectedModModel.ToModSettings();
+            await _selectedSkinMod.SaveSkinModSettings(skinModSettings, cancellationToken);
+
+
+            if (!_selectedSkinMod.HasMergedInI || !SelectedModModel.SkinModKeySwaps.Any()) return;
+
+            var keySwaps = SelectedModModel.SkinModKeySwaps.Select(x => x.ToKeySwapSettings()).ToList();
+            await _selectedSkinMod.SaveKeySwapConfiguration(keySwaps, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken);
+
+        IsReadOnlyMode = false;
+        await ReloadModSettings(CancellationToken.None).ConfigureAwait(false);
     }
 
     private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();

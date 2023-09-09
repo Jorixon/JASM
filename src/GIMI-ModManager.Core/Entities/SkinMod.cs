@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using FuzzySharp.Utils;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Helpers;
 using SharpCompress.IO;
@@ -8,14 +9,17 @@ namespace GIMI_ModManager.Core.Entities;
 
 public class SkinMod : Mod, ISkinMod
 {
+    private const string ImageName = ".JASM_Cover";
     private const string ModIniName = "merged.ini";
     private string _modIniPath = string.Empty;
     private const string configFileName = ".JASM_ModConfig.json";
     private string _configFilePath = string.Empty;
-    private readonly List<SkinModKeySwap>? _keySwaps = new();
+    private readonly List<string> _imagePaths = new();
 
-    public IReadOnlyList<SkinModKeySwap> KeySwaps => _keySwaps?.AsReadOnly() ?? new List<SkinModKeySwap>().AsReadOnly();
-    public SkinModSettings? CachedSkinModSettings { get; } = null;
+    private List<SkinModKeySwap>? _keySwaps = new();
+
+    public IReadOnlyCollection<string> ImagePaths => _imagePaths.AsReadOnly();
+    public SkinModSettings? CachedSkinModSettings { get; private set; } = null;
     public IReadOnlyCollection<SkinModKeySwap>? CachedKeySwaps => _keySwaps?.AsReadOnly();
     public bool HasMergedInI { get; private set; }
 
@@ -41,6 +45,7 @@ public class SkinMod : Mod, ISkinMod
         var modFolderAttributes = File.GetAttributes(_modDirectory.FullName);
         if (!modFolderAttributes.HasFlag(FileAttributes.Directory))
             throw new ArgumentException("Mod must be a folder.", nameof(_modDirectory.FullName));
+        _imagePaths.Add(".JASM_Cover");
         Refresh();
     }
 
@@ -62,7 +67,13 @@ public class SkinMod : Mod, ISkinMod
 
     public bool IsValidFolder() => Exists() && !IsEmpty();
 
-    public async Task<IReadOnlyCollection<SkinModKeySwap>> ReadKeySwapConfiguration(
+    public void ClearCache()
+    {
+        CachedSkinModSettings = null;
+        _keySwaps = null;
+    }
+
+    public async Task<IReadOnlyCollection<SkinModKeySwap>> ReadKeySwapConfiguration(bool forceReload = false,
         CancellationToken cancellationToken = default)
     {
         Refresh();
@@ -103,12 +114,20 @@ public class SkinMod : Mod, ISkinMod
                 keySwapLines.Add(line);
         }
 
-        _keySwaps.Clear();
+        if (keySwaps.Count == 0)
+            return new List<SkinModKeySwap>().AsReadOnly();
+
+        if (_keySwaps is null)
+            _keySwaps = new List<SkinModKeySwap>();
+        else
+            _keySwaps.Clear();
+
+
         _keySwaps.AddRange(keySwaps);
-        return KeySwaps;
+        return _keySwaps.AsReadOnly();
     }
 
-    // It is what it is
+    // I wonder how long this abomination will stay in the codebase :)
     public async Task SaveKeySwapConfiguration(ICollection<SkinModKeySwap> updatedKeySwaps,
         CancellationToken cancellationToken = default)
     {
@@ -204,16 +223,23 @@ public class SkinMod : Mod, ISkinMod
         cancellationToken.ThrowIfCancellationRequested();
         await using var writeStream = new FileStream(_modIniPath, FileMode.Truncate, FileAccess.Write, FileShare.None);
 
-        await using var writer = new StreamWriter(writeStream);
+        await using (var writer = new StreamWriter(writeStream))
+        {
+            foreach (var line in fileLines)
+                await writer.WriteLineAsync(line);
+        }
 
-        foreach (var line in fileLines)
-            await writer.WriteLineAsync(line);
+        await ReadKeySwapConfiguration(true, CancellationToken.None);
     }
 
 
-    public async Task<SkinModSettings> ReadSkinModSettings(CancellationToken cancellationToken = default)
+    public async Task<SkinModSettings> ReadSkinModSettings(bool forceReload = false,
+        CancellationToken cancellationToken = default)
     {
         Refresh();
+
+        if (CachedSkinModSettings is not null && !forceReload)
+            return CachedSkinModSettings;
 
         if (!File.Exists(_configFilePath))
             return new SkinModSettings();
@@ -224,30 +250,54 @@ public class SkinMod : Mod, ISkinMod
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
         };
+        var skinModSettings =
+            JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
 
-        return JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
+        ImageExists(skinModSettings);
+
+        CachedSkinModSettings = skinModSettings;
+
+        return skinModSettings;
     }
 
 
-    public async Task SetModImage(string imagePath)
+    private Task CopyAndSetModImage(SkinModSettings skinModSettings)
     {
-        var uri = Uri.TryCreate(imagePath, UriKind.Absolute, out var result) && result.Scheme == Uri.UriSchemeFile
+        var uri = Uri.TryCreate(skinModSettings.ImagePath, UriKind.Absolute, out var result) &&
+                  result.Scheme == Uri.UriSchemeFile
             ? result
-            : throw new ArgumentException("Invalid image path.", nameof(imagePath));
+            : throw new ArgumentException("Invalid image path.", nameof(skinModSettings.ImagePath));
 
         if (!File.Exists(uri.LocalPath))
             throw new FileNotFoundException("Image file not found.", uri.LocalPath);
 
-        var skinModSettings = CachedSkinModSettings ?? await ReadSkinModSettings();
+        // Delete old image
+        if (!string.IsNullOrWhiteSpace(CachedSkinModSettings?.ImagePath))
+        {
+            var oldImagePath = Path.Combine(FullPath, CachedSkinModSettings.ImagePath);
+            if (File.Exists(oldImagePath))
+                File.Delete(oldImagePath);
+        }
 
-        skinModSettings.ImagePath = uri.ToString();
-        await SaveSkinModSettings(skinModSettings).ConfigureAwait(false);
+
+        var newImageFileName = ImageName + Path.GetExtension(uri.LocalPath);
+        var newImagePath = Path.Combine(FullPath, newImageFileName);
+
+        File.Copy(uri.LocalPath, newImagePath, true);
+        skinModSettings.ImagePath = newImageFileName;
+        return Task.CompletedTask;
     }
 
     public async Task SaveSkinModSettings(SkinModSettings skinModSettings,
         CancellationToken cancellationToken = default)
     {
         Refresh();
+
+        if (CachedSkinModSettings is not null && skinModSettings.Equals(CachedSkinModSettings))
+            return;
+
+        if (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath) && CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath)
+            await CopyAndSetModImage(skinModSettings);
 
         var options = new JsonSerializerOptions
         {
@@ -258,6 +308,34 @@ public class SkinMod : Mod, ISkinMod
 
         var json = JsonSerializer.Serialize(skinModSettings, options);
         await File.WriteAllTextAsync(_configFilePath, json, cancellationToken);
+
+        await ReadSkinModSettings(true, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// This checks that the image path is a valid absolute path or a valid relative path to the mod folder. Also updates the image path if it's relative.
+    /// </summary>
+    private bool ImageExists(SkinModSettings skinModSettings)
+    {
+        if (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath))
+        {
+            if (File.Exists(skinModSettings.ImagePath)) // Is Absolute path
+            {
+                skinModSettings.ImagePath = skinModSettings.ImagePath;
+                return true;
+            }
+            else // Is Relative to mod folder
+            {
+                var imagePath = Path.Combine(FullPath, skinModSettings.ImagePath);
+                if (File.Exists(imagePath))
+                {
+                    skinModSettings.ImagePath = imagePath;
+                    return true;
+                }   
+            }
+        }
+
+        return false;
     }
 
     public bool Equals(ISkinMod? x, ISkinMod? y)
@@ -274,10 +352,27 @@ public class SkinMod : Mod, ISkinMod
     }
 }
 
-public record OperationResult(bool Success, string? Message = null);
-
-public class SkinModSettings // Setting internal sett messes with the json serializer
+public class SkinModSettings // "internal set" messes with the json serializer
+    : IEquatable<SkinModSettings>
 {
+    public bool Equals(SkinModSettings? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return CustomName == other.CustomName && Author == other.Author && Version == other.Version &&
+               ModUrl == other.ModUrl && Path.GetFileName(ImagePath) == Path.GetFileName(other.ImagePath);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is SkinModSettings other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(CustomName, Author, Version, ModUrl, ImagePath);
+    }
+
     public string? CustomName { get; set; }
     public string? Author { get; set; }
     public string? Version { get; set; }
@@ -286,17 +381,35 @@ public class SkinModSettings // Setting internal sett messes with the json seria
 }
 
 // There needs to be a better way to do this
-public class SkinModKeySwap
+public class SkinModKeySwap : IEquatable<SkinModKeySwap>
 {
     public const string KeySwapIniSection = "KeySwap";
     public const string ConditionIniKey = "condition";
-    public string? Condition { get; internal set; }
+    public string? Condition { get; set; }
     public const string ForwardIniKey = "key";
-    public string? ForwardHotkey { get; internal set; }
+    public string? ForwardHotkey { get; set; }
     public const string BackwardIniKey = "back";
-    public string? BackwardHotkey { get; internal set; }
+    public string? BackwardHotkey { get; set; }
     public const string TypeIniKey = "type";
-    public string? Type { get; internal set; }
+    public string? Type { get; set; }
     public const string SwapVarIniKey = "$swapvar";
-    public string[]? SwapVar { get; internal set; }
+    public string[]? SwapVar { get; set; }
+
+    public bool Equals(SkinModKeySwap? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Condition == other.Condition && ForwardHotkey == other.ForwardHotkey &&
+               BackwardHotkey == other.BackwardHotkey && Type == other.Type && Equals(SwapVar, other.SwapVar);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is SkinModKeySwap other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Condition, ForwardHotkey, BackwardHotkey, Type, SwapVar);
+    }
 }

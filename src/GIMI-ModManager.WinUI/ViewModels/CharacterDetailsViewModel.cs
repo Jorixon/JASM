@@ -170,7 +170,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             _logger.Error(e, "Error while adding archive.");
             _notificationService.ShowNotification("Error while adding storage items.",
-                $"An error occurred while adding the storage items. Mod may have been partially copied.\n{e.Message}",
+                $"An error occurred while adding the storage items.\n{e.Message}",
                 TimeSpan.FromSeconds(5));
         }
         finally
@@ -182,7 +182,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private async Task RefreshMods()
     {
+        var selectedModPaths = ModListVM.SelectedMods.Select(mod => mod.FolderName).ToArray();
         await _refreshMods();
+        var selectedMods = ModListVM.Mods.Where(mod => selectedModPaths.Any(oldModPath =>
+            oldModPath.Equals(mod.FolderName, StringComparison.CurrentCultureIgnoreCase))).ToArray();
+        ModListVM.SelectionChanged(selectedMods, new List<NewModModel>());
     }
 
     private async Task _refreshMods()
