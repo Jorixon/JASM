@@ -77,9 +77,10 @@ public partial class ModPaneVM : ObservableRecipient
 
     public void UnloadMod()
     {
-        // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
-        SelectedModModel.PropertyChanged -= (_, _) => SettingsPropertiesChanged();
-        SelectedModModel.SkinModKeySwaps.Clear();
+        if (SelectedModModel is not null)
+            // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
+            SelectedModModel.PropertyChanged -= (_, _) => SettingsPropertiesChanged();
+        SelectedModModel?.SkinModKeySwaps.Clear();
         IsReadOnlyMode = true;
         _selectedSkinMod = null!;
         _backendModModel = null!;
