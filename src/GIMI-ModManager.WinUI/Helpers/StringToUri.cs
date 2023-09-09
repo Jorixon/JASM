@@ -11,7 +11,7 @@ public class StringToUri : IValueConverter
 
         if (value is not string str)
             return "";
-        Uri.TryCreate(str, UriKind.Absolute, out uri);
+        Uri.TryCreate(str, UriKind.Absolute, out uri!);
         return uri;
     }
 

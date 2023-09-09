@@ -38,7 +38,7 @@ public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModK
         };
     }
 
-    public bool Equals(SkinModKeySwapModel other)
+    public bool Equals(SkinModKeySwapModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

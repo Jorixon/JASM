@@ -14,7 +14,6 @@ namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 public partial class ModPaneVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
-    private readonly IGenshinService _genshinService;
     private ISkinMod _selectedSkinMod = null!;
     private ICharacterModList _modList = null!;
 

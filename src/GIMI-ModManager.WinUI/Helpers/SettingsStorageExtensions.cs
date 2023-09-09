@@ -41,6 +41,7 @@ public static class SettingsStorageExtensions
 
     public static async Task SaveAsync<T>(this ApplicationDataContainer settings, string key, T value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         settings.SaveString(key, await Json.StringifyAsync(value));
     }
 
