@@ -353,4 +353,23 @@ public sealed partial class CharacterDetailsPage : Page
     {
         MoveModSearchBox.Focus(FocusState.Programmatic);
     }
+
+    private void ModDetailsPaneImage_OnDragEnter(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private void ModDetailsPaneImage_OnDragOver(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private async void UIElement_OnDrop(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            ViewModel.ModPaneVM.SetImageFromDragDrop(await e.DataView.GetStorageItemsAsync());
+        }
+    }
+
 }

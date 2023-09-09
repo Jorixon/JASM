@@ -1,22 +1,20 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Models;
-using Microsoft.UI.Xaml.Controls;
 using Windows.Storage;
 using Windows.System;
-using System.Threading;
+using GIMI_ModManager.Core.Services;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
 public partial class ModPaneVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
+    private readonly IGenshinService _genshinService;
     private ISkinMod _selectedSkinMod = null!;
     private ICharacterModList _modList = null!;
 
@@ -89,16 +87,16 @@ public partial class ModPaneVM : ObservableRecipient
         SettingsPropertiesChanged();
     }
 
+    private string[] _supportedImageExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".gif" };
 
     [RelayCommand]
     private async Task SetImageUriAsync()
     {
         var filePicker = new FileOpenPicker();
-        filePicker.FileTypeFilter.Add(".png");
-        filePicker.FileTypeFilter.Add(".jpg");
-        filePicker.FileTypeFilter.Add(".jpeg");
-        filePicker.FileTypeFilter.Add(".bmp");
-        filePicker.FileTypeFilter.Add(".gif");
+        foreach (var supportedImageExtension in _supportedImageExtensions)
+        {
+            filePicker.FileTypeFilter.Add(supportedImageExtension);
+        }
 
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
@@ -108,6 +106,19 @@ public partial class ModPaneVM : ObservableRecipient
         if (file == null) return;
         var imageUri = new Uri(file.Path);
         SelectedModModel.ImagePath = imageUri.ToString();
+    }
+
+    public void SetImageFromDragDrop(IReadOnlyList<IStorageItem> items)
+    {
+        foreach (var storageItem in items)
+        {
+            if (storageItem is not StorageFile file) continue;
+
+            if (_supportedImageExtensions.Contains(Path.GetExtension(file.Name)))
+            {
+                SelectedModModel.ImagePath = new Uri(file.Path).ToString();
+            }
+        }
     }
 
 

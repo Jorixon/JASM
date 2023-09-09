@@ -267,7 +267,6 @@
                                         Binding="{Binding Name, Mode=OneWay}"
                                         CanUserSort="True"
                                         Header="Mod Name"
-                                        IsReadOnly="True"
                                         Tag="Name" />
 
                                     <controls:DataGridTextColumn
@@ -309,8 +308,12 @@
                                 MinWidth="200"
                                 MinHeight="200"
                                 MaxWidth="400"
+                                AllowDrop="True"
                                 Background="{ThemeResource ControlFillColorTertiaryBrush}"
-                                CornerRadius="10">
+                                CornerRadius="10"
+                                DragEnter="ModDetailsPaneImage_OnDragEnter"
+                                DragOver="ModDetailsPaneImage_OnDragOver"
+                                Drop="UIElement_OnDrop">
                                 <Image Source="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ImagePath, Mode=OneWay}" Stretch="Uniform" />
                                 <Button
                                     Margin="0,20,20,0"
