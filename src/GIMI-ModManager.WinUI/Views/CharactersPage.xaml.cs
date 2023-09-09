@@ -1,4 +1,5 @@
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -55,7 +56,7 @@ public sealed partial class CharactersPage : Page
         if (sender is not MenuFlyout menuFlyout)
             return;
         
-        if (menuFlyout.Target.DataContext is not GenshinCharacter character)
+        if (menuFlyout.Target.DataContext is not CharacterGridItemModel character)
             return;
 
         ViewModel.OnRightClickContext(character);

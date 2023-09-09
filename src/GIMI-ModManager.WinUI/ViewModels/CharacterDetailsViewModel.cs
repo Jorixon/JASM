@@ -82,7 +82,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     public void OnNavigatedTo(object parameter)
     {
-        var character = _genshinService.GetCharacter(((GenshinCharacter)parameter).Id);
+        if (parameter is not CharacterGridItemModel characterGridItemModel)
+        {
+            _navigationService.GoBack();
+            return;
+        }
+
+        var character = _genshinService.GetCharacter(characterGridItemModel.Character.Id);
         if (character is null)
         {
             _navigationService.GoBack();
