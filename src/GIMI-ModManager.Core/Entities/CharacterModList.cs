@@ -58,19 +58,19 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         else
             _logger?.Warning("Deleted folder {Folder} was not tracked in mod list", e.FullPath);
 
-        ModFolderChanged();
+        ModsChanged?.Invoke(this, new ModFolderChangedArgs(e.FullPath, ModFolderChangeType.Deleted));
     }
 
     private void OnModCreated(object sender, FileSystemEventArgs e)
     {
         _logger?.Information("Mod {ModName} was created in {characterFolder} created", e.Name, Character.DisplayName);
-        var mod = new Mod(new DirectoryInfo(e.FullPath));
+        var mod = new SkinMod(new DirectoryInfo(e.FullPath));
         if (ModAlreadyAdded(mod))
             _logger?.Warning("Created folder {Folder} was already tracked in {characterFolder} mod list", e.Name,
                 Character.DisplayName);
         else
             TrackMod(mod);
-        ModFolderChanged();
+        ModsChanged?.Invoke(this, new ModFolderChangedArgs(e.FullPath, ModFolderChangeType.Created));
     }
 
     private void OnModRenamed(object sender, RenamedEventArgs e)
@@ -79,7 +79,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         if (_mods.FirstOrDefault(mod => mod.Mod.FullPath == e.OldFullPath) is var oldModEntry &&
             oldModEntry is not null)
         {
-            var newMod = new Mod(new DirectoryInfo(e.FullPath), oldModEntry.Mod.CustomName);
+            var newMod = new SkinMod(new DirectoryInfo(e.FullPath), oldModEntry.Mod.CustomName);
             var modEntry = new CharacterSkinEntry(newMod, this, !newMod.Name.StartsWith(DISABLED_PREFIX));
             _mods.Remove(oldModEntry);
             _mods.Add(modEntry);
@@ -87,15 +87,11 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         else
             _logger?.Warning("Renamed folder {Folder} was not tracked in mod list", e.OldFullPath);
 
-        ModFolderChanged();
+        ModsChanged?.Invoke(this, new ModFolderChangedArgs(e.FullPath, ModFolderChangeType.Renamed, e.OldFullPath));
     }
 
-    private void ModFolderChanged()
-    {
-        ModsChanged?.Invoke(this, new ModFolderChangedArgs());
-    }
 
-    public void TrackMod(IMod mod)
+    public void TrackMod(ISkinMod mod)
     {
         if (ModAlreadyAdded(mod))
             throw new InvalidOperationException("Mod already added");
@@ -118,7 +114,6 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
         _mods.Remove(_mods.First(m => m.Mod == mod));
         _logger?.Debug("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
-
     }
 
     public void EnableMod(Guid modId)
@@ -213,6 +208,28 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
 public class ModFolderChangedArgs : EventArgs
 {
+    public ModFolderChangedArgs(string newName, ModFolderChangeType changeType, string? oldName = null)
+    {
+        if (changeType == ModFolderChangeType.Renamed && oldName is null)
+            throw new ArgumentException("Old name must be provided when change type is renamed", nameof(oldName));
+
+        ArgumentNullException.ThrowIfNull(newName);
+
+        NewName = newName;
+        ChangeType = changeType;
+        OldName = oldName;
+    }
+
+    string NewName { get; }
+    string? OldName { get; }
+    ModFolderChangeType ChangeType { get; }
+}
+
+public enum ModFolderChangeType
+{
+    Created,
+    Deleted,
+    Renamed
 }
 
 public class DisableWatcher : IDisposable

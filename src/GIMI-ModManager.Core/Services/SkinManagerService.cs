@@ -48,7 +48,7 @@ public class SkinManagerService : ISkinManagerService
 
             foreach (var modFolder in characterModFolder.EnumerateDirectories())
             {
-                var mod = new Mod(modFolder, modFolder.Name);
+                var mod = new SkinMod(modFolder, modFolder.Name);
                 characterModList.TrackMod(mod);
             }
         }
@@ -89,7 +89,7 @@ public class SkinManagerService : ISkinManagerService
 
                 if (mod is not null) continue;
 
-                var newMod = new Mod(modDirectory, modDirectory.Name);
+                var newMod = new SkinMod(modDirectory, modDirectory.Name);
                 characterModList.TrackMod(newMod);
             }
 
@@ -210,7 +210,7 @@ public class SkinManagerService : ISkinManagerService
 
 
             var modList = GetCharacterModList(closestMatchCharacter);
-            var mod = new Mod(folder, folder.Name);
+            var mod = new SkinMod(folder, folder.Name);
             try
             {
                 using var disableWatcher = modList.DisableWatcher();

@@ -21,7 +21,7 @@ public interface ICharacterModList
     /// Add a mod to the mod list. Starts tracking the mod.
     /// </summary>
     /// <param name="mod"></param>
-    internal void TrackMod(IMod mod);
+    internal void TrackMod(ISkinMod mod);
 
     /// <summary>
     /// Remove a mod from the mod list. Stops tracking the mod.

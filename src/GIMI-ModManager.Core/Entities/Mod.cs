@@ -7,9 +7,10 @@ using SearchOption = System.IO.SearchOption;
 
 namespace GIMI_ModManager.Core.Entities;
 
+// This file was written at the very beginning is just a folder wrapper really
 public class Mod : IMod
 {
-    private DirectoryInfo _modDirectory;
+    private protected DirectoryInfo _modDirectory;
     public string FullPath => _modDirectory.FullName;
     public string Name => _modDirectory.Name;
     public string OnlyPath => _modDirectory.Parent!.FullName;
@@ -85,15 +86,17 @@ public class Mod : IMod
         if (ReferenceEquals(x, y)) return true;
         if (ReferenceEquals(x, null)) return false;
         if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return string.Equals(x.FullPath, y.FullPath, StringComparison.InvariantCultureIgnoreCase);
+        return string.Equals(x.FullPath, y.FullPath, StringComparison.CurrentCultureIgnoreCase);
     }
 
     public bool DeepEquals(IMod? x, IMod? y)
     {
         if (Equals(x, y)) return true;
         if (x is null || y is null) return false;
-        throw new NotImplementedException();
+
+        var xHash = x.GetContentsHash();
+        var yHash = y.GetContentsHash();
+        return xHash == yHash;
     }
 
     // https://stackoverflow.com/a/31349703
@@ -121,7 +124,7 @@ public class Mod : IMod
 
     public int GetHashCode(IMod obj)
     {
-        return StringComparer.InvariantCultureIgnoreCase.GetHashCode(obj.FullPath);
+        return StringComparer.CurrentCultureIgnoreCase.GetHashCode(obj.FullPath);
     }
 
     public override string ToString()

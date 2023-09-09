@@ -5,10 +5,9 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.Entities;
 
-public class SkinMod
+public class SkinMod : Mod, ISkinMod
 {
-    private readonly IMod _mod;
-    private const string ModIniString = "merged.ini";
+    private const string ModIniName = "merged.ini";
     private string _modIniPath = string.Empty;
     private const string configFileName = ".JASM_ModConfig.json";
     private string _configFilePath = string.Empty;
@@ -18,34 +17,47 @@ public class SkinMod
     public IReadOnlyList<SkinModKeySwap> KeySwaps => _keySwaps.AsReadOnly();
 
 
-    public SkinMod(IMod mod)
+    public SkinMod(IMod mod) : base(new DirectoryInfo(mod.FullPath), mod.CustomName)
     {
-        var modFolderAttributes = File.GetAttributes(mod.FullPath);
+        Init();
+    }
+
+    public SkinMod(string modPath, string customName = "") : base(new DirectoryInfo(Path.GetFullPath(modPath)),
+        customName)
+    {
+        Init();
+    }
+
+    public SkinMod(DirectoryInfo modDirectory, string customName = "") : base(modDirectory, customName)
+    {
+        Init();
+    }
+
+    private void Init()
+    {
+        var modFolderAttributes = File.GetAttributes(_modDirectory.FullName);
         if (!modFolderAttributes.HasFlag(FileAttributes.Directory))
-            throw new ArgumentException("Mod must be a folder.", nameof(mod));
-        _mod = mod;
+            throw new ArgumentException("Mod must be a folder.", nameof(_modDirectory.FullName));
         Refresh();
     }
 
     public void Refresh()
     {
+        _modDirectory.Refresh();
         if (!IsValidFolder())
             throw new InvalidOperationException("Mod folder is no longer valid.");
 
-        _configFilePath = Path.Combine(_mod.FullPath, configFileName);
-        _modIniPath = Path.Combine(_mod.FullPath, ModIniString);
+        _configFilePath = Path.Combine(FullPath, configFileName);
+        _modIniPath = Path.Combine(FullPath, ModIniName);
 
-        HasMergedInI = HasMergedInIFile(_mod);
+        HasMergedInI = HasMergedInIFile();
     }
 
-    private static bool HasMergedInIFile(IMod mod) =>
-        new DirectoryInfo(mod.FullPath).EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
-            .Any(iniFiles => iniFiles.Name.Equals(ModIniString, StringComparison.CurrentCultureIgnoreCase));
+    private bool HasMergedInIFile() =>
+        _modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
+            .Any(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase));
 
-    public bool IsValidFolder()
-    {
-        return _mod.Exists() && !_mod.IsEmpty();
-    }
+    public bool IsValidFolder() => Exists() && !IsEmpty();
 
     public async Task<OperationResult> ReadKeySwapConfiguration(CancellationToken cancellationToken = default)
     {
@@ -58,7 +70,7 @@ public class SkinMod
         var keySwapBlockStarted = false;
         await foreach (var line in File.ReadLinesAsync(_modIniPath, cancellationToken))
         {
-            if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && keySwapBlockStarted ||
+            if (IsSection(line, "[KeySwap]") && keySwapBlockStarted ||
                 keySwapBlockStarted && keySwapLines.Count > 9)
             {
                 keySwapBlockStarted = false;
@@ -69,7 +81,7 @@ public class SkinMod
                 continue;
             }
 
-            if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase))
+            if (IsSection(line, "[KeySwap]"))
             {
                 keySwapBlockStarted = true;
                 continue;
@@ -93,6 +105,7 @@ public class SkinMod
         return new OperationResult(true, message);
     }
 
+    // It is what it is
     public async Task SaveKeySwapConfiguration(ICollection<SkinModKeySwap> updatedKeySwaps,
         CancellationToken cancellationToken = default)
     {
@@ -274,6 +287,19 @@ public class SkinMod
         var json = JsonSerializer.Serialize(skinModSettings, options);
         await File.WriteAllTextAsync(_configFilePath, json, cancellationToken);
     }
+
+    public bool Equals(ISkinMod? x, ISkinMod? y)
+    {
+        if (ReferenceEquals(x, y)) return true;
+        if (ReferenceEquals(x, null)) return false;
+        if (ReferenceEquals(y, null)) return false;
+        return string.Equals(x.FullPath, y.FullPath, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    public int GetHashCode(ISkinMod obj)
+    {
+        return StringComparer.CurrentCultureIgnoreCase.GetHashCode(obj.FullPath);
+    }
 }
 
 public record OperationResult(bool Success, string? Message = null);
@@ -287,7 +313,7 @@ public class SkinModSettings
     public string? ImagePath { get; set; }
 }
 
-// Turning this into a dictionary for quick lookup will remove a lot of unnecessary looping and make the code more readable.
+// There needs to be a better way to do this
 public class SkinModKeySwap
 {
     public const string KeySwapIniSection = "KeySwap";
