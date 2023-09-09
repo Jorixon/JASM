@@ -7,6 +7,8 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Models;
 using Microsoft.UI.Xaml.Controls;
+using Windows.Storage;
+using Windows.System;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -21,10 +23,11 @@ public partial class ModPaneVM : ObservableRecipient
     private SkinMod _selectedSkinMod = null!;
 
 
-
-    [ObservableProperty] private SkinModSettingsModel _skinModSettings = new();
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SaveModSettingsCommand))]
+    private SkinModSettingsModel _skinModSettings = new();
 
     [ObservableProperty] private bool _isReadOnlyMode = true;
+
 
     public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } =
         new ObservableCollection<SkinModKeySwapModel>();
@@ -49,6 +52,10 @@ public partial class ModPaneVM : ObservableRecipient
         _backendSkinModSettings = SkinModSettingsModel.FromMod(internalSettings);
         SkinModSettings = SkinModSettingsModel.FromMod(internalSettings);
 
+        IsReadOnlyMode = false;
+
+        SkinModSettings.PropertyChanged += (_, _) => SettingsPropertiesChanged();
+
         if (!_selectedSkinMod.HasMergedInI) return;
 
         var internalKeySwaps = await _selectedSkinMod.ReadKeySwapConfiguration(cancellationToken);
@@ -56,14 +63,28 @@ public partial class ModPaneVM : ObservableRecipient
 
         foreach (var skinModKeySwapModel in _selectedSkinMod.KeySwaps.Select(SkinModKeySwapModel.FromKeySwapSettings))
         {
+            skinModKeySwapModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
             SkinModKeySwaps.Add(skinModKeySwapModel);
         }
+
+        SkinModKeySwaps.CollectionChanged += (_, _) => SettingsPropertiesChanged();
     }
 
     public void UnloadMod()
     {
+        IsReadOnlyMode = true;
+        SkinModSettings.PropertyChanged -= (_, _) => SettingsPropertiesChanged();
+        foreach (var skinModKeySwapModel in SkinModKeySwaps)
+        {
+            skinModKeySwapModel.PropertyChanged -= (_, _) => SettingsPropertiesChanged();
+        }
+
+        SkinModKeySwaps.CollectionChanged -= (_, _) => SettingsPropertiesChanged();
+
+
         _selectedMod = null!;
         _selectedSkinMod = null!;
+        SelectedModModel = null!;
         _backendSkinModSettings = new SkinModSettingsModel();
         SkinModSettings = new SkinModSettingsModel();
         _backendSkinModKeySwaps = Array.Empty<SkinModKeySwapModel>();
@@ -89,4 +110,31 @@ public partial class ModPaneVM : ObservableRecipient
         var imageUri = new Uri(file.Path);
         SkinModSettings.ImageUri = imageUri.ToString();
     }
+
+
+    [RelayCommand]
+    private async Task OpenModFolder() =>
+        await Launcher.LaunchFolderAsync(
+            await StorageFolder.GetFolderFromPathAsync(_selectedMod.FullPath));
+
+    private bool ModSettingsChanged() => !_backendSkinModSettings.Equals(SkinModSettings) ||
+                                         !_backendSkinModKeySwaps.SequenceEqual(SkinModKeySwaps);
+
+    [RelayCommand(CanExecute = nameof(ModSettingsChanged))]
+    private async Task SaveModSettingsAsync()
+    {
+        if (!_backendSkinModSettings.Equals(SkinModSettings))
+        {
+            await _selectedSkinMod.SaveSkinModSettings(SkinModSettings.ToModSettings());
+        }
+
+        if (!_backendSkinModKeySwaps.SequenceEqual(SkinModKeySwaps))
+        {
+            var keySwapSettings = SkinModKeySwaps.Select(x => x.ToKeySwapSettings()).ToArray();
+            await _selectedSkinMod.SaveKeySwapConfiguration(keySwapSettings);
+        }
+        
+    }
+
+    private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
 }

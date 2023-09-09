@@ -387,7 +387,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModListVM.ResetContent();
     }
 
-    public async Task ChangeModDetails(NewModModel newModModel)
+    public void ChangeModDetails(NewModModel newModModel)
     {
         var oldMod = _modList.Mods.FirstOrDefault(mod => mod.Id == newModModel.Id);
         if (oldMod == null)

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
+using SharpCompress.IO;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -57,7 +58,8 @@ public class SkinMod
         var keySwapBlockStarted = false;
         await foreach (var line in File.ReadLinesAsync(_modIniPath, cancellationToken))
         {
-            if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && keySwapBlockStarted || keySwapBlockStarted && keySwapLines.Count > 9)
+            if (line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && keySwapBlockStarted ||
+                keySwapBlockStarted && keySwapLines.Count > 9)
             {
                 keySwapBlockStarted = false;
                 var keySwap = ParseKeySwap(keySwapLines);
@@ -73,7 +75,8 @@ public class SkinMod
                 continue;
             }
 
-            if (keySwapLines.Count > 10 && !line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) && keySwapBlockStarted)
+            if (keySwapLines.Count > 10 && !line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) &&
+                keySwapBlockStarted)
             {
                 keySwapBlockStarted = false;
                 keySwapLines.Clear();
@@ -103,7 +106,92 @@ public class SkinMod
         if (updatedKeySwaps.Count != _keySwaps.Count)
             throw new ArgumentException("Key swap count mismatch.", nameof(updatedKeySwaps));
 
-        throw new NotImplementedException();
+
+        // Convoluted way to lock the file for reading and writing.
+        var fileLines = new List<string>();
+
+        await using var fileStream = new FileStream(_modIniPath, FileMode.Open, FileAccess.Read, FileShare.None);
+        using (var reader = new StreamReader(fileStream))
+        {
+            while (await reader.ReadLineAsync(cancellationToken) is { } line)
+                fileLines.Add(line);
+        }
+
+        var sectionStartIndexes = new List<int>();
+        for (var i = 0; i < fileLines.Count; i++)
+        {
+            if (IsSection(fileLines[i], SkinModKeySwap.KeySwapIniSection))
+                sectionStartIndexes.Add(i);
+        }
+
+        if (sectionStartIndexes.Count != updatedKeySwaps.Count)
+            throw new InvalidOperationException("Key swap count mismatch.");
+
+        if (sectionStartIndexes.Count == 0)
+            throw new InvalidOperationException("No key swaps found.");
+
+        for (var i = 0; i < sectionStartIndexes.Count; i++)
+        {
+            var keySwap = updatedKeySwaps.ElementAt(i);
+            var sectionStartIndex = sectionStartIndexes[i] + 1;
+
+
+            for (var j = sectionStartIndex; j < sectionStartIndex + 8; j++)
+            {
+                var line = fileLines[j];
+
+                if (IsIniKey(line, SkinModKeySwap.ForwardIniKey))
+                {
+                    var value = FormatIniKey(SkinModKeySwap.ForwardIniKey, keySwap.ForwardHotkey);
+                    if (value is null)
+                        continue;
+                    fileLines[j] = value;
+                }
+
+                else if (IsIniKey(line, SkinModKeySwap.BackwardIniKey))
+                {
+                    var value = FormatIniKey(SkinModKeySwap.BackwardIniKey, keySwap.BackwardHotkey);
+                    if (value is null)
+                        continue;
+                    fileLines[j] = value;
+                }
+
+                else if (IsIniKey(line, SkinModKeySwap.TypeIniKey))
+                {
+                    var value = FormatIniKey(SkinModKeySwap.TypeIniKey, keySwap.Type);
+                    if (value is null)
+                        continue;
+                    fileLines[j] = value;
+                }
+                else if (IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
+                {
+                    var value = FormatIniKey(SkinModKeySwap.SwapVarIniKey,
+                        string.Join(",", keySwap.SwapVar ?? new string[] { "" }));
+                    if (value is null)
+                        continue;
+                    fileLines[j] = value;
+                }
+
+                else if (IsIniKey(line, SkinModKeySwap.ConditionIniKey))
+                {
+                    var value = FormatIniKey(SkinModKeySwap.ConditionIniKey, keySwap.Condition);
+                    if (value is null)
+                        continue;
+                    fileLines[j] = value;
+                }
+
+                else if (IsSection(line))
+                    break;
+            }
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        await using var writeStream = new FileStream(_modIniPath, FileMode.Truncate, FileAccess.Write, FileShare.None);
+
+        await using var writer = new StreamWriter(writeStream);
+
+        foreach (var line in fileLines)
+            await writer.WriteLineAsync(line);
     }
 
     private static SkinModKeySwap? ParseKeySwap(ICollection<string> fileLines)
@@ -112,20 +200,22 @@ public class SkinMod
 
         foreach (var line in fileLines)
         {
-            if (IsIniKey(line, "key"))
+            if (IsIniKey(line, SkinModKeySwap.ForwardIniKey))
                 skinModKeySwap.ForwardHotkey = GetIniValue(line);
 
-            else if (IsIniKey(line, "back"))
+            else if (IsIniKey(line, SkinModKeySwap.BackwardIniKey))
                 skinModKeySwap.BackwardHotkey = GetIniValue(line);
 
-            else if (IsIniKey(line, "type"))
+            else if (IsIniKey(line, SkinModKeySwap.TypeIniKey))
                 skinModKeySwap.Type = GetIniValue(line);
 
-            else if (IsIniKey(line, "$swapvar"))
+            else if (IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
                 skinModKeySwap.SwapVar = GetIniValue(line)?.Split(',');
 
-            else if (IsIniKey(line, "condition"))
+            else if (IsIniKey(line, SkinModKeySwap.ConditionIniKey))
                 skinModKeySwap.Condition = GetIniValue(line);
+            else if (IsSection(line))
+                break;
         }
 
         return skinModKeySwap;
@@ -137,8 +227,20 @@ public class SkinMod
         return split.Length != 2 ? null : split[1].Trim();
     }
 
+    private static bool IsSection(string line, string? sectionKey = null)
+    {
+        line = line.Trim();
+        if (!line.StartsWith("[") && !line.EndsWith("]"))
+            return false;
+
+        return sectionKey is null || line.Equals($"[{sectionKey}]", StringComparison.CurrentCultureIgnoreCase);
+    }
+
     private static bool IsIniKey(string line, string key) =>
         line.Trim().StartsWith(key, StringComparison.CurrentCultureIgnoreCase);
+
+    private static string? FormatIniKey(string key, string? value) =>
+        value is not null ? $"{key} = {value}" : null;
 
     public async Task<SkinModSettings> ReadSkinModSettings(CancellationToken cancellationToken = default)
     {
@@ -157,7 +259,7 @@ public class SkinMod
         return JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
     }
 
-    public async Task WriteSkinModSettings(SkinModSettings skinModSettings,
+    public async Task SaveSkinModSettings(SkinModSettings skinModSettings,
         CancellationToken cancellationToken = default)
     {
         Refresh();
@@ -166,7 +268,7 @@ public class SkinMod
         {
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
-            WriteIndented = true
+            WriteIndented = true,
         };
 
         var json = JsonSerializer.Serialize(skinModSettings, options);
@@ -181,16 +283,22 @@ public class SkinModSettings
     public string? CustomName { get; set; }
     public string? Author { get; set; }
     public string? Version { get; set; }
-    public Uri? ModUrl { get; set; }
-    public Uri? ImageUri { get; set; }
-    public string? RelativeImagePath { get; set; }
+    public string? ModUrl { get; set; }
+    public string? ImagePath { get; set; }
 }
 
+// Turning this into a dictionary for quick lookup will remove a lot of unnecessary looping and make the code more readable.
 public class SkinModKeySwap
 {
+    public const string KeySwapIniSection = "KeySwap";
+    public const string ConditionIniKey = "condition";
     public string? Condition { get; set; }
+    public const string ForwardIniKey = "key";
     public string? ForwardHotkey { get; set; }
+    public const string BackwardIniKey = "back";
     public string? BackwardHotkey { get; set; }
+    public const string TypeIniKey = "type";
     public string? Type { get; set; }
+    public const string SwapVarIniKey = "$swapvar";
     public string[]? SwapVar { get; set; }
 }

@@ -37,4 +37,23 @@ public partial class SkinModKeySwapModel : ObservableObject
             SwapVar = SwapVar
         };
     }
+
+    protected bool Equals(SkinModKeySwapModel other)
+    {
+        return Condition == other.Condition && ForwardHotkey == other.ForwardHotkey &&
+               BackwardHotkey == other.BackwardHotkey && Type == other.Type && Equals(SwapVar, other.SwapVar);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((SkinModKeySwapModel)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Condition, ForwardHotkey, BackwardHotkey, Type, SwapVar);
+    }
 }

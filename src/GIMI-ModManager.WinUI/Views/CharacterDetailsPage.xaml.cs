@@ -276,10 +276,10 @@ public sealed partial class CharacterDetailsPage : Page
         }
     }
 
-    private async void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
+    private void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
     {
         var modModel = (NewModModel)e.Row.DataContext;
-        await ViewModel.ChangeModDetails(modModel);
+        ViewModel.ChangeModDetails(modModel);
     }
 
     private void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)

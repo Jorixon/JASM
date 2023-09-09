@@ -100,7 +100,7 @@ public class WindowManagerService : IWindowManagerService
     }
 
 
-    public async Task<ContentDialogResult> ShowDialogAsync(ContentDialog? dialog, WindowEx? window = null)
+    public async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null)
     {
         var currentWindow = window is not null ?  GetWindow(window) : MainWindow;
 
@@ -141,5 +141,5 @@ public interface IWindowManagerService
     void CloseWindow(WindowEx window);
     WindowEx CreateWindow(UIElement windowContent, bool activate = true);
 
-    Task<ContentDialogResult> ShowDialogAsync(ContentDialog? dialog, WindowEx? window = null);
+    Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null);
 }

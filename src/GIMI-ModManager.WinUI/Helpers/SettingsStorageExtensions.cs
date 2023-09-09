@@ -17,6 +17,9 @@ public static class SettingsStorageExtensions
 
     public static async Task SaveAsync<T>(this StorageFolder folder, string name, T content)
     {
+        if (content == null)
+            ArgumentNullException.ThrowIfNull(content);
+        
         var file = await folder.CreateFileAsync(GetFileName(name), CreationCollisionOption.ReplaceExisting);
         var fileContent = await Json.StringifyAsync(content);
 

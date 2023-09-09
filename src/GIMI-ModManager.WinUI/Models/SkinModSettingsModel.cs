@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 
 namespace GIMI_ModManager.WinUI.Models;
@@ -10,8 +11,7 @@ public partial class SkinModSettingsModel : ObservableObject
     [ObservableProperty] private string? _author;
     [ObservableProperty] private string? _version;
     [ObservableProperty] private string? _modUrl;
-    [ObservableProperty] private string? _imageUri = " ";
-    [ObservableProperty] private string? _relativeImagePath;
+    [ObservableProperty] private string? _imageUri = " "; // If this is null or empty the app will crash...
 
     public static SkinModSettingsModel FromMod(SkinModSettings mod)
     {
@@ -20,9 +20,39 @@ public partial class SkinModSettingsModel : ObservableObject
             CustomName = mod.CustomName,
             Author = mod.Author,
             Version = mod.Version,
-            ModUrl = mod.ModUrl?.ToString(),
-            ImageUri = mod.ImageUri?.ToString() ?? " ",
-            RelativeImagePath = mod.RelativeImagePath
+            ModUrl = mod.ModUrl,
+            ImageUri = string.IsNullOrEmpty(mod.ImagePath) ? " " : mod.ImagePath,
         };
+    }
+
+    public SkinModSettings ToModSettings()
+    {
+        return new SkinModSettings
+        {
+            CustomName = CustomName?.Trim(),
+            Author = Author?.Trim(),
+            Version = Version?.Trim(),
+            ModUrl = ModUrl?.Trim(),
+            ImagePath = string.IsNullOrEmpty(ImageUri) ? " " : ImageUri,
+        };
+    }
+
+    protected bool Equals(SkinModSettingsModel other)
+    {
+        return CustomName == other.CustomName && Author == other.Author && Version == other.Version &&
+               ModUrl == other.ModUrl && ImageUri == other.ImageUri;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((SkinModSettingsModel)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(CustomName, Author, Version, ModUrl, ImageUri);
     }
 }

@@ -13,6 +13,11 @@
     x:Name="CharacterDetailsRoot"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <helpers:BoolInverterConverter x:Name="BoolInverter" />
+        <helpers:ValueToBoolConverter x:Name="ValueToBoolConverter" />
+    </Page.Resources>
+
     <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}">
         <Grid.Resources>
             <Flyout
@@ -291,12 +296,17 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid Margin="0,0,0,8" VerticalAlignment="Top">
-                                <Button HorizontalAlignment="Right" Content="Open In New Window" />
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Content="Open In New Window"
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}" />
                             </Grid>
                             <Grid
                                 Grid.Row="1"
-                                Width="400"
                                 Height="400"
+                                MinWidth="200"
+                                MinHeight="200"
+                                MaxWidth="400"
                                 Background="{ThemeResource ControlFillColorTertiaryBrush}"
                                 CornerRadius="10">
                                 <Button
@@ -304,8 +314,10 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Command="{x:Bind ViewModel.ModPaneVM.SetImageUriCommand}"
-                                    Content="Edit" />
-                                <Image Source="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ImageUri, Mode=OneWay}" />
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
+                                    <FontIcon Glyph="&#xE70F;" />
+                                </Button>
+                                <Image Source="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ImageUri, Mode=OneWay}" Stretch="Uniform" />
                             </Grid>
                             <TextBlock
                                 Grid.Row="2"
@@ -318,9 +330,10 @@
                             <TextBox
                                 Grid.Row="3"
                                 Header="Mod Url:"
+                                IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
                                 Text="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ModUrl, Mode=TwoWay}" />
                             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                <TextBlock Text="Latest Version:" />
+                                <TextBlock Text="Latest Version:" Visibility="Collapsed" />
                                 <TextBlock Text="{x:Bind ViewModel.ModPaneVM.SkinModSettings.ModUrl}" />
 
                             </StackPanel>
@@ -335,18 +348,29 @@
                                             <Grid Margin="0,0">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox
                                                     Width="100"
                                                     HorizontalAlignment="Left"
                                                     Header="Forward Key"
+                                                    IsEnabled="{x:Bind ForwardHotkey, Converter={StaticResource ValueToBoolConverter}}"
                                                     Text="{x:Bind ForwardHotkey, Mode=TwoWay}" />
-                                                <TextBox
+
+                                                <StackPanel
                                                     Grid.Column="1"
+                                                    HorizontalAlignment="Center"
+                                                    Orientation="Horizontal">
+                                                    <TextBlock Text="Variations: " />
+                                                    <TextBlock Text="2" />
+                                                </StackPanel>
+                                                <TextBox
+                                                    Grid.Column="2"
                                                     Width="100"
                                                     HorizontalAlignment="Right"
                                                     Header="Backward Key"
+                                                    IsEnabled="{x:Bind BackwardHotkey, Converter={StaticResource ValueToBoolConverter}}"
                                                     Text="{x:Bind BackwardHotkey, Mode=TwoWay}" />
                                             </Grid>
                                         </DataTemplate>
@@ -359,12 +383,18 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Button Background="{ThemeResource SystemFillColorAttentionBrush}" Content="Save" />
+                                <Button
+                                    Background="{ThemeResource SystemFillColorAttentionBrush}"
+                                    Command="{x:Bind ViewModel.ModPaneVM.SaveModSettingsCommand}"
+                                    Content="Save"
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}" />
 
                                 <Button
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
-                                    Content="Open Mod Folder..." />
+                                    Command="{x:Bind ViewModel.ModPaneVM.OpenModFolderCommand}"
+                                    Content="Open Mod Folder..."
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}" />
                             </Grid>
                         </Grid>
                     </Grid>
