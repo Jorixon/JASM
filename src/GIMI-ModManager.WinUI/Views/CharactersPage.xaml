@@ -157,7 +157,11 @@
                                 VerticalAlignment="Top"
                                 Glyph="&#xE840;"
                                 Visibility="{x:Bind IsPinned, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
-                            <Image VerticalAlignment="Top" Source="{x:Bind ImageUri}" />
+                            <Image VerticalAlignment="Top">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind ImageUri}" />
+                                </Image.Source>
+                            </Image>
                             <TextBlock
                                 Grid.Row="1"
                                 Margin="{StaticResource XXSmallTopMargin}"
