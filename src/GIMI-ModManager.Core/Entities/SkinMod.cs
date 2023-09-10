@@ -253,6 +253,7 @@ public class SkinMod : Mod, ISkinMod
         if (CachedSkinModSettings is not null && !forceReload)
             return CachedSkinModSettings;
 
+
         if (!File.Exists(_configFilePath))
             return new SkinModSettings();
 
@@ -286,9 +287,18 @@ public class SkinMod : Mod, ISkinMod
         // Delete old image
         if (!string.IsNullOrWhiteSpace(CachedSkinModSettings?.ImagePath))
         {
-            var oldImagePath = Path.Combine(FullPath, CachedSkinModSettings.ImagePath);
-            if (File.Exists(oldImagePath))
-                File.Delete(oldImagePath);
+            if (Uri.TryCreate(CachedSkinModSettings.ImagePath, UriKind.Absolute, out var imagePath))
+            {
+                var oldImagePath = imagePath.LocalPath;
+                if (File.Exists(oldImagePath))
+                    File.Delete(oldImagePath);
+            }
+            else
+            {
+                var oldImagePath = Path.Combine(FullPath, CachedSkinModSettings.ImagePath);
+                if (File.Exists(oldImagePath))
+                    File.Delete(oldImagePath);
+            }
         }
 
 
@@ -309,7 +319,10 @@ public class SkinMod : Mod, ISkinMod
             return;
 
         if (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath) &&
-            CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath)
+            CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath
+            ||
+            (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath) &&
+             Uri.IsWellFormedUriString(skinModSettings.ImagePath, UriKind.Absolute)))
             await CopyAndSetModImage(skinModSettings);
 
         var options = new JsonSerializerOptions

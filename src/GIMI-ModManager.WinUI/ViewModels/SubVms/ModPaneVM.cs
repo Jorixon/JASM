@@ -228,7 +228,7 @@ public partial class ModPaneVM : ObservableRecipient
 
         if (!errored)
             _notificationManager.ShowNotification("Mod settings saved",
-                $"Settings saved for {SelectedModModel.Name}", TimeSpan.FromSeconds(5));
+                $"Settings saved for {SelectedModModel.Name}", TimeSpan.FromSeconds(2));
     }
 
     private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
