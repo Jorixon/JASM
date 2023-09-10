@@ -211,6 +211,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         var mod = skinEntry.Mod;
         _mods.Remove(skinEntry);
         mod.Delete(moveToRecycleBin);
+        _logger?.Information("{Operation} mod {ModName} from {CharacterName} modList", moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.DisplayName);
     }
 
     public bool IsMultipleModsActive(bool perSkin = false)
