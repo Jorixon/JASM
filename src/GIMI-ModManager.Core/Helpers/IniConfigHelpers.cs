@@ -45,7 +45,6 @@ public static class IniConfigHelpers
 
         split[1] = string.Join("", split.Skip(1));
         return split[1].Trim();
-
     }
 
     public static string? GetIniKey(string line)
@@ -61,12 +60,17 @@ public static class IniConfigHelpers
     public static bool IsSection(string line, string? sectionKey = null)
     {
         line = line.Trim();
-        if (!line.StartsWith("[") && !line.EndsWith("]"))
-            return false;
+        if (sectionKey is null && line.StartsWith("[") && line.EndsWith("]"))
+            return true;
 
+        if (sectionKey is not null && line.Equals($"[{sectionKey}]", StringComparison.CurrentCultureIgnoreCase))
+            return true;
 
-        return sectionKey is null || line.Equals($"[{sectionKey}]", StringComparison.CurrentCultureIgnoreCase) ||
-               line.Equals($"{sectionKey}", StringComparison.CurrentCultureIgnoreCase);
+        if (sectionKey is not null && (sectionKey.StartsWith("[") && sectionKey.EndsWith("]")) &&
+            line.Equals(sectionKey, StringComparison.CurrentCultureIgnoreCase))
+            return true;
+
+        return false;
     }
 
     public static bool IsIniKey(string line, string key) =>

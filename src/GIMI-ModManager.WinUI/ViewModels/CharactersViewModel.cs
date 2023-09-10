@@ -61,7 +61,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         };
     }
 
-    public int? AutoSuggestBox_TextChanged(string text)
+    private readonly CharacterGridItemModel _noCharacterFound =
+        new(new() { Id = -999999, DisplayName = "No Characters Found..." });
+
+    public void AutoSuggestBox_TextChanged(string text)
     {
         _searchText = text;
         SuggestionsBox.Clear();
@@ -70,41 +73,37 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             SuggestionsBox.Clear();
             ResetContent();
-            return null;
+            return;
         }
 
-        var suitableItems = new List<CharacterGridItemModel>();
-        var splitText = _searchText.Split(" ");
-        foreach (var character in _characters.Select(ch => new CharacterGridItemModel(ch)))
-        {
-            var found = splitText.Any((key) =>
-            {
-                return character.Character.Keys.Any(characterKeys =>
-                    characterKeys.Contains(key, StringComparison.CurrentCultureIgnoreCase));
-            });
-            if (found)
-            {
-                suitableItems.Add(character);
-            }
-        }
+        var suitableItems = _genshinService.GetCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
+            .Take(5)
+            .Select(x => new CharacterGridItemModel(x.Key))
+            .ToList();
+
 
         if (!suitableItems.Any())
         {
+            SuggestionsBox.Add(_noCharacterFound);
             ResetContent();
-            return 0;
+            return;
         }
 
         suitableItems.ForEach(suggestion => SuggestionsBox.Add(suggestion));
 
         ShowOnlyCharacters(suitableItems);
-        return suitableItems.Count;
     }
 
 
-    public void SuggestionBox_Chosen(CharacterGridItemModel character)
+    public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
+        if (character == _noCharacterFound || character is null)
+            return false;
+
+
         _navigationService.SetListDataItemForNextConnectedAnimation(character);
         _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
+        return true;
     }
 
     //private void ResetContent()
@@ -243,10 +242,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ShowOnlyCharacters(IEnumerable<CharacterGridItemModel> charactersToShow, bool hardClear = false)
     {
-        var tmpList = new List<CharacterGridItemModel>(Characters);
+        var tmpList = new List<CharacterGridItemModel>(_characters.Select(ch => new CharacterGridItemModel(ch)));
 
-        if (hardClear)
-            tmpList = new List<CharacterGridItemModel>(_characters.Select(ch => new CharacterGridItemModel(ch)));
 
         var characters = tmpList.Where(charactersToShow.Contains).ToArray();
 

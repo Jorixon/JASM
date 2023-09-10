@@ -430,9 +430,9 @@
                                 <Grid Grid.Column="1" Visibility="{x:Bind ViewModel.ModPaneVM.SelectedModModel.IsEnabled, Mode=OneWay}">
 
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
                                     <Border
@@ -440,9 +440,10 @@
                                         Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
                                         CornerRadius="10">
                                         <TextBlock
+                                            Padding="4,0"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Text="Mod: Enabled" />
+                                            Text="Mod Enabled" />
                                     </Border>
 
                                 </Grid>
