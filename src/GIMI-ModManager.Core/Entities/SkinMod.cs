@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using FuzzySharp.Utils;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Helpers;
@@ -81,29 +82,48 @@ public class SkinMod : Mod, ISkinMod
         List<string> keySwapLines = new();
         List<SkinModKeySwap> keySwaps = new();
         var keySwapBlockStarted = false;
+        var currentLine = -1;
+        var sectionLine = string.Empty;
         await foreach (var line in File.ReadLinesAsync(_modIniPath, cancellationToken))
         {
-            if (IniConfigHelpers.IsSection(line, "[KeySwap]") && keySwapBlockStarted ||
+            currentLine++;
+            if (line.Trim().StartsWith(";") || string.IsNullOrWhiteSpace(line))
+                continue;
+
+            if (IniConfigHelpers.IsSection(line) && keySwapBlockStarted ||
                 keySwapBlockStarted && keySwapLines.Count > 9)
             {
                 keySwapBlockStarted = false;
-                var keySwap = IniConfigHelpers.ParseKeySwap(keySwapLines);
+
+                var keySwap = IniConfigHelpers.ParseKeySwap(keySwapLines, sectionLine);
                 if (keySwap is not null)
                     keySwaps.Add(keySwap);
                 keySwapLines.Clear();
+
+                if (IniConfigHelpers.IsSection(line))
+                {
+                    sectionLine = line;
+                    keySwapBlockStarted = true;
+                }
+                else
+                    sectionLine = string.Empty;
+
+
                 continue;
             }
 
-            if (IniConfigHelpers.IsSection(line, "[KeySwap]"))
+            if (IniConfigHelpers.IsSection(line))
             {
                 keySwapBlockStarted = true;
+                sectionLine = line;
                 continue;
             }
 
-            if (keySwapLines.Count > 10 && !line.StartsWith("[KeySwap]", StringComparison.CurrentCultureIgnoreCase) &&
+            if (keySwapLines.Count > 10 && !IniConfigHelpers.IsSection(line) &&
                 keySwapBlockStarted)
             {
                 keySwapBlockStarted = false;
+                sectionLine = string.Empty;
                 keySwapLines.Clear();
                 continue;
             }
@@ -136,7 +156,7 @@ public class SkinMod : Mod, ISkinMod
         if (updatedKeySwaps.Count == 0)
             throw new ArgumentException("No key swaps to save.", nameof(updatedKeySwaps));
 
-        if (updatedKeySwaps.Count != _keySwaps.Count)
+        if (updatedKeySwaps.Count != _keySwaps?.Count)
             throw new ArgumentException("Key swap count mismatch.", nameof(updatedKeySwaps));
 
 
@@ -153,7 +173,8 @@ public class SkinMod : Mod, ISkinMod
         var sectionStartIndexes = new List<int>();
         for (var i = 0; i < fileLines.Count; i++)
         {
-            if (IniConfigHelpers.IsSection(fileLines[i], SkinModKeySwap.KeySwapIniSection))
+            var currentLine = fileLines[i];
+            if (updatedKeySwaps.Any(keySwap => IniConfigHelpers.IsSection(currentLine, keySwap.SectionKey)))
                 sectionStartIndexes.Add(i);
         }
 
@@ -189,29 +210,22 @@ public class SkinMod : Mod, ISkinMod
                     fileLines[j] = value;
                 }
 
-                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.TypeIniKey))
-                {
-                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.TypeIniKey, keySwap.Type);
-                    if (value is null)
-                        continue;
-                    fileLines[j] = value;
-                }
-                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
-                {
-                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.SwapVarIniKey,
-                        string.Join(",", keySwap.SwapVar ?? new string[] { "" }));
-                    if (value is null)
-                        continue;
-                    fileLines[j] = value;
-                }
+                //else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.TypeIniKey))
+                //{
+                //    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.TypeIniKey, keySwap.Type);
+                //    if (value is null)
+                //        continue;
+                //    fileLines[j] = value;
+                //}
+                //else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
+                //{
+                //    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.SwapVarIniKey,
+                //        string.Join(",", keySwap.SwapVar ?? new string[] { "" }));
+                //    if (value is null)
+                //        continue;
+                //    fileLines[j] = value;
+                //}
 
-                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ConditionIniKey))
-                {
-                    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.ConditionIniKey, keySwap.Condition);
-                    if (value is null)
-                        continue;
-                    fileLines[j] = value;
-                }
 
                 else if (IniConfigHelpers.IsSection(line))
                     break;
@@ -294,7 +308,8 @@ public class SkinMod : Mod, ISkinMod
         if (CachedSkinModSettings is not null && skinModSettings.Equals(CachedSkinModSettings))
             return;
 
-        if (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath) && CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath)
+        if (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath) &&
+            CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath)
             await CopyAndSetModImage(skinModSettings);
 
         var options = new JsonSerializerOptions
@@ -329,7 +344,7 @@ public class SkinMod : Mod, ISkinMod
                 {
                     skinModSettings.ImagePath = new Uri(imagePath).ToString();
                     return true;
-                }   
+                }
             }
         }
 
@@ -381,23 +396,48 @@ public class SkinModSettings // "internal set" messes with the json serializer
 // There needs to be a better way to do this
 public class SkinModKeySwap : IEquatable<SkinModKeySwap>
 {
+    public Dictionary<string, string> IniKeyValues { get; } = new();
+
     public const string KeySwapIniSection = "KeySwap";
-    public const string ConditionIniKey = "condition";
-    public string? Condition { get; set; }
+    public string SectionKey { get; set; } = KeySwapIniSection;
+
     public const string ForwardIniKey = "key";
-    public string? ForwardHotkey { get; set; }
+
+    public string? ForwardHotkey
+    {
+        get => IniKeyValues.TryGetValue(ForwardIniKey, out var value) ? value : null;
+        set => IniKeyValues[ForwardIniKey] = value ?? string.Empty;
+    }
+
     public const string BackwardIniKey = "back";
-    public string? BackwardHotkey { get; set; }
+
+    public string? BackwardHotkey
+    {
+        get => IniKeyValues.TryGetValue(BackwardIniKey, out var value) ? value : null;
+        set => IniKeyValues[BackwardIniKey] = value ?? string.Empty;
+    }
+
     public const string TypeIniKey = "type";
-    public string? Type { get; set; }
+
+    public string? Type
+    {
+        get => IniKeyValues.TryGetValue(TypeIniKey, out var value) ? value : null;
+        set => IniKeyValues[TypeIniKey] = value ?? string.Empty;
+    }
+
     public const string SwapVarIniKey = "$swapvar";
     public string[]? SwapVar { get; set; }
+
+    public bool AnyValues()
+    {
+        return !string.IsNullOrWhiteSpace(ForwardHotkey) || !string.IsNullOrWhiteSpace(BackwardHotkey);
+    }
 
     public bool Equals(SkinModKeySwap? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Condition == other.Condition && ForwardHotkey == other.ForwardHotkey &&
+        return ForwardHotkey == other.ForwardHotkey &&
                BackwardHotkey == other.BackwardHotkey && Type == other.Type && Equals(SwapVar, other.SwapVar);
     }
 
@@ -408,6 +448,19 @@ public class SkinModKeySwap : IEquatable<SkinModKeySwap>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Condition, ForwardHotkey, BackwardHotkey, Type, SwapVar);
+        return HashCode.Combine(ForwardHotkey, BackwardHotkey, Type, SwapVar);
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append("Section: ");
+        sb.Append(SectionKey + " | ");
+        foreach (var iniKeyValue in IniKeyValues)
+        {
+            sb.Append($"{iniKeyValue.Key}: {iniKeyValue.Value} | ");
+        }
+
+        return sb.ToString();
     }
 }

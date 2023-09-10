@@ -5,9 +5,12 @@ namespace GIMI_ModManager.Core.Helpers;
 // This class just holds code that i don't know where to put yet.
 public static class IniConfigHelpers
 {
-    public static SkinModKeySwap? ParseKeySwap(ICollection<string> fileLines)
+    public static SkinModKeySwap? ParseKeySwap(ICollection<string> fileLines, string sectionLine)
     {
-        var skinModKeySwap = new SkinModKeySwap();
+        var skinModKeySwap = new SkinModKeySwap
+        {
+            SectionKey = sectionLine.Trim()
+        };
 
         foreach (var line in fileLines)
         {
@@ -23,13 +26,12 @@ public static class IniConfigHelpers
             else if (IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
                 skinModKeySwap.SwapVar = GetIniValue(line)?.Split(',');
 
-            else if (IsIniKey(line, SkinModKeySwap.ConditionIniKey))
-                skinModKeySwap.Condition = GetIniValue(line);
             else if (IsSection(line))
                 break;
         }
 
-        return skinModKeySwap;
+        var result = skinModKeySwap.AnyValues() ? skinModKeySwap : null;
+        return result;
     }
 
     public static string? GetIniValue(string line)
@@ -37,7 +39,13 @@ public static class IniConfigHelpers
         if (IsComment(line)) return null;
 
         var split = line.Split('=');
-        return split.Length != 2 ? null : split[1].Trim();
+
+        if (split.Length <= 2) return split.Length != 2 ? null : split[1].Trim();
+
+
+        split[1] = string.Join("", split.Skip(1));
+        return split[1].Trim();
+
     }
 
     public static string? GetIniKey(string line)

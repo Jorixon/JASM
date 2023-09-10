@@ -291,7 +291,7 @@
                             CornerRadius="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="4*" />
+                                <RowDefinition Height="3*" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -342,7 +342,7 @@
                                     VerticalAlignment="Center"
                                     Header="Mod Url:"
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
-                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=TwoWay}" />
+                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <HyperlinkButton
                                     Grid.Column="1"
@@ -361,19 +361,20 @@
 
                             </StackPanel>
 
-                            <StackPanel
+                            <ScrollViewer
                                 Grid.Row="5"
                                 Margin="0,12,0,0"
-                                HorizontalAlignment="Center">
-                                <ScrollViewer>
+                                Padding="0,0,14,0"
+                                VerticalScrollBarVisibility="Auto">
 
+                                <StackPanel>
                                     <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.SkinModKeySwaps, Mode=OneWay}">
                                         <ItemsRepeater.ItemTemplate>
                                             <DataTemplate x:DataType="models:SkinModKeySwapModel">
                                                 <Grid Margin="0,0">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
                                                     <TextBox
@@ -381,9 +382,10 @@
                                                         HorizontalAlignment="Left"
                                                         Header="Forward Key"
                                                         IsEnabled="{x:Bind ForwardHotkey, Converter={StaticResource ValueToBoolConverter}}"
-                                                        Text="{x:Bind ForwardHotkey, Mode=TwoWay}" />
+                                                        Text="{x:Bind ForwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                        <TextBlock HorizontalAlignment="Center" Text="{x:Bind SectionKey}" />
                                                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                                             <TextBlock Margin="0,0,4,0" Text="Variations: " />
                                                             <TextBlock Text="{x:Bind VariationsCount, Mode=OneWay}" />
@@ -395,15 +397,15 @@
                                                         HorizontalAlignment="Right"
                                                         Header="Backward Key"
                                                         IsEnabled="{x:Bind BackwardHotkey, Converter={StaticResource ValueToBoolConverter}}"
-                                                        Text="{x:Bind BackwardHotkey, Mode=TwoWay}" />
+                                                        Text="{x:Bind BackwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsRepeater.ItemTemplate>
                                     </ItemsRepeater>
-                                </ScrollViewer>
 
-                            </StackPanel>
+                                </StackPanel>
 
+                            </ScrollViewer>
                             <Grid Grid.Row="6" Padding="0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />

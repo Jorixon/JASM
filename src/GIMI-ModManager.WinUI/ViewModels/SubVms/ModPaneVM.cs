@@ -9,6 +9,7 @@ using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services;
+using Serilog;
 using FileAttributes = Windows.Storage.FileAttributes;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -182,18 +183,45 @@ public partial class ModPaneVM : ObservableRecipient
         await Task.Run(async () =>
         {
             var skinModSettings = SelectedModModel.ToModSettings();
-            await _selectedSkinMod.SaveSkinModSettings(skinModSettings, cancellationToken);
+
+            try
+            {
+                await _selectedSkinMod.SaveSkinModSettings(skinModSettings, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    _notificationManager.ShowNotification("Error saving mod settings",
+                        "An error occurred while saving the mod settings. Please check the log for more details.",
+                        TimeSpan.FromSeconds(10));
+                    App.GetService<ILogger>().Error(e, "Error saving mod settings");
+                });
+            }
 
 
             if (!_selectedSkinMod.HasMergedInI || !SelectedModModel.SkinModKeySwaps.Any()) return;
 
             var keySwaps = SelectedModModel.SkinModKeySwaps.Select(x => x.ToKeySwapSettings()).ToList();
-            await _selectedSkinMod.SaveKeySwapConfiguration(keySwaps, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await _selectedSkinMod.SaveKeySwapConfiguration(keySwaps, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    _notificationManager.ShowNotification("Error saving key swap configuration",
+                        "An error occured while saving the key swap configuration. Please check the log for more details.",
+                        TimeSpan.FromSeconds(10));
+                    App.GetService<ILogger>().Error(e, "Error saving key swap configuration");
+                });
+            }
         }, cancellationToken);
 
         IsReadOnlyMode = false;
         await ReloadModSettings(CancellationToken.None).ConfigureAwait(false);
     }
 
-    private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
+    public void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
 }

@@ -5,23 +5,25 @@ namespace GIMI_ModManager.WinUI.Models;
 
 public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModKeySwapModel>
 {
+    [ObservableProperty] private string _sectionKey = string.Empty;
+
     [ObservableProperty] private string? _condition;
     [ObservableProperty] private string? _forwardHotkey;
     [ObservableProperty] private string? _backwardHotkey;
     [ObservableProperty] private string? _type;
     [ObservableProperty] private string[]? _swapVar;
-    [ObservableProperty] private int _variationsCount;
+    [ObservableProperty] private string _variationsCount;
 
     public static SkinModKeySwapModel FromKeySwapSettings(SkinModKeySwap skinSwapSetting)
     {
         return new SkinModKeySwapModel
         {
-            Condition = skinSwapSetting.Condition,
+            SectionKey = skinSwapSetting.SectionKey,
             ForwardHotkey = skinSwapSetting.ForwardHotkey,
             BackwardHotkey = skinSwapSetting.BackwardHotkey,
             Type = skinSwapSetting.Type,
             SwapVar = skinSwapSetting.SwapVar,
-            VariationsCount = skinSwapSetting.SwapVar?.Length ?? 0
+            VariationsCount = skinSwapSetting.SwapVar?.Length.ToString() ?? "Unknown"
         };
     }
 
@@ -32,7 +34,7 @@ public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModK
     {
         return new()
         {
-            Condition = Condition,
+            SectionKey = SectionKey,
             ForwardHotkey = ForwardHotkey,
             BackwardHotkey = BackwardHotkey,
             Type = Type,
