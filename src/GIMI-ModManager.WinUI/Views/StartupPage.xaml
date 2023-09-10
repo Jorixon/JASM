@@ -33,17 +33,33 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="As part of the first time setup you will need to select Genshin-Impact-Model-Importer (GIMI) folder and a Mods folder. The GIMI/3dmigoto folder contains 3DMigoto Loader.exe and a Mods folder."
-                        TextWrapping="WrapWholeWords" />
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="WrapWholeWords">
+                            <TextBlock.Text>
+                                As part of the first time setup you will need to select Genshin-Impact-Model-Importer (GIMI) folder and its connected Mods folder.
+                                The GIMI/3dmigoto folder contains 3DMigoto Loader.exe and a Mods folder. If you have not set up GIMI yet, please do so now, see link below.
+                                I find most mods on Gamebanana but Nexusmods also has some.
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+
+                            <HyperlinkButton NavigateUri="https://github.com/SilentNightSound/GI-Model-Importer">Genshin-Impact-Model-Importer (Github)</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="https://gamebanana.com/games/8552">GameBanana</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="https://www.nexusmods.com/genshinimpact">Nexusmods</HyperlinkButton>
+                        </StackPanel>
+
+                    </StackPanel>
                     <TextBlock
                         Grid.Row="1"
                         Margin="0,8,0,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="Once the settings are saved the application will create a mod folder for each character within the Mods folder. This application enables and disables mods by prefixing mod folders with 'DISABLED_'."
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords">
+                        <TextBlock.Text>
+                            Once the settings are saved the application will create a mod folder for each character within the Mods folder.
+                            This application enables and disables mods by prefixing mod folders with 'DISABLED_'.
+                            JASM also supports exporting Mods managed by it if you wish to use them with other applications.
+                        </TextBlock.Text>
+                    </TextBlock>
 
                     <TextBlock
                         Grid.Row="2"
