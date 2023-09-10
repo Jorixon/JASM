@@ -251,7 +251,7 @@ public class SkinMod : Mod, ISkinMod
         var skinModSettings =
             JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
 
-        ImageExists(skinModSettings);
+        SetAbsoluteImagePath(skinModSettings);
 
         CachedSkinModSettings = skinModSettings;
 
@@ -313,7 +313,7 @@ public class SkinMod : Mod, ISkinMod
     /// <summary>
     /// This checks that the image path is a valid absolute path or a valid relative path to the mod folder. Also updates the image path if it's relative.
     /// </summary>
-    private bool ImageExists(SkinModSettings skinModSettings)
+    private bool SetAbsoluteImagePath(SkinModSettings skinModSettings)
     {
         if (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath))
         {
@@ -327,7 +327,7 @@ public class SkinMod : Mod, ISkinMod
                 var imagePath = Path.Combine(FullPath, skinModSettings.ImagePath);
                 if (File.Exists(imagePath))
                 {
-                    skinModSettings.ImagePath = imagePath;
+                    skinModSettings.ImagePath = new Uri(imagePath).ToString();
                     return true;
                 }   
             }
