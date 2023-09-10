@@ -243,13 +243,13 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(destinationFolder.FullName));
                     mod.Rename(oldName);
-                    _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
+                    _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name, characterSkinEntry.ModList.Character.DisplayName);
 
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
-                _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
+                _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name, characterSkinEntry.ModList.Character.DisplayName);
             }
 
             ModExportProgress?.Invoke(this,
