@@ -11,6 +11,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     public string AbsModsFolderPath { get; }
     private readonly List<CharacterSkinEntry> _mods = new();
     public const string DISABLED_PREFIX = "DISABLED_";
+    public const string ALT_DISABLED_PREFIX = "DISABLED";
     public string DisabledPrefix => DISABLED_PREFIX;
     private readonly FileSystemWatcher _watcher;
     public GenshinCharacter Character { get; }
@@ -130,7 +131,14 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             if (!mod.Name.StartsWith(DISABLED_PREFIX))
                 throw new InvalidOperationException("Cannot enable a enabled mod");
 
-            mod.Rename(mod.Name.Replace(DISABLED_PREFIX, ""));
+            var newName = mod.Name.Replace(DISABLED_PREFIX, "");
+
+            newName = newName.Replace(ALT_DISABLED_PREFIX, "");
+
+
+            mod.Rename(newName);
+
+
             _mods.First(m => m.Mod == mod).IsEnabled = true;
         }
         finally
@@ -203,6 +211,11 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         var mod = skinEntry.Mod;
         _mods.Remove(skinEntry);
         mod.Delete(moveToRecycleBin);
+    }
+
+    public bool IsMultipleModsActive(bool perSkin = false)
+    {
+        return _mods.Count(mod => mod.IsEnabled) > 1;
     }
 }
 

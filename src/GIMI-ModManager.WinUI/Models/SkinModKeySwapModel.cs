@@ -10,6 +10,7 @@ public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModK
     [ObservableProperty] private string? _backwardHotkey;
     [ObservableProperty] private string? _type;
     [ObservableProperty] private string[]? _swapVar;
+    [ObservableProperty] private int _variationsCount;
 
     public static SkinModKeySwapModel FromKeySwapSettings(SkinModKeySwap skinSwapSetting)
     {
@@ -19,7 +20,8 @@ public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModK
             ForwardHotkey = skinSwapSetting.ForwardHotkey,
             BackwardHotkey = skinSwapSetting.BackwardHotkey,
             Type = skinSwapSetting.Type,
-            SwapVar = skinSwapSetting.SwapVar
+            SwapVar = skinSwapSetting.SwapVar,
+            VariationsCount = skinSwapSetting.SwapVar?.Length ?? 0
         };
     }
 

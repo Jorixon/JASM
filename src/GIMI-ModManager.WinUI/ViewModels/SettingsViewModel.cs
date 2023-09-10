@@ -467,6 +467,7 @@ public partial class SettingsViewModel : ObservableRecipient
             {
                 _skinManagerService.ExportMods(modsList, folder.Path, removeLocalJasmSettings: model.RemoveJasmSettings, zip: false, keepCharacterFolderStructure: model.KeepFolderStructure, setModStatus: model.SetModStatus);
             });
+            _notificationManager.ShowNotification("Mods exported", $"Mods exported to {folder.Path}", TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
         {

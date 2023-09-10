@@ -52,8 +52,6 @@ public class SkinMod : Mod, ISkinMod
     public void Refresh()
     {
         _modDirectory.Refresh();
-        if (!IsValidFolder())
-            throw new InvalidOperationException("Mod folder is no longer valid.");
 
         _configFilePath = Path.Combine(FullPath, configFileName);
         _modIniPath = Path.Combine(FullPath, ModIniName);

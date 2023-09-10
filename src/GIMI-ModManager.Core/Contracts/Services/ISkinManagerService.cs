@@ -1,16 +1,19 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Services;
 
 namespace GIMI_ModManager.Core.Contracts.Services;
 
-public interface ISkinManagerService
+public interface ISkinManagerService : IDisposable
 {
     public string UnloadedModsFolderPath { get; }
     public string ActiveModsFolderPath { get; }
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     public void ScanForMods();
     public ICharacterModList GetCharacterModList(GenshinCharacter character);
-    public void Initialize(string activeModsFolderPath, string? unloadedModsFolderPath);
+
+    public void Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
+        string? threeMigotoRootfolder = null);
 
     /// <summary>
     /// 
@@ -25,6 +28,8 @@ public interface ISkinManagerService
     public void RefreshMods(GenshinCharacter? refreshForCharacter = null);
 
     public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
+
+    public Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId);
 
     /// <summary>
     /// Exports mods to a user specified folder.

@@ -34,9 +34,21 @@ public static class IniConfigHelpers
 
     public static string? GetIniValue(string line)
     {
+        if (IsComment(line)) return null;
+
         var split = line.Split('=');
         return split.Length != 2 ? null : split[1].Trim();
     }
+
+    public static string? GetIniKey(string line)
+    {
+        if (IsComment(line)) return null;
+
+        var split = line.Split('=');
+        return split.Length != 2 ? split.FirstOrDefault()?.Trim() : split[0].Trim();
+    }
+
+    public static bool IsComment(string line) => line.Trim().StartsWith(";");
 
     public static bool IsSection(string line, string? sectionKey = null)
     {
@@ -45,7 +57,8 @@ public static class IniConfigHelpers
             return false;
 
 
-        return sectionKey is null || line.Equals($"[{sectionKey}]", StringComparison.CurrentCultureIgnoreCase) || line.Equals($"{sectionKey}", StringComparison.CurrentCultureIgnoreCase);
+        return sectionKey is null || line.Equals($"[{sectionKey}]", StringComparison.CurrentCultureIgnoreCase) ||
+               line.Equals($"{sectionKey}", StringComparison.CurrentCultureIgnoreCase);
     }
 
     public static bool IsIniKey(string line, string key) =>

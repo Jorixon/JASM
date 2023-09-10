@@ -62,7 +62,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             await ModPaneVM.LoadMod(selectedMod);
         };
 
-        ModPaneVM = new(skinManagerService);
+        ModPaneVM = new(skinManagerService, notificationService);
     }
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)

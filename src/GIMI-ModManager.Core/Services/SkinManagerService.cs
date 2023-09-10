@@ -4,18 +4,21 @@ using System.Runtime.CompilerServices;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
 
-public class SkinManagerService : ISkinManagerService
+public sealed class SkinManagerService : ISkinManagerService
 {
     private readonly IGenshinService _genshinService;
     private readonly ILogger _logger;
 
     private DirectoryInfo _unloadedModsFolder = null!;
     private DirectoryInfo _activeModsFolder = null!;
+    private DirectoryInfo? _threeMigotoFolder;
 
+    private FileSystemWatcher _userIniWatcher = null!;
     private readonly List<ICharacterModList> _characterModLists = new();
     public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
 
@@ -311,7 +314,8 @@ public class SkinManagerService : ISkinManagerService
     }
 
 
-    public void Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null)
+    public void Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null,
+        string? threeMigotoRootfolder = null)
     {
         _logger.Debug(
             "Initializing ModManagerService, activeModsFolderPath: {ActiveModsFolderPath}, unloadedModsFolderPath: {UnloadedModsFolderPath}",
@@ -321,6 +325,20 @@ public class SkinManagerService : ISkinManagerService
             _unloadedModsFolder = new DirectoryInfo(unloadedModsFolderPath);
             _unloadedModsFolder.Create();
             UnloadingModsEnabled = true;
+        }
+
+        if (threeMigotoRootfolder is not null)
+        {
+            _threeMigotoFolder = new DirectoryInfo(threeMigotoRootfolder);
+            _threeMigotoFolder.Refresh();
+            if (!_threeMigotoFolder.Exists)
+                throw new InvalidOperationException("3DMigoto folder does not exist");
+
+            //_userIniWatcher = new FileSystemWatcher(_threeMigotoFolder.FullName, D3DX_USER_INI);
+            //_userIniWatcher.Changed += OnUserIniChanged;
+            //_userIniWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            //_userIniWatcher.IncludeSubdirectories = false;
+            //_userIniWatcher.EnableRaisingEvents = true;
         }
 
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
@@ -413,4 +431,73 @@ public class SkinManagerService : ISkinManagerService
     {
         return Path.Combine(_activeModsFolder.FullName, character.DisplayName);
     }
+
+
+    private void OnUserIniChanged(object sender, FileSystemEventArgs e)
+    {
+        _logger.Debug("d3dx_user.ini was changed");
+        UserIniChanged?.Invoke(this, new UserIniChanged());
+    }
+
+    public event EventHandler<UserIniChanged>?  UserIniChanged;
+
+    private const string D3DX_USER_INI = "d3dx_user.ini";
+    public async Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId)
+    {
+        if (_threeMigotoFolder is null || !_threeMigotoFolder.Exists)
+            return "3DMigoto folder not set";
+
+        var characterSkinEntry = _characterModLists.SelectMany(x => x.Mods)
+            .FirstOrDefault(x => x.Id == characterSkinEntryId);
+        if (characterSkinEntry is null)
+            throw new InvalidOperationException(
+                $"CharacterSkinEntry with id {characterSkinEntryId} was not found in any character mod list");
+
+        var mod = characterSkinEntry.Mod;
+
+
+        var d3dxUserIni = new FileInfo(Path.Combine(_threeMigotoFolder.FullName, D3DX_USER_INI));
+        if (!d3dxUserIni.Exists)
+        {
+            _logger.Debug("d3dx_user.ini does not exist in 3DMigoto folder");
+            return "Unknown";
+        }
+
+        var lines = await File.ReadAllLinesAsync(d3dxUserIni.FullName);
+
+        var sectionStarted = false;
+        var returnVar = "Unknown";
+        foreach (var line in lines)
+        {
+            if (IniConfigHelpers.IsComment(line)) continue;
+            if (IniConfigHelpers.IsSection(line, "Constants"))
+            {
+                sectionStarted = true;
+                continue;
+            }
+
+            if (!sectionStarted) continue;
+            if (IniConfigHelpers.IsSection(line)) break;
+
+            var iniKey = IniConfigHelpers.GetIniKey(line);
+            if (iniKey is null || !iniKey.EndsWith("swapvar", StringComparison.CurrentCultureIgnoreCase)) continue;
+
+            if (!iniKey.Contains(mod.Name.ToLower())) continue;
+
+            returnVar = IniConfigHelpers.GetIniValue(line) ?? "Unknown";
+            break;
+        }
+
+        return returnVar;
+    }
+
+    public void Dispose()
+    {
+        _userIniWatcher.Dispose();
+    }
+}
+
+public class UserIniChanged : EventArgs
+{
+
 }

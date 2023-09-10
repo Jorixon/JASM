@@ -8,12 +8,15 @@ using GIMI_ModManager.WinUI.Models;
 using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Services;
+using FileAttributes = Windows.Storage.FileAttributes;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
 public partial class ModPaneVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
+    private readonly NotificationManager _notificationManager;
     private ISkinMod _selectedSkinMod = null!;
     private ICharacterModList _modList = null!;
 
@@ -23,9 +26,10 @@ public partial class ModPaneVM : ObservableRecipient
     [ObservableProperty] private bool _isReadOnlyMode = true;
 
 
-    public ModPaneVM(ISkinManagerService skinManagerService)
+    public ModPaneVM(ISkinManagerService skinManagerService, NotificationManager notificationManager)
     {
         _skinManagerService = skinManagerService;
+        _notificationManager = notificationManager;
     }
 
     public async Task LoadMod(NewModModel modModel, CancellationToken cancellationToken = default)
@@ -107,7 +111,7 @@ public partial class ModPaneVM : ObservableRecipient
         SelectedModModel.ImagePath = imageUri.ToString();
     }
 
-    public void SetImageFromDragDrop(IReadOnlyList<IStorageItem> items)
+    public Task SetImageFromDragDropFile(IReadOnlyList<IStorageItem> items)
     {
         foreach (var storageItem in items)
         {
@@ -115,9 +119,51 @@ public partial class ModPaneVM : ObservableRecipient
 
             if (_supportedImageExtensions.Contains(Path.GetExtension(file.Name)))
             {
-                SelectedModModel.ImagePath = new Uri(file.Path).ToString();
+                Uri.TryCreate(file.Path, UriKind.Absolute, out var imageUri);
+
+                if (imageUri is null)
+                {
+                    _notificationManager.ShowNotification("Error setting image",
+                        "Could not set image, invalid Uri. Drag and drop can be unreliable in certain situations",
+                        TimeSpan.FromSeconds(5));
+                    return Task.CompletedTask;
+                }
+
+                SelectedModModel.ImagePath = imageUri.ToString();
             }
         }
+
+        return Task.CompletedTask;
+    }
+
+    public async Task SetImageFromDragDropWeb(Uri? url)
+    {
+        if (url is null || !url.IsAbsoluteUri || (url.Scheme != Uri.UriSchemeHttps && url.Scheme != Uri.UriSchemeHttp))
+        {
+            _notificationManager.ShowNotification("Error setting image",
+                "Could not set image, invalid Uri. Drag and drop can be unreliable in certain situations",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        var tmpDir = App.TMP_DIR;
+
+        var tmpFile = Path.Combine(tmpDir, $"WEB_DROP_{Guid.NewGuid():N}{Path.GetExtension(url.ToString())}");
+
+        await Task.Run(async () =>
+        {
+            if (!Directory.Exists(tmpDir))
+                Directory.CreateDirectory(tmpDir);
+
+            var client = new HttpClient();
+            var responseStream = await client.GetStreamAsync(url);
+            await using var fileStream = File.Create(tmpFile);
+            await responseStream.CopyToAsync(fileStream);
+        });
+
+
+        var imageUri = new Uri(tmpFile);
+        SelectedModModel.ImagePath = imageUri.ToString();
     }
 
 

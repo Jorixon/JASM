@@ -43,24 +43,31 @@ public interface ICharacterModList
 
     public void SetCustomModName(Guid modId, string newName);
 
+    public bool IsMultipleModsActive(bool perSkin = false);
+
+
     /// <summary>
     /// When folders are added, removed or renamed from the mod folder, this event is fired.
     /// </summary>
     public event EventHandler<ModFolderChangedArgs>? ModsChanged;
+
     /// <summary>
     /// Returns a disposable DisableWatcher that disables the watcher for this mod list until it is disposed.
     /// </summary>
     /// <returns></returns>
     public DisableWatcher DisableWatcher();
+
     /// <summary>
     /// Checks to see if a folder already exists in the mods folder. With our without the disabled prefix.
     /// </summary>
     /// <param name="folderName"></param>
     /// <returns>True if a folder already exists</returns>
     public bool FolderAlreadyExists(string folderName);
+
     /// <summary>
     /// Permanently deletes a mod from the mod list. This deletes entire mod from the mod folder.
     /// </summary>
     public void DeleteMod(Guid modId, bool moveToRecycleBin = true);
+
     public void DeleteModBySkinEntryId(Guid skinEntryId, bool moveToRecycleBin = true);
 }

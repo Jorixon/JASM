@@ -17,6 +17,7 @@ using Serilog;
 using GIMI_ModManager.WinUI.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -364,12 +365,19 @@ public sealed partial class CharacterDetailsPage : Page
         e.AcceptedOperation = DataPackageOperation.Copy;
     }
 
-    private async void UIElement_OnDrop(object sender, DragEventArgs e)
+    private async void ModDetailsPaneImage_OnDrop(object sender, DragEventArgs e)
     {
-        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        var deferral = e.GetDeferral();
+        if (e.DataView.Contains(StandardDataFormats.Uri))
         {
-            ViewModel.ModPaneVM.SetImageFromDragDrop(await e.DataView.GetStorageItemsAsync());
+            var uri = await e.DataView.GetUriAsync();
+            await ViewModel.ModPaneVM.SetImageFromDragDropWeb(uri);
         }
-    }
+        else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await e.DataView.GetStorageItemsAsync());
+        }
 
+        deferral.Complete();
+    }
 }

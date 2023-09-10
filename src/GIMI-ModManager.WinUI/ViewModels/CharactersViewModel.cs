@@ -317,6 +317,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         foreach (var characterGridItemModel in Characters.Where(x =>
                      charactersWithMultipleActiveSkins.Contains(x.Character.Id)))
         {
+            if (characterGridItemModel.Character.Id == _genshinService.OtherCharacterId ||
+                characterGridItemModel.Character.Id == _genshinService.GlidersCharacterId)
+                continue;
+
             characterGridItemModel.Warning = true;
         }
 
