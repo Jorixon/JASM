@@ -109,7 +109,7 @@ public partial class ModPaneVM : ObservableRecipient
 
         if (file == null) return;
         var imageUri = new Uri(file.Path);
-        SelectedModModel.ImagePath = imageUri.ToString();
+        SelectedModModel.ImagePath = imageUri;
     }
 
     public Task SetImageFromDragDropFile(IReadOnlyList<IStorageItem> items)
@@ -130,7 +130,7 @@ public partial class ModPaneVM : ObservableRecipient
                     return Task.CompletedTask;
                 }
 
-                SelectedModModel.ImagePath = imageUri.ToString();
+                SelectedModModel.ImagePath = imageUri;
             }
         }
 
@@ -164,7 +164,7 @@ public partial class ModPaneVM : ObservableRecipient
 
 
         var imageUri = new Uri(tmpFile);
-        SelectedModModel.ImagePath = imageUri.ToString();
+        SelectedModModel.ImagePath = imageUri;
     }
 
 

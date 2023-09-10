@@ -18,7 +18,8 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _modUrl = string.Empty;
     [ObservableProperty] private string _modVersion = string.Empty;
-    [ObservableProperty] private string _imagePath = " ";
+
+    [ObservableProperty] private Uri _imagePath = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
     [ObservableProperty] private string _author = string.Empty;
 
     public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } =
@@ -61,7 +62,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     {
         ModUrl = settings.ModUrl ?? string.Empty;
         ModVersion = settings.Version ?? string.Empty;
-        ImagePath = string.IsNullOrEmpty(settings.ImagePath) ? " " : settings.ImagePath;
+        ImagePath = new Uri(string.IsNullOrEmpty(settings.ImagePath) ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp") : settings.ImagePath, UriKind.Absolute);
         Author = settings.Author ?? string.Empty;
         return this;
     }
@@ -73,7 +74,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
             Author = Author,
             Version = ModVersion,
             ModUrl = ModUrl,
-            ImagePath = ImagePath
+            ImagePath = ImagePath.ToString()
         };
 
     public void SetKeySwaps(IEnumerable<SkinModKeySwap> keySwaps)

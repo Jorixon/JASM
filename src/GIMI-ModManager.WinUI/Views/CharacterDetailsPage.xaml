@@ -315,7 +315,11 @@
                                 DragEnter="ModDetailsPaneImage_OnDragEnter"
                                 DragOver="ModDetailsPaneImage_OnDragOver"
                                 Drop="ModDetailsPaneImage_OnDrop">
-                                <Image Source="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ImagePath, Mode=OneWay}" Stretch="Uniform" />
+                                <Image Stretch="Uniform">
+                                    <Image.Source>
+                                        <BitmapImage CreateOptions="IgnoreImageCache" UriSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ImagePath, Mode=OneWay}" />
+                                    </Image.Source>
+                                </Image>
                                 <Button
                                     Margin="0,20,20,0"
                                     HorizontalAlignment="Right"
