@@ -418,7 +418,9 @@ public partial class SettingsViewModel : ObservableRecipient
     }
 
     [ObservableProperty] private bool _exportingMods = false;
-
+    [ObservableProperty] private int _exportProgress = 0;
+    [ObservableProperty] private string _exportProgressText = string.Empty;
+    [ObservableProperty] private string? _currentModName;
     [RelayCommand]
     private async Task ExportMods(ContentDialog contentDialog)
     {
@@ -463,6 +465,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
         try
         {
+            _skinManagerService.ModExportProgress += HandleProgressEvent;
             await Task.Run(() =>
             {
                 _skinManagerService.ExportMods(modsList, folder.Path, removeLocalJasmSettings: model.RemoveJasmSettings, zip: false, keepCharacterFolderStructure: model.KeepFolderStructure, setModStatus: model.SetModStatus);
@@ -476,9 +479,20 @@ public partial class SettingsViewModel : ObservableRecipient
         }
         finally
         {
+            _skinManagerService.ModExportProgress -= HandleProgressEvent;
             ExportingMods = false;
             _navigationViewService.IsEnabled = true;
         }
+    }
+
+    private void HandleProgressEvent(object? sender, ExportProgress args)
+    {
+        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            ExportProgress = args.Progress;
+            ExportProgressText = args.Operation;
+            CurrentModName = args.ModName;
+        });
     }
 }
 

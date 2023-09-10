@@ -44,6 +44,9 @@ public interface ISkinManagerService : IDisposable
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
         bool removeLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false,
         SetModStatus setModStatus = SetModStatus.KeepCurrent);
+
+    public event EventHandler<ExportProgress>? ModExportProgress;
+
 }
 
 public enum SetModStatus

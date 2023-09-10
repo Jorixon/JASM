@@ -211,7 +211,17 @@
                         </StackPanel>
 
                     </Button>
-                    <ProgressRing Margin="12,0" IsActive="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" />
+                    <ProgressRing
+                        Margin="12,0"
+                        IsActive="{x:Bind ViewModel.ExportingMods, Mode=OneWay}"
+                        IsIndeterminate="False"
+                        Maximum="100"
+                        Value="{x:Bind ViewModel.ExportProgress, Mode=OneWay}" />
+                    <TextBlock
+                        Margin="0,0,8,0"
+                        Text="{x:Bind ViewModel.ExportProgressText, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind ViewModel.CurrentModName, Mode=OneWay}" Visibility="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" />
                 </StackPanel>
 
 

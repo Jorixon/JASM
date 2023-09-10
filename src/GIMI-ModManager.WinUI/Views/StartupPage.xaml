@@ -117,10 +117,22 @@
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
                                 <StackPanel>
+
                                     <TextBlock
+                                        Margin="0,8,0,4"
                                         Style="{ThemeResource BodyTextBlockStyle}"
-                                        Text="Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters. Any mods that can't be reasonably matched will be placed in an 'Others' folder."
-                                        TextWrapping="WrapWholeWords" />
+                                        TextWrapping="WrapWholeWords">
+                                        <TextBlock.Text>
+                                            Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters.
+                                            Any mods that can't be reasonably matched will be placed in an 'Others' folder.
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="WrapWholeWords">
+                                        <TextBlock.Text>
+                                            A mod folder containing multiple character names may be wrongly moved to a character's directory.
+                                        </TextBlock.Text>
+                                    </TextBlock>
 
                                     <TextBlock
                                         Margin="0,8,0,4"

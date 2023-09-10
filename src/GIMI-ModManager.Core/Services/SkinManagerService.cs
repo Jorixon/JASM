@@ -132,6 +132,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
+    public event EventHandler<ExportProgress>? ModExportProgress;
 
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
         bool removeLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false,
@@ -158,6 +159,10 @@ public sealed class SkinManagerService : ISkinManagerService
             modsToExport.AddRange(characterModList.Mods);
         }
 
+        var modsProgress = 0;
+        var divider = modsToExport.Count + (removeLocalJasmSettings ? 1 : 0) +
+                      (setModStatus != SetModStatus.KeepCurrent ? 1 : 0);
+        var modsProgressIncrement = 100 / divider;
 
         if (!keepCharacterFolderStructure && !zip) // Copy mods unorganized
         {
@@ -165,6 +170,9 @@ public sealed class SkinManagerService : ISkinManagerService
             foreach (var characterSkinEntry in modsToExport)
             {
                 var mod = characterSkinEntry.Mod;
+                ModExportProgress?.Invoke(this,
+                    new(modsProgress += modsProgressIncrement, mod.Name, "Copying Folders"));
+
                 if (CheckForDuplicates(exportFolder, mod)) // Handle duplicate mod names
                 {
                     _logger.Warning("Mod '{ModName}' already exists in export folder, appending GUID to folder name",
@@ -173,17 +181,24 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(exportFolder.FullName));
                     mod.Rename(oldName);
+                    _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(exportFolder.FullName));
+                _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
             }
 
+            ModExportProgress?.Invoke(this,
+                new(modsProgress += modsProgressIncrement, null, "Removing JASM settings..."));
             RemoveJASMSettings(removeLocalJasmSettings, exportedMods);
 
-
+            ModExportProgress?.Invoke(this,
+                new(modsProgress += modsProgressIncrement, null, "Setting Mod Status..."));
             SetModsStatus(setModStatus, exportedMods);
 
+            ModExportProgress?.Invoke(this,
+                new(100, null, "Finished"));
             return;
         }
 
@@ -216,6 +231,8 @@ public sealed class SkinManagerService : ISkinManagerService
             {
                 var mod = characterSkinEntry.Mod;
                 var destinationFolder = characterToFolder[characterSkinEntry.ModList.Character];
+                ModExportProgress?.Invoke(this,
+                    new(modsProgress += modsProgressIncrement, mod.Name, "Copying Folders"));
 
                 if (CheckForDuplicates(destinationFolder, mod)) // Handle duplicate mod names
                 {
@@ -226,15 +243,25 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(destinationFolder.FullName));
                     mod.Rename(oldName);
+                    _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
+
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
+                _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
             }
 
+            ModExportProgress?.Invoke(this,
+                new(modsProgress += modsProgressIncrement, null, "Removing JASM settings..."));
             RemoveJASMSettings(removeLocalJasmSettings, exportedMods);
 
+            ModExportProgress?.Invoke(this,
+                new(modsProgress += modsProgressIncrement, null, "Setting Mod Status..."));
             SetModsStatus(setModStatus, exportedMods);
+
+            ModExportProgress?.Invoke(this,
+                new(100, null, "Finished"));
 
 
             return;
@@ -439,9 +466,10 @@ public sealed class SkinManagerService : ISkinManagerService
         UserIniChanged?.Invoke(this, new UserIniChanged());
     }
 
-    public event EventHandler<UserIniChanged>?  UserIniChanged;
+    public event EventHandler<UserIniChanged>? UserIniChanged;
 
     private const string D3DX_USER_INI = "d3dx_user.ini";
+
     public async Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId)
     {
         if (_threeMigotoFolder is null || !_threeMigotoFolder.Exists)
@@ -499,5 +527,18 @@ public sealed class SkinManagerService : ISkinManagerService
 
 public class UserIniChanged : EventArgs
 {
+}
 
+public sealed class ExportProgress : EventArgs
+{
+    public ExportProgress(int progress, string? modName, string operation)
+    {
+        Progress = progress;
+        ModName = modName;
+        Operation = operation;
+    }
+
+    public int Progress { get; }
+    public string? ModName { get; }
+    public string Operation { get; }
 }
