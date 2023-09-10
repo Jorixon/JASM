@@ -493,7 +493,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public void Dispose()
     {
-        _userIniWatcher.Dispose();
+        _userIniWatcher?.Dispose();
     }
 }
 
