@@ -91,45 +91,54 @@ public class GenshinService : IGenshinService
         return searchResult.Any() ? searchResult.MaxBy(s => s.Value).Key : null;
     }
 
-    public Dictionary<GenshinCharacter, int> GetCharacters(string keywords,
+    public Dictionary<GenshinCharacter, int> GetCharacters(string searchQuery,
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70)
     {
         var searchResult = new Dictionary<GenshinCharacter, int>();
+        searchQuery = searchQuery.ToLower();
 
         foreach (var character in restrictToGenshinCharacters ?? _characters)
         {
+            var loweredDisplayName = character.DisplayName.ToLower();
+
+            var result = 0;
+
+            // If the search query contains the display name, we give it a lot of points
+            var sameChars = loweredDisplayName.Split().Count(searchQuery.Contains);
+            result += sameChars * 50;
 
 
-            var result = Fuzz.Ratio(keywords.ToLower(), character.DisplayName.ToLower());
+            // A character can have multiple keys, so we take the best one. The keys are only used to help with searching
+            var bestKeyMatch = character.Keys.Max(key => Fuzz.Ratio(key, searchQuery));
+            result += bestKeyMatch;
 
 
-            if (keywords.Contains(character.DisplayName, StringComparison.OrdinalIgnoreCase) ||
-                keywords.Contains(character.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase))
+            var splitNames = loweredDisplayName.Split();
+            var sameStartChars = 0;
+            var bestResultOfNames = 0;
+
+            foreach (var name in splitNames)
             {
-                searchResult.Add(character, 100);
-                continue;
-            }
-
-            if (keywords.Split().Any(modKeyWord =>
-                    character.Keys.Any(characterKeyWord => characterKeyWord.Equals(modKeyWord,StringComparison.OrdinalIgnoreCase))))
-            {
-                searchResult.Add(character, 100);
-                continue;
-            }
-
-
-            if (result > fuzzRatio)
-            {
-                if (searchResult.ContainsKey(character))
+                sameStartChars = 0;
+                foreach (var @char in searchQuery)
                 {
-                    searchResult[character] += result;
-                    continue;
+                    if (name.ElementAtOrDefault(sameStartChars) == default(char)) continue;
+
+                    if (name[sameStartChars] != @char) continue;
+
+                    sameStartChars++;
+                    if (sameStartChars > bestResultOfNames)
+                        bestResultOfNames = sameStartChars;
                 }
-                searchResult.Add(character, result);
             }
+
+            result += sameStartChars * 5; // Give more points for same start chars
+
+            result += loweredDisplayName.Split()
+                .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name
+
+            searchResult.Add(character, result);
         }
-        Debug.Assert(searchResult.Count(x => x.Value == 100) <= 1,
-            $"searchResult.Count(x => x.Value == 100) <= 1, Multiple 100 results, {string.Join("\n",searchResult.Where(kv => kv.Value == 100).Select(kv => kv.Key))}");
 
         return searchResult;
     }
@@ -185,7 +194,7 @@ public interface IGenshinService
     public GenshinCharacter? GetCharacter(string keywords,
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70);
 
-    public Dictionary<GenshinCharacter, int> GetCharacters(string keywords,
+    public Dictionary<GenshinCharacter, int> GetCharacters(string searchQuery,
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70);
 
     public GenshinCharacter? GetCharacter(int id);
