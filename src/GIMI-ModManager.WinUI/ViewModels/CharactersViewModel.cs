@@ -63,7 +63,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         };
     }
 
-    public int? AutoSuggestBox_TextChanged(string text)
+    private readonly GenshinCharacter
+        _noCharacterFound = new() { Id = -999999, DisplayName = "No Characters Found..." };
+
+    public void AutoSuggestBox_TextChanged(string text)
     {
         _searchText = text;
         SuggestionsBox.Clear();
@@ -72,41 +75,37 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             SuggestionsBox.Clear();
             ResetContent();
-            return null;
+            return;
         }
 
-        var suitableItems = new List<GenshinCharacter>();
-        var splitText = _searchText.Split(" ");
-        foreach (var character in _characters)
-        {
-            var found = splitText.Any((key) =>
-            {
-                return character.Keys.Any(characterKeys =>
-                    characterKeys.Contains(key, StringComparison.CurrentCultureIgnoreCase));
-            });
-            if (found)
-            {
-                suitableItems.Add(character);
-            }
-        }
+        var suitableItems = _genshinService.GetCharacters(text, fuzzRatio: 50).OrderByDescending(kv => kv.Value)
+            .Take(5)
+            .Select(x => x.Key)
+            .ToList();
+
 
         if (!suitableItems.Any())
         {
+            SuggestionsBox.Add(_noCharacterFound);
             ResetContent();
-            return 0;
+            return;
         }
 
         suitableItems.ForEach(suggestion => SuggestionsBox.Add(suggestion));
 
         ShowOnlyCharacters(suitableItems);
-        return suitableItems.Count;
     }
 
 
-    public void SuggestionBox_Chosen(GenshinCharacter character)
+    public bool SuggestionBox_Chosen(GenshinCharacter? character)
     {
+        if (character == _noCharacterFound || character is null)
+            return false;
+
+
         _navigationService.SetListDataItemForNextConnectedAnimation(character);
         _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
+        return true;
     }
 
     //private void ResetContent()
@@ -244,10 +243,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ShowOnlyCharacters(IEnumerable<GenshinCharacter> charactersToShow, bool hardClear = false)
     {
-        var tmpList = new List<GenshinCharacter>(Characters);
+        var tmpList = new List<GenshinCharacter>(_characters);
 
-        if (hardClear)
-            tmpList = new List<GenshinCharacter>(_characters);
 
         var characters = tmpList.Where(charactersToShow.Contains).ToArray();
 
