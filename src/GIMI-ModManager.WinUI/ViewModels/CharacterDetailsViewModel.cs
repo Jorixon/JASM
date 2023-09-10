@@ -84,14 +84,20 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         if (parameter is not CharacterGridItemModel characterGridItemModel)
         {
-            _navigationService.GoBack();
+            if (_navigationService.CanGoBack)
+                _navigationService.GoBack();
+            else
+                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
             return;
         }
 
         var character = _genshinService.GetCharacter(characterGridItemModel.Character.Id);
         if (character is null)
         {
-            _navigationService.GoBack();
+            if (_navigationService.CanGoBack)
+                _navigationService.GoBack();
+            else
+                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
             return;
         }
 

@@ -412,8 +412,9 @@
                             </ScrollViewer>
                             <Grid Grid.Row="6" Padding="0,12">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
-                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Button
                                     Background="{ThemeResource SystemFillColorAttentionBrush}"
@@ -426,8 +427,29 @@
 
                                 </Button>
 
+                                <Grid Grid.Column="1" Visibility="{x:Bind ViewModel.ModPaneVM.SelectedModModel.IsEnabled, Mode=OneWay}">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border
+                                        Grid.Column="1"
+                                        Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                                        CornerRadius="10">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="Mod: Enabled" />
+                                    </Border>
+
+                                </Grid>
+
+
                                 <Button
-                                    Grid.Column="1"
+                                    Grid.Column="2"
                                     HorizontalAlignment="Right"
                                     Command="{x:Bind ViewModel.ModPaneVM.OpenModFolderCommand}"
                                     Content="Open Mod Folder..."

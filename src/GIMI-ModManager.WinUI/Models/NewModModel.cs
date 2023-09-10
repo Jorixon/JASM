@@ -19,9 +19,10 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private string _modUrl = string.Empty;
     [ObservableProperty] private string _modVersion = string.Empty;
 
-    [ObservableProperty] private Uri _imagePath = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
+    [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
     [ObservableProperty] private string _author = string.Empty;
 
+    private static readonly Uri PlaceholderImagePath = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
     public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } =
         new ObservableCollection<SkinModKeySwapModel>();
 
@@ -62,7 +63,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     {
         ModUrl = settings.ModUrl ?? string.Empty;
         ModVersion = settings.Version ?? string.Empty;
-        ImagePath = new Uri(string.IsNullOrEmpty(settings.ImagePath) ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp") : settings.ImagePath, UriKind.Absolute);
+        ImagePath = string.IsNullOrWhiteSpace(settings.ImagePath) ? PlaceholderImagePath : new Uri(settings.ImagePath, UriKind.Absolute);
         Author = settings.Author ?? string.Empty;
         return this;
     }
