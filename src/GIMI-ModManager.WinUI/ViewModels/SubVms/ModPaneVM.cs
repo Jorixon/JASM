@@ -180,6 +180,7 @@ public partial class ModPaneVM : ObservableRecipient
     private async Task SaveModSettingsAsync(CancellationToken cancellationToken = default)
     {
         IsReadOnlyMode = true;
+        var errored = false;
         await Task.Run(async () =>
         {
             var skinModSettings = SelectedModModel.ToModSettings();
@@ -190,6 +191,7 @@ public partial class ModPaneVM : ObservableRecipient
             }
             catch (Exception e)
             {
+                errored = true;
                 App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     _notificationManager.ShowNotification("Error saving mod settings",
@@ -209,6 +211,7 @@ public partial class ModPaneVM : ObservableRecipient
             }
             catch (Exception e)
             {
+                errored = true;
                 App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     _notificationManager.ShowNotification("Error saving key swap configuration",
@@ -220,8 +223,13 @@ public partial class ModPaneVM : ObservableRecipient
         }, cancellationToken);
 
         IsReadOnlyMode = false;
-        await ReloadModSettings(CancellationToken.None).ConfigureAwait(false);
+
+        await ReloadModSettings(CancellationToken.None);
+
+        if (!errored)
+            _notificationManager.ShowNotification("Mod settings saved",
+                $"Settings saved for {SelectedModModel.Name}", TimeSpan.FromSeconds(5));
     }
 
-    public void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
+    private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
 }
