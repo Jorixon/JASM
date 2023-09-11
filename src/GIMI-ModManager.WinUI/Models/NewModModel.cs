@@ -1,20 +1,31 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Services;
 
 namespace GIMI_ModManager.WinUI.Models;
 
-public partial class NewModModel : ObservableObject
+public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
 {
     public Guid Id { get; private init; }
     public GenshinCharacter Character { get; private init; }
-    [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private bool _isEnabled;
+    [ObservableProperty] private string _folderName = string.Empty;
+
+
+    [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _modUrl = string.Empty;
     [ObservableProperty] private string _modVersion = string.Empty;
-    [ObservableProperty] private string _folderName = string.Empty;
-    [ObservableProperty] private string _imageUri = string.Empty;
+
+    [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
+    [ObservableProperty] private string _author = string.Empty;
+
+    private static readonly Uri PlaceholderImagePath = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
+    public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } =
+        new ObservableCollection<SkinModKeySwapModel>();
+
 
     private Action<NewModModel>? _toggleMod = null;
 
@@ -48,6 +59,34 @@ public partial class NewModModel : ObservableObject
         };
     }
 
+    public NewModModel WithModSettings(SkinModSettings settings)
+    {
+        ModUrl = settings.ModUrl ?? string.Empty;
+        ModVersion = settings.Version ?? string.Empty;
+        ImagePath = string.IsNullOrWhiteSpace(settings.ImagePath) ? PlaceholderImagePath : new Uri(settings.ImagePath, UriKind.Absolute);
+        Author = settings.Author ?? string.Empty;
+        return this;
+    }
+
+    public SkinModSettings ToModSettings() =>
+        new()
+        {
+            CustomName = Name,
+            Author = Author,
+            Version = ModVersion,
+            ModUrl = ModUrl,
+            ImagePath = ImagePath.Equals(PlaceholderImagePath) ? string.Empty : ImagePath.ToString()
+        };
+
+    public void SetKeySwaps(IEnumerable<SkinModKeySwap> keySwaps)
+    {
+        SkinModKeySwaps.Clear();
+        foreach (var keySwapModel in keySwaps)
+        {
+            SkinModKeySwaps.Add(SkinModKeySwapModel.FromKeySwapSettings(keySwapModel));
+        }
+    }
+
     public NewModModel WithToggleModDelegate(Action<NewModModel> toggleMod)
     {
         _toggleMod = toggleMod;
@@ -79,5 +118,36 @@ public partial class NewModModel : ObservableObject
                     e.ToString(), TimeSpan.MaxValue);
             }
         }
+    }
+
+    public bool Equals(NewModModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id.Equals(other.Id);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((NewModModel)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+
+
+    public bool SettingsEquals(NewModModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return Name == other.Name && ModUrl == other.ModUrl && ModVersion == other.ModVersion &&
+               ImagePath == other.ImagePath && Author == other.Author &&
+               SkinModKeySwaps.SequenceEqual(other.SkinModKeySwaps);
     }
 }

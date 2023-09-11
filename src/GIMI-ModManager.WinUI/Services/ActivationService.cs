@@ -70,6 +70,9 @@ public class ActivationService : IActivationService
         // Activate the MainWindow.
         App.MainWindow.Activate();
 
+        // Set MainWindow Cleanup on Close.
+        App.MainWindow.Closed += (_, _) => OnApplicationExit();
+
         // Execute tasks after activation.
         await StartupAsync();
     }
@@ -171,5 +174,17 @@ public class ActivationService : IActivationService
         Task.Run(async () => await App.GetService<ILocalSettingsService>()
             .SaveSettingAsync(ScreenSize.Key, new ScreenSize(width, height) { IsFullScreen = isFullScreen }));
         _timer?.Stop();
+    }
+
+
+    private void OnApplicationExit()
+    {
+        _logger.Debug("JASM shutting down...");
+        _updateChecker.Dispose();
+        var tmpDir = new DirectoryInfo(App.TMP_DIR);
+        if (!tmpDir.Exists) return;
+
+        _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
+        tmpDir.Delete(true);
     }
 }

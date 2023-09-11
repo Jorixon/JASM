@@ -32,6 +32,7 @@ public partial class ModListVM : ObservableRecipient
         Mods.CollectionChanged += Mods_CollectionChanged;
     }
 
+
     private void Mods_CollectionChanged(object? sender,
         System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -109,7 +110,21 @@ public partial class ModListVM : ObservableRecipient
         }
 
         SelectedModsCount = SelectedMods.Count;
+        OnModsSelected?.Invoke(this, new ModSelectedEventArgs(SelectedMods));
     }
+
+    public event EventHandler<ModSelectedEventArgs>? OnModsSelected;
+
+    public class ModSelectedEventArgs : EventArgs
+    {
+        public ModSelectedEventArgs(IEnumerable<NewModModel> mods)
+        {
+            Mods = mods;
+        }
+
+        public IEnumerable<NewModModel> Mods { get; }
+    }
+
 
     public void SetInfoBarMessage(string message, InfoBarSeverity severity, bool openInfoBar = true)
     {
@@ -125,4 +140,11 @@ public partial class ModListVM : ObservableRecipient
         Severity = InfoBarSeverity.Informational;
         IsInfoBarOpen = false;
     }
+}
+
+
+
+public class SortMethod
+{
+    public bool IsDescending { get; set; }
 }

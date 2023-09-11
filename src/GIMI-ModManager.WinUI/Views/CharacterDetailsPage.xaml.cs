@@ -17,6 +17,7 @@ using Serilog;
 using GIMI_ModManager.WinUI.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -98,17 +99,25 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (ViewModel.ModListVM.BackendMods.Any())
         {
-            var stackPanel = ModListArea.FindName("NoModsStackPanel") as StackPanel;
+            var stackPanel = MainContentArea.FindName("NoModsStackPanel") as StackPanel;
             if (stackPanel != null)
             {
                 stackPanel.Visibility = Visibility.Collapsed;
             }
 
             ModListGrid.Visibility = Visibility.Visible;
+            ModDetailsPane.Visibility = Visibility.Visible;
+            ModListArea.AllowDrop = true;
+            MainContentArea.AllowDrop = false;
         }
-        else if (ModListArea.FindName("NoModsStackPanel") is null)
+        else if (MainContentArea.FindName("NoModsStackPanel") is null)
         {
             ModListGrid.Visibility = Visibility.Collapsed;
+            ModDetailsPane.Visibility = Visibility.Collapsed;
+
+            ModListArea.AllowDrop = false;
+            MainContentArea.AllowDrop = true;
+
             var stackPanel = new StackPanel()
             {
                 Name = "NoModsStackPanel",
@@ -168,7 +177,7 @@ public sealed partial class CharacterDetailsPage : Page
             backgroundGrid.Children.Add(dottedLineBox);
             dottedLineBox.Child = dropText;
 
-            ModListArea.Children.Add(stackPanel);
+            MainContentArea.Children.Add(stackPanel);
         }
     }
 
@@ -268,16 +277,19 @@ public sealed partial class CharacterDetailsPage : Page
 
     private async void ModListArea_OnDrop(object sender, DragEventArgs e)
     {
+        var deferral = e.GetDeferral();
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
             await ViewModel.DragAndDropCommand.ExecuteAsync(await e.DataView.GetStorageItemsAsync());
         }
+
+        deferral.Complete();
     }
 
-    private async void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
+    private void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
     {
         var modModel = (NewModModel)e.Row.DataContext;
-        await ViewModel.ChangeModDetails(modModel);
+        ViewModel.ChangeModDetails(modModel);
     }
 
     private void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
@@ -344,5 +356,44 @@ public sealed partial class CharacterDetailsPage : Page
     private void ModRowFlyout_OnOpened(object? sender, object e)
     {
         MoveModSearchBox.Focus(FocusState.Programmatic);
+    }
+
+    private void ModDetailsPaneImage_OnDragEnter(object sender, DragEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
+        e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private void ModDetailsPaneImage_OnDragOver(object sender, DragEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
+        e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private async void ModDetailsPaneImage_OnDrop(object sender, DragEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
+        
+        var deferral = e.GetDeferral();
+        if (e.DataView.Contains(StandardDataFormats.Uri))
+        {
+            var uri = await e.DataView.GetUriAsync();
+            await ViewModel.ModPaneVM.SetImageFromDragDropWeb(uri);
+        }
+        else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await e.DataView.GetStorageItemsAsync());
+        }
+
+        deferral.Complete();
+    }
+
+    private void Image_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
+    {
+        Log.Warning(e.ErrorMessage);
+        Debug.WriteLine(e.ErrorMessage);
     }
 }

@@ -1,12 +1,16 @@
 ﻿#nullable enable
 using GIMI_ModManager.Core.Contracts.Entities;
 using Microsoft.VisualBasic.FileIO;
+using System.Security.Cryptography;
+using System.Text;
+using SearchOption = System.IO.SearchOption;
 
 namespace GIMI_ModManager.Core.Entities;
 
-public sealed class Mod : IMod
+// This file was written at the very beginning is just a folder wrapper really
+public class Mod : IMod
 {
-    private DirectoryInfo _modDirectory;
+    private protected DirectoryInfo _modDirectory;
     public string FullPath => _modDirectory.FullName;
     public string Name => _modDirectory.Name;
     public string OnlyPath => _modDirectory.Parent!.FullName;
@@ -45,6 +49,16 @@ public sealed class Mod : IMod
         _modDirectory.MoveTo(Path.Combine(absPath, Name));
     }
 
+    public virtual IMod CopyTo(string absPath)
+    {
+        if (!Path.IsPathFullyQualified(absPath))
+            throw new ArgumentException("Path must be absolute.", nameof(absPath));
+
+        var newModDirectory = new DirectoryInfo(Path.Combine(absPath, Name));
+        RecursiveCopyTo(_modDirectory, newModDirectory);
+        return new Mod(newModDirectory, CustomName);
+    }
+
     public void Rename(string newName)
     {
         _modDirectory.Refresh();
@@ -58,6 +72,7 @@ public sealed class Mod : IMod
             FileSystem.DeleteDirectory(FullPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             return;
         }
+
         _modDirectory.Delete(true);
     }
 
@@ -81,19 +96,45 @@ public sealed class Mod : IMod
         if (ReferenceEquals(x, y)) return true;
         if (ReferenceEquals(x, null)) return false;
         if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return string.Equals(x.FullPath, y.FullPath, StringComparison.InvariantCultureIgnoreCase);
+        return string.Equals(x.FullPath, y.FullPath, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    public bool DeepEquals(Mod? x, Mod? y)
+    public bool DeepEquals(IMod? x, IMod? y)
     {
-        if (!Equals(x, y)) return false;
-        throw new NotImplementedException();
+        if (Equals(x, y)) return true;
+        if (x is null || y is null) return false;
+
+        var xHash = x.GetContentsHash();
+        var yHash = y.GetContentsHash();
+        return xHash == yHash;
+    }
+
+    // https://stackoverflow.com/a/31349703
+    public byte[] GetContentsHash()
+    {
+        _modDirectory.Refresh();
+        var filePaths = Directory.GetFiles(_modDirectory.FullName, "*", SearchOption.AllDirectories).ToArray();
+        using var md5 = MD5.Create();
+        foreach (var filePath in filePaths)
+        {
+            // hash path
+            var pathBytes = Encoding.UTF8.GetBytes(filePath);
+            md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
+
+            // hash contents
+            var contentBytes = File.ReadAllBytes(filePath);
+
+            md5.TransformBlock(contentBytes, 0, contentBytes.Length, contentBytes, 0);
+        }
+
+        md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+
+        return md5.Hash ?? Array.Empty<byte>();
     }
 
     public int GetHashCode(IMod obj)
     {
-        return StringComparer.InvariantCultureIgnoreCase.GetHashCode(obj.FullPath);
+        return StringComparer.CurrentCultureIgnoreCase.GetHashCode(obj.FullPath);
     }
 
     public override string ToString()

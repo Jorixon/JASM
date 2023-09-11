@@ -16,9 +16,8 @@ public record GenshinCharacter : IEqualityComparer<GenshinCharacter>
     public string Element { get; set; } = string.Empty;
     public string Weapon { get; set; } = string.Empty;
     public string[] Region { get; set; } = Array.Empty<string>();
-    public bool IsPinned { get; set; }
 
-    public bool Equals(GenshinCharacter x, GenshinCharacter y)
+    public bool Equals(GenshinCharacter? x, GenshinCharacter? y)
     {
         if (ReferenceEquals(x, y)) return true;
         if (ReferenceEquals(x, null)) return false;

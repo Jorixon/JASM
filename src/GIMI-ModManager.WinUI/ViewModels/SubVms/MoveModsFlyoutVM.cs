@@ -203,7 +203,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SuggestedCharacters.Clear();
         var searchResultKeyValue =
             await Task.Run(() =>
-                _genshinService.GetCharacters(searchString, fuzzRatio: 40).OrderByDescending(kv => kv.Value));
+                _genshinService.GetCharacters(searchString, minScore: 100).OrderByDescending(kv => kv.Value));
         var eligibleCharacters = searchResultKeyValue.Select(kv => kv.Key).Where(ch => ch != _shownCharacter).Take(5);
 
 
