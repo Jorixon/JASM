@@ -10,7 +10,7 @@ Download link and images are also available over at [GameBanana](https://gameban
 
 **This is still in an early stage of development. Make backups and use at your own risk ⚠️** 
 
-Unhandled exceptions are written to the Logs file as well. Debug logging can be enabled in appsettings.json
+Unhandled exceptions are written to the Logs file as well. Debug logging can be enabled in appsettings.json 
 
 
 
