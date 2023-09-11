@@ -63,7 +63,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             modManagerOptions);
         _logger.Information("Saved startup settings: {@ModManagerOptions}", modManagerOptions);
 
-        _skinManagerService.Initialize(modManagerOptions.ModsFolderPath!, null);
+        _skinManagerService.Initialize(modManagerOptions.ModsFolderPath!, null, modManagerOptions.GimiRootFolderPath);
 
         if (ReorganizeModsOnStartup)
         {

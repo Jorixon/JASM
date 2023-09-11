@@ -2,9 +2,9 @@
     "profiles": {
       "GIMI-ModManager.WinUI (Unpackaged)": {
         "commandName": "Project"
-      },
-      "GIMI-ModManager.WinUI (Package)": {
-        "commandName": "MsixPackage"
       }
+      //"GIMI-ModManager.WinUI (Package)": {
+      //  "commandName": "MsixPackage"
+      //}
     }
 }

@@ -59,6 +59,7 @@
 		<Content Remove="Assets\Images\Character_Eula_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Faruzan_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Fischl_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Freminet_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Furina_Thumb.webp" />
 		<Content Remove="Assets\Images\Character_Ganyu_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Gliders_Thumb.webp" />
@@ -119,6 +120,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\Images\characters.json" />
+		<None Remove="Assets\ModPanePlaceholder.webp" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
@@ -231,6 +233,9 @@
 		</None>
 		<None Update="Assets\Images\Character_Fischl_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Freminet_Thumb.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Images\Character_Furina_Thumb.webp">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -428,6 +433,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Update="Assets\ModPanePlaceholder.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Update="Assets\Images\Character_Others.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

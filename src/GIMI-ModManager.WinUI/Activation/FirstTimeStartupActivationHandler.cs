@@ -39,7 +39,8 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
     {
         var modManagerOptions =
             await _localSettingsService.ReadSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
-        _skinManagerService.Initialize(modManagerOptions?.ModsFolderPath!, null);
+
+        _skinManagerService.Initialize(modManagerOptions!.ModsFolderPath!, null, modManagerOptions.GimiRootFolderPath);
         _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, args.Arguments, true);
     }
 }

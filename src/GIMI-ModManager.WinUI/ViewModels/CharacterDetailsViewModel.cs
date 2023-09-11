@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,11 +10,8 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
-using System.Diagnostics;
 using GIMI_ModManager.WinUI.Services;
 using Windows.System;
-using Windows.UI.Core;
-using Microsoft.UI.Xaml;
 using Windows.Storage.Pickers;
 using GIMI_ModManager.Core.Contracts.Entities;
 
@@ -32,6 +28,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
+    public ModPaneVM ModPaneVM { get; } = null!;
 
     public MoveModsFlyoutVM MoveModsFlyoutVM { get; private set; }
 
@@ -47,10 +44,25 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _skinManagerService = skinManagerService;
         _notificationService = notificationService;
         _localSettingsService = localSettingsService;
-        ModListVM = new(skinManagerService);
         MoveModsFlyoutVM = new(_genshinService, _skinManagerService);
         MoveModsFlyoutVM.ModsMoved += async (sender, args) => await _refreshMods();
         MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await _refreshMods();
+
+        ModListVM = new(skinManagerService);
+        ModListVM.OnModsSelected += async (sender, args) =>
+        {
+            var selectedMod = args.Mods.FirstOrDefault();
+            var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
+            if (mod is null || selectedMod is null)
+            {
+                ModPaneVM.UnloadMod();
+                return;
+            }
+
+            await ModPaneVM.LoadMod(selectedMod);
+        };
+
+        ModPaneVM = new(skinManagerService, notificationService);
     }
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
@@ -70,10 +82,22 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     public void OnNavigatedTo(object parameter)
     {
-        var character = _genshinService.GetCharacter(((GenshinCharacter)parameter).Id);
+        if (parameter is not CharacterGridItemModel characterGridItemModel)
+        {
+            if (_navigationService.CanGoBack)
+                _navigationService.GoBack();
+            else
+                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            return;
+        }
+
+        var character = _genshinService.GetCharacter(characterGridItemModel.Character.Id);
         if (character is null)
         {
-            _navigationService.GoBack();
+            if (_navigationService.CanGoBack)
+                _navigationService.GoBack();
+            else
+                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
             return;
         }
 
@@ -158,7 +182,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             _logger.Error(e, "Error while adding archive.");
             _notificationService.ShowNotification("Error while adding storage items.",
-                $"An error occurred while adding the storage items. Mod may have been partially copied.\n{e.Message}",
+                $"An error occurred while adding the storage items.\n{e.Message}",
                 TimeSpan.FromSeconds(5));
         }
         finally
@@ -170,7 +194,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private async Task RefreshMods()
     {
+        var selectedModPaths = ModListVM.SelectedMods.Select(mod => mod.FolderName).ToArray();
         await _refreshMods();
+        var selectedMods = ModListVM.Mods.Where(mod => selectedModPaths.Any(oldModPath =>
+            oldModPath.Equals(mod.FolderName, StringComparison.CurrentCultureIgnoreCase))).ToArray();
+        ModListVM.SelectionChanged(selectedMods, new List<NewModModel>());
     }
 
     private async Task _refreshMods()
@@ -210,8 +238,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
     // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
-    // This code is a mess, but it works for 7zip single folder mod and file explorer.
-    // TODO: Handle .zip/.7z files directly and multiple folders/files at once
+    // This code is a mess, but it works.
     private async Task AddStorageItemFoldersAsync(IReadOnlyList<IStorageItem>? storageItems)
     {
         if (storageItems is null || !storageItems.Any())
@@ -244,7 +271,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
                 if (extractResult.IgnoredMods.Any())
                     App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-                        _notificationService.ShowNotification("Multiple folders detected during extraction, first one was extracted",
+                        _notificationService.ShowNotification(
+                            "Multiple folders detected during extraction, first one was extracted",
                             $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
                             TimeSpan.FromSeconds(7)));
                 continue;
@@ -375,7 +403,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModListVM.ResetContent();
     }
 
-    public async Task ChangeModDetails(NewModModel newModModel)
+    public void ChangeModDetails(NewModModel newModModel)
     {
         var oldMod = _modList.Mods.FirstOrDefault(mod => mod.Id == newModModel.Id);
         if (oldMod == null)
@@ -421,7 +449,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private void GoBack()
         => _navigationService.GoBack();
-
 
     public void OnNavigatedFrom()
         => _modList.ModsChanged -= ModListOnModsChanged;

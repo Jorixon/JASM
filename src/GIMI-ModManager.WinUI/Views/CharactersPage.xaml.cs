@@ -1,4 +1,5 @@
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,7 +27,7 @@ public sealed partial class CharactersPage : Page
 
     private void AutoSuggestBox_OnSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
-        if (!ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.SelectedItem)) return;
+        if (!ViewModel.SuggestionBox_Chosen((CharacterGridItemModel)args.SelectedItem)) return;
 
         sender.IsEnabled = false;
         sender.Text = string.Empty;
@@ -40,9 +41,8 @@ public sealed partial class CharactersPage : Page
     private void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         if (args.ChosenSuggestion is not null)
-            if (!ViewModel.SuggestionBox_Chosen((GenshinCharacter)args.ChosenSuggestion))
+            if (!ViewModel.SuggestionBox_Chosen((CharacterGridItemModel)args.ChosenSuggestion))
                 return;
-
 
         if (ViewModel.SuggestionsBox.Count > 0)
         {
@@ -57,7 +57,7 @@ public sealed partial class CharactersPage : Page
         if (sender is not MenuFlyout menuFlyout)
             return;
 
-        if (menuFlyout.Target.DataContext is not GenshinCharacter character)
+        if (menuFlyout.Target.DataContext is not CharacterGridItemModel character)
             return;
 
         ViewModel.OnRightClickContext(character);
