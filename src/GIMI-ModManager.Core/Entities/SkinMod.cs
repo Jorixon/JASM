@@ -1,9 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
-using FuzzySharp.Utils;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Helpers;
-using SharpCompress.IO;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -266,7 +264,8 @@ public class SkinMod : Mod, ISkinMod
         var skinModSettings =
             JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
 
-        SetAbsoluteImagePath(skinModSettings);
+        if (!SetAbsoluteImagePath(skinModSettings))
+            skinModSettings.ImagePath = string.Empty;
 
         CachedSkinModSettings = skinModSettings;
 
@@ -310,6 +309,24 @@ public class SkinMod : Mod, ISkinMod
         return Task.CompletedTask;
     }
 
+
+    private string UriPathToModRelativePath(string? uriPath)
+    {
+        if (string.IsNullOrWhiteSpace(uriPath))
+            return string.Empty;
+
+        if (Uri.IsWellFormedUriString(uriPath, UriKind.Absolute))
+        {
+            var filename = Path.GetFileName(uriPath);
+            return string.IsNullOrWhiteSpace(filename) ? string.Empty : filename;
+        }
+
+        var absPath = Path.GetFileName(uriPath);
+
+        var file = Path.GetFileName(absPath);
+        return string.IsNullOrWhiteSpace(file) ? string.Empty : file;
+    }
+
     public async Task SaveSkinModSettings(SkinModSettings skinModSettings,
         CancellationToken cancellationToken = default)
     {
@@ -322,8 +339,12 @@ public class SkinMod : Mod, ISkinMod
             CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath
             ||
             (!string.IsNullOrWhiteSpace(skinModSettings.ImagePath) &&
-             Uri.IsWellFormedUriString(skinModSettings.ImagePath, UriKind.Absolute)))
+             Uri.IsWellFormedUriString(skinModSettings.ImagePath, UriKind.Absolute)) &&
+            CachedSkinModSettings?.ImagePath != skinModSettings.ImagePath)
+
             await CopyAndSetModImage(skinModSettings);
+
+        skinModSettings.ImagePath = UriPathToModRelativePath(skinModSettings.ImagePath);
 
         var options = new JsonSerializerOptions
         {
@@ -361,6 +382,7 @@ public class SkinMod : Mod, ISkinMod
             }
         }
 
+        // No image path set or image path not found
         return false;
     }
 

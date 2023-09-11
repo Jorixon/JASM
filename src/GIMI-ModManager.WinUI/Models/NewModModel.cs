@@ -75,7 +75,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
             Author = Author,
             Version = ModVersion,
             ModUrl = ModUrl,
-            ImagePath = ImagePath.ToString()
+            ImagePath = ImagePath.Equals(PlaceholderImagePath) ? string.Empty : ImagePath.ToString()
         };
 
     public void SetKeySwaps(IEnumerable<SkinModKeySwap> keySwaps)

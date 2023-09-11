@@ -393,6 +393,7 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void Image_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
+        Log.Warning(e.ErrorMessage);
         Debug.WriteLine(e.ErrorMessage);
     }
 }
