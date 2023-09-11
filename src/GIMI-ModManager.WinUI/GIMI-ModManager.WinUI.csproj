@@ -59,6 +59,7 @@
 		<Content Remove="Assets\Images\Character_Eula_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Faruzan_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Fischl_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Freminet_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Furina_Thumb.webp" />
 		<Content Remove="Assets\Images\Character_Ganyu_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Gliders_Thumb.webp" />
@@ -232,6 +233,9 @@
 		</None>
 		<None Update="Assets\Images\Character_Fischl_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Freminet_Thumb.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Images\Character_Furina_Thumb.webp">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
