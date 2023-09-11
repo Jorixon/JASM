@@ -4,7 +4,7 @@ To start JASM run "JASM - Just Another Skin Manager.exe" inside JASM folder. You
 Updating from previous versions: 
 
 Delete the old JASM folder and replace it with the new one. 
-Personal settings are stored in "C:\Users\<username>\AppData\Local\JASM\ApplicationData"
+Personal settings are stored in "C:\Users\<username>\AppData\Local\JASM\ApplicationData" or in the mods themselves
 
 
 
