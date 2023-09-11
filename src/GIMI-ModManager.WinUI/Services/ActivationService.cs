@@ -53,7 +53,12 @@ public class ActivationService : IActivationService
 
     public async Task ActivateAsync(object activationArgs)
     {
-        _logger.Information("JASM starting up...");
+
+#if DEBUG
+        _logger.Information("JASM starting up in DEBUG mode...");
+#elif RELEASE
+        _logger.Information("JASM starting up in RELEASE mode...");
+#endif
         // Execute tasks before activation.
         await InitializeAsync();
 
