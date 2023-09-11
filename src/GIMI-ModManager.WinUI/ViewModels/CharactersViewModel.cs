@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -8,11 +7,10 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 using Serilog;
-using Microsoft.UI.Xaml;
-using GIMI_ModManager.WinUI.Helpers;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -30,13 +28,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
     private GenshinCharacter[] _characters = Array.Empty<GenshinCharacter>();
-    public ObservableCollection<GenshinCharacter> Characters { get; } = new();
+    public ObservableCollection<CharacterGridItemModel> Characters { get; } = new();
 
-    public ObservableCollection<GenshinCharacter> SuggestionsBox { get; } = new();
+    public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
 
-    public ObservableCollection<GenshinCharacter> PinnedCharacters { get; } = new();
+    public ObservableCollection<CharacterGridItemModel> PinnedCharacters { get; } = new();
 
-    public ObservableCollection<GenshinCharacter> HiddenCharacters { get; } = new();
+    public ObservableCollection<CharacterGridItemModel> HiddenCharacters { get; } = new();
 
 
     private string _searchText = string.Empty;
@@ -63,8 +61,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         };
     }
 
-    private readonly GenshinCharacter
-        _noCharacterFound = new() { Id = -999999, DisplayName = "No Characters Found..." };
+    private readonly CharacterGridItemModel _noCharacterFound =
+        new(new() { Id = -999999, DisplayName = "No Characters Found..." });
 
     public void AutoSuggestBox_TextChanged(string text)
     {
@@ -78,9 +76,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _genshinService.GetCharacters(text, fuzzRatio: 50).OrderByDescending(kv => kv.Value)
+        var suitableItems = _genshinService.GetCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
             .Take(5)
-            .Select(x => x.Key)
+            .Select(x => new CharacterGridItemModel(x.Key))
             .ToList();
 
 
@@ -97,7 +95,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public bool SuggestionBox_Chosen(GenshinCharacter? character)
+    public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
         if (character == _noCharacterFound || character is null)
             return false;
@@ -186,7 +184,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private void ResetContent()
     {
         var neitherPinnedNorHiddenCharacters = _characters.Where(x =>
-            !PinnedCharacters.Contains(x) && !HiddenCharacters.Contains(x));
+            !PinnedCharacters.Select(pch => pch.Character).Contains(x) &&
+            !HiddenCharacters.Select(pch => pch.Character).Contains(x));
 
 
         var gridIndex = 0;
@@ -196,7 +195,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             gridIndex++;
         }
 
-        foreach (var genshinCharacter in neitherPinnedNorHiddenCharacters)
+        foreach (var genshinCharacter in neitherPinnedNorHiddenCharacters.Select(ch => new CharacterGridItemModel(ch)))
         {
             InsertCharacterIntoView(genshinCharacter, gridIndex);
             gridIndex++;
@@ -220,11 +219,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    private void InsertCharacterIntoView(GenshinCharacter character, int gridIndex)
+    private void InsertCharacterIntoView(CharacterGridItemModel character, int gridIndex)
     {
         var characterAtGridIndex = Characters.ElementAtOrDefault(gridIndex);
 
-        if (characterAtGridIndex?.Id == character.Id)
+        if (characterAtGridIndex?.Character.Id == character.Character.Id)
         {
             return;
         }
@@ -235,15 +234,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        if (character.Id != characterAtGridIndex.Id)
+        if (character.Character.Id != characterAtGridIndex.Character.Id)
         {
             Characters.Insert(gridIndex, character);
         }
     }
 
-    private void ShowOnlyCharacters(IEnumerable<GenshinCharacter> charactersToShow, bool hardClear = false)
+    private void ShowOnlyCharacters(IEnumerable<CharacterGridItemModel> charactersToShow, bool hardClear = false)
     {
-        var tmpList = new List<GenshinCharacter>(_characters);
+        var tmpList = new List<CharacterGridItemModel>(_characters.Select(ch => new CharacterGridItemModel(ch)));
 
 
         var characters = tmpList.Where(charactersToShow.Contains).ToArray();
@@ -293,8 +292,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             var character = _characters.FirstOrDefault(x => x.Id == pinedCharacterId);
             if (character is not null)
             {
-                character.IsPinned = true;
-                PinnedCharacters.Add(character);
+                PinnedCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
             }
         }
 
@@ -303,17 +301,33 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             var character = _characters.FirstOrDefault(x => x.Id == hiddenCharacterId);
             if (character is not null)
             {
-                HiddenCharacters.Add(character);
+                HiddenCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
             }
         }
 
         ResetContent();
 
+        // Character Ids where more than 1 skin is enabled
+        var charactersWithMultipleActiveSkins = _skinManagerService.CharacterModLists
+            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1).Select(x => x.Character.Id);
+
+        foreach (var characterGridItemModel in Characters.Where(x =>
+                     charactersWithMultipleActiveSkins.Contains(x.Character.Id)))
+        {
+            if (characterGridItemModel.Character.Id == _genshinService.OtherCharacterId ||
+                characterGridItemModel.Character.Id == _genshinService.GlidersCharacterId)
+                continue;
+
+            characterGridItemModel.Warning = true;
+        }
+
         if (!pinnedCharactersOptions.ShowOnlyCharactersWithMods) return;
 
         ShowOnlyCharactersWithMods = true;
-        var charactersWithMods =
-            _skinManagerService.CharacterModLists.Where(x => x.Mods.Any()).Select(x => x.Character);
+        var characterIdsWithMods =
+            _skinManagerService.CharacterModLists.Where(x => x.Mods.Any()).Select(x => x.Character.Id);
+
+        var charactersWithMods = Characters.Where(x => characterIdsWithMods.Contains(x.Character.Id));
 
         ShowOnlyCharacters(charactersWithMods);
     }
@@ -323,10 +337,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void CharacterClicked(GenshinCharacter character)
+    private void CharacterClicked(CharacterGridItemModel characterModel)
     {
-        _navigationService.SetListDataItemForNextConnectedAnimation(character);
-        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
+        _navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
+        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
     }
 
     [ObservableProperty] private bool _showOnlyCharactersWithMods = false;
@@ -349,7 +363,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         var charactersWithMods =
-            _skinManagerService.CharacterModLists.Where(x => x.Mods.Any()).Select(x => x.Character);
+            _skinManagerService.CharacterModLists.Where(x => x.Mods.Any())
+                .Select(x => new CharacterGridItemModel(x.Character));
 
         ShowOnlyCharacters(charactersWithMods);
 
@@ -372,7 +387,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     const string DefaultUnpinGlyph = "\uE77A";
     const string DefaultUnpinText = "Unpin Character";
 
-    public void OnRightClickContext(GenshinCharacter clickedCharacter)
+    public void OnRightClickContext(CharacterGridItemModel clickedCharacter)
     {
         if (PinnedCharacters.Contains(clickedCharacter))
         {
@@ -387,7 +402,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private async Task PinCharacterAsync(GenshinCharacter character)
+    private async Task PinCharacterAsync(CharacterGridItemModel character)
     {
         if (PinnedCharacters.Contains(character))
         {
@@ -399,7 +414,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             else
             {
                 var charactersWithModss =
-                    _skinManagerService.CharacterModLists.Where(x => x.Mods.Any()).Select(x => x.Character);
+                    _skinManagerService.CharacterModLists.Where(x => x.Mods.Any())
+                        .Select(x => new CharacterGridItemModel(x.Character));
                 ShowOnlyCharacters(charactersWithModss, true);
             }
 
@@ -407,7 +423,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             var settingss = await ReadCharacterSettings();
 
             character.IsPinned = false;
-            var pinedCharacterss = PinnedCharacters.Select(ch => ch.Id).ToArray();
+            var pinedCharacterss = PinnedCharacters.Select(ch => ch.Character.Id).ToArray();
             settingss.PinedCharacters = pinedCharacterss;
 
             await SaveCharacterSettings(settingss);
@@ -423,14 +439,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         else
         {
             var charactersWithMods =
-                _skinManagerService.CharacterModLists.Where(x => x.Mods.Any()).Select(x => x.Character);
+                _skinManagerService.CharacterModLists.Where(x => x.Mods.Any())
+                    .Select(x => new CharacterGridItemModel(x.Character));
             ShowOnlyCharacters(charactersWithMods);
         }
 
 
         var settings = await ReadCharacterSettings();
 
-        var pinedCharacters = PinnedCharacters.Select(ch => ch.Id)
+        var pinedCharacters = PinnedCharacters.Select(ch => ch.Character.Id)
             .Union(settings.PinedCharacters.ToList()).ToArray();
         settings.PinedCharacters = pinedCharacters;
 

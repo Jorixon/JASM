@@ -11,7 +11,6 @@ public sealed class UpdateChecker : IDisposable
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly NotificationManager _notificationManager;
-    private readonly HttpClient _httpClient;
 
     public Version CurrentVersion { get; private set; }
     public Version? LatestRetrievedVersion { get; private set; }
@@ -30,7 +29,6 @@ public sealed class UpdateChecker : IDisposable
         _localSettingsService = localSettingsService;
         _notificationManager = notificationManager;
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _httpClient = CreateHttpClient();
 
         var version = Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -82,7 +80,7 @@ public sealed class UpdateChecker : IDisposable
                 try
                 {
                     await CheckForUpdatesAsync(cancellationToken);
-                    await Task.Delay(TimeSpan.FromHours(1), cancellationToken);
+                    await Task.Delay(TimeSpan.FromHours(2), cancellationToken);
                 }
                 catch (TaskCanceledException e)
                 {
@@ -135,7 +133,9 @@ public sealed class UpdateChecker : IDisposable
 
     private async Task<Version?> GetLatestVersionAsync(CancellationToken cancellationToken)
     {
-        var result = await _httpClient.GetAsync(ReleasesApiUrl, cancellationToken);
+        using var httpClient = CreateHttpClient();
+
+        var result = await httpClient.GetAsync(ReleasesApiUrl, cancellationToken);
         if (!result.IsSuccessStatusCode)
         {
             _logger.Error("Failed to get latest version from GitHub. Status Code: {StatusCode}, Reason: {ReasonPhrase}",
@@ -163,9 +163,6 @@ public sealed class UpdateChecker : IDisposable
     public void Dispose()
     {
         _cancellationTokenSource.Cancel();
-        _httpClient.CancelPendingRequests();
-        _httpClient.Dispose();
-        _cancellationTokenSource.Dispose();
     }
 
     private void OnNewVersionAvailable(Version e)

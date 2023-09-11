@@ -12,8 +12,7 @@
     "Weapon": "Sword",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 1,
@@ -28,8 +27,7 @@
     "Weapon": "Sword",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 2,
@@ -44,8 +42,7 @@
     "Weapon": "Bow",
     "Region": [
       "Crossover"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 3,
@@ -60,8 +57,7 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 4,
@@ -77,8 +73,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 5,
@@ -93,8 +88,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 6,
@@ -109,8 +103,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 7,
@@ -125,8 +118,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 8,
@@ -141,8 +133,7 @@
     "Weapon": "Sword",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 9,
@@ -157,8 +148,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 73,
@@ -173,8 +163,7 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 10,
@@ -189,8 +178,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 72,
@@ -205,8 +193,7 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 11,
@@ -221,8 +208,7 @@
     "Weapon": "Bow",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 12,
@@ -237,8 +223,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 13,
@@ -253,8 +238,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 14,
@@ -269,8 +253,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 15,
@@ -285,8 +268,7 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 16,
@@ -301,8 +283,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 17,
@@ -317,8 +298,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 18,
@@ -333,8 +313,7 @@
     "Weapon": "Bow",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 19,
@@ -349,8 +328,22 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
+    ]
+  },
+  {
+    "Id": 76,
+    "DisplayName": "Freminet",
+    "Keys": [
+      "freminet"
     ],
-    "IsPinned": false
+    "ReleaseDate": "2023-09-05T00:00:00",
+    "ImageUri": "Character_Freminet_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Weapon": "Claymore",
+    "Region": [
+      "Fontaine"
+    ]
   },
   {
     "Id": 71,
@@ -366,8 +359,7 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 20,
@@ -382,8 +374,7 @@
     "Weapon": "Bow",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 21,
@@ -398,8 +389,7 @@
     "Weapon": "Bow",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 22,
@@ -415,8 +405,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 23,
@@ -431,8 +420,7 @@
     "Weapon": "Sword",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 24,
@@ -448,8 +436,7 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 25,
@@ -464,8 +451,7 @@
     "Weapon": "Sword",
     "Region": [
       "MondstadtKhaenri'ah"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 26,
@@ -481,8 +467,7 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 27,
@@ -498,8 +483,7 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 28,
@@ -514,8 +498,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 29,
@@ -530,8 +513,7 @@
     "Weapon": "Sword",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 30,
@@ -546,8 +528,7 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 31,
@@ -562,8 +543,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 32,
@@ -579,8 +559,7 @@
     "Weapon": "Bow",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 33,
@@ -596,8 +575,7 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 34,
@@ -612,8 +590,7 @@
     "Weapon": "Sword",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 35,
@@ -628,8 +605,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 36,
@@ -644,8 +620,7 @@
     "Weapon": "Sword",
     "Region": [
       "Fontaine"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 37,
@@ -660,8 +635,7 @@
     "Weapon": "Bow",
     "Region": [
       "Fontaine"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 38,
@@ -676,8 +650,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 39,
@@ -692,8 +665,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 40,
@@ -708,8 +680,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 70,
@@ -724,8 +695,7 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 41,
@@ -740,8 +710,7 @@
     "Weapon": "Sword",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 42,
@@ -756,8 +725,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 43,
@@ -772,8 +740,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 69,
@@ -788,8 +755,7 @@
     "Rarity": 0,
     "Element": "",
     "Weapon": "",
-    "Region": [],
-    "IsPinned": false
+    "Region": []
   },
   {
     "Id": 44,
@@ -804,8 +770,7 @@
     "Weapon": "Sword",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 45,
@@ -821,8 +786,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 46,
@@ -837,8 +801,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 47,
@@ -853,8 +816,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 48,
@@ -870,8 +832,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 49,
@@ -886,8 +847,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 50,
@@ -902,8 +862,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 51,
@@ -919,8 +878,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 52,
@@ -935,8 +893,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 53,
@@ -951,8 +908,7 @@
     "Weapon": "Bow",
     "Region": [
       "Snezhnaya"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 54,
@@ -967,8 +923,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 55,
@@ -983,8 +938,7 @@
     "Weapon": "Bow",
     "Region": [
       "Sumeru"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 57,
@@ -1001,8 +955,7 @@
     "Weapon": "Sword",
     "Region": [
       "Outlander"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 56,
@@ -1019,8 +972,7 @@
     "Weapon": "Sword",
     "Region": [
       "Outlander"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 58,
@@ -1035,8 +987,7 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 59,
@@ -1053,8 +1004,7 @@
       "Sumeru",
       "Snezhnaya",
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 60,
@@ -1069,8 +1019,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 61,
@@ -1085,8 +1034,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 62,
@@ -1101,8 +1049,7 @@
     "Weapon": "Sword",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 63,
@@ -1117,8 +1064,7 @@
     "Weapon": "Claymore",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 64,
@@ -1134,8 +1080,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 65,
@@ -1150,8 +1095,7 @@
     "Weapon": "Catalyst",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 66,
@@ -1166,8 +1110,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 67,
@@ -1182,8 +1125,7 @@
     "Weapon": "Bow",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 68,
@@ -1198,8 +1140,7 @@
     "Weapon": "Bow",
     "Region": [
       "Inazuma"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 74,
@@ -1215,8 +1156,7 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   },
   {
     "Id": 75,
@@ -1231,7 +1171,6 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
-    ],
-    "IsPinned": false
+    ]
   }
 ]

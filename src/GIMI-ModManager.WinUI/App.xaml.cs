@@ -39,6 +39,7 @@ public partial class App : Application
         return service;
     }
 
+    public static string TMP_DIR { get; } = Path.Combine(Path.GetTempPath(), "JASM_TMP");
     public static WindowEx MainWindow { get; } = new MainWindow();
 
     public static UIElement? AppTitlebar { get; set; }

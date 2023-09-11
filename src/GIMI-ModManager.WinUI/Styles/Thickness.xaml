@@ -26,7 +26,7 @@
     <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
     <Thickness x:Key="NavigationViewHeaderMargin">56,34,0,0</Thickness>
     <Thickness x:Key="NavigationViewPageContentMargin">48,24,48,0</Thickness>
-    <Thickness x:Key="NegativeNavigationViewPageContentMargin">0,-24,0,0</Thickness>
+    <Thickness x:Key="NegativeNavigationViewPageContentMargin">-48,-24,-48,0</Thickness>
 
     <Thickness x:Key="MenuBarContentMargin">36,24,36,0</Thickness>
 

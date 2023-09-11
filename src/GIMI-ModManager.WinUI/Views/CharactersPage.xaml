@@ -10,6 +10,7 @@
     xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:GIMI_ModManager.WinUI.Models"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -81,13 +82,24 @@
             <StackPanel
                 Grid.Column="0"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
 
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="28"
                     Style="{StaticResource TitleTextBlockStyle}"
                     Text="Character Overview" />
+
+                <HyperlinkButton VerticalAlignment="Bottom" NavigateUri="https://gamebanana.com/games/8552">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,8,0" Text="GameBanana" />
+                        <FontIcon FontSize="12" Glyph="&#xE8A7;" />
+                    </StackPanel>
+
+                </HyperlinkButton>
+
+
             </StackPanel>
 
             <StackPanel
@@ -119,8 +131,8 @@
                             Modifiers="Control" />
                     </AutoSuggestBox.KeyboardAccelerators>
                     <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate x:DataType="entities:GenshinCharacter">
-                            <TextBlock Text="{x:Bind DisplayName}" />
+                        <DataTemplate x:DataType="models:CharacterGridItemModel">
+                            <TextBlock Text="{x:Bind Character.DisplayName}" />
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
@@ -141,7 +153,7 @@
             SelectionMode="None"
             StretchContentForSingleRow="False">
             <controls:AdaptiveGridView.ItemTemplate>
-                <DataTemplate x:DataType="entities:GenshinCharacter">
+                <DataTemplate x:DataType="models:CharacterGridItemModel">
                     <Grid
                         x:Name="itemThumbnail"
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
@@ -152,18 +164,32 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+
+                            <Image VerticalAlignment="Top">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind Character.ImageUri}" />
+                                </Image.Source>
+                            </Image>
                             <FontIcon
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
                                 Glyph="&#xE840;"
                                 Visibility="{x:Bind IsPinned, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
-                            <Image VerticalAlignment="Top" Source="{x:Bind ImageUri}" />
+
+                            <FontIcon
+                                Margin="-8"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                FontSize="60"
+                                Foreground="Yellow"
+                                Glyph="&#xEC00;"
+                                Visibility="{x:Bind Warning, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
                             <TextBlock
                                 Grid.Row="1"
                                 Margin="{StaticResource XXSmallTopMargin}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
-                                Text="{x:Bind DisplayName}" />
+                                Text="{x:Bind Character.DisplayName}" />
                         </Grid>
                     </Grid>
                 </DataTemplate>

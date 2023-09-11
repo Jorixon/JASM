@@ -92,7 +92,7 @@ public class GenshinService : IGenshinService
     }
 
     public Dictionary<GenshinCharacter, int> GetCharacters(string searchQuery,
-        IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70)
+        IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int minScore = 100)
     {
         var searchResult = new Dictionary<GenshinCharacter, int>();
         searchQuery = searchQuery.ToLower();
@@ -136,6 +136,8 @@ public class GenshinService : IGenshinService
 
             result += loweredDisplayName.Split()
                 .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name
+
+            if (result < minScore) continue;
 
             searchResult.Add(character, result);
         }
@@ -195,7 +197,7 @@ public interface IGenshinService
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70);
 
     public Dictionary<GenshinCharacter, int> GetCharacters(string searchQuery,
-        IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70);
+        IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int minScore = 70);
 
     public GenshinCharacter? GetCharacter(int id);
     public int OtherCharacterId { get; }

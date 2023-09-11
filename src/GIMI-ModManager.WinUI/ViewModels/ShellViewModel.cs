@@ -36,7 +36,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     public event EventHandler<bool>? ShowSettingsInfoBadge;
 
-    private async void OnNewVersionAvailable(object? sender, UpdateChecker.NewVersionEventArgs e)
+    private void OnNewVersionAvailable(object? sender, UpdateChecker.NewVersionEventArgs e)
     {
         if (_updateChecker.IgnoredVersion == e.Version)
             return;
