@@ -315,7 +315,7 @@
                                 DragEnter="ModDetailsPaneImage_OnDragEnter"
                                 DragOver="ModDetailsPaneImage_OnDragOver"
                                 Drop="ModDetailsPaneImage_OnDrop">
-                                <Image Stretch="Uniform">
+                                <Image Stretch="Uniform" ImageFailed="Image_OnImageFailed">
                                     <Image.Source>
                                         <BitmapImage CreateOptions="IgnoreImageCache" UriSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ImagePath, Mode=OneWay}" />
                                     </Image.Source>

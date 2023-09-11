@@ -277,10 +277,13 @@ public sealed partial class CharacterDetailsPage : Page
 
     private async void ModListArea_OnDrop(object sender, DragEventArgs e)
     {
+        var deferral = e.GetDeferral();
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
             await ViewModel.DragAndDropCommand.ExecuteAsync(await e.DataView.GetStorageItemsAsync());
         }
+
+        deferral.Complete();
     }
 
     private void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
@@ -357,16 +360,23 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void ModDetailsPaneImage_OnDragEnter(object sender, DragEventArgs e)
     {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
         e.AcceptedOperation = DataPackageOperation.Copy;
     }
 
     private void ModDetailsPaneImage_OnDragOver(object sender, DragEventArgs e)
     {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
         e.AcceptedOperation = DataPackageOperation.Copy;
     }
 
     private async void ModDetailsPaneImage_OnDrop(object sender, DragEventArgs e)
     {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
+        
         var deferral = e.GetDeferral();
         if (e.DataView.Contains(StandardDataFormats.Uri))
         {
@@ -379,5 +389,10 @@ public sealed partial class CharacterDetailsPage : Page
         }
 
         deferral.Complete();
+    }
+
+    private void Image_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
+    {
+        Debug.WriteLine(e.ErrorMessage);
     }
 }

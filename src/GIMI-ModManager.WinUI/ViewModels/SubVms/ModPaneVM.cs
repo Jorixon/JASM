@@ -147,6 +147,18 @@ public partial class ModPaneVM : ObservableRecipient
             return;
         }
 
+        if (!_supportedImageExtensions.Contains(Path.GetExtension(url.AbsolutePath)))
+        {
+            var invalidExtension = Path.GetExtension(url.AbsolutePath);
+
+            invalidExtension = string.IsNullOrWhiteSpace(invalidExtension)  ? "Could not get extension" : invalidExtension;
+
+            _notificationManager.ShowNotification("Error setting image",
+                               $"Could not set image, invalid extenstion: {invalidExtension}",
+                                              TimeSpan.FromSeconds(5));
+            return;
+        }
+
         var tmpDir = App.TMP_DIR;
 
         var tmpFile = Path.Combine(tmpDir, $"WEB_DROP_{Guid.NewGuid():N}{Path.GetExtension(url.ToString())}");
