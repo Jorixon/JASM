@@ -144,6 +144,7 @@ public class SkinMod : Mod, ISkinMod
     }
 
     // I wonder how long this abomination will stay in the codebase :)
+    // This is getting worse and worse
     public async Task SaveKeySwapConfiguration(ICollection<SkinModKeySwap> updatedKeySwaps,
         CancellationToken cancellationToken = default)
     {
@@ -158,7 +159,6 @@ public class SkinMod : Mod, ISkinMod
             throw new ArgumentException("Key swap count mismatch.", nameof(updatedKeySwaps));
 
 
-        // Convoluted way to lock the file for reading and writing.
         var fileLines = new List<string>();
 
         await using var fileStream = new FileStream(_modIniPath, FileMode.Open, FileAccess.Read, FileShare.None);
@@ -182,52 +182,85 @@ public class SkinMod : Mod, ISkinMod
         if (sectionStartIndexes.Count == 0)
             throw new InvalidOperationException("No key swaps found.");
 
-        for (var i = 0; i < sectionStartIndexes.Count; i++)
+        // Line numbers where the key swap sections starts
+        // We loop from the beginning to the end so we can remove or add lines without messing up the indexes
+        for (var i = sectionStartIndexes.Count - 1; i >= 0; i--)
         {
             var keySwap = updatedKeySwaps.ElementAt(i);
             var sectionStartIndex = sectionStartIndexes[i] + 1;
 
+            var newForwardKeyWrittenIndex = -1;
+            var newBackwardKeyWrittenIndex = -1;
 
-            for (var j = sectionStartIndex; j < sectionStartIndex + 8; j++)
+            var oldForwardKeyIndex = -1;
+            var oldBackwardKeyIndex = -1;
+
+            // When iterating a section go downwards instead of upwards
+            // 8 as the limit is just an arbitrary number so it doesn't loop forever
+            for (var lineIndex = sectionStartIndex; lineIndex < sectionStartIndex + 8; lineIndex++)
             {
-                var line = fileLines[j];
+                var line = fileLines[lineIndex];
 
-                if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ForwardIniKey))
+                if (newForwardKeyWrittenIndex == -1 && IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ForwardIniKey))
                 {
                     var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.ForwardIniKey, keySwap.ForwardHotkey);
                     if (value is null)
                         continue;
-                    fileLines[j] = value;
+                    fileLines[lineIndex] = value;
+
+                    // If forwardkey is defined also set the backward key
+                    if (keySwap.BackwardHotkey is null) continue;
+
+                    var backwardValue =
+                        IniConfigHelpers.FormatIniKey(SkinModKeySwap.BackwardIniKey, keySwap.BackwardHotkey);
+                    if (backwardValue is null)
+                        continue;
+                    newBackwardKeyWrittenIndex = lineIndex + 1;
+                    fileLines.Insert(newBackwardKeyWrittenIndex, backwardValue);
                 }
 
-                else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.BackwardIniKey))
+                // Remove old forward key
+                else if (newForwardKeyWrittenIndex != -1 && newForwardKeyWrittenIndex != lineIndex &&
+                         IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ForwardIniKey))
+                    oldForwardKeyIndex = lineIndex;
+
+                else if (newBackwardKeyWrittenIndex == -1 &&
+                         IniConfigHelpers.IsIniKey(line, SkinModKeySwap.BackwardIniKey))
                 {
                     var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.BackwardIniKey, keySwap.BackwardHotkey);
                     if (value is null)
                         continue;
-                    fileLines[j] = value;
+                    fileLines[lineIndex] = value;
+
+                    // If backwardkey is defined also set the forward key
+                    if (keySwap.ForwardHotkey is null) continue;
+                    var forwardValue =
+                        IniConfigHelpers.FormatIniKey(SkinModKeySwap.ForwardIniKey, keySwap.ForwardHotkey);
+                    if (forwardValue is null)
+                        continue;
+                    newForwardKeyWrittenIndex = lineIndex + 1;
+                    fileLines.Insert(newForwardKeyWrittenIndex, forwardValue);
                 }
 
-                //else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.TypeIniKey))
-                //{
-                //    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.TypeIniKey, keySwap.Type);
-                //    if (value is null)
-                //        continue;
-                //    fileLines[j] = value;
-                //}
-                //else if (IniConfigHelpers.IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
-                //{
-                //    var value = IniConfigHelpers.FormatIniKey(SkinModKeySwap.SwapVarIniKey,
-                //        string.Join(",", keySwap.SwapVar ?? new string[] { "" }));
-                //    if (value is null)
-                //        continue;
-                //    fileLines[j] = value;
-                //}
-
+                // Remove old backward key
+                else if (newBackwardKeyWrittenIndex != -1 && newBackwardKeyWrittenIndex != lineIndex &&
+                         IniConfigHelpers.IsIniKey(line, SkinModKeySwap.BackwardIniKey))
+                    oldBackwardKeyIndex = lineIndex;
 
                 else if (IniConfigHelpers.IsSection(line))
                     break;
             }
+
+            if (newBackwardKeyWrittenIndex != -1 && newForwardKeyWrittenIndex != -1)
+                throw new InvalidOperationException("Key bind writing error");
+
+            if (oldBackwardKeyIndex != -1 && oldForwardKeyIndex != -1)
+                throw new InvalidOperationException("key bind writing error");
+
+            if (oldBackwardKeyIndex != -1)
+                fileLines.RemoveAt(oldBackwardKeyIndex);
+            else if (oldForwardKeyIndex != -1)
+                fileLines.RemoveAt(oldForwardKeyIndex);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -464,9 +497,6 @@ public class SkinModKeySwap : IEquatable<SkinModKeySwap>
     public string[]? SwapVar { get; set; }
 
     public bool AnyValues() => ForwardHotkey is not null || BackwardHotkey is not null;
-    {
-        return !string.IsNullOrWhiteSpace(ForwardHotkey) || !string.IsNullOrWhiteSpace(BackwardHotkey);
-    }
 
     public bool Equals(SkinModKeySwap? other)
     {
