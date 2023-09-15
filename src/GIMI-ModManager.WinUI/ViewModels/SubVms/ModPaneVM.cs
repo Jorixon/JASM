@@ -26,6 +26,8 @@ public partial class ModPaneVM : ObservableRecipient
     [ObservableProperty] private NewModModel _selectedModModel = null!;
     [ObservableProperty] private bool _isReadOnlyMode = true;
 
+    [ObservableProperty] private bool _isEditingModName = false;
+
 
     public ModPaneVM(ISkinManagerService skinManagerService, NotificationManager notificationManager)
     {
@@ -179,6 +181,12 @@ public partial class ModPaneVM : ObservableRecipient
         SelectedModModel.ImagePath = imageUri;
     }
 
+    [RelayCommand]
+    private void ToggleEditingModName()
+    {
+        IsEditingModName = !IsEditingModName;
+    }
+
 
     [RelayCommand]
     private async Task OpenModFolder() =>
@@ -237,6 +245,7 @@ public partial class ModPaneVM : ObservableRecipient
         IsReadOnlyMode = false;
 
         await ReloadModSettings(CancellationToken.None);
+        IsEditingModName = false;
 
         if (!errored)
             _notificationManager.ShowNotification("Mod settings saved",

@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entities="using:GIMI_ModManager.Core.Entities"
     xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
@@ -329,13 +330,24 @@
                                     <FontIcon Glyph="&#xE70F;" />
                                 </Button>
                             </Grid>
-                            <TextBlock
-                                Grid.Row="2"
-                                Margin="0,8"
-                                HorizontalAlignment="Center"
-                                IsTextSelectionEnabled="True"
-                                Style="{ThemeResource SubtitleTextBlockStyle}"
-                                Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=OneWay}" />
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <controls1:EditableTextBlock
+                                    Margin="0,8"
+                                    HorizontalAlignment="Stretch"
+                                    IsEditMode="{x:Bind ViewModel.ModPaneVM.IsEditingModName, Mode=OneWay}"
+                                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=TwoWay}"
+                                    TextAlignment="Center" />
+
+                                <Button Grid.Column="1" Command="{x:Bind ViewModel.ModPaneVM.ToggleEditingModNameCommand}">
+                                    <FontIcon Glyph="&#xE70F;" />
+                                </Button>
+
+                            </Grid>
 
                             <Grid Grid.Row="3">
                                 <Grid.ColumnDefinitions>
@@ -417,8 +429,13 @@
                                 <Button
                                     Background="{ThemeResource SystemFillColorAttentionBrush}"
                                     Command="{x:Bind ViewModel.ModPaneVM.SaveModSettingsCommand}"
-                                    Content="Save"
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
+                                            <TextBlock Text="Save" />
+                                        </StackPanel>
+                                    </Button.Content>
                                     <Button.KeyboardAccelerators>
                                         <KeyboardAccelerator Key="S" Modifiers="Control" />
                                     </Button.KeyboardAccelerators>

@@ -61,6 +61,9 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
 
     public NewModModel WithModSettings(SkinModSettings settings)
     {
+        if (!string.IsNullOrWhiteSpace(settings.CustomName))
+            Name = settings.CustomName;
+        
         ModUrl = settings.ModUrl ?? string.Empty;
         ModVersion = settings.Version ?? string.Empty;
         ImagePath = string.IsNullOrWhiteSpace(settings.ImagePath) ? PlaceholderImagePath : new Uri(settings.ImagePath, UriKind.Absolute);
