@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,6 +19,7 @@ public partial class ModPaneVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly NotificationManager _notificationManager;
+    private readonly ILogger _logger = Log.ForContext<ModPaneVM>();
     private ISkinMod _selectedSkinMod = null!;
     private ICharacterModList _modList = null!;
 
@@ -52,10 +54,20 @@ public partial class ModPaneVM : ObservableRecipient
 
     private async Task ReloadModSettings(CancellationToken cancellationToken = default)
     {
-        var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
+        try
+        {
+            var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
 
-        _backendModModel.WithModSettings(skinModSettings);
-        SelectedModModel.WithModSettings(skinModSettings);
+            _backendModModel.WithModSettings(skinModSettings);
+            SelectedModModel.WithModSettings(skinModSettings);
+        }
+        catch (JsonException e)
+        {
+            _logger.Error(e, "Error while reading mod settings for {ModName}", _backendModModel.FolderName);
+            _notificationManager.ShowNotification("Error while reading mod settings.",
+                $"An error occurred while reading the mod settings for {_backendModModel.FolderName}, See logs for details.\n{e.Message}",
+                TimeSpan.FromSeconds(10));
+        }
 
         Debug.Assert(_backendModModel.Equals(SelectedModModel));
 

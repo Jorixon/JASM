@@ -57,6 +57,10 @@ public partial class App : Application
                 var mt = new ExpressionTemplate(
                     "[{@t:yyyy-MM-dd'T'HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
                 configuration.WriteTo.File(formatter: mt, "logs\\log.txt");
+                if (Debugger.IsAttached)
+                {
+                    configuration.WriteTo.Debug();
+                }
             })
             .ConfigureServices((context, services) =>
             {

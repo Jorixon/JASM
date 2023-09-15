@@ -33,7 +33,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public bool UnloadingModsEnabled { get; private set; }
 
-    public void ScanForMods()
+    public Task ScanForModsAsync()
     {
         _activeModsFolder.Refresh();
 
@@ -56,9 +56,11 @@ public sealed class SkinManagerService : ISkinManagerService
                 characterModList.TrackMod(mod);
             }
         }
+
+        return Task.CompletedTask;
     }
 
-    public void RefreshMods(GenshinCharacter? refreshForCharacter = null)
+    public async Task RefreshModsAsync(GenshinCharacter? refreshForCharacter = null)
     {
         foreach (var characterModList in _characterModLists)
         {
@@ -341,7 +343,7 @@ public sealed class SkinManagerService : ISkinManagerService
     }
 
 
-    public void Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null,
+    public async Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
     {
         _logger.Debug(
@@ -371,7 +373,7 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
         _activeModsFolder.Create();
         InitializeFolderStructure();
-        ScanForMods();
+        await ScanForModsAsync();
     }
 
     private void InitializeFolderStructure()

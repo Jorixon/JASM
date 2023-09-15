@@ -9,10 +9,10 @@ public interface ISkinManagerService : IDisposable
     public string UnloadedModsFolderPath { get; }
     public string ActiveModsFolderPath { get; }
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
-    public void ScanForMods();
+    public Task ScanForModsAsync();
     public ICharacterModList GetCharacterModList(GenshinCharacter character);
 
-    public void Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
+    public Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
         string? threeMigotoRootfolder = null);
 
     /// <summary>
@@ -25,7 +25,7 @@ public interface ISkinManagerService : IDisposable
     /// <summary>
     /// This looks for mods in characters mod folder that are not tracked by the mod manager and adds them to the mod manager.
     /// </summary>
-    public void RefreshMods(GenshinCharacter? refreshForCharacter = null);
+    public Task RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
 
     public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
 

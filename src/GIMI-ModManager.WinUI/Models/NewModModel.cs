@@ -22,7 +22,9 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
     [ObservableProperty] private string _author = string.Empty;
 
-    private static readonly Uri PlaceholderImagePath = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
+    private static readonly Uri PlaceholderImagePath =
+        new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
+
     public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } =
         new ObservableCollection<SkinModKeySwapModel>();
 
@@ -49,7 +51,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
                 name.StartsWith(CharacterModList.DISABLED_PREFIX) ? "DISABLED_" : "DISABLED", "");
         }
 
-        return new NewModModel
+        var modModel = new NewModModel
         {
             Id = modEntry.Id,
             Character = modEntry.ModList.Character,
@@ -57,16 +59,27 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
             FolderName = modEntry.Mod.Name,
             IsEnabled = modEntry.IsEnabled
         };
+
+        if (modEntry.Mod.CachedSkinModSettings is { } settings)
+            modModel.WithModSettings(settings);
+
+
+        if (modEntry.Mod.CachedKeySwaps is { } keySwaps)
+            modModel.SetKeySwaps(keySwaps);
+
+        return modModel;
     }
 
     public NewModModel WithModSettings(SkinModSettings settings)
     {
         if (!string.IsNullOrWhiteSpace(settings.CustomName))
             Name = settings.CustomName;
-        
+
         ModUrl = settings.ModUrl ?? string.Empty;
         ModVersion = settings.Version ?? string.Empty;
-        ImagePath = string.IsNullOrWhiteSpace(settings.ImagePath) ? PlaceholderImagePath : new Uri(settings.ImagePath, UriKind.Absolute);
+        ImagePath = string.IsNullOrWhiteSpace(settings.ImagePath)
+            ? PlaceholderImagePath
+            : new Uri(settings.ImagePath, UriKind.Absolute);
         Author = settings.Author ?? string.Empty;
         return this;
     }
