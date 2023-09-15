@@ -55,6 +55,13 @@ public sealed partial class ShellPage : Page
 
             Bindings.Update();
         };
+
+
+#if RELEASE
+// Hide debug menu in release mode
+DebugItem.Visibility = Visibility.Collapsed;
+
+#endif
     }
 
 

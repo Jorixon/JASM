@@ -39,6 +39,16 @@ public class SkinMod : Mod, ISkinMod
         Init();
     }
 
+    public static async Task<ISkinMod> CreateWithSettingsAsync(DirectoryInfo modDirectory,
+        CancellationToken cancellationToken = default)
+    {
+        var skinMod = new SkinMod(modDirectory);
+        if (skinMod.HasMergedInI)
+            await skinMod.ReadKeySwapConfiguration(cancellationToken: cancellationToken);
+        await skinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
+        return skinMod;
+    }
+
     private void Init()
     {
         var modFolderAttributes = File.GetAttributes(_modDirectory.FullName);
@@ -76,6 +86,10 @@ public class SkinMod : Mod, ISkinMod
         Refresh();
         if (!HasMergedInI)
             throw new InvalidOperationException("Mod has no merged.ini file.");
+
+
+        if (CachedKeySwaps is not null && !forceReload)
+            return CachedKeySwaps;
 
         List<string> keySwapLines = new();
         List<SkinModKeySwap> keySwaps = new();
@@ -301,6 +315,7 @@ public class SkinMod : Mod, ISkinMod
             skinModSettings.ImagePath = string.Empty;
 
         CachedSkinModSettings = skinModSettings;
+        SetCustomName(skinModSettings.CustomName ?? Name);
 
         return skinModSettings;
     }

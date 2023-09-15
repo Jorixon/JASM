@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entities="using:GIMI_ModManager.Core.Entities"
     xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
@@ -83,6 +84,27 @@
                     </StackPanel>
                 </Grid>
             </Flyout>
+
+            <MenuFlyout x:Name="ImageFlyout">
+                <MenuFlyoutItem
+                    Height="40"
+                    Click="ImageFlyout_PasteImage"
+                    Icon="Paste"
+                    Text="Paste Image" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Height="40"
+                    Click="ImageFlyout_CopyImage"
+                    Icon="Copy"
+                    Text="Copy Image" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.ModPaneVM.ClearImageCommand}"
+                    Icon="Delete"
+                    Text="Clear image" />
+            </MenuFlyout>
         </Grid.Resources>
 
 
@@ -252,6 +274,7 @@
                                         CanUserSort="True"
                                         Header="ModEnabled"
                                         Tag="IsEnabled">
+
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate x:DataType="models:NewModModel">
                                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -263,14 +286,25 @@
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
                                     </controls:DataGridTemplateColumn>
-                                    <controls:DataGridTextColumn
+
+                                    <controls:DataGridTemplateColumn
                                         Width="SizeToCells"
-                                        Binding="{Binding Name, Mode=OneWay}"
                                         CanUserSort="True"
                                         Header="Mod Name"
                                         IsReadOnly="True"
-                                        Tag="Name" />
-
+                                        Tag="Name">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:NewModModel">
+                                                <Grid Margin="8,0">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Center"
+                                                        DoubleTapped="ModNameCell_OnDoubleTapped"
+                                                        Text="{x:Bind Name, Mode=OneWay}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
                                     <controls:DataGridTextColumn
                                         Width="SizeToCells"
                                         Binding="{Binding FolderName, Mode=OneWay}"
@@ -311,6 +345,7 @@
                                 MinHeight="200"
                                 AllowDrop="True"
                                 Background="{ThemeResource ControlFillColorTertiaryBrush}"
+                                ContextFlyout="{Binding ElementName=ImageFlyout}"
                                 CornerRadius="10"
                                 DragEnter="ModDetailsPaneImage_OnDragEnter"
                                 DragOver="ModDetailsPaneImage_OnDragOver"
@@ -329,13 +364,25 @@
                                     <FontIcon Glyph="&#xE70F;" />
                                 </Button>
                             </Grid>
-                            <TextBlock
-                                Grid.Row="2"
-                                Margin="0,8"
-                                HorizontalAlignment="Center"
-                                IsTextSelectionEnabled="True"
-                                Style="{ThemeResource SubtitleTextBlockStyle}"
-                                Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=OneWay}" />
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <controls1:EditableTextBlock
+                                    x:Name="ModNameTextBlock"
+                                    Margin="0,8"
+                                    HorizontalAlignment="Stretch"
+                                    IsEditMode="{x:Bind ViewModel.ModPaneVM.IsEditingModName, Mode=OneWay}"
+                                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=TwoWay}"
+                                    TextAlignment="Center" />
+
+                                <Button Grid.Column="1" Command="{x:Bind ViewModel.ModPaneVM.ToggleEditingModNameCommand}">
+                                    <FontIcon Glyph="&#xE70F;" />
+                                </Button>
+
+                            </Grid>
 
                             <Grid Grid.Row="3">
                                 <Grid.ColumnDefinitions>
@@ -417,8 +464,13 @@
                                 <Button
                                     Background="{ThemeResource SystemFillColorAttentionBrush}"
                                     Command="{x:Bind ViewModel.ModPaneVM.SaveModSettingsCommand}"
-                                    Content="Save"
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
+                                            <TextBlock Text="Save" />
+                                        </StackPanel>
+                                    </Button.Content>
                                     <Button.KeyboardAccelerators>
                                         <KeyboardAccelerator Key="S" Modifiers="Control" />
                                     </Button.KeyboardAccelerators>

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,8 +10,10 @@ using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Serilog;
 using FileAttributes = Windows.Storage.FileAttributes;
+using Windows.Storage.Streams;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -18,6 +21,7 @@ public partial class ModPaneVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly NotificationManager _notificationManager;
+    private readonly ILogger _logger = Log.ForContext<ModPaneVM>();
     private ISkinMod _selectedSkinMod = null!;
     private ICharacterModList _modList = null!;
 
@@ -25,6 +29,8 @@ public partial class ModPaneVM : ObservableRecipient
 
     [ObservableProperty] private NewModModel _selectedModModel = null!;
     [ObservableProperty] private bool _isReadOnlyMode = true;
+
+    [ObservableProperty] private bool _isEditingModName = false;
 
 
     public ModPaneVM(ISkinManagerService skinManagerService, NotificationManager notificationManager)
@@ -50,10 +56,20 @@ public partial class ModPaneVM : ObservableRecipient
 
     private async Task ReloadModSettings(CancellationToken cancellationToken = default)
     {
-        var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
+        try
+        {
+            var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
 
-        _backendModModel.WithModSettings(skinModSettings);
-        SelectedModModel.WithModSettings(skinModSettings);
+            _backendModModel.WithModSettings(skinModSettings);
+            SelectedModModel.WithModSettings(skinModSettings);
+        }
+        catch (JsonException e)
+        {
+            _logger.Error(e, "Error while reading mod settings for {ModName}", _backendModModel.FolderName);
+            _notificationManager.ShowNotification("Error while reading mod settings.",
+                $"An error occurred while reading the mod settings for {_backendModModel.FolderName}, See logs for details.\n{e.Message}",
+                TimeSpan.FromSeconds(10));
+        }
 
         Debug.Assert(_backendModModel.Equals(SelectedModModel));
 
@@ -86,12 +102,14 @@ public partial class ModPaneVM : ObservableRecipient
         IsReadOnlyMode = true;
         _selectedSkinMod = null!;
         _backendModModel = null!;
+        IsEditingModName = false;
         SelectedModModel = new NewModModel();
         _modList = null!;
         SettingsPropertiesChanged();
     }
 
-    private string[] _supportedImageExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".gif" };
+    private string[] _supportedImageExtensions =
+        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg" };
 
     [RelayCommand]
     private async Task SetImageUriAsync()
@@ -151,11 +169,13 @@ public partial class ModPaneVM : ObservableRecipient
         {
             var invalidExtension = Path.GetExtension(url.AbsolutePath);
 
-            invalidExtension = string.IsNullOrWhiteSpace(invalidExtension)  ? "Could not get extension" : invalidExtension;
+            invalidExtension = string.IsNullOrWhiteSpace(invalidExtension)
+                ? "Could not get extension"
+                : invalidExtension;
 
             _notificationManager.ShowNotification("Error setting image",
-                               $"Could not set image, invalid extenstion: {invalidExtension}",
-                                              TimeSpan.FromSeconds(5));
+                $"Could not set image, invalid extenstion: {invalidExtension}",
+                TimeSpan.FromSeconds(5));
             return;
         }
 
@@ -177,6 +197,45 @@ public partial class ModPaneVM : ObservableRecipient
 
         var imageUri = new Uri(tmpFile);
         SelectedModModel.ImagePath = imageUri;
+    }
+
+    public async Task SetImageFromBitmapStreamAsync(RandomAccessStreamReference accessStreamReference,
+        IReadOnlyCollection<string> formats)
+    {
+        var tmpDir = App.TMP_DIR;
+
+        if (!Directory.Exists(tmpDir))
+            Directory.CreateDirectory(tmpDir);
+
+        var tmpFile = Path.Combine(tmpDir, $"CLIPBOARD_PASTE_{Guid.NewGuid():N}");
+
+        var fileExtension = formats.FirstOrDefault(format => _supportedImageExtensions.Append("bitmap").Any(supportedFormat => supportedFormat.Trim('.').Equals(format, StringComparison.OrdinalIgnoreCase)));
+
+        if (fileExtension is null)
+        {
+            _notificationManager.ShowNotification("Error setting image",
+                "Could not set image, invalid extenstion",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        tmpFile += "."+ fileExtension;
+
+
+        await Task.Run(async () =>
+        {
+            var stream = await accessStreamReference.OpenReadAsync();
+            await using var fileStream = File.Create(tmpFile);
+            await stream.AsStreamForRead().CopyToAsync(fileStream);
+        });
+
+        SelectedModModel.ImagePath = new Uri(tmpFile);
+    }
+
+    [RelayCommand]
+    private void ToggleEditingModName()
+    {
+        IsEditingModName = !IsEditingModName;
     }
 
 
@@ -237,6 +296,7 @@ public partial class ModPaneVM : ObservableRecipient
         IsReadOnlyMode = false;
 
         await ReloadModSettings(CancellationToken.None);
+        IsEditingModName = false;
 
         if (!errored)
             _notificationManager.ShowNotification("Mod settings saved",
@@ -244,4 +304,15 @@ public partial class ModPaneVM : ObservableRecipient
     }
 
     private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
+
+    [RelayCommand]
+    private void ClearImage()
+    {
+        SelectedModModel.ImagePath = NewModModel.PlaceholderImagePath;
+    }
+
+    [RelayCommand]
+    private async Task CopyImageAsync()
+    {
+    }
 }

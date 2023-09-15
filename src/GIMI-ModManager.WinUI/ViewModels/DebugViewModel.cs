@@ -20,8 +20,6 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     private readonly IGenshinService _genshinService;
 
 
-    public ModListVM ModListVM { get; }
-
     public DebugViewModel(ILogger logger, NotificationManager notificationManager,
         ISkinManagerService skinManagerService, IGenshinService genshinService)
     {
@@ -29,16 +27,23 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
         _notificationManager = notificationManager;
         _skinManagerService = skinManagerService;
         _genshinService = genshinService;
-        ModListVM = new(skinManagerService);
+    }
+
+
+    [ObservableProperty]
+    private string _testString = "TestString";
+
+    [ObservableProperty]
+    private bool _isEditing = false;
+
+    [RelayCommand]
+    private void ToggleEditing()
+    {
+        IsEditing = !IsEditing;
     }
 
     public void OnNavigatedTo(object parameter)
     {
-        var modList =
-            _skinManagerService.GetCharacterModList(_genshinService.GetCharacter("Raiden")!);
-
-        ModListVM.SetBackendMods(modList.Mods.Select(NewModModel.FromMod));
-        ModListVM.ResetContent();
     }
 
     public void OnNavigatedFrom()

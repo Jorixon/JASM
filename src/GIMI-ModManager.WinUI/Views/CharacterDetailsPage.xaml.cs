@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System.Diagnostics;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
 using CommunityToolkit.WinUI.UI;
@@ -376,7 +377,7 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (ViewModel.ModPaneVM.IsReadOnlyMode)
             return;
-        
+
         var deferral = e.GetDeferral();
         if (e.DataView.Contains(StandardDataFormats.Uri))
         {
@@ -395,5 +396,55 @@ public sealed partial class CharacterDetailsPage : Page
     {
         Log.Warning(e.ErrorMessage);
         Debug.WriteLine(e.ErrorMessage);
+    }
+
+    private void ModNameCell_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode ||
+            ViewModel.ModPaneVM.SelectedModModel.SettingsEquals(new NewModModel()))
+            return;
+
+        ViewModel.ModPaneVM.IsEditingModName = true;
+        ModNameTextBlock.SetFocus();
+    }
+
+    private async void ImageFlyout_PasteImage(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
+
+        var package = Clipboard.GetContent();
+        if (package.Contains(StandardDataFormats.Bitmap))
+        {
+            var imageStream = await package.GetBitmapAsync();
+            if (imageStream is null) return;
+            await ViewModel.ModPaneVM.SetImageFromBitmapStreamAsync(imageStream, package.AvailableFormats);
+        }
+        else if (package.Contains(StandardDataFormats.StorageItems))
+        {
+            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await package.GetStorageItemsAsync());
+        }
+    }
+
+    private async void ImageFlyout_CopyImage(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode)
+            return;
+
+        var package = new DataPackage
+        {
+            RequestedOperation = DataPackageOperation.Copy
+        };
+
+        var imageFile = await StorageFile.GetFileFromPathAsync(ViewModel.ModPaneVM.SelectedModModel.ImagePath.LocalPath);
+        var imageStream = RandomAccessStreamReference.CreateFromFile(imageFile);
+        package.SetBitmap(imageStream);
+        package.SetStorageItems(new List<IStorageItem>()
+        {
+            imageFile
+        });
+
+        Clipboard.SetContent(package);
+        Clipboard.Flush();
     }
 }

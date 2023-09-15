@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text.Json;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -67,20 +69,19 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
     {
-        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
         {
             if (!IsAddingModFolder)
                 _notificationService.ShowNotification(
                     $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
                     "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
                     TimeSpan.FromSeconds(5));
-            ModListVM.SetBackendMods(_modList.Mods.Select(mod =>
-                NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod)));
-            ModListVM.ResetContent();
+            await Task.Delay(TimeSpan.FromSeconds(1)); // Wait for file system to finish moving files
+            await _refreshMods().ConfigureAwait(false);
         });
     }
 
-    public void OnNavigatedTo(object parameter)
+    public async void OnNavigatedTo(object parameter)
     {
         if (parameter is not CharacterGridItemModel characterGridItemModel)
         {
@@ -107,11 +108,19 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (ShownCharacter.Id == _genshinService.OtherCharacterId)
             ModListVM.DisableInfoBar = true;
 
-
-        ModListVM.SetBackendMods(_modList.Mods.Select(mod =>
-            NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod)));
-        _modList.ModsChanged += ModListOnModsChanged;
-        ModListVM.ResetContent();
+        try
+        {
+            await _refreshMods();
+            _modList.ModsChanged += ModListOnModsChanged;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while refreshing mods.");
+            _notificationService.ShowNotification("Error while loading modes.",
+                $"An error occurred while loading the mods for this character.\n{e.Message}",
+                TimeSpan.FromSeconds(10));
+            _navigationService.GoBack();
+        }
     }
 
 
@@ -203,9 +212,30 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     private async Task _refreshMods()
     {
-        await Task.Run(() => _skinManagerService.RefreshMods(ShownCharacter));
-        ModListVM.SetBackendMods(_modList.Mods.Select(mod =>
-            NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod)));
+        await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter));
+        var modList = new List<NewModModel>();
+        foreach (var skinEntry in _modList.Mods)
+        {
+            var newModModel = NewModModel.FromMod(skinEntry);
+            newModModel.WithToggleModDelegate(ToggleMod);
+            try
+            {
+                var modSettings = await skinEntry.Mod.ReadSkinModSettings();
+
+                newModModel.WithModSettings(modSettings);
+
+            }
+            catch (JsonException e)
+            {
+                _logger.Error(e, "Error while reading mod settings for {ModName}", skinEntry.Mod.Name);
+                _notificationService.ShowNotification("Error while reading mod settings.",
+                                       $"An error occurred while reading the mod settings for {skinEntry.Mod.Name}, See logs for details.\n{e.Message}",
+                                                          TimeSpan.FromSeconds(10));
+            }
+            modList.Add(newModModel);
+        }
+
+        ModListVM.SetBackendMods(modList);
         ModListVM.ResetContent();
     }
 
