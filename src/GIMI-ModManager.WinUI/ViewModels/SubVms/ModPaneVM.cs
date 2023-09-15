@@ -88,6 +88,7 @@ public partial class ModPaneVM : ObservableRecipient
         IsReadOnlyMode = true;
         _selectedSkinMod = null!;
         _backendModModel = null!;
+        IsEditingModName = false;
         SelectedModModel = new NewModModel();
         _modList = null!;
         SettingsPropertiesChanged();

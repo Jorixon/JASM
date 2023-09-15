@@ -253,6 +253,7 @@
                                         CanUserSort="True"
                                         Header="ModEnabled"
                                         Tag="IsEnabled">
+
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate x:DataType="models:NewModModel">
                                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -264,14 +265,25 @@
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
                                     </controls:DataGridTemplateColumn>
-                                    <controls:DataGridTextColumn
+
+                                    <controls:DataGridTemplateColumn
                                         Width="SizeToCells"
-                                        Binding="{Binding Name, Mode=OneWay}"
                                         CanUserSort="True"
                                         Header="Mod Name"
                                         IsReadOnly="True"
-                                        Tag="Name" />
-
+                                        Tag="Name">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:NewModModel">
+                                                <Grid Margin="8,0">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Center"
+                                                        DoubleTapped="ModNameCell_OnDoubleTapped"
+                                                        Text="{x:Bind Name, Mode=OneWay}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
                                     <controls:DataGridTextColumn
                                         Width="SizeToCells"
                                         Binding="{Binding FolderName, Mode=OneWay}"
@@ -336,6 +348,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <controls1:EditableTextBlock
+                                    x:Name="ModNameTextBlock"
                                     Margin="0,8"
                                     HorizontalAlignment="Stretch"
                                     IsEditMode="{x:Bind ViewModel.ModPaneVM.IsEditingModName, Mode=OneWay}"

@@ -376,7 +376,7 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (ViewModel.ModPaneVM.IsReadOnlyMode)
             return;
-        
+
         var deferral = e.GetDeferral();
         if (e.DataView.Contains(StandardDataFormats.Uri))
         {
@@ -395,5 +395,14 @@ public sealed partial class CharacterDetailsPage : Page
     {
         Log.Warning(e.ErrorMessage);
         Debug.WriteLine(e.ErrorMessage);
+    }
+
+    private void ModNameCell_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (ViewModel.ModPaneVM.IsReadOnlyMode || ViewModel.ModPaneVM.SelectedModModel.SettingsEquals(new NewModModel()))
+            return;
+
+        ViewModel.ModPaneVM.IsEditingModName = true;
+        ModNameTextBlock.SetFocus();
     }
 }

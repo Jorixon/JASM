@@ -14,6 +14,11 @@ public sealed partial class EditableTextBlock : UserControl
         this.InitializeComponent();
     }
 
+    public void SetFocus()
+    {
+        TextBox.Focus(FocusState.Programmatic);
+    }
+
     public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
         nameof(Text), typeof(string), typeof(EditableTextBlock), new PropertyMetadata(default(string)));
 
