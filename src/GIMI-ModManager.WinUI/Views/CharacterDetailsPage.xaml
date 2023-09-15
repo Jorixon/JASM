@@ -315,7 +315,7 @@
                                 DragEnter="ModDetailsPaneImage_OnDragEnter"
                                 DragOver="ModDetailsPaneImage_OnDragOver"
                                 Drop="ModDetailsPaneImage_OnDrop">
-                                <Image Stretch="Uniform" ImageFailed="Image_OnImageFailed">
+                                <Image ImageFailed="Image_OnImageFailed" Stretch="Uniform">
                                     <Image.Source>
                                         <BitmapImage CreateOptions="IgnoreImageCache" UriSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ImagePath, Mode=OneWay}" />
                                     </Image.Source>
@@ -385,7 +385,6 @@
                                                         MinWidth="100"
                                                         HorizontalAlignment="Left"
                                                         Header="Forward Key"
-                                                        IsEnabled="{x:Bind ForwardHotkey, Converter={StaticResource ValueToBoolConverter}}"
                                                         Text="{x:Bind ForwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -400,7 +399,6 @@
                                                         MinWidth="100"
                                                         HorizontalAlignment="Right"
                                                         Header="Backward Key"
-                                                        IsEnabled="{x:Bind BackwardHotkey, Converter={StaticResource ValueToBoolConverter}}"
                                                         Text="{x:Bind BackwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </DataTemplate>
