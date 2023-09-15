@@ -204,8 +204,17 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private async Task _refreshMods()
     {
         await Task.Run(() => _skinManagerService.RefreshMods(ShownCharacter));
-        ModListVM.SetBackendMods(_modList.Mods.Select(mod =>
-            NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod)));
+        var modList = new List<NewModModel>();
+        foreach (var skinEntry in _modList.Mods)
+        {
+            var modSettings = await skinEntry.Mod.ReadSkinModSettings();
+            var newModModel = NewModModel.FromMod(skinEntry);
+            newModModel.WithToggleModDelegate(ToggleMod);
+            newModModel.WithModSettings(modSettings);
+            modList.Add(newModModel);
+        }
+
+        ModListVM.SetBackendMods(modList);
         ModListVM.ResetContent();
     }
 

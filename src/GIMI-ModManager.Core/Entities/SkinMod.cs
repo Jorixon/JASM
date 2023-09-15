@@ -301,6 +301,7 @@ public class SkinMod : Mod, ISkinMod
             skinModSettings.ImagePath = string.Empty;
 
         CachedSkinModSettings = skinModSettings;
+        SetCustomName(skinModSettings.CustomName ?? Name);
 
         return skinModSettings;
     }
