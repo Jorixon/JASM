@@ -10,8 +10,10 @@ using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Serilog;
 using FileAttributes = Windows.Storage.FileAttributes;
+using Windows.Storage.Streams;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -106,7 +108,8 @@ public partial class ModPaneVM : ObservableRecipient
         SettingsPropertiesChanged();
     }
 
-    private string[] _supportedImageExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".gif" };
+    private string[] _supportedImageExtensions =
+        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg" };
 
     [RelayCommand]
     private async Task SetImageUriAsync()
@@ -166,11 +169,13 @@ public partial class ModPaneVM : ObservableRecipient
         {
             var invalidExtension = Path.GetExtension(url.AbsolutePath);
 
-            invalidExtension = string.IsNullOrWhiteSpace(invalidExtension)  ? "Could not get extension" : invalidExtension;
+            invalidExtension = string.IsNullOrWhiteSpace(invalidExtension)
+                ? "Could not get extension"
+                : invalidExtension;
 
             _notificationManager.ShowNotification("Error setting image",
-                               $"Could not set image, invalid extenstion: {invalidExtension}",
-                                              TimeSpan.FromSeconds(5));
+                $"Could not set image, invalid extenstion: {invalidExtension}",
+                TimeSpan.FromSeconds(5));
             return;
         }
 
@@ -192,6 +197,39 @@ public partial class ModPaneVM : ObservableRecipient
 
         var imageUri = new Uri(tmpFile);
         SelectedModModel.ImagePath = imageUri;
+    }
+
+    public async Task SetImageFromBitmapStreamAsync(RandomAccessStreamReference accessStreamReference,
+        IReadOnlyCollection<string> formats)
+    {
+        var tmpDir = App.TMP_DIR;
+
+        if (!Directory.Exists(tmpDir))
+            Directory.CreateDirectory(tmpDir);
+
+        var tmpFile = Path.Combine(tmpDir, $"CLIPBOARD_PASTE_{Guid.NewGuid():N}");
+
+        var fileExtension = formats.FirstOrDefault(format => _supportedImageExtensions.Append("bitmap").Any(supportedFormat => supportedFormat.Trim('.').Equals(format, StringComparison.OrdinalIgnoreCase)));
+
+        if (fileExtension is null)
+        {
+            _notificationManager.ShowNotification("Error setting image",
+                "Could not set image, invalid extenstion",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        tmpFile += "."+ fileExtension;
+
+
+        await Task.Run(async () =>
+        {
+            var stream = await accessStreamReference.OpenReadAsync();
+            await using var fileStream = File.Create(tmpFile);
+            await stream.AsStreamForRead().CopyToAsync(fileStream);
+        });
+
+        SelectedModModel.ImagePath = new Uri(tmpFile);
     }
 
     [RelayCommand]
@@ -266,4 +304,15 @@ public partial class ModPaneVM : ObservableRecipient
     }
 
     private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
+
+    [RelayCommand]
+    private void ClearImage()
+    {
+        SelectedModModel.ImagePath = NewModModel.PlaceholderImagePath;
+    }
+
+    [RelayCommand]
+    private async Task CopyImageAsync()
+    {
+    }
 }

@@ -84,6 +84,27 @@
                     </StackPanel>
                 </Grid>
             </Flyout>
+
+            <MenuFlyout x:Name="ImageFlyout">
+                <MenuFlyoutItem
+                    Height="40"
+                    Click="ImageFlyout_PasteImage"
+                    Icon="Paste"
+                    Text="Paste Image" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Height="40"
+                    Click="ImageFlyout_CopyImage"
+                    Icon="Copy"
+                    Text="Copy Image" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.ModPaneVM.ClearImageCommand}"
+                    Icon="Delete"
+                    Text="Clear image" />
+            </MenuFlyout>
         </Grid.Resources>
 
 
@@ -324,6 +345,7 @@
                                 MinHeight="200"
                                 AllowDrop="True"
                                 Background="{ThemeResource ControlFillColorTertiaryBrush}"
+                                ContextFlyout="{Binding ElementName=ImageFlyout}"
                                 CornerRadius="10"
                                 DragEnter="ModDetailsPaneImage_OnDragEnter"
                                 DragOver="ModDetailsPaneImage_OnDragOver"

@@ -22,7 +22,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
     [ObservableProperty] private string _author = string.Empty;
 
-    private static readonly Uri PlaceholderImagePath =
+    public static readonly Uri PlaceholderImagePath =
         new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
 
     public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } =
