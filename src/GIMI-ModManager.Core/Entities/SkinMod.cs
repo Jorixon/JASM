@@ -463,7 +463,7 @@ public class SkinModKeySwap : IEquatable<SkinModKeySwap>
     public const string SwapVarIniKey = "$swapvar";
     public string[]? SwapVar { get; set; }
 
-    public bool AnyValues()
+    public bool AnyValues() => ForwardHotkey is not null || BackwardHotkey is not null;
     {
         return !string.IsNullOrWhiteSpace(ForwardHotkey) || !string.IsNullOrWhiteSpace(BackwardHotkey);
     }
