@@ -15,6 +15,7 @@ using Serilog;
 using GIMI_ModManager.WinUI.Services;
 using Windows.System;
 using Windows.Storage.Pickers;
+using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Entities;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -69,7 +70,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
     {
-        App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
+        App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
             if (!IsAddingModFolder)
                 _notificationService.ShowNotification(
