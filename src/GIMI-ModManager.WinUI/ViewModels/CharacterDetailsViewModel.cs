@@ -28,6 +28,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly NotificationManager _notificationService;
+    private readonly ModDragAndDropService _modDragAndDropService;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -39,7 +40,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     public CharacterDetailsViewModel(IGenshinService genshinService, ILogger logger,
         INavigationService navigationService, ISkinManagerService skinManagerService,
-        NotificationManager notificationService, ILocalSettingsService localSettingsService)
+        NotificationManager notificationService, ILocalSettingsService localSettingsService,
+        ModDragAndDropService modDragAndDropService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -47,6 +49,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _skinManagerService = skinManagerService;
         _notificationService = notificationService;
         _localSettingsService = localSettingsService;
+        _modDragAndDropService = modDragAndDropService;
         MoveModsFlyoutVM = new(_genshinService, _skinManagerService);
         MoveModsFlyoutVM.ModsMoved += async (sender, args) => await _refreshMods();
         MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await _refreshMods();
@@ -78,7 +81,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                     "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
                     TimeSpan.FromSeconds(5));
             await Task.Delay(TimeSpan.FromSeconds(1)); // Wait for file system to finish moving files
-            await _refreshMods().ConfigureAwait(false);
+            await RefreshMods().ConfigureAwait(false);
         });
     }
 
@@ -158,7 +161,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             IsAddingModFolder = true;
             await Task.Run(async () =>
-                await AddStorageItemFoldersAsync(
+                await _modDragAndDropService.AddStorageItemFoldersAsync(_modList,
                     new ReadOnlyCollection<IStorageItem>(new List<IStorageItem> { folder })));
         }
         finally
@@ -186,7 +189,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         try
         {
             IsAddingModFolder = true;
-            await Task.Run(async () => await AddStorageItemFoldersAsync(new[] { file }));
+            await Task.Run(
+                async () => await _modDragAndDropService.AddStorageItemFoldersAsync(_modList, new[] { file }));
         }
         catch (Exception e)
         {
@@ -224,15 +228,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 var modSettings = await skinEntry.Mod.ReadSkinModSettings();
 
                 newModModel.WithModSettings(modSettings);
-
             }
             catch (JsonException e)
             {
                 _logger.Error(e, "Error while reading mod settings for {ModName}", skinEntry.Mod.Name);
                 _notificationService.ShowNotification("Error while reading mod settings.",
-                                       $"An error occurred while reading the mod settings for {skinEntry.Mod.Name}, See logs for details.\n{e.Message}",
-                                                          TimeSpan.FromSeconds(10));
+                    $"An error occurred while reading the mod settings for {skinEntry.Mod.Name}, See logs for details.\n{e.Message}",
+                    TimeSpan.FromSeconds(10));
             }
+
             modList.Add(newModModel);
         }
 
@@ -252,7 +256,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         try
         {
             IsAddingModFolder = true;
-            await Task.Run(async () => await AddStorageItemFoldersAsync(storageItems));
+            await Task.Run(async () => await _modDragAndDropService.AddStorageItemFoldersAsync(_modList, storageItems));
         }
         catch (Exception e)
         {
@@ -264,145 +268,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         finally
         {
             IsAddingModFolder = false;
-        }
-    }
-
-    // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
-    // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
-    // This code is a mess, but it works.
-    private async Task AddStorageItemFoldersAsync(IReadOnlyList<IStorageItem>? storageItems)
-    {
-        if (storageItems is null || !storageItems.Any())
-        {
-            _logger.Warning("Drag and drop files called with null/0 storage items.");
-            return;
-        }
-
-        var showFileWarning = false;
-
-        if (storageItems.Count > 1)
-        {
-            _notificationService.ShowNotification(
-                "Drag and drop called with more than one storage item, this is currently not supported", "",
-                TimeSpan.FromSeconds(5));
-            return;
-        }
-
-        // Warning mess below
-        foreach (var storageItem in storageItems)
-        {
-            var destDirectoryInfo = new DirectoryInfo(_modList.AbsModsFolderPath);
-            destDirectoryInfo.Create();
-
-
-            if (storageItem is StorageFile)
-            {
-                using var scanner = new DragAndDropScanner();
-                var extractResult = scanner.Scan(storageItem.Path);
-                extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
-                if (extractResult.IgnoredMods.Any())
-                    App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-                        _notificationService.ShowNotification(
-                            "Multiple folders detected during extraction, first one was extracted",
-                            $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
-                            TimeSpan.FromSeconds(7)));
-                continue;
-            }
-
-            if (storageItem is not StorageFolder sourceFolder)
-            {
-                _logger.Information("Unknown storage item type from drop: {StorageItemType}", storageItem.GetType());
-                continue;
-            }
-
-
-            _logger.Debug("Source destination folder for drag and drop: {Source}", sourceFolder.Path);
-            _logger.Debug("Copying folder {FolderName} to {DestinationFolder}", sourceFolder.Path,
-                destDirectoryInfo.FullName);
-
-
-            var sourceFolderPath = sourceFolder.Path;
-
-
-            if (sourceFolderPath is null)
-            {
-                _logger.Warning("Source folder path is null, skipping.");
-                continue;
-            }
-
-            var tmpFolder = Path.GetTempPath();
-
-            Action<StorageFolder, StorageFolder> recursiveCopy = null!;
-
-            if (sourceFolderPath.Contains(tmpFolder)) // Is 7zip
-                recursiveCopy = RecursiveCopy7z;
-            else // StorageFolder from explorer
-            {
-                destDirectoryInfo = new DirectoryInfo(Path.Combine(_modList.AbsModsFolderPath, sourceFolder.Name));
-                destDirectoryInfo.Create();
-                recursiveCopy = RecursiveCopy;
-            }
-
-
-            IsAddingModFolder = true;
-            recursiveCopy.Invoke(sourceFolder,
-                await StorageFolder.GetFolderFromPathAsync(destDirectoryInfo.FullName));
-        }
-
-        if (showFileWarning)
-        {
-            _notificationService.ShowNotification("Only folders are supported for drag and drop.",
-                "Any files not in the dropped in folders are ignored.", TimeSpan.FromSeconds(10));
-        }
-    }
-
-    // ReSharper disable once InconsistentNaming
-    private static void RecursiveCopy7z(StorageFolder sourceFolder, StorageFolder destinationFolder)
-    {
-        var tmpFolder = Path.GetTempPath();
-        var parentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFolder.Path)!);
-        parentDir.MoveTo(Path.Combine(tmpFolder, "JASM_TMP", Guid.NewGuid().ToString("N")));
-        var mod = new Mod(parentDir.GetDirectories().First()!);
-        mod.MoveTo(destinationFolder.Path);
-    }
-
-    private void RecursiveCopy(StorageFolder sourceFolder, StorageFolder destinationFolder)
-    {
-        if (sourceFolder == null || destinationFolder == null)
-        {
-            throw new ArgumentNullException("Source and destination folders cannot be null.");
-        }
-
-        var sourceDir = new DirectoryInfo(sourceFolder.Path);
-
-        // Copy files
-        foreach (var file in sourceDir.GetFiles())
-        {
-            _logger.Debug("Copying file {FileName} to {DestinationFolder}", file.FullName, destinationFolder.Path);
-            if (!File.Exists(file.FullName))
-            {
-                _logger.Warning("File {FileName} does not exist.", file.FullName);
-                continue;
-            }
-
-            file.CopyTo(Path.Combine(destinationFolder.Path, file.Name), true);
-        }
-        // Recursively copy subfolders
-
-        foreach (var subFolder in sourceDir.GetDirectories())
-        {
-            _logger.Debug("Copying subfolder {SubFolderName} to {DestinationFolder}", subFolder.FullName,
-                destinationFolder.Path);
-            if (!Directory.Exists(subFolder.FullName))
-            {
-                _logger.Warning("Subfolder {SubFolderName} does not exist.", subFolder.FullName);
-                continue;
-            }
-
-            var newSubFolder = new DirectoryInfo(Path.Combine(destinationFolder.Path, subFolder.Name));
-            newSubFolder.Create();
-            RecursiveCopy(StorageFolder.GetFolderFromPathAsync(subFolder.FullName).GetAwaiter().GetResult(),
-                StorageFolder.GetFolderFromPathAsync(newSubFolder.FullName).GetAwaiter().GetResult());
         }
     }
 

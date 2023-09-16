@@ -15,15 +15,16 @@
 
     <Page.Resources>
         <helpers:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
+        <helpers:BoolInverterConverter x:Name="BoolInverterConverter" />
     </Page.Resources>
-
-    <Grid
-        Margin="0,-24,0,0"
-        AllowDrop="True"
-        Background="Transparent"
+    <!--
         DragEnter="Page_OnDragEnter"
         DragLeave="Page_OnDragLeave"
-        Drop="Page_OnDrop">
+        Drop="Page_OnDrop"
+        AllowDrop="True"
+        On Grid below
+    -->
+    <Grid Margin="0,-24,0,0" Background="Transparent">
         <Grid.Resources>
             <MenuFlyout x:Name="ImageCommandsFlyout" Opening="ImageCommandsFlyout_OnOpening">
                 <MenuFlyoutItem
@@ -174,7 +175,7 @@
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
             AllowDrop="False"
             DesiredWidth="200"
-            IsItemClickEnabled="True"
+            IsItemClickEnabled="{x:Bind ViewModel.IsAddingMod, Mode=OneWay, Converter={StaticResource BoolInverterConverter}}"
             ItemClickCommand="{x:Bind ViewModel.CharacterClickedCommand}"
             ItemHeight="150"
             ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"

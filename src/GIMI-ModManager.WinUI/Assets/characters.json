@@ -671,7 +671,8 @@
     "Id": 40,
     "DisplayName": "Nahida",
     "Keys": [
-      "nahida"
+      "nahida",
+      "buer"
     ],
     "ReleaseDate": "0001-01-01T00:00:00",
     "ImageUri": "Character_Nahida_Thumb.png",

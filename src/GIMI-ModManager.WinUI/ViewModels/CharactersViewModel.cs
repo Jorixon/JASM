@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -23,6 +24,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ILocalSettingsService _localSettingsService;
     private readonly GenshinProcessManager _genshinProcessManager;
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
+    private readonly ModDragAndDropService _modDragAndDropService;
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
@@ -42,7 +44,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
-        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager)
+        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
+        ModDragAndDropService modDragAndDropService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -53,6 +56,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ElevatorService = elevatorService;
         _genshinProcessManager = genshinProcessManager;
         _threeDMigtoProcessManager = threeDMigtoProcessManager;
+        _modDragAndDropService = modDragAndDropService;
 
         ElevatorService.PropertyChanged += (sender, args) =>
         {
@@ -507,5 +511,75 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         if (_genshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
             _genshinProcessManager.StartProcess();
+    }
+
+    [ObservableProperty] private bool _isAddingMod = false;
+
+    public async Task ModDroppedOnCharacterAsync(CharacterGridItemModel characterGridItemModel,
+        IReadOnlyList<IStorageItem> storageItems)
+    {
+        if (IsAddingMod)
+        {
+            _logger.Warning("Already adding mod");
+            return;
+        }
+
+        var modList =
+            _skinManagerService.CharacterModLists.FirstOrDefault(x =>
+                x.Character.Id == characterGridItemModel.Character.Id);
+        if (modList is null)
+        {
+            _logger.Warning("No mod list found for character {Character}",
+                characterGridItemModel.Character.DisplayName);
+            return;
+        }
+
+        var errored = false;
+        try
+        {
+            IsAddingMod = true;
+            await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
+        }
+        catch (Exception e)
+        {
+            errored = true;
+            _logger.Error(e, "Error adding mod");
+            NotificationManager.ShowNotification("Error adding mod", e.Message, TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            IsAddingMod = false;
+        }
+
+        if (!errored)
+            NotificationManager.ShowNotification("Mod added",
+                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.DisplayName}",
+                TimeSpan.FromSeconds(2));
+    }
+
+
+    public async Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
+    {
+        var modNameToCharacter = new Dictionary<IStorageItem, GenshinCharacter>();
+        var othersCharacter = _genshinService.GetCharacters().First(x => x.Id == _genshinService.OtherCharacterId);
+
+        foreach (var storageItem in storageItems)
+        {
+            var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
+            var result = _genshinService.GetCharacters(modName, minScore: 100);
+
+            var character = result.FirstOrDefault().Key;
+            if (character is not null)
+            {
+                _logger.Debug("Mod {ModName} was detected as {Character}", modName,
+                    character.DisplayName);
+                modNameToCharacter.Add(storageItem, character);
+            }
+            else
+            {
+                _logger.Debug("Mod {ModName} was not detected as any character", modName);
+                modNameToCharacter.Add(storageItem, othersCharacter);
+            }
+        }
     }
 }

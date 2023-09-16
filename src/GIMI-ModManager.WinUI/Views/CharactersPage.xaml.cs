@@ -87,8 +87,11 @@ public sealed partial class CharactersPage : Page
         SetGridDropHereVisibility(gridItem, Visibility.Collapsed);
     }
 
-    private void CharacterThumbnail_OnDrop(object sender, DragEventArgs e)
+    private async void CharacterThumbnail_OnDrop(object sender, DragEventArgs e)
     {
+        if (((Grid)sender).DataContext is CharacterGridItemModel characterGridItem)
+            await ViewModel.ModDroppedOnCharacterAsync(characterGridItem, await e.DataView.GetStorageItemsAsync());
+
         var gridItem = ((Grid)sender);
         SetGridDropHereVisibility(gridItem, Visibility.Collapsed);
     }
@@ -106,6 +109,7 @@ public sealed partial class CharactersPage : Page
 
     private void Page_OnDragEnter(object sender, DragEventArgs e)
     {
+        e.AcceptedOperation = DataPackageOperation.Copy;
         DragAndDropArea.Visibility = Visibility.Visible;
     }
 
@@ -114,8 +118,9 @@ public sealed partial class CharactersPage : Page
         DragAndDropArea.Visibility = Visibility.Collapsed;
     }
 
-    private void Page_OnDrop(object sender, DragEventArgs e)
+    private async void Page_OnDrop(object sender, DragEventArgs e)
     {
+        await ViewModel.ModDroppedOnAutoDetect(await e.DataView.GetStorageItemsAsync());
         DragAndDropArea.Visibility = Visibility.Collapsed;
     }
 }
