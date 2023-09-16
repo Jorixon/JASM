@@ -1,10 +1,12 @@
+using Windows.ApplicationModel.DataTransfer;
+using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -61,5 +63,59 @@ public sealed partial class CharactersPage : Page
             return;
 
         ViewModel.OnRightClickContext(character);
+    }
+
+    private void SetGridDropHereVisibility(Grid characterThumbnail, Visibility visibility)
+    {
+        var dropHereIcon = ((FontIcon)characterThumbnail.FindName("DropHereIcon"));
+        dropHereIcon.Visibility = visibility;
+        var dropHereBorder = ((Border)characterThumbnail.FindName("DropHereBorder"));
+        dropHereBorder.Visibility = visibility;
+    }
+
+    private void CharacterThumbnail_OnDragEnter(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = DataPackageOperation.Copy;
+
+        var gridItem = ((Grid)sender);
+        SetGridDropHereVisibility(gridItem, Visibility.Visible);
+    }
+
+    private void CharacterThumbnail_OnDragLeave(object sender, DragEventArgs e)
+    {
+        var gridItem = ((Grid)sender);
+        SetGridDropHereVisibility(gridItem, Visibility.Collapsed);
+    }
+
+    private void CharacterThumbnail_OnDrop(object sender, DragEventArgs e)
+    {
+        var gridItem = ((Grid)sender);
+        SetGridDropHereVisibility(gridItem, Visibility.Collapsed);
+    }
+
+    private void DragAndDropArea_OnDragEnter(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = DataPackageOperation.Copy;
+        Log.Information("DragEnter_DragAndDropArea_OnDragEnter");
+    }
+
+    private void DragAndDropArea_OnDrop(object sender, DragEventArgs e)
+    {
+        Log.Information("Drop_DragAndDropArea_OnDrop");
+    }
+
+    private void Page_OnDragEnter(object sender, DragEventArgs e)
+    {
+        DragAndDropArea.Visibility = Visibility.Visible;
+    }
+
+    private void Page_OnDragLeave(object sender, DragEventArgs e)
+    {
+        DragAndDropArea.Visibility = Visibility.Collapsed;
+    }
+
+    private void Page_OnDrop(object sender, DragEventArgs e)
+    {
+        DragAndDropArea.Visibility = Visibility.Collapsed;
     }
 }

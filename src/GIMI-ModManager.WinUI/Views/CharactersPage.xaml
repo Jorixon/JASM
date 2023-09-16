@@ -17,7 +17,13 @@
         <helpers:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
     </Page.Resources>
 
-    <Grid Margin="0,-24,0,0">
+    <Grid
+        Margin="0,-24,0,0"
+        AllowDrop="True"
+        Background="Transparent"
+        DragEnter="Page_OnDragEnter"
+        DragLeave="Page_OnDragLeave"
+        Drop="Page_OnDrop">
         <Grid.Resources>
             <MenuFlyout x:Name="ImageCommandsFlyout" Opening="ImageCommandsFlyout_OnOpening">
                 <MenuFlyoutItem
@@ -44,7 +50,6 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -75,7 +80,8 @@
         <Grid Grid.Row="1">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -102,8 +108,29 @@
 
             </StackPanel>
 
-            <StackPanel
+            <Grid
+                x:Name="DragAndDropArea"
                 Grid.Column="1"
+                AllowDrop="True"
+                Background="Transparent"
+                BorderBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                DragEnter="DragAndDropArea_OnDragEnter"
+                Drop="DragAndDropArea_OnDrop"
+                Visibility="Collapsed">
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Drop Here to Auto Detect Mod..."
+                    TextWrapping="NoWrap" />
+
+            </Grid>
+
+            <StackPanel
+                Grid.Column="2"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
                 <ToggleButton
@@ -145,6 +172,7 @@
             animations:Connected.ListItemElementName="itemThumbnail"
             animations:Connected.ListItemKey="animationKeyContentGrid"
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+            AllowDrop="False"
             DesiredWidth="200"
             IsItemClickEnabled="True"
             ItemClickCommand="{x:Bind ViewModel.CharacterClickedCommand}"
@@ -157,8 +185,12 @@
                     <Grid
                         x:Name="itemThumbnail"
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
+                        AllowDrop="True"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        ContextFlyout="{Binding ElementName=ImageCommandsFlyout}">
+                        ContextFlyout="{Binding ElementName=ImageCommandsFlyout}"
+                        DragEnter="CharacterThumbnail_OnDragEnter"
+                        DragLeave="CharacterThumbnail_OnDragLeave"
+                        Drop="CharacterThumbnail_OnDrop">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -184,6 +216,23 @@
                                 Foreground="Yellow"
                                 Glyph="&#xEC00;"
                                 Visibility="{x:Bind Warning, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+
+                            <Border
+                                x:Name="DropHereBorder"
+                                BorderBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Visibility="Collapsed" />
+                            <FontIcon
+                                x:Name="DropHereIcon"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                FontSize="60"
+                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                Glyph="&#xE74B;"
+                                Visibility="Collapsed" />
+
+
                             <TextBlock
                                 Grid.Row="1"
                                 Margin="{StaticResource XXSmallTopMargin}"
