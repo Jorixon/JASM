@@ -109,7 +109,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ShownCharacter = character;
         MoveModsFlyoutVM.SetShownCharacter(ShownCharacter);
         _modList = _skinManagerService.GetCharacterModList(character);
-        if (ShownCharacter.Id == _genshinService.OtherCharacterId)
+        if (_genshinService.IsMultiModCharacter(ShownCharacter))
             ModListVM.DisableInfoBar = true;
 
         try

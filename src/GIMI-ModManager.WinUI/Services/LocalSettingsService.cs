@@ -84,6 +84,12 @@ public class LocalSettingsService : ILocalSettingsService
         return default;
     }
 
+    public async Task<T> ReadOrCreateSettingAsync<T>(string key) where T : new()
+    {
+        var setting = await ReadSettingAsync<T>(key);
+        return setting ?? new T();
+    }
+
     public async Task SaveSettingAsync<T>(string key, T value)
     {
         if (RuntimeHelper.IsMSIX)

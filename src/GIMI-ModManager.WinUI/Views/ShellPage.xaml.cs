@@ -35,6 +35,9 @@ public sealed partial class ShellPage : Page
         App.MainWindow.SetTitleBar(AppTitleBar);
         App.MainWindow.Activated += MainWindow_Activated;
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+#if DEBUG
+        AppTitleBarText.Text += " - DEBUG";
+#endif
         this.KeyDown += GlobalKeyHandler_Invoked;
 
         Loaded += (sender, args) =>

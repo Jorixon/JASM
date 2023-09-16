@@ -45,6 +45,7 @@ public class GenshinService : IGenshinService
         _characters.AddRange(characters);
         _characters.Add(getGlidersCharacter(assetsUriPath));
         _characters.Add(getOthersCharacter(assetsUriPath));
+        _characters.Add(getWeaponsCharacter(assetsUriPath));
     }
 
     private static void SetImageUriForCharacter(string assetsUriPath, GenshinCharacter character)
@@ -184,8 +185,32 @@ public class GenshinService : IGenshinService
         return character;
     }
 
+    private const int _weaponsCharacterId = -1236;
+    public int WeaponsCharacterId => _weaponsCharacterId;
+
+    private static GenshinCharacter getWeaponsCharacter(string assetsUriPath)
+    {
+        var character = new GenshinCharacter
+        {
+            Id = _weaponsCharacterId,
+            DisplayName = "Weapons",
+            ReleaseDate = DateTime.MinValue,
+            Rarity = -1,
+            Keys = new[] { "weapon", "claymore", "sword", "polearm", "catalyst", "bow" },
+            ImageUri = "Character_Weapons_Thumb.webp"
+        };
+        SetImageUriForCharacter(assetsUriPath, character);
+        return character;
+    }
+
     public GenshinCharacter? GetCharacter(int id)
         => _characters.FirstOrDefault(c => c.Id == id);
+
+    public bool IsMultiModCharacter(GenshinCharacter character)
+        => IsMultiModCharacter(character.Id);
+
+    public bool IsMultiModCharacter(int characterId)
+        => characterId == OtherCharacterId || characterId == GlidersCharacterId || characterId == WeaponsCharacterId;
 }
 
 public interface IGenshinService
@@ -202,6 +227,10 @@ public interface IGenshinService
     public GenshinCharacter? GetCharacter(int id);
     public int OtherCharacterId { get; }
     public int GlidersCharacterId { get; }
+    public int WeaponsCharacterId { get; }
+
+    public bool IsMultiModCharacter(GenshinCharacter character);
+    public bool IsMultiModCharacter(int characterId);
 }
 
 internal static class GenshinCharacters

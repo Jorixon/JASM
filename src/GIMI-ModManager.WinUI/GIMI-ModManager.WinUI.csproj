@@ -105,6 +105,7 @@
 		<Content Remove="Assets\Images\Character_Traveler_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Venti_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Wanderer_Thumb.png" />
+		<Content Remove="Assets\Images\Character_Weapons_Thumb.webp" />
 		<Content Remove="Assets\Images\Character_Xiangling_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Xiao_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Xingqiu_Thumb.png" />
@@ -373,6 +374,9 @@
 		</None>
 		<None Update="Assets\Images\Character_Wanderer_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Weapons_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Images\Character_Xiangling_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.Models;
 
@@ -12,6 +13,9 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     [ObservableProperty] private bool _isPinned;
     [ObservableProperty] private bool _warning;
     [ObservableProperty] private bool _isHidden;
+
+    [ObservableProperty] private bool _notification;
+    [ObservableProperty] private AttentionType _notificationType;
 
     public CharacterGridItemModel(GenshinCharacter character)
     {

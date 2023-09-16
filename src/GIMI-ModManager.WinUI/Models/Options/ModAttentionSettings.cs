@@ -11,6 +11,7 @@ public class ModAttentionSettings
 
 public sealed class ModNotification
 {
+    public int CharacterId { get; set; }
     public string ModCustomName { get; set; }
     public string ModFolderName { get; set; }
     public bool ShowOnOverview { get; set; }
@@ -20,8 +21,9 @@ public sealed class ModNotification
 
 public enum AttentionType
 {
+    None,
     Added,
     Modified,
-    UpdateAvailable,
-    Error
+    UpdateAvailable, // Also show in character overview
+    Error // Also show in character overview
 }

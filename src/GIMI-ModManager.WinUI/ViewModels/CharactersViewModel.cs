@@ -289,6 +289,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             characters.Add(gliders);
         }
 
+        var weapons = characters.FirstOrDefault(ch => ch.Id == _genshinService.WeaponsCharacterId);
+        if (weapons is not null) // Add to end
+        {
+            characters.Remove(weapons);
+            characters.Add(weapons);
+        }
+
         _characters = characters.ToArray();
 
         var pinnedCharactersOptions = await ReadCharacterSettings();
@@ -320,8 +327,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         foreach (var characterGridItemModel in Characters.Where(x =>
                      charactersWithMultipleActiveSkins.Contains(x.Character.Id)))
         {
-            if (characterGridItemModel.Character.Id == _genshinService.OtherCharacterId ||
-                characterGridItemModel.Character.Id == _genshinService.GlidersCharacterId)
+            if (_genshinService.IsMultiModCharacter(characterGridItemModel.Character))
                 continue;
 
             characterGridItemModel.Warning = true;
