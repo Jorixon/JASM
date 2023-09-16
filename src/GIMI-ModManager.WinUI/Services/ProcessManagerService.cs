@@ -15,6 +15,7 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
 {
     private protected readonly ILogger _logger;
     private protected readonly ILocalSettingsService _localSettingsService;
+    private readonly NotificationManager _notificationManager = new();
 
     private Process? _process;
     private protected string _prcoessPath = null!;
@@ -64,6 +65,7 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
         }
 
         ProcessPath = processOptions.ProcessPath;
+        ProcessName = Path.GetFileNameWithoutExtension(ProcessPath);
         ProcessStatus = ProcessStatus.NotRunning;
         return true;
     }
@@ -133,12 +135,30 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
         }
         catch (Win32Exception e)
         {
-            _logger.Error(e,
-                $"Failed to start {ProcessName}, this is likely due to the user cancelling the UAC (admin) prompt");
-            ErrorMessage = $"Failed to start {ProcessName}";
+            if (e.NativeErrorCode == 1223)
+            {
+                _logger.Error(e,
+                    $"Failed to start {ProcessName}, this can happen due to the user cancelling the UAC (admin) prompt");
+                ErrorMessage =
+                    $"Failed to start {ProcessName}, this can happen due to the user cancelling the UAC (admin) prompt";
+            }
+            else if (e.NativeErrorCode == 740)
+            {
+                _logger.Error(e,
+                    $"Failed to start {ProcessName}, this can happen if the exe has the 'Run as administrator' option enabled");
+                ErrorMessage =
+                    $"Failed to start {ProcessName}, this can happen if the exe has the 'Run as administrator' option enabled in the exe properties";
+            }
+            else
+            {
+                _logger.Error(e, $"Failed to start {ProcessName}");
+                ErrorMessage = $"Failed to start {ProcessName} due to an unknown error, see logs for details";
+            }
+
+
+            ErrorMessage ??= $"Failed to start {ProcessName}";
             return;
         }
-
 
         if (_process == null || _process.HasExited)
         {
@@ -148,6 +168,7 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
             return;
         }
 
+        ErrorMessage = null;
         ProcessStatus = ProcessStatus.Running;
 
         _process.Exited += (sender, args) =>

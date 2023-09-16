@@ -487,7 +487,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+        {
             ThreeDMigtoProcessManager.StartProcess();
+            if (ThreeDMigtoProcessManager.ErrorMessage is not null)
+                NotificationManager.ShowNotification($"Failed to start {ThreeDMigtoProcessManager.ProcessName}",
+                    ThreeDMigtoProcessManager.ErrorMessage,
+                    TimeSpan.FromSeconds(5));
+        }
     }
 
     private bool CanRefreshModsInGame() => ElevatorService.ElevatorStatus == ElevatorStatus.Running;
@@ -512,7 +518,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+        {
             GenshinProcessManager.StartProcess();
+            if (GenshinProcessManager.ErrorMessage is not null)
+                NotificationManager.ShowNotification($"Failed to start {GenshinProcessManager.ProcessName}",
+                    GenshinProcessManager.ErrorMessage,
+                    TimeSpan.FromSeconds(5));
+        }
     }
 
     [ObservableProperty] private bool _isAddingMod = false;
