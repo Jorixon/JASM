@@ -190,8 +190,20 @@
                         <Button
                             Margin="0,0,8,0"
                             Command="{x:Bind ViewModel.Reset3DmigotoPathCommand}"
-                            Content="Reset 3Dmigoto Exe Path" />
-                        <Button Command="{x:Bind ViewModel.ResetGenshinExePathCommand}" Content="Reset Genshin Exe Path" />
+                            Content="Reset 3Dmigoto Exe Path">
+                            <ToolTipService.ToolTip>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                                </StackPanel>
+                            </ToolTipService.ToolTip>
+                        </Button>
+                        <Button Command="{x:Bind ViewModel.ResetGenshinExePathCommand}" Content="Reset Genshin Exe Path">
+                            <ToolTipService.ToolTip>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                                </StackPanel>
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
 

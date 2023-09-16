@@ -293,12 +293,22 @@ public sealed partial class CharacterDetailsPage : Page
         ViewModel.ChangeModDetails(modModel);
     }
 
-    private void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
+    private async void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Space)
         {
             ViewModel.ModList_KeyHandler(ModListGrid.SelectedItems.OfType<NewModModel>().Select(mod => mod.Id), e.Key);
             e.Handled = true;
+        }
+
+        if (e.Key == VirtualKey.Delete)
+        {
+            e.Handled = true;
+            ViewModel.MoveModsFlyoutVM.SetSelectedModsCommand.Execute(ModListGrid.SelectedItems.OfType<NewModModel>()
+                .ToArray());
+            await ViewModel.MoveModsFlyoutVM.DeleteModsCommand.ExecuteAsync(null);
+            ViewModel.MoveModsFlyoutVM.ResetStateCommand.Execute(null);
+
         }
     }
 
@@ -436,7 +446,8 @@ public sealed partial class CharacterDetailsPage : Page
             RequestedOperation = DataPackageOperation.Copy
         };
 
-        var imageFile = await StorageFile.GetFileFromPathAsync(ViewModel.ModPaneVM.SelectedModModel.ImagePath.LocalPath);
+        var imageFile =
+            await StorageFile.GetFileFromPathAsync(ViewModel.ModPaneVM.SelectedModModel.ImagePath.LocalPath);
         var imageStream = RandomAccessStreamReference.CreateFromFile(imageFile);
         package.SetBitmap(imageStream);
         package.SetStorageItems(new List<IStorageItem>()

@@ -15,9 +15,16 @@
 
     <Page.Resources>
         <helpers:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
+        <helpers:BoolInverterConverter x:Name="BoolInverterConverter" />
     </Page.Resources>
-
-    <Grid Margin="0,-24,0,0">
+    <!--
+        DragEnter="Page_OnDragEnter"
+        DragLeave="Page_OnDragLeave"
+        Drop="Page_OnDrop"
+        AllowDrop="True"
+        On Grid below
+    -->
+    <Grid Margin="0,-24,0,0" Background="Transparent">
         <Grid.Resources>
             <MenuFlyout x:Name="ImageCommandsFlyout" Opening="ImageCommandsFlyout_OnOpening">
                 <MenuFlyoutItem
@@ -44,7 +51,6 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -60,7 +66,13 @@
             <Button
                 Margin="32,0,32,0"
                 Command="{x:Bind ViewModel.Start3DmigotoCommand}"
-                Content="Start 3Dmigoto" />
+                Content="Start 3Dmigoto">
+                <ToolTipService.ToolTip>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                    </StackPanel>
+                </ToolTipService.ToolTip>
+            </Button>
             <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,4,0" Text="Start Genshin" />
@@ -69,13 +81,19 @@
                         Height="16"
                         Source="../Assets/Images/Start_Genshin.png" />
                 </StackPanel>
+                <ToolTipService.ToolTip>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                    </StackPanel>
+                </ToolTipService.ToolTip>
             </Button>
         </StackPanel>
 
         <Grid Grid.Row="1">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -102,8 +120,29 @@
 
             </StackPanel>
 
-            <StackPanel
+            <Grid
+                x:Name="DragAndDropArea"
                 Grid.Column="1"
+                AllowDrop="True"
+                Background="Transparent"
+                BorderBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                DragEnter="DragAndDropArea_OnDragEnter"
+                Drop="DragAndDropArea_OnDrop"
+                Visibility="Collapsed">
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Drop Here to Auto Detect Mod..."
+                    TextWrapping="NoWrap" />
+
+            </Grid>
+
+            <StackPanel
+                Grid.Column="2"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
                 <ToggleButton
@@ -145,8 +184,9 @@
             animations:Connected.ListItemElementName="itemThumbnail"
             animations:Connected.ListItemKey="animationKeyContentGrid"
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+            AllowDrop="False"
             DesiredWidth="200"
-            IsItemClickEnabled="True"
+            IsItemClickEnabled="{x:Bind ViewModel.IsAddingMod, Mode=OneWay, Converter={StaticResource BoolInverterConverter}}"
             ItemClickCommand="{x:Bind ViewModel.CharacterClickedCommand}"
             ItemHeight="150"
             ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
@@ -157,8 +197,12 @@
                     <Grid
                         x:Name="itemThumbnail"
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
+                        AllowDrop="True"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        ContextFlyout="{Binding ElementName=ImageCommandsFlyout}">
+                        ContextFlyout="{Binding ElementName=ImageCommandsFlyout}"
+                        DragEnter="CharacterThumbnail_OnDragEnter"
+                        DragLeave="CharacterThumbnail_OnDragLeave"
+                        Drop="CharacterThumbnail_OnDrop">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -184,6 +228,23 @@
                                 Foreground="Yellow"
                                 Glyph="&#xEC00;"
                                 Visibility="{x:Bind Warning, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+
+                            <Border
+                                x:Name="DropHereBorder"
+                                BorderBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Visibility="Collapsed" />
+                            <FontIcon
+                                x:Name="DropHereIcon"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                FontSize="60"
+                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                Glyph="&#xE74B;"
+                                Visibility="Collapsed" />
+
+
                             <TextBlock
                                 Grid.Row="1"
                                 Margin="{StaticResource XXSmallTopMargin}"

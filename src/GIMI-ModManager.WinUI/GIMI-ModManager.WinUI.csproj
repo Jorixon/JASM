@@ -126,6 +126,7 @@
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
 		<None Remove="Views\Controls\ModListOverview.xaml" />
+		<None Remove="Views\Controls\SelectCharacterFromGrid.xaml" />
 		<None Remove="Views\DebugPage.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
 	</ItemGroup>
@@ -409,6 +410,9 @@
 		<None Update="Assets\Images\Character_Zhongli_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\Controls\SelectCharacterFromGrid.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\Controls\EditableTextBlock.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

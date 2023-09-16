@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -21,8 +22,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly GenshinProcessManager _genshinProcessManager;
-    private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
+    private readonly ModDragAndDropService _modDragAndDropService;
+
+    public readonly GenshinProcessManager GenshinProcessManager;
+
+    public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
@@ -42,7 +46,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
-        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager)
+        GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
+        ModDragAndDropService modDragAndDropService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -51,8 +56,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _localSettingsService = localSettingsService;
         NotificationManager = notificationManager;
         ElevatorService = elevatorService;
-        _genshinProcessManager = genshinProcessManager;
-        _threeDMigtoProcessManager = threeDMigtoProcessManager;
+        GenshinProcessManager = genshinProcessManager;
+        ThreeDMigtoProcessManager = threeDMigtoProcessManager;
+        _modDragAndDropService = modDragAndDropService;
 
         ElevatorService.PropertyChanged += (sender, args) =>
         {
@@ -471,17 +477,23 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private async Task Start3DmigotoAsync()
     {
         _logger.Debug("Starting 3Dmigoto");
-        _threeDMigtoProcessManager.CheckStatus();
+        ThreeDMigtoProcessManager.CheckStatus();
 
-        if (_threeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
+        if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
         {
-            var processPath = await _threeDMigtoProcessManager.PickProcessPathAsync(App.MainWindow);
+            var processPath = await ThreeDMigtoProcessManager.PickProcessPathAsync(App.MainWindow);
             if (processPath is null) return;
-            await _threeDMigtoProcessManager.SetPath(Path.GetFileName(processPath), processPath);
+            await ThreeDMigtoProcessManager.SetPath(Path.GetFileName(processPath), processPath);
         }
 
-        if (_threeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotRunning)
-            _threeDMigtoProcessManager.StartProcess();
+        if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+        {
+            ThreeDMigtoProcessManager.StartProcess();
+            if (ThreeDMigtoProcessManager.ErrorMessage is not null)
+                NotificationManager.ShowNotification($"Failed to start {ThreeDMigtoProcessManager.ProcessName}",
+                    ThreeDMigtoProcessManager.ErrorMessage,
+                    TimeSpan.FromSeconds(5));
+        }
     }
 
     private bool CanRefreshModsInGame() => ElevatorService.ElevatorStatus == ElevatorStatus.Running;
@@ -497,15 +509,91 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private async Task StartGenshinAsync()
     {
         _logger.Debug("Starting Genshin Impact");
-        _genshinProcessManager.CheckStatus();
-        if (_genshinProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
+        GenshinProcessManager.CheckStatus();
+        if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
         {
-            var processPath = await _genshinProcessManager.PickProcessPathAsync(App.MainWindow);
+            var processPath = await GenshinProcessManager.PickProcessPathAsync(App.MainWindow);
             if (processPath is null) return;
-            await _genshinProcessManager.SetPath(Path.GetFileName(processPath), processPath);
+            await GenshinProcessManager.SetPath(Path.GetFileName(processPath), processPath);
         }
 
-        if (_genshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
-            _genshinProcessManager.StartProcess();
+        if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+        {
+            GenshinProcessManager.StartProcess();
+            if (GenshinProcessManager.ErrorMessage is not null)
+                NotificationManager.ShowNotification($"Failed to start {GenshinProcessManager.ProcessName}",
+                    GenshinProcessManager.ErrorMessage,
+                    TimeSpan.FromSeconds(5));
+        }
+    }
+
+    [ObservableProperty] private bool _isAddingMod = false;
+
+    public async Task ModDroppedOnCharacterAsync(CharacterGridItemModel characterGridItemModel,
+        IReadOnlyList<IStorageItem> storageItems)
+    {
+        if (IsAddingMod)
+        {
+            _logger.Warning("Already adding mod");
+            return;
+        }
+
+        var modList =
+            _skinManagerService.CharacterModLists.FirstOrDefault(x =>
+                x.Character.Id == characterGridItemModel.Character.Id);
+        if (modList is null)
+        {
+            _logger.Warning("No mod list found for character {Character}",
+                characterGridItemModel.Character.DisplayName);
+            return;
+        }
+
+        var errored = false;
+        try
+        {
+            IsAddingMod = true;
+            await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
+        }
+        catch (Exception e)
+        {
+            errored = true;
+            _logger.Error(e, "Error adding mod");
+            NotificationManager.ShowNotification("Error adding mod", e.Message, TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            IsAddingMod = false;
+        }
+
+        if (!errored)
+            NotificationManager.ShowNotification("Mod added",
+                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.DisplayName}",
+                TimeSpan.FromSeconds(2));
+    }
+
+
+    public async Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
+    {
+        var modNameToCharacter = new Dictionary<IStorageItem, GenshinCharacter>();
+        var othersCharacter = _genshinService.GetCharacters().First(x => x.Id == _genshinService.OtherCharacterId);
+
+        foreach (var storageItem in storageItems)
+        {
+            var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
+            var result = _genshinService.GetCharacters(modName, minScore: 100);
+
+            var character = result.FirstOrDefault().Key;
+            if (character is not null)
+            {
+                _logger.Debug("Mod {ModName} was detected as {Character}", modName,
+                    character.DisplayName);
+                modNameToCharacter.Add(storageItem, character);
+            }
+            else
+            {
+                _logger.Debug("Mod {ModName} was not detected as any character", modName);
+                modNameToCharacter.Add(storageItem, othersCharacter);
+            }
+        }
     }
 }

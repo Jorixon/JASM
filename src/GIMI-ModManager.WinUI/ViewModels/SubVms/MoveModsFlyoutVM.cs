@@ -6,7 +6,9 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -14,6 +16,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGenshinService _genshinService;
+    private readonly ILogger _logger = App.GetService<ILogger>().ForContext<MoveModsFlyoutVM>();
 
     private GenshinCharacter _shownCharacter = null!;
 
@@ -73,9 +76,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         }
         catch (InvalidOperationException e)
         {
+            _logger.Error(e, "Error moving mods");
             notificationManager
                 .ShowNotification("Invalid Operation Exception",
-                    $"Cannot move mods\n{e.Message}", TimeSpan.FromSeconds(10));
+                    $"Cannot move mods\n{e.Message}, see logs for details.", TimeSpan.FromSeconds(10));
             return;
         }
 
@@ -111,8 +115,6 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             Content = "Move to Recycle Bin?",
             IsChecked = true
         };
-
-
         var mods = new ListView()
         {
             ItemsSource = modEntryNames,
@@ -134,15 +136,16 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
                 scrollViewer
             }
         };
-
-        var result = await windowManager.ShowDialogAsync(new ContentDialog()
+        var dialog = new ContentDialog()
         {
             Title = $"Delete These {selectedModsCount} Mods?",
             Content = stackPanel,
             PrimaryButtonText = "Delete",
             SecondaryButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Secondary
-        });
+            DefaultButton = ContentDialogButton.Primary,
+        };
+
+        var result = await windowManager.ShowDialogAsync(dialog);
 
         if (result != ContentDialogResult.Primary)
             return;
@@ -160,6 +163,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         }
         catch (InvalidOperationException e)
         {
+            _logger.Error(e, "Error deleting mods");
             notificationManager
                 .ShowNotification("Invalid Operation Exception",
                     $"Mods Deleted: {modsDeleted}. Some mods may not have been deleted, See Logs.\n{e.Message}",
@@ -209,7 +213,6 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
         foreach (var eligibleCharacter in eligibleCharacters)
             SuggestedCharacters.Add(eligibleCharacter);
-        
 
 
         if (SuggestedCharacters.Count == 0)

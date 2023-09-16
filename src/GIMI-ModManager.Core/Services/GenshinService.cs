@@ -116,7 +116,7 @@ public class GenshinService : IGenshinService
             var splitNames = loweredDisplayName.Split();
             var sameStartChars = 0;
             var bestResultOfNames = 0;
-
+            // This loop will give points for each name that starts with the same chars as the search query
             foreach (var name in splitNames)
             {
                 sameStartChars = 0;

@@ -81,6 +81,7 @@ public partial class App : Application
 
                 services.AddSingleton<IWindowManagerService, WindowManagerService>();
                 services.AddSingleton<NotificationManager>();
+                services.AddTransient<ModDragAndDropService>();
 
                 services.AddSingleton<ElevatorService>();
                 services.AddSingleton<GenshinProcessManager>();

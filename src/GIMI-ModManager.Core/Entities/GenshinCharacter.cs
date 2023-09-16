@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GIMI_ModManager.Core.Entities;
 
-public record GenshinCharacter : IEqualityComparer<GenshinCharacter>
+public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCharacter>
 {
     public int Id { get; set; } = -1;
     public string DisplayName { get; set; } = string.Empty;
@@ -30,4 +30,17 @@ public record GenshinCharacter : IEqualityComparer<GenshinCharacter>
     {
         return obj.Id;
     }
+}
+
+public interface IGenshinCharacter
+{
+    int Id { get; }
+    public string DisplayName { get; set; }
+    public string[] Keys { get; set; }
+    public DateTime ReleaseDate { get; set; }
+    public string? ImageUri { get; set; }
+    public int Rarity { get; set; }
+    public string Element { get; set; }
+    public string Weapon { get; set; }
+    public string[] Region { get; set; }
 }
