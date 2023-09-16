@@ -8,6 +8,7 @@ using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -15,6 +16,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGenshinService _genshinService;
+    private readonly ILogger _logger = App.GetService<ILogger>().ForContext<MoveModsFlyoutVM>();
 
     private GenshinCharacter _shownCharacter = null!;
 
@@ -74,9 +76,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         }
         catch (InvalidOperationException e)
         {
+            _logger.Error(e, "Error moving mods");
             notificationManager
                 .ShowNotification("Invalid Operation Exception",
-                    $"Cannot move mods\n{e.Message}", TimeSpan.FromSeconds(10));
+                    $"Cannot move mods\n{e.Message}, see logs for details.", TimeSpan.FromSeconds(10));
             return;
         }
 
@@ -160,6 +163,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         }
         catch (InvalidOperationException e)
         {
+            _logger.Error(e, "Error deleting mods");
             notificationManager
                 .ShowNotification("Invalid Operation Exception",
                     $"Mods Deleted: {modsDeleted}. Some mods may not have been deleted, See Logs.\n{e.Message}",
