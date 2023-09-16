@@ -27,7 +27,6 @@
             x:Name="TextBox"
             CornerRadius="4"
             KeyDown="TextBox_OnKeyDown"
-            Style="{x:Bind Style, Mode=OneWay}"
             Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             TextAlignment="{x:Bind TextAlignment, Mode=OneWay}"
             Visibility="Collapsed" />
