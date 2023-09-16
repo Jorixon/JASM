@@ -25,6 +25,17 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
 
     public string ProcessName { get; protected set; } = string.Empty;
 
+    public string ProcessPath
+    {
+        get => _prcoessPath;
+        private protected set
+        {
+            if (value == _prcoessPath) return;
+            _prcoessPath = value;
+            OnPropertyChanged();
+        }
+    }
+
 
     [ObservableProperty] private string? _errorMessage = null;
 
@@ -52,7 +63,7 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
             return false;
         }
 
-        _prcoessPath = processOptions.ProcessPath;
+        ProcessPath = processOptions.ProcessPath;
         ProcessStatus = ProcessStatus.NotRunning;
         return true;
     }
@@ -76,7 +87,7 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     private async Task _SetStartupPath(string processName, string path, string? workingDirectory = null)
     {
         ProcessName = processName;
-        _prcoessPath = path;
+        ProcessPath = path;
         _workingDirectory = workingDirectory ?? Path.GetDirectoryName(path) ?? "";
 
         var processOptions = await ReadProcessOptions();
@@ -111,10 +122,10 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
 
         try
         {
-            _process = Process.Start(new ProcessStartInfo(_prcoessPath)
+            _process = Process.Start(new ProcessStartInfo(ProcessPath)
             {
                 WorkingDirectory = _workingDirectory == string.Empty
-                    ? Path.GetDirectoryName(_prcoessPath) ?? ""
+                    ? Path.GetDirectoryName(ProcessPath) ?? ""
                     : _workingDirectory,
                 Arguments = _isGenshinClass ? "runas" : "",
                 UseShellExecute = _isGenshinClass
@@ -122,7 +133,8 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
         }
         catch (Win32Exception e)
         {
-            _logger.Error(e, $"Failed to start {ProcessName}, this is likely due to the user cancelling the UAC (admin) prompt");
+            _logger.Error(e,
+                $"Failed to start {ProcessName}, this is likely due to the user cancelling the UAC (admin) prompt");
             ErrorMessage = $"Failed to start {ProcessName}";
             return;
         }

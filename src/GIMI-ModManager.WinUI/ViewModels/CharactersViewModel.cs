@@ -22,9 +22,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly GenshinProcessManager _genshinProcessManager;
-    private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
     private readonly ModDragAndDropService _modDragAndDropService;
+
+    public readonly GenshinProcessManager GenshinProcessManager;
+
+    public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
@@ -54,8 +56,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _localSettingsService = localSettingsService;
         NotificationManager = notificationManager;
         ElevatorService = elevatorService;
-        _genshinProcessManager = genshinProcessManager;
-        _threeDMigtoProcessManager = threeDMigtoProcessManager;
+        GenshinProcessManager = genshinProcessManager;
+        ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _modDragAndDropService = modDragAndDropService;
 
         ElevatorService.PropertyChanged += (sender, args) =>
@@ -475,17 +477,17 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private async Task Start3DmigotoAsync()
     {
         _logger.Debug("Starting 3Dmigoto");
-        _threeDMigtoProcessManager.CheckStatus();
+        ThreeDMigtoProcessManager.CheckStatus();
 
-        if (_threeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
+        if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
         {
-            var processPath = await _threeDMigtoProcessManager.PickProcessPathAsync(App.MainWindow);
+            var processPath = await ThreeDMigtoProcessManager.PickProcessPathAsync(App.MainWindow);
             if (processPath is null) return;
-            await _threeDMigtoProcessManager.SetPath(Path.GetFileName(processPath), processPath);
+            await ThreeDMigtoProcessManager.SetPath(Path.GetFileName(processPath), processPath);
         }
 
-        if (_threeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotRunning)
-            _threeDMigtoProcessManager.StartProcess();
+        if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+            ThreeDMigtoProcessManager.StartProcess();
     }
 
     private bool CanRefreshModsInGame() => ElevatorService.ElevatorStatus == ElevatorStatus.Running;
@@ -501,16 +503,16 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private async Task StartGenshinAsync()
     {
         _logger.Debug("Starting Genshin Impact");
-        _genshinProcessManager.CheckStatus();
-        if (_genshinProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
+        GenshinProcessManager.CheckStatus();
+        if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
         {
-            var processPath = await _genshinProcessManager.PickProcessPathAsync(App.MainWindow);
+            var processPath = await GenshinProcessManager.PickProcessPathAsync(App.MainWindow);
             if (processPath is null) return;
-            await _genshinProcessManager.SetPath(Path.GetFileName(processPath), processPath);
+            await GenshinProcessManager.SetPath(Path.GetFileName(processPath), processPath);
         }
 
-        if (_genshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
-            _genshinProcessManager.StartProcess();
+        if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+            GenshinProcessManager.StartProcess();
     }
 
     [ObservableProperty] private bool _isAddingMod = false;
