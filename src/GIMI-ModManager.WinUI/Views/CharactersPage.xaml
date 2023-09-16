@@ -62,17 +62,17 @@
             <Button
                 Command="{x:Bind ViewModel.RefreshModsInGameCommand}"
                 Content="Refresh Mods"
-                IsHitTestVisible="True">
+                IsHitTestVisible="True" />
+            <Button
+                Margin="32,0,32,0"
+                Command="{x:Bind ViewModel.Start3DmigotoCommand}"
+                Content="Start 3Dmigoto">
                 <ToolTipService.ToolTip>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
                     </StackPanel>
                 </ToolTipService.ToolTip>
             </Button>
-            <Button
-                Margin="32,0,32,0"
-                Command="{x:Bind ViewModel.Start3DmigotoCommand}"
-                Content="Start 3Dmigoto" />
             <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,4,0" Text="Start Genshin" />
