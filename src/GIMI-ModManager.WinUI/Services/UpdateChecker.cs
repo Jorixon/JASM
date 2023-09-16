@@ -13,6 +13,7 @@ public sealed class UpdateChecker : IDisposable
     private readonly NotificationManager _notificationManager;
 
     public Version CurrentVersion { get; private set; }
+    public GtiHubRelease? LatestGitHubRelease { get; private set; }
     public Version? LatestRetrievedVersion { get; private set; }
     public event EventHandler<NewVersionEventArgs>? NewVersionAvailable;
     private Version? _ignoredVersion;
@@ -107,13 +108,16 @@ public sealed class UpdateChecker : IDisposable
         if (DisableChecker)
             return;
 
-        var latestVersion = await GetLatestVersionAsync(cancellationToken);
+        var gitHubRelease = await GetLatestVersionAsync(cancellationToken);
 
-        if (latestVersion is null)
+        if (gitHubRelease is null || gitHubRelease.Version.Equals(new Version()))
         {
             _logger.Warning("No versions found, latestVersion is null");
             return;
         }
+
+        var latestVersion = gitHubRelease.Version;
+
 
         if (CurrentVersion == latestVersion || LatestRetrievedVersion == latestVersion)
         {
@@ -131,7 +135,7 @@ public sealed class UpdateChecker : IDisposable
         }
     }
 
-    private async Task<Version?> GetLatestVersionAsync(CancellationToken cancellationToken)
+    private async Task<GtiHubRelease?> GetLatestVersionAsync(CancellationToken cancellationToken)
     {
         using var httpClient = CreateHttpClient();
 
@@ -145,11 +149,30 @@ public sealed class UpdateChecker : IDisposable
 
         var text = await result.Content.ReadAsStringAsync(cancellationToken);
         var gitHubReleases =
-            (JsonConvert.DeserializeObject<GitHubRelease[]>(text)) ?? Array.Empty<GitHubRelease>();
+            (JsonConvert.DeserializeObject<GitHubReleaseApi[]>(text)) ?? Array.Empty<GitHubReleaseApi>();
 
-        var latestReleases = gitHubReleases.Where(r => !r.prerelease);
-        var latestVersion = latestReleases.Select(r => new Version(r.tag_name?.Trim('v') ?? "")).Max();
+        var releases = new List<GtiHubRelease>();
+
+
+        foreach (var gitHubReleaseApi in gitHubReleases)
+        {
+            var release = ParseGitHubRelease(gitHubReleaseApi);
+            releases.Add(release);
+        }
+
+        var latestVersion = releases.Where(x => !x.PreRelease).MaxBy(x => x.PublishedAt);
         return latestVersion;
+    }
+
+    private GtiHubRelease ParseGitHubRelease(GitHubReleaseApi gitHubReleaseApi)
+    {
+        var version = Version.TryParse(gitHubReleaseApi.tag_name?.Trim('v') ?? "", out var v)
+            ? v
+            : new Version();
+        var preRelease = gitHubReleaseApi.prerelease;
+        var publishedAt = gitHubReleaseApi.published_at;
+        var body = gitHubReleaseApi.body;
+        return new(version, preRelease, publishedAt, body);
     }
 
     private HttpClient CreateHttpClient()
@@ -180,11 +203,14 @@ public sealed class UpdateChecker : IDisposable
     }
 
 
-    private class GitHubRelease
+    private class GitHubReleaseApi
     {
         public string? target_commitish;
         public string? tag_name;
         public bool prerelease;
+        public string? body;
         public DateTime published_at = DateTime.MinValue;
     }
 }
+
+public record GtiHubRelease(Version Version, bool PreRelease, DateTime PublishedAt, string? Body = null);
