@@ -6,6 +6,7 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -111,8 +112,6 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             Content = "Move to Recycle Bin?",
             IsChecked = true
         };
-
-
         var mods = new ListView()
         {
             ItemsSource = modEntryNames,
@@ -134,15 +133,16 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
                 scrollViewer
             }
         };
-
-        var result = await windowManager.ShowDialogAsync(new ContentDialog()
+        var dialog = new ContentDialog()
         {
             Title = $"Delete These {selectedModsCount} Mods?",
             Content = stackPanel,
             PrimaryButtonText = "Delete",
             SecondaryButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Secondary
-        });
+            DefaultButton = ContentDialogButton.Primary,
+        };
+
+        var result = await windowManager.ShowDialogAsync(dialog);
 
         if (result != ContentDialogResult.Primary)
             return;
@@ -209,7 +209,6 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
         foreach (var eligibleCharacter in eligibleCharacters)
             SuggestedCharacters.Add(eligibleCharacter);
-        
 
 
         if (SuggestedCharacters.Count == 0)
