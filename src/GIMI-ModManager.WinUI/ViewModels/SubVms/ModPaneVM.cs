@@ -56,6 +56,7 @@ public partial class ModPaneVM : ObservableRecipient
 
     private async Task ReloadModSettings(CancellationToken cancellationToken = default)
     {
+        if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
         try
         {
             var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
@@ -127,7 +128,7 @@ public partial class ModPaneVM : ObservableRecipient
 
         if (file == null) return;
         var imageUri = new Uri(file.Path);
-        SelectedModModel.ImagePath = imageUri;
+        SelectedModModel!.ImagePath = imageUri;
     }
 
     public Task SetImageFromDragDropFile(IReadOnlyList<IStorageItem> items)
@@ -148,7 +149,7 @@ public partial class ModPaneVM : ObservableRecipient
                     return Task.CompletedTask;
                 }
 
-                SelectedModModel.ImagePath = imageUri;
+                SelectedModModel!.ImagePath = imageUri;
             }
         }
 
@@ -209,7 +210,9 @@ public partial class ModPaneVM : ObservableRecipient
 
         var tmpFile = Path.Combine(tmpDir, $"CLIPBOARD_PASTE_{Guid.NewGuid():N}");
 
-        var fileExtension = formats.FirstOrDefault(format => _supportedImageExtensions.Append("bitmap").Any(supportedFormat => supportedFormat.Trim('.').Equals(format, StringComparison.OrdinalIgnoreCase)));
+        var fileExtension = formats.FirstOrDefault(format =>
+            _supportedImageExtensions.Append("bitmap").Any(supportedFormat =>
+                supportedFormat.Trim('.').Equals(format, StringComparison.OrdinalIgnoreCase)));
 
         if (fileExtension is null)
         {
@@ -219,7 +222,7 @@ public partial class ModPaneVM : ObservableRecipient
             return;
         }
 
-        tmpFile += "."+ fileExtension;
+        tmpFile += "." + fileExtension;
 
 
         await Task.Run(async () =>
@@ -309,10 +312,5 @@ public partial class ModPaneVM : ObservableRecipient
     private void ClearImage()
     {
         SelectedModModel.ImagePath = NewModModel.PlaceholderImagePath;
-    }
-
-    [RelayCommand]
-    private async Task CopyImageAsync()
-    {
     }
 }

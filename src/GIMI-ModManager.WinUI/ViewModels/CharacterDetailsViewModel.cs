@@ -50,6 +50,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _notificationService = notificationService;
         _localSettingsService = localSettingsService;
         _modDragAndDropService = modDragAndDropService;
+
+        _modDragAndDropService.DragAndDropFinished += (sender, args) =>
+            App.MainWindow.DispatcherQueue.EnqueueAsync(
+                async () => { await RefreshMods(); });
+
         MoveModsFlyoutVM = new(_genshinService, _skinManagerService);
         MoveModsFlyoutVM.ModsMoved += async (sender, args) => await _refreshMods();
         MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await _refreshMods();
@@ -75,12 +80,12 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
-            if (!IsAddingModFolder)
-                _notificationService.ShowNotification(
-                    $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
-                    "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
-                    TimeSpan.FromSeconds(5));
-            await Task.Delay(TimeSpan.FromSeconds(1)); // Wait for file system to finish moving files
+            if (IsAddingModFolder) return;
+            _notificationService.ShowNotification(
+                $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
+                "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
+                TimeSpan.FromSeconds(5));
+
             await RefreshMods().ConfigureAwait(false);
         });
     }
@@ -217,7 +222,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     private async Task _refreshMods()
     {
-        await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter));
+        var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter));
         var modList = new List<NewModModel>();
         foreach (var skinEntry in _modList.Mods)
         {
@@ -239,6 +244,22 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
             modList.Add(newModModel);
         }
+
+
+        if (refreshResult.ModsDuplicate.Any())
+        {
+            var message = $"Duplicate mods were detected in {ShownCharacter.DisplayName}'s mod folder.\n";
+
+            message = refreshResult.ModsDuplicate.Aggregate(message,
+                (current, duplicateMod) =>
+                    current +
+                    $"Mod: '{duplicateMod.ExistingFolderName}' was renamed to '{duplicateMod.RenamedFolderName}' to avoid conflicts.\n");
+
+            _notificationService.ShowNotification("Duplicate Mods Detected",
+                message,
+                TimeSpan.FromSeconds(10));
+        }
+
 
         ModListVM.SetBackendMods(modList);
         ModListVM.ResetContent();

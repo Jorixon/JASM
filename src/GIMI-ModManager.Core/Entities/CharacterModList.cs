@@ -131,10 +131,10 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             if (!mod.Name.StartsWith(DISABLED_PREFIX))
                 throw new InvalidOperationException("Cannot enable a enabled mod");
 
-            var newName = mod.Name.Replace(DISABLED_PREFIX, "");
+            var newName = GetFolderNameWithoutDisabledPrefix(mod.Name);
 
-            newName = newName.Replace(ALT_DISABLED_PREFIX, "");
-
+            if (Directory.Exists(Path.Combine(AbsModsFolderPath, newName)))
+                throw new InvalidOperationException("Cannot disable a mod with the same name as a disabled mod");
 
             mod.Rename(newName);
 
@@ -160,7 +160,12 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             if (mod.Name.StartsWith(DISABLED_PREFIX))
                 throw new InvalidOperationException("Cannot disable a disabled mod");
 
-            mod.Rename(DISABLED_PREFIX + mod.Name);
+            var newName = GetFolderNameWithDisabledPrefix(mod.Name);
+
+            if (Directory.Exists(Path.Combine(AbsModsFolderPath, newName)))
+                throw new InvalidOperationException("Cannot disable a mod with the same name as a disabled mod");
+
+            mod.Rename(newName);
             _mods.First(m => m.Mod == mod).IsEnabled = false;
         }
         finally
@@ -194,9 +199,35 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     public bool FolderAlreadyExists(string folderName)
     {
-        var enabledPath = Path.Combine(AbsModsFolderPath, folderName);
-        var disabledPath = Path.Combine(AbsModsFolderPath, DISABLED_PREFIX + folderName);
-        return new DirectoryInfo(enabledPath).Exists || new DirectoryInfo(disabledPath).Exists;
+        if (Path.IsPathFullyQualified(folderName))
+            folderName = Path.GetDirectoryName(folderName) ?? folderName;
+
+        var enabledFolderNamePath = Path.Combine(AbsModsFolderPath, GetFolderNameWithoutDisabledPrefix(folderName));
+        var disabledFolderNamePath = Path.Combine(AbsModsFolderPath, GetFolderNameWithDisabledPrefix(folderName));
+
+        return Directory.Exists(enabledFolderNamePath) || Directory.Exists(disabledFolderNamePath);
+    }
+
+    public string GetFolderNameWithoutDisabledPrefix(string folderName)
+    {
+        if (folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
+            return folderName.Replace(DISABLED_PREFIX, string.Empty);
+
+        if (folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
+            return folderName.Replace(ALT_DISABLED_PREFIX, string.Empty);
+
+        return folderName;
+    }
+
+    public string GetFolderNameWithDisabledPrefix(string folderName)
+    {
+        if (folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
+            return folderName;
+
+        if (folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
+            return folderName.Replace(ALT_DISABLED_PREFIX, DISABLED_PREFIX);
+
+        return DISABLED_PREFIX + folderName;
     }
 
     public void DeleteMod(Guid modId, bool moveToRecycleBin = true) => throw new NotImplementedException();
@@ -211,13 +242,21 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         var mod = skinEntry.Mod;
         _mods.Remove(skinEntry);
         mod.Delete(moveToRecycleBin);
-        _logger?.Information("{Operation} mod {ModName} from {CharacterName} modList", moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.DisplayName);
+        _logger?.Information("{Operation} mod {ModName} from {CharacterName} modList",
+            moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.DisplayName);
     }
 
     public bool IsMultipleModsActive(bool perSkin = false)
     {
         return _mods.Count(mod => mod.IsEnabled) > 1;
     }
+
+    private static bool IsModFolderEnabled(string folderName)
+        => !IsModFolderDisabled(folderName);
+
+    private static bool IsModFolderDisabled(string folderName) =>
+        folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase) ||
+        folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase);
 }
 
 public class ModFolderChangedArgs : EventArgs

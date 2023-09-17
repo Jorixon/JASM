@@ -11,14 +11,11 @@ using System.Diagnostics;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI;
-using CommunityToolkit.WinUI.UI;
 using GIMI_ModManager.Core.Entities;
 using Serilog;
 using GIMI_ModManager.WinUI.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -308,7 +305,6 @@ public sealed partial class CharacterDetailsPage : Page
                 .ToArray());
             await ViewModel.MoveModsFlyoutVM.DeleteModsCommand.ExecuteAsync(null);
             ViewModel.MoveModsFlyoutVM.ResetStateCommand.Execute(null);
-
         }
     }
 
@@ -328,7 +324,7 @@ public sealed partial class CharacterDetailsPage : Page
         ViewModel.MoveModsFlyoutVM.SetSelectedModsCommand.Execute(ViewModel.ModListVM.SelectedMods);
     }
 
-    private async void MoveModSearch_OnSuggestionChosen(AutoSuggestBox sender,
+    private void MoveModSearch_OnSuggestionChosen(AutoSuggestBox sender,
         AutoSuggestBoxSuggestionChosenEventArgs args)
     {
         //sender.IsEnabled = false;

@@ -3,6 +3,7 @@ using GIMI_ModManager.Core.Services;
 using Serilog;
 using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -11,6 +12,8 @@ public class ModDragAndDropService
     private readonly ILogger _logger;
 
     private readonly NotificationManager _notificationManager;
+
+    public event EventHandler? DragAndDropFinished;
 
     public ModDragAndDropService(ILogger logger, NotificationManager notificationManager)
     {
@@ -48,7 +51,7 @@ public class ModDragAndDropService
             if (storageItem is StorageFile)
             {
                 using var scanner = new DragAndDropScanner();
-                var extractResult = scanner.Scan(storageItem.Path);
+                var extractResult = scanner.ScanAndGetContents(storageItem.Path);
                 extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
                 if (extractResult.IgnoredMods.Any())
                     App.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -89,15 +92,28 @@ public class ModDragAndDropService
             else // StorageFolder from explorer
             {
                 destDirectoryInfo = new DirectoryInfo(Path.Combine(modList.AbsModsFolderPath, sourceFolder.Name));
-                destDirectoryInfo.Create();
                 recursiveCopy = RecursiveCopy;
             }
 
-            //IsAddingModFolder = true; // This was used to disable the UI while adding a mod, but it's not in use anymore
+
+            var destFolderPath = destDirectoryInfo.FullName;
+
+            if (Directory.Exists(destFolderPath))
+                _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
+                    destDirectoryInfo.FullName);
+            while (Directory.Exists(destFolderPath))
+            {
+                destFolderPath = DuplicateModAffixHelper.AppendNumberAffix(destFolderPath);
+            }
+
+            Directory.CreateDirectory(destFolderPath);
+
 
             recursiveCopy.Invoke(sourceFolder,
-                await StorageFolder.GetFolderFromPathAsync(destDirectoryInfo.FullName));
+                await StorageFolder.GetFolderFromPathAsync(destFolderPath));
         }
+
+        DragAndDropFinished?.Invoke(this, EventArgs.Empty);
     }
 
     // ReSharper disable once InconsistentNaming

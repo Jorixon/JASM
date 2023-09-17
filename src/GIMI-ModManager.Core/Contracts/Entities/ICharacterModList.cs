@@ -70,4 +70,19 @@ public interface ICharacterModList
     public void DeleteMod(Guid modId, bool moveToRecycleBin = true);
 
     public void DeleteModBySkinEntryId(Guid skinEntryId, bool moveToRecycleBin = true);
+
+    /// <summary>
+    /// Gets the folder name without the disabled prefix. If the folder does not have the disabled prefix, it returns the same string.
+    /// </summary>
+    /// <param name="folderName"></param>
+    /// <returns></returns>
+    public string GetFolderNameWithoutDisabledPrefix(string folderName);
+
+    /// <summary>
+    /// Gets the folder name with the disabled prefix. If the folder already has the disabled prefix, it returns the same string.
+    /// If it has the alternate disabled prefix, it returns it with the normal disabled prefix.
+    /// </summary>
+    /// <param name="folderName"></param>
+    /// <returns></returns>
+    public string GetFolderNameWithDisabledPrefix(string folderName);
 }

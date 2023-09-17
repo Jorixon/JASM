@@ -22,7 +22,7 @@ public sealed partial class CharactersPage : Page
     }
 
 
-    private async void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         ViewModel.AutoSuggestBox_TextChanged(sender.Text);
     }

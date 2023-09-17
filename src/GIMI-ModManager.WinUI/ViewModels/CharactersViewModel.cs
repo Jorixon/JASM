@@ -578,7 +578,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public async Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
+    public Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
     {
         var modNameToCharacter = new Dictionary<IStorageItem, GenshinCharacter>();
         var othersCharacter = _genshinService.GetCharacters().First(x => x.Id == _genshinService.OtherCharacterId);
@@ -601,5 +601,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 modNameToCharacter.Add(storageItem, othersCharacter);
             }
         }
+        return Task.CompletedTask;
     }
 }
