@@ -1,15 +1,12 @@
-﻿using GIMI_ModManager.WinUI.Contracts.Services;
+﻿using Windows.System;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Windows.System;
-using Windows.UI.Core;
-using Microsoft.UI.Xaml.Data;
-using WindowActivatedEventArgs = Microsoft.UI.Xaml.WindowActivatedEventArgs;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -38,7 +35,7 @@ public sealed partial class ShellPage : Page
 #if DEBUG
         AppTitleBarText.Text += " - DEBUG";
 #endif
-        this.KeyDown += GlobalKeyHandler_Invoked;
+        KeyDown += GlobalKeyHandler_Invoked;
 
         Loaded += (sender, args) =>
         {
@@ -54,7 +51,7 @@ public sealed partial class ShellPage : Page
             settingsItem.InfoBadge = infoBadge;
 
 
-            BindingOperations.SetBinding(settingsItem.InfoBadge, InfoBadge.OpacityProperty, bindings);
+            BindingOperations.SetBinding(settingsItem.InfoBadge, OpacityProperty, bindings);
 
             Bindings.Update();
         };
@@ -68,7 +65,7 @@ DebugItem.Visibility = Visibility.Collapsed;
     }
 
 
-    private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
         TitleBarHelper.UpdateTitleBar(RequestedTheme);
 
@@ -82,7 +79,7 @@ DebugItem.Visibility = Visibility.Collapsed;
             ? "WindowCaptionForegroundDisabled"
             : "WindowCaptionForeground";
 
-        AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
+        AppTitleBarText.Foreground = (SolidColorBrush)Application.Current.Resources[resource];
         App.AppTitlebar = AppTitleBarText as UIElement;
     }
 
@@ -104,10 +101,7 @@ DebugItem.Visibility = Visibility.Collapsed;
     {
         var keyboardAccelerator = new KeyboardAccelerator() { Key = key };
 
-        if (modifiers.HasValue)
-        {
-            keyboardAccelerator.Modifiers = modifiers.Value;
-        }
+        if (modifiers.HasValue) keyboardAccelerator.Modifiers = modifiers.Value;
 
         keyboardAccelerator.Invoked += OnKeyboardAcceleratorInvoked;
 

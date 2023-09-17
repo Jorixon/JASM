@@ -36,7 +36,7 @@ public sealed class UpdateChecker : IDisposable
         {
             _logger.Error("Failed to get current version");
             DisableChecker = true;
-            CurrentVersion = new(0, 0, 0, 0);
+            CurrentVersion = new Version(0, 0, 0, 0);
             return;
         }
 
@@ -47,7 +47,7 @@ public sealed class UpdateChecker : IDisposable
     public async Task InitializeAsync()
     {
         var options = await _localSettingsService.ReadSettingAsync<UpdateCheckerOptions>(UpdateCheckerOptions.Key) ??
-                      new();
+                      new UpdateCheckerOptions();
         if (options.IgnoreNewVersion is not null)
             _ignoredVersion = options.IgnoreNewVersion;
 
@@ -64,7 +64,7 @@ public sealed class UpdateChecker : IDisposable
     public async Task IgnoreCurrentVersionAsync()
     {
         var options = await _localSettingsService.ReadSettingAsync<UpdateCheckerOptions>(UpdateCheckerOptions.Key) ??
-                      new();
+                      new UpdateCheckerOptions();
         options.IgnoreNewVersion = LatestRetrievedVersion;
         await _localSettingsService.SaveSettingAsync(UpdateCheckerOptions.Key, options);
         _ignoredVersion = LatestRetrievedVersion;
@@ -76,7 +76,6 @@ public sealed class UpdateChecker : IDisposable
         Task.Run(async () =>
         {
             while (!cancellationToken.IsCancellationRequested)
-            {
                 try
                 {
                     await CheckForUpdatesAsync(cancellationToken);
@@ -97,7 +96,6 @@ public sealed class UpdateChecker : IDisposable
                     _logger.Error(e, "Failed to check for updates. Stopping Update checker");
                     break;
                 }
-            }
         }, CancellationToken.None);
     }
 
@@ -166,7 +164,9 @@ public sealed class UpdateChecker : IDisposable
     }
 
     private void OnNewVersionAvailable(Version e)
-        => NewVersionAvailable?.Invoke(this, new(e));
+    {
+        NewVersionAvailable?.Invoke(this, new NewVersionEventArgs(e));
+    }
 
 
     public class NewVersionEventArgs : EventArgs

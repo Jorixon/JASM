@@ -1,8 +1,4 @@
 ﻿#nullable enable
-using GIMI_ModManager;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 namespace GIMI_ModManager.Core.Entities;
 
 public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCharacter>

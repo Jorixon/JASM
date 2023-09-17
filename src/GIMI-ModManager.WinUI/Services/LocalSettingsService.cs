@@ -1,10 +1,10 @@
-﻿using GIMI_ModManager.Core.Contracts.Services;
+﻿using Windows.Storage;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models;
 using Microsoft.Extensions.Options;
-using Windows.Storage;
 using Newtonsoft.Json;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -67,18 +67,14 @@ public class LocalSettingsService : ILocalSettingsService
         if (RuntimeHelper.IsMSIX)
         {
             if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-            {
                 return await Json.ToObjectAsync<T>((string)obj).ConfigureAwait(false);
-            }
         }
         else
         {
             await InitializeAsync();
 
             if (_settings != null && _settings.TryGetValue(key, out var obj))
-            {
                 return await Json.ToObjectAsync<T>((string)obj).ConfigureAwait(false);
-            }
         }
 
         return default;
@@ -111,16 +107,12 @@ public class LocalSettingsService : ILocalSettingsService
         if (RuntimeHelper.IsMSIX)
         {
             if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-            {
                 return JsonConvert.DeserializeObject<T>((string)obj);
-            }
         }
         else
         {
             if (_settings != null && _settings.TryGetValue(key, out var obj))
-            {
                 return JsonConvert.DeserializeObject<T>((string)obj);
-            }
         }
 
         return default;

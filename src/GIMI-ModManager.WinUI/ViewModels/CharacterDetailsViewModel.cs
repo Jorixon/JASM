@@ -1,22 +1,21 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.Json;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
-using GIMI_ModManager.WinUI.Services;
-using Windows.System;
-using Windows.Storage.Pickers;
-using CommunityToolkit.WinUI;
-using GIMI_ModManager.Core.Contracts.Entities;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -55,11 +54,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             App.MainWindow.DispatcherQueue.EnqueueAsync(
                 async () => { await RefreshMods(); });
 
-        MoveModsFlyoutVM = new(_genshinService, _skinManagerService);
+        MoveModsFlyoutVM = new MoveModsFlyoutVM(_genshinService, _skinManagerService);
         MoveModsFlyoutVM.ModsMoved += async (sender, args) => await _refreshMods();
         MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await _refreshMods();
 
-        ModListVM = new(skinManagerService);
+        ModListVM = new ModListVM(skinManagerService);
         ModListVM.OnModsSelected += async (sender, args) =>
         {
             var selectedMod = args.Mods.FirstOrDefault();
@@ -73,7 +72,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             await ModPaneVM.LoadMod(selectedMod);
         };
 
-        ModPaneVM = new(skinManagerService, notificationService);
+        ModPaneVM = new ModPaneVM(skinManagerService, notificationService);
     }
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
@@ -294,8 +293,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [RelayCommand]
     private async Task OpenModsFolderAsync()
-        => await Launcher.LaunchFolderAsync(
+    {
+        await Launcher.LaunchFolderAsync(
             await StorageFolder.GetFolderFromPathAsync(_modList.AbsModsFolderPath));
+    }
 
     [RelayCommand]
     private async Task OpenGIMIRootFolderAsync()
@@ -333,10 +334,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
 
         if (oldModModel.Name != newModModel.Name)
-        {
             NotImplemented.Show("Setting custom mod names are not persisted between sessions",
                 TimeSpan.FromSeconds(10));
-        }
     }
 
     public void ModList_KeyHandler(IEnumerable<Guid> modEntryId, VirtualKey key)
@@ -344,7 +343,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var selectedMods = ModListVM.Mods.Where(mod => modEntryId.Contains(mod.Id)).ToArray();
 
         if (key == VirtualKey.Space)
-        {
             foreach (var newModModel in selectedMods)
             {
                 if (newModModel.IsEnabled)
@@ -355,18 +353,23 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 newModModel.IsEnabled = !newModModel.IsEnabled;
                 newModModel.FolderName = _modList.Mods.First(mod => mod.Id == newModModel.Id).Mod.Name;
             }
-        }
     }
 
 
     private IEnumerable<NewModModel> GetNewModModels()
-        => _modList.Mods.Select(mod => NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod));
+    {
+        return _modList.Mods.Select(mod => NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod));
+    }
 
 
     [RelayCommand]
     private void GoBack()
-        => _navigationService.GoBack();
+    {
+        _navigationService.GoBack();
+    }
 
     public void OnNavigatedFrom()
-        => _modList.ModsChanged -= ModListOnModsChanged;
+    {
+        _modList.ModsChanged -= ModListOnModsChanged;
+    }
 }

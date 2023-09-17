@@ -1,6 +1,4 @@
 using Windows.ApplicationModel.DataTransfer;
-using CommunityToolkit.WinUI.UI.Controls;
-using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
@@ -17,7 +15,7 @@ public sealed partial class CharactersPage : Page
     public CharactersPage()
     {
         ViewModel = App.GetService<CharactersViewModel>();
-        this.InitializeComponent();
+        InitializeComponent();
         Loaded += (sender, args) => SearchBox.Focus(FocusState.Keyboard);
     }
 

@@ -93,11 +93,8 @@ public sealed class DragAndDropScanner : IDisposable
         Action<string>? action = null;
 
         if (_extractTool == ExtractTool.Bundled7Zip)
-        {
             action = Extract7Z;
-        }
         else if (_extractTool == ExtractTool.SharpCompress)
-        {
             action = Path.GetExtension(path) switch
             {
                 ".zip" => SharpExtractZip,
@@ -105,11 +102,7 @@ public sealed class DragAndDropScanner : IDisposable
                 ".7z" => SharpExtract7z,
                 _ => null
             };
-        }
-        else if (_extractTool == ExtractTool.System7Zip)
-        {
-            throw new NotImplementedException();
-        }
+        else if (_extractTool == ExtractTool.System7Zip) throw new NotImplementedException();
 
         return action;
     }
@@ -154,10 +147,7 @@ public sealed class DragAndDropScanner : IDisposable
         foreach (var fileSystemInfo in folder.GetFileSystemInfos())
         {
             var extension = Path.GetExtension(fileSystemInfo.Name);
-            if (extension.Equals(".ini"))
-            {
-                return true;
-            }
+            if (extension.Equals(".ini")) return true;
         }
 
         return false;
@@ -174,7 +164,7 @@ public sealed class DragAndDropScanner : IDisposable
     {
         Bundled7Zip, // 7zip bundled with JASM
         SharpCompress, // SharpCompress library
-        System7Zip, // 7zip installed on the system
+        System7Zip // 7zip installed on the system
     }
 
     private ExtractTool GetExtractTool()

@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System.Diagnostics;
 using System.Reflection;
 using FuzzySharp;
 using GIMI_ModManager.Core.Entities;
@@ -37,10 +36,7 @@ public class GenshinService : IGenshinService
             return;
         }
 
-        foreach (var character in characters)
-        {
-            SetImageUriForCharacter(assetsUriPath, character);
-        }
+        foreach (var character in characters) SetImageUriForCharacter(assetsUriPath, character);
 
         _characters.AddRange(characters);
         _characters.Add(getGlidersCharacter(assetsUriPath));
@@ -51,9 +47,7 @@ public class GenshinService : IGenshinService
     private static void SetImageUriForCharacter(string assetsUriPath, GenshinCharacter character)
     {
         if (character.ImageUri is not null && character.ImageUri.StartsWith("Character_"))
-        {
             character.ImageUri = $"{assetsUriPath}/Images/{character.ImageUri}";
-        }
     }
 
     public IEnumerable<GenshinCharacter> GetCharacters()
@@ -78,15 +72,9 @@ public class GenshinService : IGenshinService
                     character.Keys.Any(characterKeyWord => characterKeyWord.ToLower() == modKeyWord)))
                 return character;
 
-            if (result == 100)
-            {
-                return character;
-            }
+            if (result == 100) return character;
 
-            if (result > fuzzRatio)
-            {
-                searchResult.Add(character, result);
-            }
+            if (result > fuzzRatio) searchResult.Add(character, result);
         }
 
         return searchResult.Any() ? searchResult.MaxBy(s => s.Value).Key : null;
@@ -161,7 +149,7 @@ public class GenshinService : IGenshinService
             Keys = new[] { "others", "unknown" },
             ImageUri = "Character_Others.png",
             Element = string.Empty,
-            Weapon = string.Empty,
+            Weapon = string.Empty
         };
         SetImageUriForCharacter(assetsUriPath, character);
         return character;
@@ -204,13 +192,20 @@ public class GenshinService : IGenshinService
     }
 
     public GenshinCharacter? GetCharacter(int id)
-        => _characters.FirstOrDefault(c => c.Id == id);
+    {
+        return _characters.FirstOrDefault(c => c.Id == id);
+    }
 
     public bool IsMultiModCharacter(GenshinCharacter character)
-        => IsMultiModCharacter(character.Id);
+    {
+        return IsMultiModCharacter(character.Id);
+    }
 
     public bool IsMultiModCharacter(int characterId)
-        => characterId == OtherCharacterId || characterId == GlidersCharacterId || characterId == WeaponsCharacterId;
+    {
+        return characterId == OtherCharacterId || characterId == GlidersCharacterId ||
+               characterId == WeaponsCharacterId;
+    }
 }
 
 public interface IGenshinService
@@ -235,13 +230,15 @@ public interface IGenshinService
 
 internal static class GenshinCharacters
 {
-    internal static IEnumerable<GenshinCharacter> AllCharacters() =>
-        typeof(GenshinCharacters).GetFields(BindingFlags.Static | BindingFlags.NonPublic)
+    internal static IEnumerable<GenshinCharacter> AllCharacters()
+    {
+        return typeof(GenshinCharacters).GetFields(BindingFlags.Static | BindingFlags.NonPublic)
             .Where(f => f.FieldType == typeof(GenshinCharacter))
             .Select(f => (GenshinCharacter)f.GetValue(null)!);
+    }
 
 
-    internal static readonly GenshinCharacter Amber = new GenshinCharacter
+    internal static readonly GenshinCharacter Amber = new()
     {
         DisplayName = "Amber",
         ReleaseDate = new DateTime(2020, 9, 28),
@@ -251,7 +248,7 @@ internal static class GenshinCharacters
         Region = new[] { "Mondstadt" }
     };
 
-    internal static readonly GenshinCharacter Barbara = new GenshinCharacter
+    internal static readonly GenshinCharacter Barbara = new()
     {
         DisplayName = "Barbara",
         ReleaseDate = new DateTime(2020, 9, 28),
@@ -261,7 +258,7 @@ internal static class GenshinCharacters
         Region = new[] { "Mondstadt" }
     };
 
-    internal static readonly GenshinCharacter Deluc = new GenshinCharacter
+    internal static readonly GenshinCharacter Deluc = new()
     {
         DisplayName = "Deluc",
         ReleaseDate = new DateTime(2020, 9, 28),

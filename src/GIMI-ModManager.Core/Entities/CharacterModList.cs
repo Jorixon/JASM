@@ -21,7 +21,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         _logger = logger?.ForContext<CharacterModList>();
         Character = character;
         AbsModsFolderPath = absPath;
-        _watcher = new(AbsModsFolderPath);
+        _watcher = new FileSystemWatcher(AbsModsFolderPath);
         _watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.CreationTime | NotifyFilters.FileName;
         _watcher.Renamed += OnModRenamed;
         _watcher.Created += OnModCreated;
@@ -38,7 +38,9 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         {
         }
         else
+        {
             _logger?.Warning("Renamed mod {ModId} was not tracked in mod list", modId);
+        }
     }
 
     public event EventHandler<ModFolderChangedArgs>? ModsChanged;
@@ -57,7 +59,9 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             _mods.Remove(mod);
         }
         else
+        {
             _logger?.Warning("Deleted folder {Folder} was not tracked in mod list", e.FullPath);
+        }
 
         ModsChanged?.Invoke(this, new ModFolderChangedArgs(e.FullPath, ModFolderChangeType.Deleted));
     }
@@ -86,7 +90,9 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             _mods.Add(modEntry);
         }
         else
+        {
             _logger?.Warning("Renamed folder {Folder} was not tracked in mod list", e.OldFullPath);
+        }
 
         ModsChanged?.Invoke(this, new ModFolderChangedArgs(e.FullPath, ModFolderChangeType.Renamed, e.OldFullPath));
     }
@@ -188,14 +194,19 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     }
 
     public void Dispose()
-        => _watcher.Dispose();
+    {
+        _watcher.Dispose();
+    }
 
     public override string ToString()
     {
         return $"{Character} ({Mods.Count} mods)";
     }
 
-    public DisableWatcher DisableWatcher() => new(_watcher);
+    public DisableWatcher DisableWatcher()
+    {
+        return new DisableWatcher(_watcher);
+    }
 
     public bool FolderAlreadyExists(string folderName)
     {
@@ -230,7 +241,10 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         return DISABLED_PREFIX + folderName;
     }
 
-    public void DeleteMod(Guid modId, bool moveToRecycleBin = true) => throw new NotImplementedException();
+    public void DeleteMod(Guid modId, bool moveToRecycleBin = true)
+    {
+        throw new NotImplementedException();
+    }
 
 
     public void DeleteModBySkinEntryId(Guid skinEntryId, bool moveToRecycleBin = true)
@@ -252,11 +266,15 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     }
 
     private static bool IsModFolderEnabled(string folderName)
-        => !IsModFolderDisabled(folderName);
+    {
+        return !IsModFolderDisabled(folderName);
+    }
 
-    private static bool IsModFolderDisabled(string folderName) =>
-        folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase) ||
-        folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase);
+    private static bool IsModFolderDisabled(string folderName)
+    {
+        return folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase) ||
+               folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase);
+    }
 }
 
 public class ModFolderChangedArgs : EventArgs
@@ -296,5 +314,7 @@ public class DisableWatcher : IDisposable
     }
 
     public void Dispose()
-        => _watcher.EnableRaisingEvents = true;
+    {
+        _watcher.EnableRaisingEvents = true;
+    }
 }

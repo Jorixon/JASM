@@ -1,9 +1,9 @@
-﻿using GIMI_ModManager.Core.Entities;
+﻿using Windows.Storage;
+using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using Serilog;
-using Windows.Storage;
-using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -88,7 +88,9 @@ public class ModDragAndDropService
             Action<StorageFolder, StorageFolder> recursiveCopy = null!;
 
             if (sourceFolderPath.Contains(tmpFolder)) // Is 7zip
+            {
                 recursiveCopy = RecursiveCopy7z;
+            }
             else // StorageFolder from explorer
             {
                 destDirectoryInfo = new DirectoryInfo(Path.Combine(modList.AbsModsFolderPath, sourceFolder.Name));
@@ -102,9 +104,7 @@ public class ModDragAndDropService
                 _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
                     destDirectoryInfo.FullName);
             while (Directory.Exists(destFolderPath))
-            {
                 destFolderPath = DuplicateModAffixHelper.AppendNumberAffix(destFolderPath);
-            }
 
             Directory.CreateDirectory(destFolderPath);
 
@@ -129,9 +129,7 @@ public class ModDragAndDropService
     private void RecursiveCopy(StorageFolder sourceFolder, StorageFolder destinationFolder)
     {
         if (sourceFolder == null || destinationFolder == null)
-        {
             throw new ArgumentNullException("Source and destination folders cannot be null.");
-        }
 
         var sourceDir = new DirectoryInfo(sourceFolder.Path);
 

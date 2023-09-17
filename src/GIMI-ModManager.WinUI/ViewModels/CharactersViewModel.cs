@@ -68,7 +68,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
     private readonly CharacterGridItemModel _noCharacterFound =
-        new(new() { Id = -999999, DisplayName = "No Characters Found..." });
+        new(new GenshinCharacter { Id = -999999, DisplayName = "No Characters Found..." });
 
     public void AutoSuggestBox_TextChanged(string text)
     {
@@ -213,10 +213,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             gridIndex++;
         }
 
-        for (int i = Characters.Count; i > gridIndex; i--)
-        {
-            Characters.RemoveAt(i - 1);
-        }
+        for (int i = Characters.Count; i > gridIndex; i--) Characters.RemoveAt(i - 1);
 
 
         Debug.Assert(Characters.Distinct().Count() == Characters.Count,
@@ -229,10 +226,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     {
         var characterAtGridIndex = Characters.ElementAtOrDefault(gridIndex);
 
-        if (characterAtGridIndex?.Character.Id == character.Character.Id)
-        {
-            return;
-        }
+        if (characterAtGridIndex?.Character.Id == character.Character.Id) return;
 
         if (characterAtGridIndex is null)
         {
@@ -240,10 +234,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        if (character.Character.Id != characterAtGridIndex.Character.Id)
-        {
-            Characters.Insert(gridIndex, character);
-        }
+        if (character.Character.Id != characterAtGridIndex.Character.Id) Characters.Insert(gridIndex, character);
     }
 
     private void ShowOnlyCharacters(IEnumerable<CharacterGridItemModel> charactersToShow, bool hardClear = false)
@@ -257,15 +248,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         characters = characters.Except(pinnedCharacters).ToArray();
         Characters.Clear();
 
-        foreach (var genshinCharacter in pinnedCharacters)
-        {
-            Characters.Add(genshinCharacter);
-        }
+        foreach (var genshinCharacter in pinnedCharacters) Characters.Add(genshinCharacter);
 
-        foreach (var genshinCharacter in characters)
-        {
-            Characters.Add(genshinCharacter);
-        }
+        foreach (var genshinCharacter in characters) Characters.Add(genshinCharacter);
 
         Debug.Assert(Characters.Distinct().Count() == Characters.Count,
             $"Characters.Distinct().Count(): {Characters.Distinct().Count()} != Characters.Count: {Characters.Count}\n\t" +
@@ -303,19 +288,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
         {
             var character = _characters.FirstOrDefault(x => x.Id == pinedCharacterId);
-            if (character is not null)
-            {
-                PinnedCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
-            }
+            if (character is not null) PinnedCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
         }
 
         foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
         {
             var character = _characters.FirstOrDefault(x => x.Id == hiddenCharacterId);
-            if (character is not null)
-            {
-                HiddenCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
-            }
+            if (character is not null) HiddenCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
         }
 
         ResetContent();
@@ -422,7 +401,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             PinnedCharacters.Remove(character);
 
             if (!ShowOnlyCharactersWithMods)
+            {
                 ResetContent();
+            }
             else
             {
                 var charactersWithModss =
@@ -446,7 +427,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         PinnedCharacters.Add(character);
 
         if (!ShowOnlyCharactersWithMods)
+        {
             ResetContent();
+        }
 
         else
         {
@@ -469,14 +452,20 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     [RelayCommand]
     private void HideCharacter(GenshinCharacter character)
-        => NotImplemented.Show("Hiding characters is not implemented yet");
+    {
+        NotImplemented.Show("Hiding characters is not implemented yet");
+    }
 
-    private async Task<CharacterOverviewOptions> ReadCharacterSettings() =>
-        await _localSettingsService.ReadSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key) ??
-        new CharacterOverviewOptions();
+    private async Task<CharacterOverviewOptions> ReadCharacterSettings()
+    {
+        return await _localSettingsService.ReadSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key) ??
+               new CharacterOverviewOptions();
+    }
 
-    private async Task SaveCharacterSettings(CharacterOverviewOptions settings) =>
+    private async Task SaveCharacterSettings(CharacterOverviewOptions settings)
+    {
         await _localSettingsService.SaveSettingAsync(CharacterOverviewOptions.Key, settings);
+    }
 
 
     [RelayCommand]
@@ -502,7 +491,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    private bool CanRefreshModsInGame() => ElevatorService.ElevatorStatus == ElevatorStatus.Running;
+    private bool CanRefreshModsInGame()
+    {
+        return ElevatorService.ElevatorStatus == ElevatorStatus.Running;
+    }
 
     [RelayCommand(CanExecute = nameof(CanRefreshModsInGame))]
     private async Task RefreshModsInGameAsync()
@@ -601,6 +593,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 modNameToCharacter.Add(storageItem, othersCharacter);
             }
         }
+
         return Task.CompletedTask;
     }
 }

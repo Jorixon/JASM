@@ -1,19 +1,16 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
+using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
-using Windows.Storage;
-using Windows.System;
-using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Serilog;
-using FileAttributes = Windows.Storage.FileAttributes;
-using Windows.Storage.Streams;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -85,9 +82,7 @@ public partial class ModPaneVM : ObservableRecipient
         _backendModModel.SetKeySwaps(keySwaps);
         SelectedModModel.SetKeySwaps(keySwaps);
         foreach (var skinModKeySwapModel in SelectedModModel.SkinModKeySwaps)
-        {
             skinModKeySwapModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
-        }
 
         IsReadOnlyMode = false;
 
@@ -117,9 +112,7 @@ public partial class ModPaneVM : ObservableRecipient
     {
         var filePicker = new FileOpenPicker();
         foreach (var supportedImageExtension in _supportedImageExtensions)
-        {
             filePicker.FileTypeFilter.Add(supportedImageExtension);
-        }
 
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
@@ -243,12 +236,16 @@ public partial class ModPaneVM : ObservableRecipient
 
 
     [RelayCommand]
-    private async Task OpenModFolder() =>
+    private async Task OpenModFolder()
+    {
         await Launcher.LaunchFolderAsync(
             await StorageFolder.GetFolderFromPathAsync(_selectedSkinMod.FullPath));
+    }
 
-    private bool ModSettingsChanged() =>
-        _backendModModel is not null && !_backendModModel.SettingsEquals(SelectedModModel);
+    private bool ModSettingsChanged()
+    {
+        return _backendModModel is not null && !_backendModModel.SettingsEquals(SelectedModModel);
+    }
 
     [RelayCommand(CanExecute = nameof(ModSettingsChanged))]
     private async Task SaveModSettingsAsync(CancellationToken cancellationToken = default)
@@ -306,7 +303,10 @@ public partial class ModPaneVM : ObservableRecipient
                 $"Settings saved for {SelectedModModel.Name}", TimeSpan.FromSeconds(2));
     }
 
-    private void SettingsPropertiesChanged() => SaveModSettingsCommand.NotifyCanExecuteChanged();
+    private void SettingsPropertiesChanged()
+    {
+        SaveModSettingsCommand.NotifyCanExecuteChanged();
+    }
 
     [RelayCommand]
     private void ClearImage()

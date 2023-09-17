@@ -1,20 +1,13 @@
 ﻿using Windows.Foundation;
-using Windows.UI.ViewManagement;
-using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
-using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
-using Microsoft.UI;
-using Microsoft.UI.Windowing;
-using WinRT.Interop;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -53,7 +46,6 @@ public class ActivationService : IActivationService
 
     public async Task ActivateAsync(object activationArgs)
     {
-
 #if DEBUG
         _logger.Information("JASM starting up in DEBUG mode...");
 #elif RELEASE
@@ -138,9 +130,7 @@ public class ActivationService : IActivationService
         var characterOverviewSettings =
             await _localSettingsService.ReadSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key);
         if (characterOverviewSettings == null)
-        {
             await _localSettingsService.SaveSettingAsync(CharacterOverviewOptions.Key, new CharacterOverviewOptions());
-        }
     }
 
     private Size _previousScreenSize = new(0, 0);
@@ -158,9 +148,7 @@ public class ActivationService : IActivationService
             _timer.Stop();
             if (App.MainWindow.Height == _previousScreenSize.Height &&
                 App.MainWindow.Width == _previousScreenSize.Width)
-            {
                 return;
-            }
 
             _previousScreenSize = new Size(App.MainWindow.Width, App.MainWindow.Height);
             _timer.Start();
