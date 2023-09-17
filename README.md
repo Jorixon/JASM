@@ -20,8 +20,11 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - Automatically sort unsorted mods into respective character's folders
 - Move Mods between characters
 - Start a 3Dmigto launcher and/or a certain game straight from the app
-- Refresh mods using F10 or the refresh button in app. (Requires an elevated side process, see description bellow)
 - The app watches character folders and automaticly updates if skins are added or removed from folders.
+- Edit merged.ini keys
+- Export (copy) all mods managed by JASM to a user specified folder
+- Refresh mods using F10 or the refresh button in app. (Requires an elevated side process, see description bellow)
+
 
 ## Hotkeys
 - "SPACE" - In character view, toggles selected mods on/off
@@ -43,8 +46,11 @@ Latest development release can be downloaded from [Actions Tab](https://github.c
 - [NET 7.0 Desktop Runtime (v7.0.10)](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win10-x64&apphost_version=7.0.10&gui=true)
 - [Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads)
 
+If you don't have these downloaded the application will prompt you to download necessary dependencies and provide links.
+ 
+
 ### Elevator process
-The elevator process is a small program that can be started as an elevated process from the app. It is completely optional.
+The elevator process is a small program that can be started as an elevated process from the app. It is completely optional and is kind of a niche feature.
 It is used to send the F10 key to the game to refresh the mods. This is done trough named pipes. 
 The process does not listen for keybinds it only waits for a simple "1" command from the app. This makes it send the F10 key to the game.
 
@@ -53,13 +59,15 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 
 ### Limitations and Acknowledgements
 - The Json file that stores the characters is a stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and images are also from the same repository.
-- I have tested this app mostly on two machines running Windows 11. I have not tested it on Windows 10.
+- 7-Zip is bundled with the app, 7-Zip is licensed under the GNU Lesser General Public License (LGPL). You can find the full license details and source code at [www.7-zip.org](https://www.7-zip.org/).
+- SharpCompress is used if the bundled 7-zip is not found. SharpCompress is licensed under the MIT license. You can find the full license details and source code at [SharpCompress's GitHub Page](https://github.com/adamhathcock/sharpcompress)
+- I have tested this app mostly on two machines running Windows 11. I have tested it on Windows 10 in a virtual machine.
 - There are definitely bugs. I have not tested this app enough and there are not tests written for it.
 - Drag and drop is really finicky for some reason. It works but it's not perfect. So the code for it is still quite messy and it involed time consuming tirial and error until it worked.
 - Changing the app's theme causes instability and usually it crashes when navigating to another page. This means it needs to restart after changing the theme
 - I made everything in dark mode theme, so light mode does not look good.
-- Currently the newest characters have not been added. I plan to add them, as well as creating a way to add new custom characters.
 - App settings are stored here ```C:\Users\<username>\AppData\Local\JASM\ApplicationData```
+- Mod specific settings are stored within the mod folder themselves and are prefixed with ```.JASM_```. When exporting mods, these files can be ignored.
 
 ### Contributing
 If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively  learning.
