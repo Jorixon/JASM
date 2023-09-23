@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Security.Principal;
+using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 using Microsoft.UI.Xaml;
 using Serilog;
-using Windows.Storage.Pickers;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -54,15 +53,9 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     {
         var processOptions = await ReadProcessOptions();
 
-        if (processOptions.GetType() == typeof(GenshinProcessOptions))
-        {
-            _isGenshinClass = true;
-        }
+        if (processOptions.GetType() == typeof(GenshinProcessOptions)) _isGenshinClass = true;
 
-        if (!File.Exists(processOptions.ProcessPath))
-        {
-            return false;
-        }
+        if (!File.Exists(processOptions.ProcessPath)) return false;
 
         ProcessPath = processOptions.ProcessPath;
         ProcessName = Path.GetFileNameWithoutExtension(ProcessPath);
@@ -185,7 +178,9 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     }
 
     private void MainWindowExitHandler(object sender, WindowEventArgs args)
-        => StopProcess();
+    {
+        StopProcess();
+    }
 
 
     public void CheckStatus()
@@ -254,7 +249,7 @@ public enum ProcessStatus
     /// <summary>
     /// Path set and process running
     /// </summary>
-    Running,
+    Running
 }
 
 public class GenshinProcessManager : BaseProcessManager<GenshinProcessOptions>

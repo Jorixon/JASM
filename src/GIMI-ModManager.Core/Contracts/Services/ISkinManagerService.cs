@@ -25,7 +25,7 @@ public interface ISkinManagerService : IDisposable
     /// <summary>
     /// This looks for mods in characters mod folder that are not tracked by the mod manager and adds them to the mod manager.
     /// </summary>
-    public Task RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
+    public Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
 
     public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
 
@@ -46,7 +46,6 @@ public interface ISkinManagerService : IDisposable
         SetModStatus setModStatus = SetModStatus.KeepCurrent);
 
     public event EventHandler<ExportProgress>? ModExportProgress;
-
 }
 
 public enum SetModStatus
@@ -54,4 +53,32 @@ public enum SetModStatus
     KeepCurrent,
     EnableAllMods,
     DisableAllMods
+}
+
+public readonly struct RefreshResult
+{
+    public RefreshResult(IReadOnlyCollection<string> modsUntracked, IReadOnlyCollection<ISkinMod> modsTracked,
+        IReadOnlyCollection<DuplicateMods> modsDuplicate)
+    {
+        ModsUntracked = modsUntracked;
+        ModsTracked = modsTracked;
+        ModsDuplicate = modsDuplicate;
+    }
+
+    public IReadOnlyCollection<string> ModsUntracked { get; }
+    public IReadOnlyCollection<ISkinMod> ModsTracked { get; }
+
+    public IReadOnlyCollection<DuplicateMods> ModsDuplicate { get; }
+
+    public readonly struct DuplicateMods
+    {
+        public DuplicateMods(string existingFolderName, string renamedFolderName)
+        {
+            ExistingFolderName = existingFolderName;
+            RenamedFolderName = renamedFolderName;
+        }
+
+        public string ExistingFolderName { get; }
+        public string RenamedFolderName { get; }
+    }
 }

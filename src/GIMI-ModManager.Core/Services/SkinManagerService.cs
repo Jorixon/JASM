@@ -1,11 +1,9 @@
-﻿#nullable enable
-using System.IO.Compression;
-using System.Runtime.CompilerServices;
-using GIMI_ModManager.Core.Contracts.Entities;
+﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
+using static GIMI_ModManager.Core.Contracts.Services.RefreshResult;
 
 namespace GIMI_ModManager.Core.Services;
 
@@ -60,8 +58,12 @@ public sealed class SkinManagerService : ISkinManagerService
         return Task.CompletedTask;
     }
 
-    public async Task RefreshModsAsync(GenshinCharacter? refreshForCharacter = null)
+    public async Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null)
     {
+        var modsUntracked = new List<string>();
+        var newModsFound = new List<ISkinMod>();
+        var duplicateModsFound = new List<DuplicateMods>();
+
         foreach (var characterModList in _characterModLists)
         {
             if (refreshForCharacter is not null && characterModList.Character.Id != refreshForCharacter.Id) continue;
@@ -77,6 +79,32 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 foreach (var x in characterModList.Mods)
                 {
+                    if (x.Mod.FullPath.Equals(modDirectory.FullName, StringComparison.CurrentCultureIgnoreCase)
+                        &&
+                        Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath,
+                            characterModList.GetFolderNameWithDisabledPrefix(modDirectory.Name)))
+                        &&
+                        Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath,
+                            characterModList.GetFolderNameWithoutDisabledPrefix(modDirectory.Name)))
+                       )
+                    {
+                        var newName = modDirectory.Name;
+
+                        while (Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath, newName)))
+                            newName = DuplicateModAffixHelper.AppendNumberAffix(newName);
+
+                        _logger.Warning(
+                            "Mod '{ModName}' has both enabled and disabled folders, renaming folder",
+                            modDirectory.Name);
+
+                        duplicateModsFound.Add(new DuplicateMods(x.Mod.Name, newName));
+                        x.Mod.Rename(newName);
+                        mod = x;
+                        mod.Mod.ClearCache();
+                        orphanedMods.Remove(x);
+                        break;
+                    }
+
                     if (x.Mod.FullPath == modDirectory.FullName)
                     {
                         mod = x;
@@ -85,8 +113,8 @@ public sealed class SkinManagerService : ISkinManagerService
                         break;
                     }
 
-                    var disabledName = $"{CharacterModList.DISABLED_PREFIX}{modDirectory.Name}";
-                    if (x.Mod.FullPath == Path.Combine(modDirectory.Parent!.FullName, disabledName))
+                    var disabledName = characterModList.GetFolderNameWithDisabledPrefix(modDirectory.Name);
+                    if (x.Mod.FullPath == Path.Combine(characterModList.AbsModsFolderPath, disabledName))
                     {
                         mod = x;
                         mod.Mod.ClearCache();
@@ -99,11 +127,23 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 var newMod = new SkinMod(modDirectory, modDirectory.Name);
                 characterModList.TrackMod(newMod);
+                newModsFound.Add(newMod);
+                _logger.Debug("Found new mod '{ModName}' in '{CharacterFolder}'", newMod.Name,
+                    characterModList.Character.DisplayName);
             }
 
-            orphanedMods.ForEach(x => characterModList.UnTrackMod(x.Mod));
+            orphanedMods.ForEach(x =>
+            {
+                characterModList.UnTrackMod(x.Mod);
+                modsUntracked.Add(x.Mod.FullPath);
+                _logger.Debug("Mod '{ModName}' in '{CharacterFolder}' is no longer tracked", x.Mod.Name,
+                    characterModList.Character.DisplayName);
+            });
         }
+
+        return new RefreshResult(modsUntracked, newModsFound, duplicateModsFound);
     }
+
 
     public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds)
     {
@@ -156,10 +196,7 @@ public sealed class SkinManagerService : ISkinManagerService
         var modsToExport = new List<CharacterSkinEntry>();
 
 
-        foreach (var characterModList in characterModLists)
-        {
-            modsToExport.AddRange(characterModList.Mods);
-        }
+        foreach (var characterModList in characterModLists) modsToExport.AddRange(characterModList.Mods);
 
         var modsProgress = 0;
         var divider = modsToExport.Count + (removeLocalJasmSettings ? 1 : 0) +
@@ -173,7 +210,7 @@ public sealed class SkinManagerService : ISkinManagerService
             {
                 var mod = characterSkinEntry.Mod;
                 ModExportProgress?.Invoke(this,
-                    new(modsProgress += modsProgressIncrement, mod.Name, "Copying Folders"));
+                    new ExportProgress(modsProgress += modsProgressIncrement, mod.Name, "Copying Folders"));
 
                 if (CheckForDuplicates(exportFolder, mod)) // Handle duplicate mod names
                 {
@@ -192,15 +229,15 @@ public sealed class SkinManagerService : ISkinManagerService
             }
 
             ModExportProgress?.Invoke(this,
-                new(modsProgress += modsProgressIncrement, null, "Removing JASM settings..."));
+                new ExportProgress(modsProgress += modsProgressIncrement, null, "Removing JASM settings..."));
             RemoveJASMSettings(removeLocalJasmSettings, exportedMods);
 
             ModExportProgress?.Invoke(this,
-                new(modsProgress += modsProgressIncrement, null, "Setting Mod Status..."));
+                new ExportProgress(modsProgress += modsProgressIncrement, null, "Setting Mod Status..."));
             SetModsStatus(setModStatus, exportedMods);
 
             ModExportProgress?.Invoke(this,
-                new(100, null, "Finished"));
+                new ExportProgress(100, null, "Finished"));
             return;
         }
 
@@ -234,7 +271,7 @@ public sealed class SkinManagerService : ISkinManagerService
                 var mod = characterSkinEntry.Mod;
                 var destinationFolder = characterToFolder[characterSkinEntry.ModList.Character];
                 ModExportProgress?.Invoke(this,
-                    new(modsProgress += modsProgressIncrement, mod.Name, "Copying Folders"));
+                    new ExportProgress(modsProgress += modsProgressIncrement, mod.Name, "Copying Folders"));
 
                 if (CheckForDuplicates(destinationFolder, mod)) // Handle duplicate mod names
                 {
@@ -245,25 +282,27 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(destinationFolder.FullName));
                     mod.Rename(oldName);
-                    _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name, characterSkinEntry.ModList.Character.DisplayName);
+                    _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
+                        characterSkinEntry.ModList.Character.DisplayName);
 
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
-                _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name, characterSkinEntry.ModList.Character.DisplayName);
+                _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
+                    characterSkinEntry.ModList.Character.DisplayName);
             }
 
             ModExportProgress?.Invoke(this,
-                new(modsProgress += modsProgressIncrement, null, "Removing JASM settings..."));
+                new ExportProgress(modsProgress += modsProgressIncrement, null, "Removing JASM settings..."));
             RemoveJASMSettings(removeLocalJasmSettings, exportedMods);
 
             ModExportProgress?.Invoke(this,
-                new(modsProgress += modsProgressIncrement, null, "Setting Mod Status..."));
+                new ExportProgress(modsProgress += modsProgressIncrement, null, "Setting Mod Status..."));
             SetModsStatus(setModStatus, exportedMods);
 
             ModExportProgress?.Invoke(this,
-                new(100, null, "Finished"));
+                new ExportProgress(100, null, "Finished"));
 
 
             return;
@@ -312,10 +351,8 @@ public sealed class SkinManagerService : ISkinManagerService
             case SetModStatus.DisableAllMods:
             {
                 foreach (var mod in mods)
-                {
                     if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
                         mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
-                }
 
                 break;
             }
@@ -325,14 +362,12 @@ public sealed class SkinManagerService : ISkinManagerService
     private void RemoveJASMSettings(bool removeLocalJasmSettings, IEnumerable<IMod> exportedMods)
     {
         if (removeLocalJasmSettings)
-        {
             foreach (var file in exportedMods.Select(mod => new DirectoryInfo(mod.FullPath))
                          .SelectMany(folder => folder.EnumerateFileSystemInfos(".JASM_*")))
             {
                 _logger.Debug("Deleting local jasm file '{JasmFile}' in modFolder", file.FullName);
                 file.Delete();
             }
-        }
     }
 
     public ICharacterModList GetCharacterModList(GenshinCharacter character)

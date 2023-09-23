@@ -1,10 +1,8 @@
 ﻿using System.Diagnostics;
-using Windows.ApplicationModel;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.ViewModels;
@@ -13,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Serilog;
-using Microsoft.UI.Xaml.Controls;
 using Serilog.Templates;
 
 namespace GIMI_ModManager.WinUI;
@@ -31,15 +28,14 @@ public partial class App : Application
     public static T GetService<T>()
         where T : class
     {
-        if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
-        {
+        if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
             throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-        }
 
         return service;
     }
 
     public static string TMP_DIR { get; } = Path.Combine(Path.GetTempPath(), "JASM_TMP");
+    public static string ROOT_DIR { get; } = AppDomain.CurrentDomain.BaseDirectory;
     public static WindowEx MainWindow { get; } = new MainWindow();
 
     public static UIElement? AppTitlebar { get; set; }
@@ -57,10 +53,7 @@ public partial class App : Application
                 var mt = new ExpressionTemplate(
                     "[{@t:yyyy-MM-dd'T'HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
                 configuration.WriteTo.File(formatter: mt, "logs\\log.txt");
-                if (Debugger.IsAttached)
-                {
-                    configuration.WriteTo.Debug();
-                }
+                if (Debugger.IsAttached) configuration.WriteTo.Debug();
             })
             .ConfigureServices((context, services) =>
             {
@@ -127,8 +120,8 @@ public partial class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        NotImplemented.NotificationManager = App.GetService<NotificationManager>();
+        NotImplemented.NotificationManager = GetService<NotificationManager>();
         base.OnLaunched(args);
-        await App.GetService<IActivationService>().ActivateAsync(args);
+        await GetService<IActivationService>().ActivateAsync(args);
     }
 }

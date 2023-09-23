@@ -6,7 +6,6 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
 
@@ -55,7 +54,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SelectedModsCount = SelectedMods.Count;
     }
 
-    private bool CanMoveModsCommandExecute() => SelectedCharacter is not null && SelectedModsCount > 0;
+    private bool CanMoveModsCommandExecute()
+    {
+        return SelectedCharacter is not null && SelectedModsCount > 0;
+    }
 
     [RelayCommand(CanExecute = nameof(CanMoveModsCommandExecute))]
     private async Task MoveModsAsync()
@@ -92,7 +94,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     public event EventHandler? ModsMoved;
 
-    private bool CanDeleteModsCommandExecute() => SelectedCharacter is null && SelectedModsCount > 0;
+    private bool CanDeleteModsCommandExecute()
+    {
+        return SelectedCharacter is null && SelectedModsCount > 0;
+    }
 
     [RelayCommand(CanExecute = nameof(CanDeleteModsCommandExecute))]
     private async Task DeleteModsAsync()
@@ -118,7 +123,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         var mods = new ListView()
         {
             ItemsSource = modEntryNames,
-            SelectionMode = ListViewSelectionMode.None,
+            SelectionMode = ListViewSelectionMode.None
         };
 
         var scrollViewer = new ScrollViewer()
@@ -142,7 +147,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             Content = stackPanel,
             PrimaryButtonText = "Delete",
             SecondaryButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
+            DefaultButton = ContentDialogButton.Primary
         };
 
         var result = await windowManager.ShowDialogAsync(dialog);

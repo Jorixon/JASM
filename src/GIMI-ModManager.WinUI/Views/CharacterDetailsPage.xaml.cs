@@ -1,24 +1,21 @@
-﻿using Windows.ApplicationModel.DataTransfer;
-using CommunityToolkit.WinUI.UI.Animations;
-using CommunityToolkit.WinUI.UI.Controls;
-using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.ViewModels;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI;
-using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI.UI.Animations;
+using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.Core.Entities;
-using Serilog;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -31,18 +28,12 @@ public sealed partial class CharacterDetailsPage : Page
     public CharacterDetailsPage()
     {
         ViewModel = App.GetService<CharacterDetailsViewModel>();
-        this.InitializeComponent();
+        InitializeComponent();
         ViewModel.PropertyChanged += (sender, args) =>
         {
-            if (args.PropertyName == nameof(ViewModel.IsAddingModFolder))
-            {
-                this.IsEnabled = !ViewModel.IsAddingModFolder;
-            }
+            if (args.PropertyName == nameof(ViewModel.IsAddingModFolder)) IsEnabled = !ViewModel.IsAddingModFolder;
 
-            if (args.PropertyName == nameof(ViewModel.ModListVM.Mods))
-            {
-                CheckIfAnyMods();
-            }
+            if (args.PropertyName == nameof(ViewModel.ModListVM.Mods)) CheckIfAnyMods();
         };
 
         ViewModel.ModListVM.SelectedMods.CollectionChanged += (sender, args) =>
@@ -90,9 +81,7 @@ public sealed partial class CharacterDetailsPage : Page
         {
             var navigationService = App.GetService<INavigationService>();
             if (ViewModel.ShownCharacter != null!)
-            {
                 navigationService.SetListDataItemForNextConnectedAnimation(ViewModel.ShownCharacter);
-            }
         }
     }
 
@@ -101,10 +90,7 @@ public sealed partial class CharacterDetailsPage : Page
         if (ViewModel.ModListVM.BackendMods.Any())
         {
             var stackPanel = MainContentArea.FindName("NoModsStackPanel") as StackPanel;
-            if (stackPanel != null)
-            {
-                stackPanel.Visibility = Visibility.Collapsed;
-            }
+            if (stackPanel != null) stackPanel.Visibility = Visibility.Collapsed;
 
             ModListGrid.Visibility = Visibility.Visible;
             ModDetailsPane.Visibility = Visibility.Visible;
@@ -125,7 +111,7 @@ public sealed partial class CharacterDetailsPage : Page
                 Orientation = Orientation.Vertical,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                AllowDrop = false,
+                AllowDrop = false
             };
 
             var title = new TextBlock()
@@ -134,7 +120,7 @@ public sealed partial class CharacterDetailsPage : Page
                 FontSize = 28,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                AllowDrop = false,
+                AllowDrop = false
             };
             stackPanel.Children.Add(title);
 
@@ -144,7 +130,7 @@ public sealed partial class CharacterDetailsPage : Page
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 AllowDrop = false,
-                Background = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(Colors.Transparent)
             };
 
             stackPanel.Children.Add(backgroundGrid);
@@ -161,7 +147,7 @@ public sealed partial class CharacterDetailsPage : Page
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 Padding = new Thickness(5),
-                AllowDrop = false,
+                AllowDrop = false
             };
 
             // Create the TextBlock for "Drop Mods Here"
@@ -171,7 +157,7 @@ public sealed partial class CharacterDetailsPage : Page
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 20,
-                AllowDrop = false,
+                AllowDrop = false
             };
 
 
@@ -263,12 +249,8 @@ public sealed partial class CharacterDetailsPage : Page
 
         // Remove sorting indicators from other columns
         foreach (var dgColumn in ModListGrid.Columns)
-        {
             if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
-            {
                 dgColumn.SortDirection = null;
-            }
-        }
     }
 
     private void ModListArea_OnDragOver(object sender, DragEventArgs e)
@@ -280,9 +262,7 @@ public sealed partial class CharacterDetailsPage : Page
     {
         var deferral = e.GetDeferral();
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
-        {
             await ViewModel.DragAndDropCommand.ExecuteAsync(await e.DataView.GetStorageItemsAsync());
-        }
 
         deferral.Complete();
     }
@@ -308,7 +288,6 @@ public sealed partial class CharacterDetailsPage : Page
                 .ToArray());
             await ViewModel.MoveModsFlyoutVM.DeleteModsCommand.ExecuteAsync(null);
             ViewModel.MoveModsFlyoutVM.ResetStateCommand.Execute(null);
-
         }
     }
 
@@ -328,7 +307,7 @@ public sealed partial class CharacterDetailsPage : Page
         ViewModel.MoveModsFlyoutVM.SetSelectedModsCommand.Execute(ViewModel.ModListVM.SelectedMods);
     }
 
-    private async void MoveModSearch_OnSuggestionChosen(AutoSuggestBox sender,
+    private void MoveModSearch_OnSuggestionChosen(AutoSuggestBox sender,
         AutoSuggestBoxSuggestionChosenEventArgs args)
     {
         //sender.IsEnabled = false;
