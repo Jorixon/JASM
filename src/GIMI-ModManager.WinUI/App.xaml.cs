@@ -86,6 +86,7 @@ public partial class App : Application
                 services.AddSingleton<IFileService, FileService>();
                 services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
+                services.AddSingleton<ModCrawlerService>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();

@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:custom="using:GIMI_ModManager.WinUI.Models.CustomControlTemplates"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,8 +12,33 @@
 
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="CharacterItemTemplate" />
+            <DataTemplate x:Key="CharacterItemTemplate" x:DataType="custom:SelectCharacterTemplate">
+                <ItemContainer Margin="8,0">
+                    <StackPanel>
+                        <Image Width="80" HorizontalAlignment="Center">
+                            <Image.Source>
+                                <BitmapImage DecodePixelWidth="80" UriSource="{x:Bind ImagePath}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                            Text="{x:Bind DisplayName}" />
+                    </StackPanel>
+                </ItemContainer>
+            </DataTemplate>
         </Grid.Resources>
-        <ItemsView />
+
+
+        <ItemsView
+            IsItemInvokedEnabled="True"
+            ItemInvoked="ItemsView_OnItemInvoked"
+            ItemTemplate="{StaticResource CharacterItemTemplate}"
+            ItemsSource="{x:Bind GridSource, Mode=OneWay}"
+            SelectionMode="None">
+            <ItemsView.Layout>
+                <UniformGridLayout />
+            </ItemsView.Layout>
+        </ItemsView>
     </Grid>
 </UserControl>

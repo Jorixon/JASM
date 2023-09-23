@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using System.Reflection;
 using FuzzySharp;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -36,7 +36,11 @@ public class GenshinService : IGenshinService
             return;
         }
 
-        foreach (var character in characters) SetImageUriForCharacter(assetsUriPath, character);
+        foreach (var character in characters)
+        {
+            SetImageUriForCharacter(assetsUriPath, character);
+            SetSubSkinConnections(character);
+        }
 
         _characters.AddRange(characters);
         _characters.Add(getGlidersCharacter(assetsUriPath));
@@ -48,6 +52,14 @@ public class GenshinService : IGenshinService
     {
         if (character.ImageUri is not null && character.ImageUri.StartsWith("Character_"))
             character.ImageUri = $"{assetsUriPath}/Images/{character.ImageUri}";
+        foreach (var characterInGameSkin in character.InGameSkins)
+            if (characterInGameSkin.DefaultSkin)
+                continue;
+    }
+
+    private static void SetSubSkinConnections(GenshinCharacter character)
+    {
+        foreach (var skin in character.InGameSkins) skin.Character = character;
     }
 
     public IEnumerable<GenshinCharacter> GetCharacters()
@@ -83,10 +95,16 @@ public class GenshinService : IGenshinService
     public Dictionary<GenshinCharacter, int> GetCharacters(string searchQuery,
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int minScore = 100)
     {
+        return SearchCharacters(searchQuery, restrictToGenshinCharacters ?? _characters, minScore);
+    }
+
+    public static Dictionary<GenshinCharacter, int> SearchCharacters(string searchQuery,
+        IEnumerable<GenshinCharacter> characters, int minScore = 100)
+    {
         var searchResult = new Dictionary<GenshinCharacter, int>();
         searchQuery = searchQuery.ToLower();
 
-        foreach (var character in restrictToGenshinCharacters ?? _characters)
+        foreach (var character in characters)
         {
             var loweredDisplayName = character.DisplayName.ToLower();
 

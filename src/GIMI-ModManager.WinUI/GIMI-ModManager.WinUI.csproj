@@ -36,6 +36,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Remove="Assets\characters.json" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_Amber_Thumb.webp" />
 		<Content Remove="Assets\Images\Character_Albedo_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Alhaitham_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Aloy_Thumb.png" />
@@ -167,7 +168,10 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\characters.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_Amber_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Images\Character_Albedo_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,8 +1,8 @@
 ﻿#nullable enable
-using GIMI_ModManager.Core.Contracts.Entities;
-using Microsoft.VisualBasic.FileIO;
 using System.Security.Cryptography;
 using System.Text;
+using GIMI_ModManager.Core.Contracts.Entities;
+using Microsoft.VisualBasic.FileIO;
 using SearchOption = System.IO.SearchOption;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -23,12 +23,19 @@ public class Mod : IMod
     }
 
     public bool Exists()
-        => _modDirectory.Exists;
+    {
+        return _modDirectory.Exists;
+    }
 
     public bool IsEmpty()
-        => !_modDirectory.EnumerateFiles().Any();
+    {
+        return !_modDirectory.EnumerateFiles().Any();
+    }
 
-    public void SetCustomName(string customName) => CustomName = customName;
+    public void SetCustomName(string customName)
+    {
+        CustomName = customName;
+    }
 
     public void MoveTo(string absPath)
     {
@@ -80,9 +87,7 @@ public class Mod : IMod
     {
         newModDirectory.Create();
         foreach (var file in oldModDirectory.EnumerateFiles())
-        {
             file.CopyTo(Path.Combine(newModDirectory.FullName, file.Name));
-        }
 
         foreach (var directory in oldModDirectory.EnumerateDirectories())
         {

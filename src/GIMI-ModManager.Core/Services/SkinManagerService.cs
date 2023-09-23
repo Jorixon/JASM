@@ -1,6 +1,7 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
 using static GIMI_ModManager.Core.Contracts.Services.RefreshResult;

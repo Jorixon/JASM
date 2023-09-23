@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Helpers;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.Entities;
 
@@ -68,11 +68,16 @@ public class SkinMod : Mod, ISkinMod
         HasMergedInI = HasMergedInIFile();
     }
 
-    private bool HasMergedInIFile() =>
-        _modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
+    private bool HasMergedInIFile()
+    {
+        return _modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
             .Any(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase));
+    }
 
-    public bool IsValidFolder() => Exists() && !IsEmpty();
+    public bool IsValidFolder()
+    {
+        return Exists() && !IsEmpty();
+    }
 
     public void ClearCache()
     {
@@ -118,7 +123,9 @@ public class SkinMod : Mod, ISkinMod
                     keySwapBlockStarted = true;
                 }
                 else
+                {
                     sectionLine = string.Empty;
+                }
 
 
                 continue;
@@ -236,7 +243,9 @@ public class SkinMod : Mod, ISkinMod
                 // Remove old forward key
                 else if (newForwardKeyWrittenIndex != -1 && newForwardKeyWrittenIndex != lineIndex &&
                          IniConfigHelpers.IsIniKey(line, SkinModKeySwap.ForwardIniKey))
+                {
                     oldForwardKeyIndex = lineIndex;
+                }
 
                 else if (newBackwardKeyWrittenIndex == -1 &&
                          IniConfigHelpers.IsIniKey(line, SkinModKeySwap.BackwardIniKey))
@@ -259,10 +268,14 @@ public class SkinMod : Mod, ISkinMod
                 // Remove old backward key
                 else if (newBackwardKeyWrittenIndex != -1 && newBackwardKeyWrittenIndex != lineIndex &&
                          IniConfigHelpers.IsIniKey(line, SkinModKeySwap.BackwardIniKey))
+                {
                     oldBackwardKeyIndex = lineIndex;
+                }
 
                 else if (IniConfigHelpers.IsSection(line))
+                {
                     break;
+                }
             }
 
             if (newBackwardKeyWrittenIndex != -1 && newForwardKeyWrittenIndex != -1)
@@ -306,7 +319,7 @@ public class SkinMod : Mod, ISkinMod
         var options = new JsonSerializerOptions
         {
             ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true,
+            AllowTrailingCommas = true
         };
         var skinModSettings =
             JsonSerializer.Deserialize<SkinModSettings>(fileContents, options) ?? new SkinModSettings();
@@ -398,7 +411,7 @@ public class SkinMod : Mod, ISkinMod
         {
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
-            WriteIndented = true,
+            WriteIndented = true
         };
 
         var json = JsonSerializer.Serialize(skinModSettings, options);
@@ -474,6 +487,9 @@ public class SkinModSettings // "internal set" messes with the json serializer
     public string? Version { get; set; }
     public string? ModUrl { get; set; }
     public string? ImagePath { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? CharacterSkinOverride { get; set; }
 }
 
 // There needs to be a better way to do this
@@ -511,7 +527,10 @@ public class SkinModKeySwap : IEquatable<SkinModKeySwap>
     public const string SwapVarIniKey = "$swapvar";
     public string[]? SwapVar { get; set; }
 
-    public bool AnyValues() => ForwardHotkey is not null || BackwardHotkey is not null;
+    public bool AnyValues()
+    {
+        return ForwardHotkey is not null || BackwardHotkey is not null;
+    }
 
     public bool Equals(SkinModKeySwap? other)
     {
@@ -536,10 +555,7 @@ public class SkinModKeySwap : IEquatable<SkinModKeySwap>
         var sb = new StringBuilder();
         sb.Append("Section: ");
         sb.Append(SectionKey + " | ");
-        foreach (var iniKeyValue in IniKeyValues)
-        {
-            sb.Append($"{iniKeyValue.Key}: {iniKeyValue.Value} | ");
-        }
+        foreach (var iniKeyValue in IniKeyValues) sb.Append($"{iniKeyValue.Key}: {iniKeyValue.Value} | ");
 
         return sb.ToString();
     }

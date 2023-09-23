@@ -2,26 +2,23 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Input;
+using Windows.ApplicationModel;
+using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Helpers;
-using Microsoft.UI.Xaml;
-using Windows.ApplicationModel;
-using GIMI_ModManager.WinUI.Models;
-using GIMI_ModManager.WinUI.Services;
-using Microsoft.UI.Xaml.Controls;
-using Serilog;
-using GIMI_ModManager.WinUI.ViewModels.SubVms;
-using GIMI_ModManager.WinUI.Validators.PreConfigured;
-using Windows.ApplicationModel.Core;
-using Windows.Storage.Pickers;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
-using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Validators.PreConfigured;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -167,7 +164,8 @@ public partial class SettingsViewModel : ObservableRecipient
         {
             var packageVersion = Package.Current.Id.Version;
 
-            version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            version = new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build,
+                packageVersion.Revision);
         }
         else
         {
@@ -179,10 +177,13 @@ public partial class SettingsViewModel : ObservableRecipient
     }
 
 
-    private bool ValidFolderSettings() => PathToGIMIFolderPicker.IsValid && PathToModsFolderPicker.IsValid &&
-                                          PathToGIMIFolderPicker.Path != PathToModsFolderPicker.Path &&
-                                          (PathToGIMIFolderPicker.Path != _modManagerOptions?.GimiRootFolderPath ||
-                                           PathToModsFolderPicker.Path != _modManagerOptions?.ModsFolderPath);
+    private bool ValidFolderSettings()
+    {
+        return PathToGIMIFolderPicker.IsValid && PathToModsFolderPicker.IsValid &&
+               PathToGIMIFolderPicker.Path != PathToModsFolderPicker.Path &&
+               (PathToGIMIFolderPicker.Path != _modManagerOptions?.GimiRootFolderPath ||
+                PathToModsFolderPicker.Path != _modManagerOptions?.ModsFolderPath);
+    }
 
 
     [RelayCommand(CanExecute = nameof(ValidFolderSettings))]
@@ -229,7 +230,9 @@ public partial class SettingsViewModel : ObservableRecipient
 
     [RelayCommand]
     private async Task BrowseModsFolderAsync()
-        => await PathToModsFolderPicker.BrowseFolderPathAsync(App.MainWindow);
+    {
+        await PathToModsFolderPicker.BrowseFolderPathAsync(App.MainWindow);
+    }
 
     [RelayCommand]
     private async Task ReorganizeModsAsync()
@@ -289,7 +292,7 @@ public partial class SettingsViewModel : ObservableRecipient
         if (RuntimeHelper.IsMSIX)
         {
             _logger.Information("Restarting in MSIX mode not supported. Shutting down...");
-            App.Current.Exit();
+            Application.Current.Exit();
             return;
         }
 
@@ -302,13 +305,16 @@ public partial class SettingsViewModel : ObservableRecipient
         Process.Start(new ProcessStartInfo
         {
             FileName = exePath,
-            UseShellExecute = true,
+            UseShellExecute = true
         });
 
-        App.Current.Exit();
+        Application.Current.Exit();
     }
 
-    private bool CanStartElevator() => ElevatorService.ElevatorStatus == ElevatorStatus.NotRunning;
+    private bool CanStartElevator()
+    {
+        return ElevatorService.ElevatorStatus == ElevatorStatus.NotRunning;
+    }
 
     [RelayCommand(CanExecute = nameof(CanStartElevator))]
     private async Task StartElevator()
@@ -322,7 +328,7 @@ public partial class SettingsViewModel : ObservableRecipient
                 "The Elevator process should automatically close when this program is closed.\n\n" +
                 "After pressing Start, a User Account Control (UAC) prompt will appear to confirm the elevation.\n\n" +
                 "(This requires that Genshin and that 3Dmigoto is running, when pressing F10",
-            Margin = new Thickness(0, 0, 0, 12),
+            Margin = new Thickness(0, 0, 0, 12)
         };
 
 
@@ -363,7 +369,6 @@ public partial class SettingsViewModel : ObservableRecipient
         }
 
         if (start && ElevatorService.ElevatorStatus == ElevatorStatus.NotRunning)
-        {
             try
             {
                 ElevatorService.StartElevator();
@@ -373,10 +378,12 @@ public partial class SettingsViewModel : ObservableRecipient
                 _notificationManager.ShowNotification("Unable to start Elevator", e.Message, TimeSpan.FromSeconds(10));
                 _showElevatorStartDialog = true;
             }
-        }
     }
 
-    private bool CanResetGenshinExePath() => GenshinProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+    private bool CanResetGenshinExePath()
+    {
+        return GenshinProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+    }
 
     [RelayCommand(CanExecute = nameof(CanResetGenshinExePath))]
     private async Task ResetGenshinExePath()
@@ -384,7 +391,10 @@ public partial class SettingsViewModel : ObservableRecipient
         await GenshinProcessManager.ResetProcessOptions();
     }
 
-    private bool CanReset3DmigotoPath() => ThreeDMigtoProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+    private bool CanReset3DmigotoPath()
+    {
+        return ThreeDMigtoProcessManager.ProcessStatus != ProcessStatus.NotInitialized;
+    }
 
     [RelayCommand(CanExecute = nameof(CanReset3DmigotoPath))]
     private async Task Reset3DmigotoPath()
@@ -421,11 +431,10 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty] private int _exportProgress = 0;
     [ObservableProperty] private string _exportProgressText = string.Empty;
     [ObservableProperty] private string? _currentModName;
+
     [RelayCommand]
     private async Task ExportMods(ContentDialog contentDialog)
     {
-
-
         var dialog = new ContentDialog()
         {
             PrimaryButtonText = "Export",
@@ -444,7 +453,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
         if (result != ContentDialogResult.Primary)
             return;
-        
+
         var folderPicker = new FolderPicker();
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
@@ -456,21 +465,22 @@ public partial class SettingsViewModel : ObservableRecipient
         ExportingMods = true;
         _navigationViewService.IsEnabled = false;
 
-        var charactersToExport = model.CharacterModsToBackup.Where(modList => modList.IsChecked).Select(ch => ch.Character);
+        var charactersToExport =
+            model.CharacterModsToBackup.Where(modList => modList.IsChecked).Select(ch => ch.Character);
         var modsList = new List<ICharacterModList>();
-        foreach (var character in charactersToExport)
-        {
-            modsList.Add(_skinManagerService.GetCharacterModList(character));
-        }
+        foreach (var character in charactersToExport) modsList.Add(_skinManagerService.GetCharacterModList(character));
 
         try
         {
             _skinManagerService.ModExportProgress += HandleProgressEvent;
             await Task.Run(() =>
             {
-                _skinManagerService.ExportMods(modsList, folder.Path, removeLocalJasmSettings: model.RemoveJasmSettings, zip: false, keepCharacterFolderStructure: model.KeepFolderStructure, setModStatus: model.SetModStatus);
+                _skinManagerService.ExportMods(modsList, folder.Path,
+                    removeLocalJasmSettings: model.RemoveJasmSettings, zip: false,
+                    keepCharacterFolderStructure: model.KeepFolderStructure, setModStatus: model.SetModStatus);
             });
-            _notificationManager.ShowNotification("Mods exported", $"Mods exported to {folder.Path}", TimeSpan.FromSeconds(5));
+            _notificationManager.ShowNotification("Mods exported", $"Mods exported to {folder.Path}",
+                TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
         {
@@ -512,16 +522,12 @@ public partial class ExportModsDialogModel : ObservableObject
         SetModStatus.DisableAllMods
     };
 
-    [ObservableProperty]
-    private SetModStatus _setModStatus = SetModStatus.KeepCurrent;
+    [ObservableProperty] private SetModStatus _setModStatus = SetModStatus.KeepCurrent;
 
     public ExportModsDialogModel(IEnumerable<GenshinCharacter> characters)
     {
         SetModStatus = SetModStatus.KeepCurrent;
-        foreach (var character in characters)
-        {
-            CharacterModsToBackup.Add(new CharacterCheckboxModel(character));
-        }
+        foreach (var character in characters) CharacterModsToBackup.Add(new CharacterCheckboxModel(character));
     }
 }
 

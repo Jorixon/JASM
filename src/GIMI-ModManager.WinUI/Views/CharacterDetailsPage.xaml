@@ -7,6 +7,7 @@
     xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entities="using:GIMI_ModManager.Core.Entities"
+    xmlns:genshin="using:GIMI_ModManager.Core.Entities.Genshin"
     xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -77,7 +78,7 @@
                                 Text="{x:Bind ViewModel.MoveModsFlyoutVM.SearchText, Mode=TwoWay}"
                                 TextChanged="MoveModSearch_OnTextChanged">
                                 <AutoSuggestBox.ItemTemplate>
-                                    <DataTemplate x:DataType="entities:GenshinCharacter">
+                                    <DataTemplate x:DataType="genshin:GenshinCharacter">
                                         <TextBlock Text="{x:Bind DisplayName}" />
                                     </DataTemplate>
                                 </AutoSuggestBox.ItemTemplate>
@@ -86,6 +87,11 @@
 
                     </StackPanel>
                 </Grid>
+            </Flyout>
+
+
+            <Flyout x:Name="SelectInGameSkin">
+                <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.SelectableInGameSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.SwitchCharacterSkinCommand}" />
             </Flyout>
 
             <MenuFlyout x:Name="ImageFlyout">
@@ -114,7 +120,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10*" />
             </Grid.ColumnDefinitions>
 
 
@@ -125,7 +131,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel>
+                <StackPanel MaxWidth="220">
 
                     <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackCommand}">
                         <Button.KeyboardAccelerators>
@@ -141,11 +147,12 @@
                         Margin="{StaticResource SmallRightMargin}"
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Top"
+                        CornerRadius="10">
                         <Image
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Source="{x:Bind ViewModel.ShownCharacter.ImageUri}" />
+                            Source="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneWay}" />
                     </Grid>
                     <TextBlock
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
@@ -156,17 +163,38 @@
                         Style="{ThemeResource TitleTextBlockStyle}"
                         Text="{x:Bind ViewModel.ShownCharacter.DisplayName}" />
 
+
                     <StackPanel
-                        Margin="{StaticResource SmallRightMargin}"
+                        Margin="0,8"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
                         <TextBlock
                             Margin="0,0,4,0"
                             VerticalAlignment="Center"
                             Style="{ThemeResource BodyTextStyle}"
-                            Text="Mods:" />
+                            Text="Tracked Mods:" />
                         <TextBlock Style="{ThemeResource BodyTextStyle}" Text="{x:Bind ViewModel.ModListVM.Mods.Count, Mode=OneWay}" />
                     </StackPanel>
+
+                    <StackPanel Padding="8" Background="{ThemeResource ControlFillColorDefaultBrush}">
+                        <TextBlock
+                            Padding="0,0,0,16"
+                            HorizontalAlignment="Center"
+                            Text="Selected Skin:" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                        <Button
+                            Margin="0,16,0,0"
+                            HorizontalAlignment="Center"
+                            Content="Select Skin"
+                            Flyout="{StaticResource SelectInGameSkin}"
+                            IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}" />
+                    </StackPanel>
+
+
 
                 </StackPanel>
 
@@ -383,7 +411,10 @@
                                     Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=TwoWay}"
                                     TextAlignment="Center" />
 
-                                <Button Grid.Column="1" Command="{x:Bind ViewModel.ModPaneVM.ToggleEditingModNameCommand}">
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{x:Bind ViewModel.ModPaneVM.ToggleEditingModNameCommand}"
+                                    IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
                                     <FontIcon Glyph="&#xE70F;" />
                                 </Button>
 

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Entities;

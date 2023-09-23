@@ -1,5 +1,5 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 
 namespace GIMI_ModManager.Core.Contracts.Services;

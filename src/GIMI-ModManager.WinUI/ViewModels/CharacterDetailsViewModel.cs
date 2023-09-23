@@ -9,10 +9,13 @@ using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
@@ -28,6 +31,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ILocalSettingsService _localSettingsService;
     private readonly NotificationManager _notificationService;
     private readonly ModDragAndDropService _modDragAndDropService;
+    private readonly ModCrawlerService _modCrawlerService;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -37,10 +41,17 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty] private GenshinCharacter _shownCharacter = null!;
 
+    public ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
+
+    [ObservableProperty] public bool _multipleInGameSkins = false;
+
+    [ObservableProperty] private SkinVM _selectedInGameSkin = new();
+
+
     public CharacterDetailsViewModel(IGenshinService genshinService, ILogger logger,
         INavigationService navigationService, ISkinManagerService skinManagerService,
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
-        ModDragAndDropService modDragAndDropService)
+        ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -49,6 +60,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _notificationService = notificationService;
         _localSettingsService = localSettingsService;
         _modDragAndDropService = modDragAndDropService;
+        _modCrawlerService = modCrawlerService;
 
         _modDragAndDropService.DragAndDropFinished += (sender, args) =>
             App.MainWindow.DispatcherQueue.EnqueueAsync(
@@ -93,20 +105,14 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         if (parameter is not CharacterGridItemModel characterGridItemModel)
         {
-            if (_navigationService.CanGoBack)
-                _navigationService.GoBack();
-            else
-                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            ErrorNavigateBack();
             return;
         }
 
         var character = _genshinService.GetCharacter(characterGridItemModel.Character.Id);
         if (character is null)
         {
-            if (_navigationService.CanGoBack)
-                _navigationService.GoBack();
-            else
-                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            ErrorNavigateBack();
             return;
         }
 
@@ -115,6 +121,40 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _modList = _skinManagerService.GetCharacterModList(character);
         if (_genshinService.IsMultiModCharacter(ShownCharacter))
             ModListVM.DisableInfoBar = true;
+
+        foreach (var characterInGameSkin in character.InGameSkins.Select(SkinVM.FromSkin))
+            SelectableInGameSkins.Add(
+                new SelectCharacterTemplate()
+                {
+                    DisplayName = characterInGameSkin.DisplayName,
+                    ImagePath = characterInGameSkin.ImageUri,
+                    IsSelected = characterInGameSkin.DefaultSkin
+                }
+            );
+
+        var skin = character.InGameSkins.FirstOrDefault(skin => skin.DefaultSkin);
+
+        switch (skin)
+        {
+            case null when _genshinService.IsMultiModCharacter(character):
+                skin = new Skin(true, "", "", "") { Character = ShownCharacter };
+                break;
+            case null:
+                _logger.Error("No default skin found for character {CharacterName}", character.DisplayName);
+                _notificationService.ShowNotification("Error while loading character.",
+                    $"An error occurred while loading the character {character.DisplayName}.\nNo default skin found for character.",
+                    TimeSpan.FromSeconds(10));
+
+                ErrorNavigateBack();
+
+                return;
+        }
+
+        SelectedInGameSkin = SkinVM.FromSkin(skin);
+
+
+        MultipleInGameSkins = character.InGameSkins.Count > 1;
+
 
         try
         {
@@ -223,7 +263,12 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter));
         var modList = new List<NewModModel>();
-        foreach (var skinEntry in _modList.Mods)
+
+        var mods = _genshinService.IsMultiModCharacter(ShownCharacter) || !MultipleInGameSkins
+            ? _modList.Mods
+            : FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
+
+        foreach (var skinEntry in mods)
         {
             var newModModel = NewModModel.FromMod(skinEntry);
             newModModel.WithToggleModDelegate(ToggleMod);
@@ -262,6 +307,43 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         ModListVM.SetBackendMods(modList);
         ModListVM.ResetContent();
+    }
+
+    [RelayCommand]
+    private async Task SwitchCharacterSkin(SelectCharacterTemplate characterTemplate)
+    {
+        var characterSkin = ShownCharacter.InGameSkins.FirstOrDefault(skin =>
+            skin.DisplayName.Equals(characterTemplate.DisplayName, StringComparison.CurrentCultureIgnoreCase));
+        if (characterSkin is null)
+        {
+            _logger.Error("Could not find character skin {SkinName} for character {CharacterName}",
+                characterTemplate.DisplayName, ShownCharacter.DisplayName);
+            _notificationService.ShowNotification("Error while switching character skin.", "", TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        SelectedInGameSkin = SkinVM.FromSkin(characterSkin);
+        await RefreshMods().ConfigureAwait(false);
+    }
+
+    private IReadOnlyCollection<CharacterSkinEntry> FilterModsToSkin(IEnumerable<CharacterSkinEntry> mods, SkinVM skin)
+    {
+        var filteredMods = new List<CharacterSkinEntry>();
+        foreach (var mod in mods)
+        {
+            var detectedSkin = _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter);
+            if (detectedSkin is null)
+            {
+                // In this case, we don't know what skin the mod is for, so we just add it.
+                filteredMods.Add(mod);
+                continue;
+            }
+
+            if (detectedSkin.Name.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
+                filteredMods.Add(mod);
+        }
+
+        return filteredMods;
     }
 
     [RelayCommand]
@@ -371,5 +453,23 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     public void OnNavigatedFrom()
     {
         _modList.ModsChanged -= ModListOnModsChanged;
+    }
+
+
+    private void ErrorNavigateBack()
+    {
+        SelectedInGameSkin = new SkinVM();
+
+        Task.Run(async () =>
+        {
+            await Task.Delay(500);
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                if (_navigationService.CanGoBack)
+                    _navigationService.GoBack();
+                else
+                    _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            });
+        });
     }
 }
