@@ -69,7 +69,7 @@ public record Skin : ISubSkin
     public string SkinSuffix { get; set; }
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public string? ImageUri { get; init; }
+    public string? ImageUri { get; set; }
 }
 
 public interface IGenshinCharacter
@@ -104,5 +104,5 @@ public interface ISubSkin
     public string SkinSuffix { get; }
 
     // If null, use default image
-    public string? ImageUri { get; }
+    public string? ImageUri { get; internal set; }
 }

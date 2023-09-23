@@ -118,6 +118,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         ShownCharacter = character;
         MoveModsFlyoutVM.SetShownCharacter(ShownCharacter);
+        MoveModsFlyoutVM.ModCharactersSkinOverriden +=
+            async (sender, args) => await RefreshMods().ConfigureAwait(false);
         _modList = _skinManagerService.GetCharacterModList(character);
         if (_genshinService.IsMultiModCharacter(ShownCharacter))
             ModListVM.DisableInfoBar = true;
@@ -151,6 +153,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
         SelectedInGameSkin = SkinVM.FromSkin(skin);
+        MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
 
 
         MultipleInGameSkins = character.InGameSkins.Count > 1;
@@ -266,25 +269,18 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         var mods = _genshinService.IsMultiModCharacter(ShownCharacter) || !MultipleInGameSkins
             ? _modList.Mods
-            : FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
+            : await FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
 
         foreach (var skinEntry in mods)
         {
             var newModModel = NewModModel.FromMod(skinEntry);
             newModModel.WithToggleModDelegate(ToggleMod);
-            try
-            {
-                var modSettings = await skinEntry.Mod.ReadSkinModSettings();
 
+            var modSettings = await LoadModSettings(skinEntry);
+
+            if (modSettings != null)
                 newModModel.WithModSettings(modSettings);
-            }
-            catch (JsonException e)
-            {
-                _logger.Error(e, "Error while reading mod settings for {ModName}", skinEntry.Mod.Name);
-                _notificationService.ShowNotification("Error while reading mod settings.",
-                    $"An error occurred while reading the mod settings for {skinEntry.Mod.Name}, See logs for details.\n{e.Message}",
-                    TimeSpan.FromSeconds(10));
-            }
+
 
             modList.Add(newModModel);
         }
@@ -323,14 +319,28 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
         SelectedInGameSkin = SkinVM.FromSkin(characterSkin);
+        MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
+        foreach (var selectableInGameSkin in SelectableInGameSkins)
+            selectableInGameSkin.IsSelected = selectableInGameSkin.DisplayName.Equals(characterTemplate.DisplayName,
+                StringComparison.CurrentCultureIgnoreCase);
+
         await RefreshMods().ConfigureAwait(false);
     }
 
-    private IReadOnlyCollection<CharacterSkinEntry> FilterModsToSkin(IEnumerable<CharacterSkinEntry> mods, SkinVM skin)
+    private async Task<IReadOnlyCollection<CharacterSkinEntry>> FilterModsToSkin(IEnumerable<CharacterSkinEntry> mods,
+        SkinVM skin)
     {
         var filteredMods = new List<CharacterSkinEntry>();
         foreach (var mod in mods)
         {
+            var modSkin = (await LoadModSettings(mod))?.CharacterSkinOverride;
+
+            if (modSkin != null && modSkin.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
+            {
+                filteredMods.Add(mod);
+                continue;
+            }
+
             var detectedSkin = _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter);
             if (detectedSkin is null)
             {
@@ -339,11 +349,29 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 continue;
             }
 
-            if (detectedSkin.Name.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
+            if (modSkin == null && detectedSkin.Name.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
                 filteredMods.Add(mod);
         }
 
         return filteredMods;
+    }
+
+    private async Task<SkinModSettings?> LoadModSettings(CharacterSkinEntry characterSkinEntry)
+    {
+        try
+        {
+            var modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
+            return modSettings;
+        }
+        catch (JsonException e)
+        {
+            _logger.Error(e, "Error while reading mod settings for {ModName}", characterSkinEntry.Mod.Name);
+            _notificationService.ShowNotification("Error while reading mod settings.",
+                $"An error occurred while reading the mod settings for {characterSkinEntry.Mod.Name}, See logs for details.\n{e.Message}",
+                TimeSpan.FromSeconds(10));
+        }
+
+        return null;
     }
 
     [RelayCommand]

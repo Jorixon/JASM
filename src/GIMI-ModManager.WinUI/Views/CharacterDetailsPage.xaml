@@ -33,6 +33,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="0,0,0,4">
                         <Grid>
@@ -85,6 +86,36 @@
                             </AutoSuggestBox>
                         </StackPanel>
 
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="2"
+                        Margin="0,4,0,4"
+                        Padding="0,4,0,0"
+                        BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                        BorderThickness="0,4,0,0">
+                        <Expander
+                            VerticalAlignment="Top"
+                            ExpandDirection="Down"
+                            Header="Move Mod to another Skin"
+                            IsExpanded="False">
+                            <Expander.Content>
+                                <StackPanel>
+                                    <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.MoveModsFlyoutVM.SelectableCharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.MoveModsFlyoutVM.SelectNewCharacterSkinCommand}" />
+                                    <Button
+                                        Margin="0,8,0,0"
+                                        HorizontalAlignment="Left"
+                                        Command="{x:Bind ViewModel.MoveModsFlyoutVM.OverrideModCharacterSkinCommand}">
+                                        <Button.Content>
+                                            <StackPanel Orientation="Horizontal">
+                                                <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
+                                                <TextBlock Text="Override" />
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
                     </StackPanel>
                 </Grid>
             </Flyout>

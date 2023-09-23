@@ -4,27 +4,47 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:custom="using:GIMI_ModManager.WinUI.Models.CustomControlTemplates"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+
+    <UserControl.Resources>
+        <converters:BoolToObjectConverter
+            x:Key="BoolToThickness"
+            FalseValue="0"
+            TrueValue="4" />
+        <converters:BoolToObjectConverter
+            x:Key="BoolToMargin"
+            FalseValue="4"
+            TrueValue="0" />
+    </UserControl.Resources>
+
+
     <Grid>
         <Grid.Resources>
             <DataTemplate x:Key="CharacterItemTemplate" x:DataType="custom:SelectCharacterTemplate">
                 <ItemContainer Margin="8,0">
-                    <StackPanel>
-                        <Image Width="80" HorizontalAlignment="Center">
-                            <Image.Source>
-                                <BitmapImage DecodePixelWidth="80" UriSource="{x:Bind ImagePath}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind DisplayName}" />
-                    </StackPanel>
+                    <Border
+                        x:Name="SelectedBorder"
+                        Margin="{x:Bind IsSelected, Mode=OneWay, Converter={StaticResource BoolToMargin}}"
+                        BorderBrush="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                        BorderThickness="{x:Bind IsSelected, Mode=OneWay, Converter={StaticResource BoolToThickness}}">
+                        <StackPanel Margin="4">
+                            <Image Width="80" HorizontalAlignment="Center">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelWidth="80" UriSource="{x:Bind ImagePath}" />
+                                </Image.Source>
+                            </Image>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind DisplayName}" />
+                        </StackPanel>
+                    </Border>
                 </ItemContainer>
             </DataTemplate>
         </Grid.Resources>

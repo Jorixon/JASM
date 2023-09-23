@@ -53,8 +53,13 @@ public class GenshinService : IGenshinService
         if (character.ImageUri is not null && character.ImageUri.StartsWith("Character_"))
             character.ImageUri = $"{assetsUriPath}/Images/{character.ImageUri}";
         foreach (var characterInGameSkin in character.InGameSkins)
+        {
             if (characterInGameSkin.DefaultSkin)
                 continue;
+            if (characterInGameSkin.ImageUri is not null && characterInGameSkin.ImageUri.StartsWith("Character_"))
+                characterInGameSkin.ImageUri =
+                    $"{assetsUriPath}/Images/AltCharacterSkins/{characterInGameSkin.ImageUri}";
+        }
     }
 
     private static void SetSubSkinConnections(GenshinCharacter character)

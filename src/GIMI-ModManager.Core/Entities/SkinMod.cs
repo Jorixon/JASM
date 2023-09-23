@@ -469,7 +469,8 @@ public class SkinModSettings // "internal set" messes with the json serializer
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return CustomName == other.CustomName && Author == other.Author && Version == other.Version &&
-               ModUrl == other.ModUrl && Path.GetFileName(ImagePath) == Path.GetFileName(other.ImagePath);
+               ModUrl == other.ModUrl && Path.GetFileName(ImagePath) == Path.GetFileName(other.ImagePath) &&
+               CharacterSkinOverride == other.CharacterSkinOverride;
     }
 
     public override bool Equals(object? obj)
