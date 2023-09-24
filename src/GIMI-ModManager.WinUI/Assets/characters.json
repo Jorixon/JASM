@@ -168,7 +168,7 @@
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "Summertime Sparkle",
         "Name": "BarbaraSummertime",
         "SkinSuffix": "Summertime",
         "ImageUri": ""
@@ -308,8 +308,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Clorinde",
+        "SkinSuffix": ""
       }
     ]
   },
@@ -405,7 +405,7 @@
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "Red Dead of Night",
         "Name": "DilucFlamme",
         "SkinSuffix": "Flamme",
         "ImageUri": ""
@@ -527,7 +527,7 @@
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "Ein Immernachtstraum",
         "Name": "FischlHighness",
         "SkinSuffix": "Highness",
         "ImageUri": ""
@@ -576,8 +576,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Furina",
+        "SkinSuffix": ""
       }
     ]
   },
@@ -801,8 +801,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Kaveh",
+        "SkinSuffix": ""
       }
     ]
   },
@@ -829,7 +829,7 @@
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "Opulent Splendor",
         "Name": "KeqingOpulent",
         "SkinSuffix": "Opulent",
         "ImageUri": ""
@@ -976,14 +976,14 @@
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "A Sobriquet Under Shade",
         "Name": "LisaSobriquet",
         "SkinSuffix": "Sobriquet",
         "ImageUri": ""
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "Student",
         "Name": "LisaStudent",
         "SkinSuffix": "Student",
         "ImageUri": ""
@@ -1031,8 +1031,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Lyney",
+        "SkinSuffix": ""
       }
     ]
   },
@@ -1131,8 +1131,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Navia",
+        "SkinSuffix": ""
       }
     ]
   },
@@ -1182,7 +1182,7 @@
       },
       {
         "DefaultSkin": false,
-        "DisplayName": "---------------INSERT_SKIN_DISPLAY_NAME_MANUALLY---------------",
+        "DisplayName": "Orchid's Evening Gown",
         "Name": "NingguangOrchid",
         "SkinSuffix": "Orchid",
         "ImageUri": ""
@@ -1230,8 +1230,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Paimon",
+        "SkinSuffix": ""
       }
     ]
   },
@@ -1470,8 +1470,8 @@
       {
         "DefaultSkin": true,
         "DisplayName": "Default",
-        "Name": "---------------INSERT_NAME_MANUALLY---------------",
-        "SkinSuffix": "---------------INSERT_SKIN_MANUALLY---------------"
+        "Name": "Tartaglia",
+        "SkinSuffix": ""
       }
     ]
   },
