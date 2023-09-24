@@ -25,6 +25,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ILocalSettingsService _localSettingsService;
     private readonly ModDragAndDropService _modDragAndDropService;
     private readonly ModNotificationManager _modNotificationManager;
+    private readonly ModCrawlerService _modCrawlerService;
 
     public readonly GenshinProcessManager GenshinProcessManager;
 
@@ -49,7 +50,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager)
+        ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
+        ModCrawlerService modCrawlerService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -62,6 +64,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _modDragAndDropService = modDragAndDropService;
         _modNotificationManager = modNotificationManager;
+        _modCrawlerService = modCrawlerService;
 
         ElevatorService.PropertyChanged += (sender, args) =>
         {
@@ -317,8 +320,40 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         // Character Ids where more than 1 skin is enabled
-        var charactersWithMultipleActiveSkins = _skinManagerService.CharacterModLists
-            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1).Select(x => x.Character.Id);
+        var charactersWithMultipleMods = _skinManagerService.CharacterModLists
+            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
+
+        var charactersWithMultipleActiveSkins = new List<int>();
+        foreach (var modList in charactersWithMultipleMods)
+        {
+            if (_genshinService.IsMultiModCharacter(modList.Character))
+                continue;
+
+            var addWarning = false;
+            var subSkinsFound = new List<ISubSkin>();
+            foreach (var characterSkinEntry in modList.Mods)
+            {
+                if (!characterSkinEntry.IsEnabled) continue;
+
+                var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath,
+                    modList.Character);
+                if (subSkin is null) continue;
+
+                if (!subSkinsFound.Contains(subSkin))
+                {
+                    subSkinsFound.Add(subSkin);
+                    continue;
+                }
+
+
+                addWarning = true;
+                break;
+            }
+
+            if (addWarning)
+                charactersWithMultipleActiveSkins.Add(modList.Character.Id);
+        }
+
 
         foreach (var characterGridItemModel in Characters.Where(x =>
                      charactersWithMultipleActiveSkins.Contains(x.Character.Id)))

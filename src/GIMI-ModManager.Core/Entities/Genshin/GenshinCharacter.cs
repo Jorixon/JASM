@@ -36,9 +36,23 @@ public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCha
     {
         return obj.Id;
     }
+
+    public bool Equals(IGenshinCharacter? x, IGenshinCharacter? y)
+    {
+        if (ReferenceEquals(x, y)) return true;
+        if (ReferenceEquals(x, null)) return false;
+        if (ReferenceEquals(y, null)) return false;
+        if (x.GetType() != y.GetType()) return false;
+        return x.Id == y.Id;
+    }
+
+    public int GetHashCode(IGenshinCharacter obj)
+    {
+        return obj.Id;
+    }
 }
 
-public record Skin : ISubSkin
+public record Skin : ISubSkin, IEqualityComparer<ISubSkin>
 {
     private IGenshinCharacter _character;
 
@@ -70,9 +84,27 @@ public record Skin : ISubSkin
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? ImageUri { get; set; }
+
+    public bool Equals(ISubSkin? x, ISubSkin? y)
+    {
+        if (ReferenceEquals(x, y)) return true;
+        if (ReferenceEquals(x, null)) return false;
+        if (ReferenceEquals(y, null)) return false;
+        if (x.GetType() != y.GetType()) return false;
+        return x.Character.Equals(y.Character) && string.Equals(x.Name, y.Name, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.SkinSuffix, y.SkinSuffix, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    public int GetHashCode(ISubSkin obj)
+    {
+        var hashCode = new HashCode();
+        hashCode.Add(obj.Character);
+        hashCode.Add(obj.Name, StringComparer.CurrentCultureIgnoreCase);
+        hashCode.Add(obj.SkinSuffix, StringComparer.CurrentCultureIgnoreCase);
+        return hashCode.ToHashCode();
+    }
 }
 
-public interface IGenshinCharacter
+public interface IGenshinCharacter : IEqualityComparer<GenshinCharacter>, IEqualityComparer<IGenshinCharacter>
 {
     int Id { get; }
     public string DisplayName { get; }
@@ -88,7 +120,7 @@ public interface IGenshinCharacter
     public string GetInternalSkinName();
 }
 
-public interface ISubSkin
+public interface ISubSkin : IEqualityComparer<ISubSkin>
 {
     public IGenshinCharacter Character { get; internal set; }
     public bool DefaultSkin { get; }
