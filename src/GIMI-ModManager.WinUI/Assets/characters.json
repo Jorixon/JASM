@@ -171,7 +171,7 @@
         "DisplayName": "Summertime Sparkle",
         "Name": "BarbaraSummertime",
         "SkinSuffix": "Summertime",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_BarbaraSummertime_Thumb.webp"
       }
     ]
   },
@@ -408,7 +408,7 @@
         "DisplayName": "Red Dead of Night",
         "Name": "DilucFlamme",
         "SkinSuffix": "Flamme",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_DilucFlamme_Thumb.webp"
       }
     ]
   },
@@ -530,7 +530,7 @@
         "DisplayName": "Ein Immernachtstraum",
         "Name": "FischlHighness",
         "SkinSuffix": "Highness",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_FischlHighness_Thumb.webp"
       }
     ]
   },
@@ -677,7 +677,7 @@
         "DisplayName": "JeanCN",
         "Name": "JeanCN",
         "SkinSuffix": "CN",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_JeanCN_Thumb.webp"
       },
       {
         "DefaultSkin": false,
@@ -832,7 +832,7 @@
         "DisplayName": "Opulent Splendor",
         "Name": "KeqingOpulent",
         "SkinSuffix": "Opulent",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_KeqingOpulent_Thumb.webp"
       }
     ]
   },
@@ -979,7 +979,7 @@
         "DisplayName": "A Sobriquet Under Shade",
         "Name": "LisaSobriquet",
         "SkinSuffix": "Sobriquet",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_LisaSobriquet_Thumb.webp"
       },
       {
         "DefaultSkin": false,
@@ -1085,7 +1085,7 @@
         "DisplayName": "MonaCN",
         "Name": "MonaCN",
         "SkinSuffix": "CN",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_MonaCN_Thumb.webp"
       }
     ]
   },
@@ -1185,7 +1185,7 @@
         "DisplayName": "Orchid's Evening Gown",
         "Name": "NingguangOrchid",
         "SkinSuffix": "Orchid",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_NingguangOrchid_Thumb.webp"
       }
     ]
   },
@@ -1331,7 +1331,7 @@
         "DisplayName": "RosariaCN",
         "Name": "RosariaCN",
         "SkinSuffix": "CN",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_RosariaCN_Thumb.webp"
       }
     ]
   },

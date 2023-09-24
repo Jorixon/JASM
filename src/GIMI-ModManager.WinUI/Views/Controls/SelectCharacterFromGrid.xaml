@@ -42,7 +42,8 @@
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="{x:Bind DisplayName}" />
+                                Text="{x:Bind DisplayName}"
+                                TextWrapping="NoWrap" />
                         </StackPanel>
                     </Border>
                 </ItemContainer>
