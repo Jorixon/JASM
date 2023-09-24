@@ -51,11 +51,25 @@ public class ModDragAndDropService
             var destDirectoryInfo = new DirectoryInfo(modList.AbsModsFolderPath);
             destDirectoryInfo.Create();
 
+            var destFolderPath = destDirectoryInfo.FullName;
+
+
 
             if (storageItem is StorageFile)
             {
                 using var scanner = new DragAndDropScanner();
                 var extractResult = scanner.ScanAndGetContents(storageItem.Path);
+
+                destFolderPath = Path.Combine(destFolderPath, extractResult.ExtractedMod.Name);
+
+                if (Directory.Exists(destFolderPath))
+                    _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
+                        destFolderPath);
+                while (Directory.Exists(destFolderPath))
+                    destFolderPath = DuplicateModAffixHelper.AppendNumberAffix(destFolderPath);
+
+                extractResult.ExtractedMod.Rename(new DirectoryInfo(destFolderPath).Name);
+
                 extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
                 if (extractResult.IgnoredMods.Any())
                     App.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -105,7 +119,9 @@ public class ModDragAndDropService
             }
 
 
-            var destFolderPath = destDirectoryInfo.FullName;
+
+            if (destFolderPath.Equals(modList.AbsModsFolderPath, StringComparison.CurrentCultureIgnoreCase))
+                destFolderPath = Path.Combine(destFolderPath, sourceFolder.Name);
 
             if (Directory.Exists(destFolderPath))
                 _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
