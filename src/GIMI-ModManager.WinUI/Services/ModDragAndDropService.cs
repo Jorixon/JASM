@@ -188,7 +188,7 @@ public class ModDragAndDropService
             public ExtractPaths(string sourcePath, string extractedFolderPath)
             {
                 this.SourcePath = sourcePath;
-                this.ExtractedFolderPath = Path.EndsInDirectorySeparator(sourcePath) ? sourcePath[..^1] : sourcePath;
+                this.ExtractedFolderPath = Path.EndsInDirectorySeparator(extractedFolderPath) ? extractedFolderPath : extractedFolderPath + Path.DirectorySeparatorChar;
             }
 
             public string SourcePath { get; init; }

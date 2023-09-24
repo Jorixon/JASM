@@ -611,7 +611,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 {
                     CharacterId = modList.Character.Id,
                     AttentionType = AttentionType.Added,
-                    ModFolderName = Path.GetFileNameWithoutExtension(extractResult.ExtractedFolderPath),
+                    ModFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name,
                     Message = "Mod added from character overview",
                 };
                 await _modNotificationManager.AddModNotification(notfiy);

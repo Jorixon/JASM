@@ -73,12 +73,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             foreach (var extractResult in args.ExtractResults)
             {
-                var extractedFolderName = Path.EndsInDirectorySeparator(extractResult.ExtractedFolderPath)
-                    ? extractResult.ExtractedFolderPath[..^1]
-                    : extractResult.ExtractedFolderPath;
+                var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
 
                 await AddNewModAddedNotificationAsync(AttentionType.Added,
-                    Path.GetFileNameWithoutExtension(extractedFolderName), null);
+                    extractedFolderName, null);
             }
 
             await App.MainWindow.DispatcherQueue.EnqueueAsync(
@@ -147,7 +145,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 {
                     CharacterId = ShownCharacter.Id,
                     ShowOnOverview = false,
-                    ModFolderName = Path.GetFileNameWithoutExtension(e.NewName) ?? string.Empty,
+                    ModFolderName = new DirectoryInfo(e.NewName).Name,
                     AttentionType = e.ChangeType switch
                     {
                         ModFolderChangeType.Created => AttentionType.Added,
@@ -361,9 +359,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             if (modSettings != null)
                 newModModel.WithModSettings(modSettings);
 
-            var inMemoryModNotification = _modNotificationManager.InMemoryModNotifications.FirstOrDefault(x =>
-                x.ModFolderName.Equals(skinEntry.Mod.Name, StringComparison.CurrentCultureIgnoreCase) &&
-                x.CharacterId == ShownCharacter.Id);
+            ModNotification? inMemoryModNotification =
+                _modNotificationManager.InMemoryModNotifications.FirstOrDefault(x =>
+                    x.ModFolderName.Equals(skinEntry.Mod.Name, StringComparison.CurrentCultureIgnoreCase) &&
+                    x.CharacterId == ShownCharacter.Id);
 
             if (inMemoryModNotification != null)
                 newModModel.ModNotifications.Add(inMemoryModNotification);
@@ -609,7 +608,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             CharacterId = ShownCharacter.Id,
             ShowOnOverview = false,
-            ModFolderName = Path.GetFileNameWithoutExtension(newModFolderName),
+            ModFolderName = newModFolderName,
             AttentionType = attentionType,
             Message = message ?? string.Empty,
         };
