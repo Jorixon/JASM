@@ -67,8 +67,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 async () => { await RefreshMods(); });
 
         MoveModsFlyoutVM = new MoveModsFlyoutVM(_genshinService, _skinManagerService);
-        MoveModsFlyoutVM.ModsMoved += async (sender, args) => await _refreshMods();
-        MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await _refreshMods();
+        MoveModsFlyoutVM.ModsMoved += async (sender, args) => await RefreshMods().ConfigureAwait(false);
+        MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await RefreshMods().ConfigureAwait(false);
+        MoveModsFlyoutVM.ModCharactersSkinOverriden +=
+            async (sender, args) => await RefreshMods().ConfigureAwait(false);
 
         ModListVM = new ModListVM(skinManagerService);
         ModListVM.OnModsSelected += async (sender, args) =>
@@ -118,8 +120,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         ShownCharacter = character;
         MoveModsFlyoutVM.SetShownCharacter(ShownCharacter);
-        MoveModsFlyoutVM.ModCharactersSkinOverriden +=
-            async (sender, args) => await RefreshMods().ConfigureAwait(false);
         _modList = _skinManagerService.GetCharacterModList(character);
         if (_genshinService.IsMultiModCharacter(ShownCharacter))
             ModListVM.DisableInfoBar = true;

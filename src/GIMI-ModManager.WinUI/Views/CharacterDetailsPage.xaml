@@ -52,9 +52,6 @@
                                 BorderThickness="0"
                                 Command="{x:Bind ViewModel.MoveModsFlyoutVM.DeleteModsCommand}">
                                 <FontIcon FontSize="16" Glyph="&#xE74D;" />
-                                <Button.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="Delete" />
-                                </Button.KeyboardAccelerators>
                             </Button>
                         </Grid>
                     </Grid>

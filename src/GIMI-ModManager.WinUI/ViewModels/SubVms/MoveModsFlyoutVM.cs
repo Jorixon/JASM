@@ -29,6 +29,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         nameof(OverrideModCharacterSkinCommand))]
     private ISubSkin? _selectedCharacterSkin = null;
 
+    private SkinVM? _backendSelectedCharacterSkin = null;
+
     [ObservableProperty] private bool _isMoveModsFlyoutOpen;
 
     [ObservableProperty]
@@ -65,6 +67,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             if (selectableCharacterSkin.DisplayName == skinVm.DisplayName)
             {
                 selectableCharacterSkin.IsSelected = true;
+                _backendSelectedCharacterSkin = skinVm;
                 SelectedCharacterSkin =
                     _shownCharacter.InGameSkins.FirstOrDefault(skin =>
                         skin.Name.Equals(skinVm.Name, StringComparison.CurrentCultureIgnoreCase));
@@ -261,7 +264,6 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SelectedCharacterSkin = null;
         SuggestedCharacters.Clear();
         SearchText = string.Empty;
-        foreach (var selectableCharacterSkin in SelectableCharacterSkins) selectableCharacterSkin.IsSelected = false;
     }
 
     public bool SelectCharacter(GenshinCharacter? character)
@@ -285,7 +287,9 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     private bool CanOverrideModCharacterSkin()
     {
-        return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0;
+        return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0
+               && !SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName,
+                   StringComparison.CurrentCultureIgnoreCase);
     }
 
     [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
