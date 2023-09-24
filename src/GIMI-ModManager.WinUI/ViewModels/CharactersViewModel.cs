@@ -35,6 +35,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
     private GenshinCharacter[] _characters = Array.Empty<GenshinCharacter>();
+
+    private CharacterGridItemModel[] _backendCharacters = Array.Empty<CharacterGridItemModel>();
     public ObservableCollection<CharacterGridItemModel> Characters { get; } = new();
 
     public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
@@ -245,7 +247,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ShowOnlyCharacters(IEnumerable<CharacterGridItemModel> charactersToShow, bool hardClear = false)
     {
-        var tmpList = new List<CharacterGridItemModel>(_characters.Select(ch => new CharacterGridItemModel(ch)));
+        var tmpList = new List<CharacterGridItemModel>(_backendCharacters);
 
 
         var characters = tmpList.Where(charactersToShow.Contains).ToArray();
@@ -304,6 +306,16 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         ResetContent();
+
+        var allCharacters = new List<CharacterGridItemModel>();
+        foreach (var genshinCharacter in _characters)
+        {
+            var characterGridItemModel = FindCharacterById(genshinCharacter.Id);
+            if (characterGridItemModel is null) continue;
+            allCharacters.Add(characterGridItemModel);
+        }
+
+        _backendCharacters = allCharacters.ToArray();
 
         foreach (var genshinCharacter in _characters)
         {
