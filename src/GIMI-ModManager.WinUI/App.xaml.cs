@@ -5,6 +5,7 @@ using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,6 +75,7 @@ public partial class App : Application
 
                 services.AddSingleton<IWindowManagerService, WindowManagerService>();
                 services.AddSingleton<NotificationManager>();
+                services.AddSingleton<ModNotificationManager>();    
                 services.AddTransient<ModDragAndDropService>();
 
                 services.AddSingleton<ElevatorService>();
@@ -86,6 +88,7 @@ public partial class App : Application
                 services.AddSingleton<IFileService, FileService>();
                 services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
+                services.AddSingleton<ModCrawlerService>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();

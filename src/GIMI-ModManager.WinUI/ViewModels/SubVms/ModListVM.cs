@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -11,6 +12,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 public partial class ModListVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
+    private readonly ModNotificationManager _modNotificationManager;
     public readonly ObservableCollection<NewModModel> BackendMods = new();
 
     public ObservableCollection<NewModModel> SelectedMods { get; } = new();
@@ -26,9 +28,10 @@ public partial class ModListVM : ObservableRecipient
 
     public bool DisableInfoBar { get; set; } = false;
 
-    public ModListVM(ISkinManagerService skinManagerService)
+    public ModListVM(ISkinManagerService skinManagerService, ModNotificationManager modNotificationManager)
     {
         _skinManagerService = skinManagerService;
+        _modNotificationManager = modNotificationManager;
         Mods.CollectionChanged += Mods_CollectionChanged;
     }
 
@@ -119,10 +122,10 @@ public partial class ModListVM : ObservableRecipient
     {
         public ModSelectedEventArgs(IEnumerable<NewModModel> mods)
         {
-            Mods = mods;
+            Mods = mods.ToArray();
         }
 
-        public IEnumerable<NewModModel> Mods { get; }
+        public ICollection<NewModModel> Mods { get; }
     }
 
 

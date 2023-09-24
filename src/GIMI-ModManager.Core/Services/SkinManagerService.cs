@@ -1,6 +1,7 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
 using static GIMI_ModManager.Core.Contracts.Services.RefreshResult;
@@ -145,7 +146,8 @@ public sealed class SkinManagerService : ISkinManagerService
     }
 
 
-    public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds)
+    public async Task TransferMods(ICharacterModList source, ICharacterModList destination,
+        IEnumerable<Guid> modsEntryIds)
     {
         var mods = source.Mods.Where(x => modsEntryIds.Contains(x.Id)).Select(x => x.Mod).ToList();
         foreach (var mod in mods)
@@ -171,6 +173,11 @@ public sealed class SkinManagerService : ISkinManagerService
             source.UnTrackMod(mod);
             mod.MoveTo(destination.AbsModsFolderPath);
             destination.TrackMod(mod);
+
+            // Remove overrides, i.e. skinOverride
+            var skinModSettings = (await mod.ReadSkinModSettings()).DeepClone();
+            skinModSettings.CharacterSkinOverride = null;
+            await mod.SaveSkinModSettings(skinModSettings);
         }
     }
 
@@ -198,9 +205,9 @@ public sealed class SkinManagerService : ISkinManagerService
 
         foreach (var characterModList in characterModLists) modsToExport.AddRange(characterModList.Mods);
 
-        var modsProgress = 0;
-        var divider = modsToExport.Count + (removeLocalJasmSettings ? 1 : 0) +
-                      (setModStatus != SetModStatus.KeepCurrent ? 1 : 0);
+        double modsProgress = 0;
+        double divider = modsToExport.Count + (removeLocalJasmSettings ? 1 : 0) +
+                         (setModStatus != SetModStatus.KeepCurrent ? 1 : 0);
         var modsProgressIncrement = 100 / divider;
 
         if (!keepCharacterFolderStructure && !zip) // Copy mods unorganized
@@ -214,18 +221,20 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 if (CheckForDuplicates(exportFolder, mod)) // Handle duplicate mod names
                 {
-                    _logger.Warning("Mod '{ModName}' already exists in export folder, appending GUID to folder name",
+                    _logger.Information(
+                        "Mod '{ModName}' already exists in export folder, appending GUID to folder name",
                         characterSkinEntry.Mod.Name);
                     var oldName = mod.Name;
+                    using var disableWatcher = characterSkinEntry.ModList.DisableWatcher();
                     mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(exportFolder.FullName));
                     mod.Rename(oldName);
-                    _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
+                    _logger.Information("Copied mod '{ModName}' to export folder", mod.Name);
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(exportFolder.FullName));
-                _logger.Debug("Copied mod '{ModName}' to export folder", mod.Name);
+                _logger.Information("Copied mod '{ModName}' to export folder", mod.Name);
             }
 
             ModExportProgress?.Invoke(this,
@@ -275,21 +284,24 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 if (CheckForDuplicates(destinationFolder, mod)) // Handle duplicate mod names
                 {
-                    _logger.Warning("Mod '{ModName}' already exists in export folder, appending GUID to folder name",
+                    _logger.Information(
+                        "Mod '{ModName}' already exists in export folder, appending GUID to folder name",
                         characterSkinEntry.Mod.Name);
 
                     var oldName = mod.Name;
+                    using var disableWatcher = characterSkinEntry.ModList.DisableWatcher();
                     mod.Rename(mod.Name + "__" + Guid.NewGuid().ToString("N"));
                     exportedMods.Add(mod.CopyTo(destinationFolder.FullName));
                     mod.Rename(oldName);
-                    _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
+                    _logger.Information("Copied mod '{ModName}' to export character folder '{CharacterFolder}'",
+                        mod.Name,
                         characterSkinEntry.ModList.Character.DisplayName);
 
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
-                _logger.Debug("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
+                _logger.Information("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
                     characterSkinEntry.ModList.Character.DisplayName);
             }
 
@@ -568,9 +580,9 @@ public class UserIniChanged : EventArgs
 
 public sealed class ExportProgress : EventArgs
 {
-    public ExportProgress(int progress, string? modName, string operation)
+    public ExportProgress(double progress, string? modName, string operation)
     {
-        Progress = progress;
+        Progress = (int)Math.Round(progress);
         ModName = modName;
         Operation = operation;
     }

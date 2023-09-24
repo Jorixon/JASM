@@ -1,5 +1,5 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 
 namespace GIMI_ModManager.Core.Contracts.Services;
@@ -27,7 +27,7 @@ public interface ISkinManagerService : IDisposable
     /// </summary>
     public Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
 
-    public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
+    public Task TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
 
     public Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId);
 

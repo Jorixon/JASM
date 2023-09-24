@@ -3,7 +3,9 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
+using FuzzySharp.Extractor;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -13,7 +15,7 @@ public class ModDragAndDropService
 
     private readonly NotificationManager _notificationManager;
 
-    public event EventHandler? DragAndDropFinished;
+    public event EventHandler<DragAndDropFinishedArgs>? DragAndDropFinished;
 
     public ModDragAndDropService(ILogger logger, NotificationManager notificationManager)
     {
@@ -24,12 +26,12 @@ public class ModDragAndDropService
     // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
     // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
     // This code is a mess, but it works.
-    public async Task AddStorageItemFoldersAsync(ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
+    public async Task<IReadOnlyList<DragAndDropFinishedArgs.ExtractPaths>> AddStorageItemFoldersAsync(ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
     {
         if (storageItems is null || !storageItems.Any())
         {
             _logger.Warning("Drag and drop files called with null/0 storage items.");
-            return;
+            return Array.Empty<DragAndDropFinishedArgs.ExtractPaths>();
         }
 
 
@@ -38,8 +40,10 @@ public class ModDragAndDropService
             _notificationManager.ShowNotification(
                 "Drag and drop called with more than one storage item, this is currently not supported", "",
                 TimeSpan.FromSeconds(5));
-            return;
+            return Array.Empty<DragAndDropFinishedArgs.ExtractPaths>();
         }
+
+        var extractResults = new List<DragAndDropFinishedArgs.ExtractPaths>();
 
         // Warning mess below
         foreach (var storageItem in storageItems)
@@ -47,11 +51,25 @@ public class ModDragAndDropService
             var destDirectoryInfo = new DirectoryInfo(modList.AbsModsFolderPath);
             destDirectoryInfo.Create();
 
+            var destFolderPath = destDirectoryInfo.FullName;
+
+
 
             if (storageItem is StorageFile)
             {
                 using var scanner = new DragAndDropScanner();
                 var extractResult = scanner.ScanAndGetContents(storageItem.Path);
+
+                destFolderPath = Path.Combine(destFolderPath, extractResult.ExtractedMod.Name);
+
+                if (Directory.Exists(destFolderPath))
+                    _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
+                        destFolderPath);
+                while (Directory.Exists(destFolderPath))
+                    destFolderPath = DuplicateModAffixHelper.AppendNumberAffix(destFolderPath);
+
+                extractResult.ExtractedMod.Rename(new DirectoryInfo(destFolderPath).Name);
+
                 extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
                 if (extractResult.IgnoredMods.Any())
                     App.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -59,6 +77,9 @@ public class ModDragAndDropService
                             "Multiple folders detected during extraction, first one was extracted",
                             $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
                             TimeSpan.FromSeconds(7)));
+
+                extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path,
+                    extractResult.ExtractedMod.FullPath));
                 continue;
             }
 
@@ -98,7 +119,9 @@ public class ModDragAndDropService
             }
 
 
-            var destFolderPath = destDirectoryInfo.FullName;
+
+            if (destFolderPath.Equals(modList.AbsModsFolderPath, StringComparison.CurrentCultureIgnoreCase))
+                destFolderPath = Path.Combine(destFolderPath, sourceFolder.Name);
 
             if (Directory.Exists(destFolderPath))
                 _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
@@ -111,9 +134,11 @@ public class ModDragAndDropService
 
             recursiveCopy.Invoke(sourceFolder,
                 await StorageFolder.GetFolderFromPathAsync(destFolderPath));
+            extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path, destFolderPath));
         }
 
-        DragAndDropFinished?.Invoke(this, EventArgs.Empty);
+        DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(extractResults));
+        return extractResults;
     }
 
     // ReSharper disable once InconsistentNaming
@@ -161,6 +186,35 @@ public class ModDragAndDropService
             newSubFolder.Create();
             RecursiveCopy(StorageFolder.GetFolderFromPathAsync(subFolder.FullName).GetAwaiter().GetResult(),
                 StorageFolder.GetFolderFromPathAsync(newSubFolder.FullName).GetAwaiter().GetResult());
+        }
+    }
+
+
+    public class DragAndDropFinishedArgs : EventArgs
+    {
+        public DragAndDropFinishedArgs(IReadOnlyCollection<ExtractPaths> extractResults)
+        {
+            ExtractResults = extractResults;
+        }
+
+        public IReadOnlyCollection<ExtractPaths> ExtractResults { get; }
+
+        public record ExtractPaths
+        {
+            public ExtractPaths(string sourcePath, string extractedFolderPath)
+            {
+                this.SourcePath = sourcePath;
+                this.ExtractedFolderPath = Path.EndsInDirectorySeparator(extractedFolderPath) ? extractedFolderPath : extractedFolderPath + Path.DirectorySeparatorChar;
+            }
+
+            public string SourcePath { get; init; }
+            public string ExtractedFolderPath { get; init; }
+
+            public void Deconstruct(out string SourcePath, out string ExtractedFolderPath)
+            {
+                SourcePath = this.SourcePath;
+                ExtractedFolderPath = this.ExtractedFolderPath;
+            }
         }
     }
 }

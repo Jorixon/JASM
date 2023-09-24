@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -291,9 +292,9 @@ public class ModFolderChangedArgs : EventArgs
         OldName = oldName;
     }
 
-    string NewName { get; }
-    string? OldName { get; }
-    ModFolderChangeType ChangeType { get; }
+    public string NewName { get; }
+    public string? OldName { get; }
+    public ModFolderChangeType ChangeType { get; }
 }
 
 public enum ModFolderChangeType

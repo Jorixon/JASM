@@ -9,11 +9,16 @@ using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
+using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
 
@@ -28,6 +33,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ILocalSettingsService _localSettingsService;
     private readonly NotificationManager _notificationService;
     private readonly ModDragAndDropService _modDragAndDropService;
+    private readonly ModCrawlerService _modCrawlerService;
+    private readonly ModNotificationManager _modNotificationManager;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -37,10 +44,20 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty] private GenshinCharacter _shownCharacter = null!;
 
+    public ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
+
+    [ObservableProperty] public bool _multipleInGameSkins = false;
+
+    [ObservableProperty] private SkinVM _selectedInGameSkin = new();
+
+    private static Dictionary<GenshinCharacter, string> _lastSelectedSkin = new();
+
+
     public CharacterDetailsViewModel(IGenshinService genshinService, ILogger logger,
         INavigationService navigationService, ISkinManagerService skinManagerService,
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
-        ModDragAndDropService modDragAndDropService)
+        ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
+        ModNotificationManager modNotificationManager)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -49,41 +66,104 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _notificationService = notificationService;
         _localSettingsService = localSettingsService;
         _modDragAndDropService = modDragAndDropService;
+        _modCrawlerService = modCrawlerService;
+        _modNotificationManager = modNotificationManager;
 
-        _modDragAndDropService.DragAndDropFinished += (sender, args) =>
-            App.MainWindow.DispatcherQueue.EnqueueAsync(
-                async () => { await RefreshMods(); });
-
-        MoveModsFlyoutVM = new MoveModsFlyoutVM(_genshinService, _skinManagerService);
-        MoveModsFlyoutVM.ModsMoved += async (sender, args) => await _refreshMods();
-        MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await _refreshMods();
-
-        ModListVM = new ModListVM(skinManagerService);
-        ModListVM.OnModsSelected += async (sender, args) =>
+        _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
         {
-            var selectedMod = args.Mods.FirstOrDefault();
-            var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
-            if (mod is null || selectedMod is null)
+            foreach (var extractResult in args.ExtractResults)
             {
-                ModPaneVM.UnloadMod();
-                return;
+                var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
+
+                await AddNewModAddedNotificationAsync(AttentionType.Added,
+                    extractedFolderName, null);
             }
 
-            await ModPaneVM.LoadMod(selectedMod);
+            await App.MainWindow.DispatcherQueue.EnqueueAsync(
+                async () => { await RefreshMods(); }).ConfigureAwait(false);
         };
 
+        MoveModsFlyoutVM = new MoveModsFlyoutVM(_genshinService, _skinManagerService);
+        MoveModsFlyoutVM.ModsMoved += async (sender, args) => await RefreshMods().ConfigureAwait(false);
+        MoveModsFlyoutVM.ModsDeleted += async (sender, args) => await RefreshMods().ConfigureAwait(false);
+        MoveModsFlyoutVM.ModCharactersSkinOverriden +=
+            async (sender, args) => await RefreshMods().ConfigureAwait(false);
+
+        ModListVM = new ModListVM(skinManagerService, modNotificationManager);
+        ModListVM.OnModsSelected += OnModsSelected;
+
         ModPaneVM = new ModPaneVM(skinManagerService, notificationService);
+    }
+
+    private async void OnModsSelected(object? sender, ModListVM.ModSelectedEventArgs args)
+    {
+        var selectedMod = args.Mods.FirstOrDefault();
+        var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
+        if (mod is null || selectedMod is null)
+        {
+            ModPaneVM.UnloadMod();
+            return;
+        }
+
+        var recentlyAddedModNotifications = args.Mods.SelectMany(x =>
+            x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
+
+        if (recentlyAddedModNotifications.Any())
+        {
+            foreach (var modNotification in recentlyAddedModNotifications)
+            {
+                await _modNotificationManager.RemoveModNotification(modNotification.Id);
+
+                foreach (var newModModel in args.Mods)
+                {
+                    var notification = newModModel.ModNotifications.FirstOrDefault(x => x.Id == modNotification.Id);
+                    if (notification is not null) newModModel.ModNotifications.Remove(notification);
+                }
+            }
+        }
+
+
+        await ModPaneVM.LoadMod(selectedMod).ConfigureAwait(false);
     }
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
     {
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
-            if (IsAddingModFolder) return;
-            _notificationService.ShowNotification(
-                $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
-                "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
-                TimeSpan.FromSeconds(5));
+            if (!IsAddingModFolder)
+            {
+                _notificationService.ShowNotification(
+                    $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
+                    "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
+                    TimeSpan.FromSeconds(5));
+            }
+
+
+            if (e.ChangeType == ModFolderChangeType.Renamed)
+            {
+                var inMemoryModNotification = new ModNotification()
+                {
+                    CharacterId = ShownCharacter.Id,
+                    ShowOnOverview = false,
+                    ModFolderName = new DirectoryInfo(e.NewName).Name,
+                    AttentionType = e.ChangeType switch
+                    {
+                        ModFolderChangeType.Created => AttentionType.Added,
+                        ModFolderChangeType.Renamed => AttentionType.Added,
+                        _ => AttentionType.None
+                    },
+                    Message = e.ChangeType switch
+                    {
+                        ModFolderChangeType.Created =>
+                            $"Mod '{e.NewName}' was added to {ShownCharacter.DisplayName}'s mod folder.",
+                        ModFolderChangeType.Renamed =>
+                            $"Mod '{e.OldName}' was renamed to '{e.NewName}' in {ShownCharacter.DisplayName}'s mod folder.",
+                        _ => string.Empty
+                    },
+                };
+
+                await _modNotificationManager.AddModNotification(inMemoryModNotification);
+            }
 
             await RefreshMods().ConfigureAwait(false);
         });
@@ -93,20 +173,14 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         if (parameter is not CharacterGridItemModel characterGridItemModel)
         {
-            if (_navigationService.CanGoBack)
-                _navigationService.GoBack();
-            else
-                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            ErrorNavigateBack();
             return;
         }
 
         var character = _genshinService.GetCharacter(characterGridItemModel.Character.Id);
         if (character is null)
         {
-            if (_navigationService.CanGoBack)
-                _navigationService.GoBack();
-            else
-                _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            ErrorNavigateBack();
             return;
         }
 
@@ -116,9 +190,44 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (_genshinService.IsMultiModCharacter(ShownCharacter))
             ModListVM.DisableInfoBar = true;
 
+        foreach (var characterInGameSkin in character.InGameSkins.Select(SkinVM.FromSkin))
+            SelectableInGameSkins.Add(
+                new SelectCharacterTemplate()
+                {
+                    DisplayName = characterInGameSkin.DisplayName,
+                    ImagePath = characterInGameSkin.ImageUri,
+                    IsSelected = characterInGameSkin.DefaultSkin
+                }
+            );
+
+        var skin = character.InGameSkins.FirstOrDefault(skin => skin.DefaultSkin);
+
+        switch (skin)
+        {
+            case null when _genshinService.IsMultiModCharacter(character):
+                skin = new Skin(true, "", "", "") { Character = ShownCharacter };
+                break;
+            case null:
+                _logger.Error("No default skin found for character {CharacterName}", character.DisplayName);
+                _notificationService.ShowNotification("Error while loading character.",
+                    $"An error occurred while loading the character {character.DisplayName}.\nNo default skin found for character.",
+                    TimeSpan.FromSeconds(10));
+
+                ErrorNavigateBack();
+
+                return;
+        }
+
+        SelectedInGameSkin = SkinVM.FromSkin(skin);
+        MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
+
+
+        MultipleInGameSkins = character.InGameSkins.Count > 1;
+
+
         try
         {
-            await _refreshMods();
+            await RefreshMods();
             _modList.ModsChanged += ModListOnModsChanged;
         }
         catch (Exception e)
@@ -128,6 +237,16 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 $"An error occurred while loading the mods for this character.\n{e.Message}",
                 TimeSpan.FromSeconds(10));
             _navigationService.GoBack();
+        }
+
+        var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(selectCharacterTemplate =>
+            selectCharacterTemplate.DisplayName.Equals(
+                _lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
+                StringComparison.CurrentCultureIgnoreCase));
+
+        if (lastSelectedSkin is not null)
+        {
+            await SwitchCharacterSkin(lastSelectedSkin);
         }
     }
 
@@ -165,8 +284,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             IsAddingModFolder = true;
             await Task.Run(async () =>
+            {
                 await _modDragAndDropService.AddStorageItemFoldersAsync(_modList,
-                    new ReadOnlyCollection<IStorageItem>(new List<IStorageItem> { folder })));
+                    new ReadOnlyCollection<IStorageItem>(new List<IStorageItem> { folder }));
+            });
         }
         finally
         {
@@ -223,23 +344,38 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter));
         var modList = new List<NewModModel>();
-        foreach (var skinEntry in _modList.Mods)
+
+        var mods = _genshinService.IsMultiModCharacter(ShownCharacter) || !MultipleInGameSkins
+            ? _modList.Mods
+            : await FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
+
+        foreach (var skinEntry in mods)
         {
             var newModModel = NewModModel.FromMod(skinEntry);
             newModModel.WithToggleModDelegate(ToggleMod);
-            try
-            {
-                var modSettings = await skinEntry.Mod.ReadSkinModSettings();
 
+            var modSettings = await LoadModSettings(skinEntry);
+
+            if (modSettings != null)
                 newModModel.WithModSettings(modSettings);
-            }
-            catch (JsonException e)
-            {
-                _logger.Error(e, "Error while reading mod settings for {ModName}", skinEntry.Mod.Name);
-                _notificationService.ShowNotification("Error while reading mod settings.",
-                    $"An error occurred while reading the mod settings for {skinEntry.Mod.Name}, See logs for details.\n{e.Message}",
-                    TimeSpan.FromSeconds(10));
-            }
+
+            ModNotification? inMemoryModNotification =
+                _modNotificationManager.InMemoryModNotifications.FirstOrDefault(x =>
+                    x.ModFolderName.Equals(skinEntry.Mod.Name, StringComparison.CurrentCultureIgnoreCase) &&
+                    x.CharacterId == ShownCharacter.Id);
+
+            if (inMemoryModNotification != null)
+                newModModel.ModNotifications.Add(inMemoryModNotification);
+
+            //newModModel.ModNotifications.Add(new ModNotification()
+            //{
+            //    CharacterId = ShownCharacter.Id,
+            //    ShowOnOverview = false,
+            //    ModFolderName = Path.GetFileNameWithoutExtension(skinEntry.Mod.Name) ?? string.Empty,
+            //    AttentionType = AttentionType.Added,
+            //    Message = $"Mod '{skinEntry.Mod.Name}' was added to {ShownCharacter.DisplayName}'s mod folder.",
+            //});
+
 
             modList.Add(newModModel);
         }
@@ -262,6 +398,80 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         ModListVM.SetBackendMods(modList);
         ModListVM.ResetContent();
+    }
+
+    [RelayCommand]
+    private async Task SwitchCharacterSkin(SelectCharacterTemplate characterTemplate)
+    {
+        if (characterTemplate?.DisplayName is not null && characterTemplate.DisplayName.Equals(
+                SelectedInGameSkin.DisplayName,
+                StringComparison.CurrentCultureIgnoreCase))
+            return;
+
+        var characterSkin = ShownCharacter.InGameSkins.FirstOrDefault(skin =>
+            skin.DisplayName.Equals(characterTemplate.DisplayName, StringComparison.CurrentCultureIgnoreCase));
+        if (characterSkin is null)
+        {
+            _logger.Error("Could not find character skin {SkinName} for character {CharacterName}",
+                characterTemplate.DisplayName, ShownCharacter.DisplayName);
+            _notificationService.ShowNotification("Error while switching character skin.", "", TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        SelectedInGameSkin = SkinVM.FromSkin(characterSkin);
+        MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
+        foreach (var selectableInGameSkin in SelectableInGameSkins)
+            selectableInGameSkin.IsSelected = selectableInGameSkin.DisplayName.Equals(characterTemplate.DisplayName,
+                StringComparison.CurrentCultureIgnoreCase);
+        _lastSelectedSkin[ShownCharacter] = SelectedInGameSkin.DisplayName;
+        await RefreshMods().ConfigureAwait(false);
+    }
+
+    private async Task<IReadOnlyCollection<CharacterSkinEntry>> FilterModsToSkin(IEnumerable<CharacterSkinEntry> mods,
+        SkinVM skin)
+    {
+        var filteredMods = new List<CharacterSkinEntry>();
+        foreach (var mod in mods)
+        {
+            var modSkin = (await LoadModSettings(mod))?.CharacterSkinOverride;
+
+            if (modSkin != null && modSkin.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
+            {
+                filteredMods.Add(mod);
+                continue;
+            }
+
+            var detectedSkin = _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter);
+            if (detectedSkin is null && modSkin is null)
+            {
+                // In this case, we don't know what skin the mod is for, so we just add it.
+                filteredMods.Add(mod);
+                continue;
+            }
+
+            if (modSkin == null && detectedSkin.Name.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
+                filteredMods.Add(mod);
+        }
+
+        return filteredMods;
+    }
+
+    private async Task<SkinModSettings?> LoadModSettings(CharacterSkinEntry characterSkinEntry)
+    {
+        try
+        {
+            var modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
+            return modSettings;
+        }
+        catch (JsonException e)
+        {
+            _logger.Error(e, "Error while reading mod settings for {ModName}", characterSkinEntry.Mod.Name);
+            _notificationService.ShowNotification("Error while reading mod settings.",
+                $"An error occurred while reading the mod settings for {characterSkinEntry.Mod.Name}, See logs for details.\n{e.Message}",
+                TimeSpan.FromSeconds(10));
+        }
+
+        return null;
     }
 
     [RelayCommand]
@@ -371,5 +581,38 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     public void OnNavigatedFrom()
     {
         _modList.ModsChanged -= ModListOnModsChanged;
+    }
+
+
+    private void ErrorNavigateBack()
+    {
+        SelectedInGameSkin = new SkinVM();
+
+        Task.Run(async () =>
+        {
+            await Task.Delay(500);
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                if (_navigationService.CanGoBack)
+                    _navigationService.GoBack();
+                else
+                    _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+            });
+        });
+    }
+
+
+    public Task AddNewModAddedNotificationAsync(AttentionType attentionType, string newModFolderName, string? message)
+    {
+        var inMemoryModNotification = new ModNotification()
+        {
+            CharacterId = ShownCharacter.Id,
+            ShowOnOverview = false,
+            ModFolderName = newModFolderName,
+            AttentionType = attentionType,
+            Message = message ?? string.Empty,
+        };
+
+        return _modNotificationManager.AddModNotification(inMemoryModNotification);
     }
 }

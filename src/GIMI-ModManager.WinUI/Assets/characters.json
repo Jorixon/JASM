@@ -12,6 +12,14 @@
     "Weapon": "Sword",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Albedo",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -27,6 +35,14 @@
     "Weapon": "Sword",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Alhaitham",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -42,6 +58,14 @@
     "Weapon": "Bow",
     "Region": [
       "Crossover"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Aloy",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -57,6 +81,21 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Amber",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "AmberCN",
+        "Name": "AmberCN",
+        "SkinSuffix": "CN",
+        "ImageUri": "Character_Skin_AmberCN_Thumb.webp"
+      }
     ]
   },
   {
@@ -73,6 +112,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Itto",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -88,6 +135,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Baizhu",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -103,6 +158,21 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Barbara",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Summertime Sparkle",
+        "Name": "BarbaraSummertime",
+        "SkinSuffix": "Summertime",
+        "ImageUri": "Character_Skin_BarbaraSummertime_Thumb.webp"
+      }
     ]
   },
   {
@@ -118,6 +188,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Beidou",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -133,6 +211,14 @@
     "Weapon": "Sword",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Bennett",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -148,6 +234,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Candace",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -163,6 +257,14 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Charlotte",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -178,6 +280,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Chongyun",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -193,6 +303,14 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Clorinde",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -208,6 +326,14 @@
     "Weapon": "Bow",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Collei",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -223,6 +349,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Cyno",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -238,6 +372,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Dehya",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -253,6 +395,21 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Diluc",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Red Dead of Night",
+        "Name": "DilucFlamme",
+        "SkinSuffix": "Flamme",
+        "ImageUri": "Character_Skin_DilucFlamme_Thumb.webp"
+      }
     ]
   },
   {
@@ -268,6 +425,14 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Diona",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -283,6 +448,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Dori",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -298,6 +471,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Eula",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -313,6 +494,14 @@
     "Weapon": "Bow",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Faruzan",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -328,6 +517,21 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Fischl",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Ein Immernachtstraum",
+        "Name": "FischlHighness",
+        "SkinSuffix": "Highness",
+        "ImageUri": "Character_Skin_FischlHighness_Thumb.webp"
+      }
     ]
   },
   {
@@ -343,6 +547,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Freminet",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -359,6 +571,14 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Furina",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -374,6 +594,14 @@
     "Weapon": "Bow",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Ganyu",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -389,6 +617,14 @@
     "Weapon": "Bow",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Gorou",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -405,6 +641,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "HuTao",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -420,6 +664,28 @@
     "Weapon": "Sword",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Jean",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "JeanCN",
+        "Name": "JeanCN",
+        "SkinSuffix": "CN",
+        "ImageUri": "Character_Skin_JeanCN_Thumb.webp"
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Sea Breeze Dandelion",
+        "Name": "JeanSea",
+        "SkinSuffix": "Sea",
+        "ImageUri": "Character_Skin_JeanSea_Thumb.webp"
+      }
     ]
   },
   {
@@ -436,6 +702,14 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Kazuha",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -451,6 +725,14 @@
     "Weapon": "Sword",
     "Region": [
       "MondstadtKhaenri'ah"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Kaeya",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -467,6 +749,14 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Ayaka",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -483,6 +773,14 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Ayato",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -498,6 +796,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Kaveh",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -513,6 +819,21 @@
     "Weapon": "Sword",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Keqing",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Opulent Splendor",
+        "Name": "KeqingOpulent",
+        "SkinSuffix": "Opulent",
+        "ImageUri": "Character_Skin_KeqingOpulent_Thumb.webp"
+      }
     ]
   },
   {
@@ -528,6 +849,14 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Kirara",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -543,6 +872,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Klee",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -559,6 +896,14 @@
     "Weapon": "Bow",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "KujouSara",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -575,6 +920,14 @@
     "Weapon": "Sword",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Shinobu",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -590,6 +943,14 @@
     "Weapon": "Sword",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Layla",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -605,6 +966,28 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Lisa",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "A Sobriquet Under Shade",
+        "Name": "LisaSobriquet",
+        "SkinSuffix": "Sobriquet",
+        "ImageUri": "Character_Skin_LisaSobriquet_Thumb.webp"
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Student",
+        "Name": "LisaStudent",
+        "SkinSuffix": "Student",
+        "ImageUri": ""
+      }
     ]
   },
   {
@@ -620,6 +1003,14 @@
     "Weapon": "Sword",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Lynette",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -635,6 +1026,14 @@
     "Weapon": "Bow",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Lyney",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -650,6 +1049,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Mika",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -665,6 +1072,21 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Mona",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "MonaCN",
+        "Name": "MonaCN",
+        "SkinSuffix": "CN",
+        "ImageUri": "Character_Skin_MonaCN_Thumb.webp"
+      }
     ]
   },
   {
@@ -681,6 +1103,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Nahida",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -696,6 +1126,14 @@
     "Weapon": "",
     "Region": [
       "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Navia",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -711,6 +1149,14 @@
     "Weapon": "Sword",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Nilou",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -726,6 +1172,21 @@
     "Weapon": "Catalyst",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Ningguang",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Orchid's Evening Gown",
+        "Name": "NingguangOrchid",
+        "SkinSuffix": "Orchid",
+        "ImageUri": "Character_Skin_NingguangOrchid_Thumb.webp"
+      }
     ]
   },
   {
@@ -741,6 +1202,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Noelle",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -756,7 +1225,15 @@
     "Rarity": 0,
     "Element": "",
     "Weapon": "",
-    "Region": []
+    "Region": [],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Paimon",
+        "SkinSuffix": ""
+      }
+    ]
   },
   {
     "Id": 44,
@@ -771,6 +1248,14 @@
     "Weapon": "Sword",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Qiqi",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -787,6 +1272,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "RaidenShogun",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -802,6 +1295,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Razor",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -817,6 +1318,21 @@
     "Weapon": "Polearm",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Rosaria",
+        "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "RosariaCN",
+        "Name": "RosariaCN",
+        "SkinSuffix": "CN",
+        "ImageUri": "Character_Skin_RosariaCN_Thumb.webp"
+      }
     ]
   },
   {
@@ -833,6 +1349,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Kokomi",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -848,6 +1372,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Sayu",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -863,6 +1395,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Shenhe",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -879,6 +1419,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Heizou",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -894,6 +1442,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Sucrose",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -909,6 +1465,14 @@
     "Weapon": "Bow",
     "Region": [
       "Snezhnaya"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Tartaglia",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -924,6 +1488,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Thoma",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -939,6 +1511,14 @@
     "Weapon": "Bow",
     "Region": [
       "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Tighnari",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -956,6 +1536,14 @@
     "Weapon": "Sword",
     "Region": [
       "Outlander"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "TravelerGirl",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -973,6 +1561,14 @@
     "Weapon": "Sword",
     "Region": [
       "Outlander"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "TravelerBoy",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -988,6 +1584,14 @@
     "Weapon": "Bow",
     "Region": [
       "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Venti",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1005,6 +1609,14 @@
       "Sumeru",
       "Snezhnaya",
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Wanderer",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1020,6 +1632,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Xiangling",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1035,6 +1655,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Xiao",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1050,6 +1678,14 @@
     "Weapon": "Sword",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Xingqiu",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1065,6 +1701,14 @@
     "Weapon": "Claymore",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Xinyan",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1081,6 +1725,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Yae",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1096,6 +1748,14 @@
     "Weapon": "Catalyst",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Yanfei",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1111,6 +1771,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "YaoYao",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1126,6 +1794,14 @@
     "Weapon": "Bow",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Yelan",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1141,6 +1817,14 @@
     "Weapon": "Bow",
     "Region": [
       "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Yoimiya",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1157,6 +1841,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "YunJin",
+        "SkinSuffix": ""
+      }
     ]
   },
   {
@@ -1172,6 +1864,14 @@
     "Weapon": "Polearm",
     "Region": [
       "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Zhongli",
+        "SkinSuffix": ""
+      }
     ]
   }
 ]

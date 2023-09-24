@@ -6,17 +6,18 @@ public class ModAttentionSettings
 {
     [JsonIgnore] public const string Key = "ModAttentionSettings";
 
-    public ModNotification[] ModNotifications { get; set; } = Array.Empty<ModNotification>();
+    public Dictionary<int, ModNotification[]> ModNotifications { get; set; } = new ();
 }
 
 public sealed class ModNotification
 {
-    public int CharacterId { get; set; }
-    public string ModCustomName { get; set; }
-    public string ModFolderName { get; set; }
-    public bool ShowOnOverview { get; set; }
-    public AttentionType AttentionType { get; set; }
-    public string Message { get; set; }
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public int CharacterId { get; init; }
+    public string ModCustomName { get; init; } = string.Empty;
+    public string ModFolderName { get; init; } = string.Empty;
+    public bool ShowOnOverview { get; init; }
+    public AttentionType AttentionType { get; init; }
+    public string Message { get; init; } = string.Empty;
 }
 
 public enum AttentionType

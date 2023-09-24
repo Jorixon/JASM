@@ -2,9 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
@@ -22,16 +24,30 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(MoveModsCommand))]
     private GenshinCharacter? _selectedCharacter = null;
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(MoveModsCommand),
+        nameof(OverrideModCharacterSkinCommand))]
+    private ISubSkin? _selectedCharacterSkin = null;
+
+    private SkinVM? _backendSelectedCharacterSkin = null;
+
     [ObservableProperty] private bool _isMoveModsFlyoutOpen;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(OverrideModCharacterSkinCommand))]
     private int _selectedModsCount;
 
     [ObservableProperty] private string _searchText = string.Empty;
 
+    [ObservableProperty] private bool _selectedModHasCharacterSkinOverride;
+
+    [ObservableProperty] private string _selectedModCharacterSkinOverrideDisplayName = string.Empty;
+
 
     public ObservableCollection<GenshinCharacter> SuggestedCharacters { get; init; } = new();
     private List<NewModModel> SelectedMods { get; init; } = new();
+
+    public ObservableCollection<SelectCharacterTemplate> SelectableCharacterSkins { get; init; } = new();
 
     public MoveModsFlyoutVM(IGenshinService genshinService, ISkinManagerService skinManagerService)
     {
@@ -41,8 +57,29 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     public void SetShownCharacter(GenshinCharacter selectedCharacter)
     {
-        if (_shownCharacter is not null) throw new InvalidOperationException("Selected character is already set");
+        if (_shownCharacter is not null)
+            throw new InvalidOperationException("Selected character is already set");
         _shownCharacter = selectedCharacter;
+        var skinVms = _shownCharacter.InGameSkins.Select(SkinVM.FromSkin);
+
+        foreach (var skinVm in skinVms) SelectableCharacterSkins.Add(new SelectCharacterTemplate(skinVm));
+    }
+
+    public void SetActiveSkin(SkinVM skinVm)
+    {
+        foreach (var selectableCharacterSkin in SelectableCharacterSkins)
+            if (selectableCharacterSkin.DisplayName == skinVm.DisplayName)
+            {
+                selectableCharacterSkin.IsSelected = true;
+                _backendSelectedCharacterSkin = skinVm;
+                SelectedCharacterSkin =
+                    _shownCharacter.InGameSkins.FirstOrDefault(skin =>
+                        skin.Name.Equals(skinVm.Name, StringComparison.CurrentCultureIgnoreCase));
+            }
+            else
+            {
+                selectableCharacterSkin.IsSelected = false;
+            }
     }
 
 
@@ -52,11 +89,26 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SelectedMods.Clear();
         SelectedMods.AddRange(modModel);
         SelectedModsCount = SelectedMods.Count;
+        if (SelectedModsCount == 1)
+        {
+            var selectedMod = SelectedMods.First();
+            SelectedModHasCharacterSkinOverride =  !string.IsNullOrWhiteSpace(selectedMod.CharacterSkinOverride);
+            SelectedModCharacterSkinOverrideDisplayName = selectedMod.CharacterSkinOverride;
+        }
+        else
+        {
+            SelectedModHasCharacterSkinOverride = false;
+            SelectedModCharacterSkinOverrideDisplayName = string.Empty;
+        }
     }
 
     private bool CanMoveModsCommandExecute()
     {
-        return SelectedCharacter is not null && SelectedModsCount > 0;
+        return SelectedCharacter is not null && SelectedModsCount > 0
+                                             && (SelectedCharacterSkin is null ||
+                                                 SelectedCharacterSkin.DisplayName.Equals(
+                                                     _backendSelectedCharacterSkin?.DisplayName,
+                                                     StringComparison.CurrentCultureIgnoreCase));
     }
 
     [RelayCommand(CanExecute = nameof(CanMoveModsCommandExecute))]
@@ -72,8 +124,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
         try
         {
-            await Task.Run(() =>
-                _skinManagerService.TransferMods(sourceModList, destinationModList,
+            await Task.Run(async () =>
+                await _skinManagerService.TransferMods(sourceModList, destinationModList,
                     SelectedMods.Select(modEntry => modEntry.Id)));
         }
         catch (InvalidOperationException e)
@@ -96,7 +148,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     private bool CanDeleteModsCommandExecute()
     {
-        return SelectedCharacter is null && SelectedModsCount > 0;
+        return SelectedCharacter is null && SelectedModsCount > 0 && SelectedCharacterSkin is null;
     }
 
     [RelayCommand(CanExecute = nameof(CanDeleteModsCommandExecute))]
@@ -187,6 +239,55 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     public event EventHandler? ModsDeleted;
 
+    private bool CanOverrideModCharacterSkin()
+    {
+        return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0
+               && !SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName,
+                   StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
+    private async Task OverrideModCharacterSkin()
+    {
+        if (SelectedCharacterSkin == null) return;
+
+        var characterSkinToSet = _shownCharacter.InGameSkins.FirstOrDefault(charSkin =>
+            charSkin.Name.Equals(SelectedCharacterSkin.Name, StringComparison.CurrentCultureIgnoreCase));
+
+        if (characterSkinToSet == null)
+            return;
+
+
+        foreach (var modModel in SelectedMods)
+        {
+            var skinMod = _skinManagerService.GetCharacterModList(_shownCharacter).Mods
+                .First(mod => mod.Id == modModel.Id).Mod;
+
+            var skinModSettings = modModel.WithModSettings(await skinMod.ReadSkinModSettings());
+
+            skinModSettings.CharacterSkinOverride = characterSkinToSet.Name;
+
+            try
+            {
+                await skinMod.SaveSkinModSettings(skinModSettings.ToModSettings());
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error saving skin mod settings");
+                var notificationManager = App.GetService<NotificationManager>();
+                notificationManager.ShowNotification("Error Saving Skin Mod Settings",
+                    $"Error saving skin mod settings for {skinMod.Name}\n{e.Message}",
+                    TimeSpan.FromSeconds(10));
+            }
+        }
+
+        ModCharactersSkinOverriden?.Invoke(this, EventArgs.Empty);
+        CloseFlyoutCommand.Execute(null);
+    }
+
+    public event EventHandler? ModCharactersSkinOverriden;
+
+
 
     [RelayCommand]
     private void CloseFlyout()
@@ -228,6 +329,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     private void ResetState()
     {
         SelectedCharacter = null;
+        SelectedCharacterSkin = null;
         SuggestedCharacters.Clear();
         SearchText = string.Empty;
     }
@@ -247,5 +349,23 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SelectedCharacter = character;
         SearchText = character.DisplayName;
         return true;
+    }
+
+
+
+    [RelayCommand]
+    private void SelectNewCharacterSkin(SelectCharacterTemplate? characterTemplate)
+    {
+        if (characterTemplate == null) return;
+
+        var characterSkinToSet = _shownCharacter.InGameSkins.FirstOrDefault(charSkin =>
+            charSkin.DisplayName.Equals(characterTemplate.DisplayName, StringComparison.CurrentCultureIgnoreCase));
+
+        if (characterSkinToSet == null)
+            return;
+
+        SelectedCharacterSkin = characterSkinToSet;
+        foreach (var selectableCharacterSkin in SelectableCharacterSkins) selectableCharacterSkin.IsSelected = false;
+        characterTemplate.IsSelected = true;
     }
 }
