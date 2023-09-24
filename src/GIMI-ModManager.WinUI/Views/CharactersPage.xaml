@@ -232,7 +232,7 @@
 
 
                             <FontIcon
-                                Margin="-8"
+                                Margin="-16,-32,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
                                 FontSize="60"

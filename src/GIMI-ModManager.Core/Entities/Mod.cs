@@ -69,6 +69,8 @@ public class Mod : IMod
     public void Rename(string newName)
     {
         _modDirectory.Refresh();
+        if (newName.Equals(_modDirectory.Name, StringComparison.CurrentCultureIgnoreCase))
+            return;
         _modDirectory.MoveTo(Path.Combine(OnlyPath, newName));
     }
 
