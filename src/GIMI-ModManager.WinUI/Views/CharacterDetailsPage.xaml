@@ -12,6 +12,7 @@
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
+    xmlns:options="using:GIMI_ModManager.WinUI.Models.Options"
     x:Name="CharacterDetailsRoot"
     mc:Ignorable="d">
 
@@ -19,6 +20,17 @@
         <helpers:BoolInverterConverter x:Name="BoolInverter" />
         <helpers:ValueToBoolConverter x:Name="ValueToBoolConverter" />
         <helpers:StringToUri x:Name="StringToUri" />
+        <helpers:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
+        <Storyboard x:Name="PulsingIcon">
+            <DoubleAnimation
+                AutoReverse="True"
+                RepeatBehavior="Forever"
+                Storyboard.TargetName="NotificationIcon"
+                Storyboard.TargetProperty="Opacity"
+                From="1"
+                To="0.2"
+                Duration="0:0:2" />
+        </Storyboard>
     </Page.Resources>
 
     <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}">
@@ -94,22 +106,27 @@
                         <Expander
                             VerticalAlignment="Top"
                             ExpandDirection="Down"
-                            Header="Move Mod to another Skin"
+                            Header="Move Mods to another Skin"
                             IsExpanded="False">
                             <Expander.Content>
                                 <StackPanel>
                                     <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.MoveModsFlyoutVM.SelectableCharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.MoveModsFlyoutVM.SelectNewCharacterSkinCommand}" />
-                                    <Button
-                                        Margin="0,8,0,0"
-                                        HorizontalAlignment="Left"
-                                        Command="{x:Bind ViewModel.MoveModsFlyoutVM.OverrideModCharacterSkinCommand}">
-                                        <Button.Content>
-                                            <StackPanel Orientation="Horizontal">
-                                                <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
-                                                <TextBlock Text="Override" />
-                                            </StackPanel>
-                                        </Button.Content>
-                                    </Button>
+
+                                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                        <Button HorizontalAlignment="Left" Command="{x:Bind ViewModel.MoveModsFlyoutVM.OverrideModCharacterSkinCommand}">
+                                            <Button.Content>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
+                                                    <TextBlock Text="Override" />
+                                                </StackPanel>
+                                            </Button.Content>
+                                        </Button>
+
+                                        <StackPanel Margin="4,0,0,0" Visibility="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModHasCharacterSkinOverride, Mode=OneWay}">
+                                            <TextBlock Text="Override Skin Set: " />
+                                            <TextBlock HorizontalAlignment="Center" Text="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModCharacterSkinOverrideDisplayName, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </StackPanel>
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
@@ -221,7 +238,11 @@
                             HorizontalAlignment="Center"
                             Content="Select Skin"
                             Flyout="{StaticResource SelectInGameSkin}"
-                            IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}" />
+                            IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="F1" />
+                            </Button.KeyboardAccelerators>
+                        </Button>
                     </StackPanel>
 
 
@@ -375,7 +396,40 @@
                                         Header="Mod Folder Name"
                                         IsReadOnly="True"
                                         Tag="Folder Name" />
+
+                                    <controls:DataGridTemplateColumn
+                                        Width="SizeToCells"
+                                        CanUserSort="False"
+                                        Header=""
+                                        IsReadOnly="True">
+
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:NewModModel">
+                                                <StackPanel
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal">
+                                                    <ItemsRepeater ItemsSource="{x:Bind ModNotifications, Mode=OneWay}">
+                                                        <ItemsRepeater.ItemTemplate>
+                                                            <DataTemplate x:DataType="options:ModNotification">
+                                                                <Grid Margin="4,0" VerticalAlignment="Center">
+                                                                    <FontIcon
+                                                                        VerticalAlignment="Bottom"
+                                                                        Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                                                        Glyph="{x:Bind AttentionType, Converter={StaticResource AttentionTypeToSymbolConverter}}" />
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsRepeater.ItemTemplate>
+                                                    </ItemsRepeater>
+
+
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+
                                 </controls:DataGrid.Columns>
+
                             </controls:DataGrid>
                         </Grid>
 

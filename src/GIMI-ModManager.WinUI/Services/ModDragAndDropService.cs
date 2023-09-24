@@ -3,6 +3,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -12,12 +13,14 @@ public class ModDragAndDropService
     private readonly ILogger _logger;
 
     private readonly NotificationManager _notificationManager;
+    private readonly ModNotificationManager _modNotificationManager;
 
     public event EventHandler? DragAndDropFinished;
 
-    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager)
+    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager, ModNotificationManager modNotificationManager)
     {
         _notificationManager = notificationManager;
+        _modNotificationManager = modNotificationManager;
         _logger = logger.ForContext<ModDragAndDropService>();
     }
 
@@ -162,5 +165,13 @@ public class ModDragAndDropService
             RecursiveCopy(StorageFolder.GetFolderFromPathAsync(subFolder.FullName).GetAwaiter().GetResult(),
                 StorageFolder.GetFolderFromPathAsync(newSubFolder.FullName).GetAwaiter().GetResult());
         }
+    }
+
+
+    public class DragAndDropFinishedArgs : EventArgs
+    {
+
+
+        public record ExtractResult(string SourcePath, string ExtractedFolderPath);
     }
 }

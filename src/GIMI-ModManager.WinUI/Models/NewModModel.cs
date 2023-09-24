@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 
 namespace GIMI_ModManager.WinUI.Models;
@@ -22,6 +23,8 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
     [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private string _characterSkinOverride = string.Empty;
+
+    [ObservableProperty] private ObservableCollection<ModNotification> _modNotifications = new ();
 
     public static readonly Uri PlaceholderImagePath =
         new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));

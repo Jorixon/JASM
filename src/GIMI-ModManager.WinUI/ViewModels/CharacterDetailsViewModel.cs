@@ -15,8 +15,10 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
+using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
 
@@ -32,6 +34,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly NotificationManager _notificationService;
     private readonly ModDragAndDropService _modDragAndDropService;
     private readonly ModCrawlerService _modCrawlerService;
+    private readonly ModNotificationManager _modNotificationManager;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -47,11 +50,14 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty] private SkinVM _selectedInGameSkin = new();
 
+    private static Dictionary<GenshinCharacter, string> _lastSelectedSkin = new();
+
 
     public CharacterDetailsViewModel(IGenshinService genshinService, ILogger logger,
         INavigationService navigationService, ISkinManagerService skinManagerService,
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
-        ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService)
+        ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
+        ModNotificationManager modNotificationManager)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -61,6 +67,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _localSettingsService = localSettingsService;
         _modDragAndDropService = modDragAndDropService;
         _modCrawlerService = modCrawlerService;
+        _modNotificationManager = modNotificationManager;
 
         _modDragAndDropService.DragAndDropFinished += (sender, args) =>
             App.MainWindow.DispatcherQueue.EnqueueAsync(
@@ -72,7 +79,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         MoveModsFlyoutVM.ModCharactersSkinOverriden +=
             async (sender, args) => await RefreshMods().ConfigureAwait(false);
 
-        ModListVM = new ModListVM(skinManagerService);
+        ModListVM = new ModListVM(skinManagerService, modNotificationManager);
         ModListVM.OnModsSelected += async (sender, args) =>
         {
             var selectedMod = args.Mods.FirstOrDefault();
@@ -83,7 +90,22 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 return;
             }
 
-            await ModPaneVM.LoadMod(selectedMod);
+            var recentlyAddedModNotifications = args.Mods.SelectMany(x =>
+                x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
+
+            if (recentlyAddedModNotifications.Any())
+            {
+                foreach (var modNotification in recentlyAddedModNotifications)
+                {
+                    await _modNotificationManager.RemoveModNotification(modNotification.Id);
+                    var notification = selectedMod.ModNotifications.FirstOrDefault(x => x.Id == modNotification.Id);
+                    if (notification is not null)
+                        selectedMod.ModNotifications.Remove(notification);
+                }
+            }
+
+
+            await ModPaneVM.LoadMod(selectedMod).ConfigureAwait(false);
         };
 
         ModPaneVM = new ModPaneVM(skinManagerService, notificationService);
@@ -93,11 +115,40 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
-            if (IsAddingModFolder) return;
-            _notificationService.ShowNotification(
-                $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
-                "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
-                TimeSpan.FromSeconds(5));
+            if (!IsAddingModFolder)
+            {
+                _notificationService.ShowNotification(
+                    $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
+                    "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
+                    TimeSpan.FromSeconds(5));
+            }
+
+
+            if (e.ChangeType != ModFolderChangeType.Deleted)
+            {
+                var inMemoryModNotification = new ModNotification()
+                {
+                    CharacterId = ShownCharacter.Id,
+                    ShowOnOverview = false,
+                    ModFolderName = Path.GetFileNameWithoutExtension(e.NewName) ?? string.Empty,
+                    AttentionType = e.ChangeType switch
+                    {
+                        ModFolderChangeType.Created => AttentionType.Added,
+                        ModFolderChangeType.Renamed => AttentionType.Added,
+                        _ => AttentionType.None
+                    },
+                    Message = e.ChangeType switch
+                    {
+                        ModFolderChangeType.Created =>
+                            $"Mod '{e.NewName}' was added to {ShownCharacter.DisplayName}'s mod folder.",
+                        ModFolderChangeType.Renamed =>
+                            $"Mod '{e.OldName}' was renamed to '{e.NewName}' in {ShownCharacter.DisplayName}'s mod folder.",
+                        _ => string.Empty
+                    },
+                };
+
+                await _modNotificationManager.ShowModNotification(inMemoryModNotification);
+            }
 
             await RefreshMods().ConfigureAwait(false);
         });
@@ -161,7 +212,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         try
         {
-            await _refreshMods();
+            await RefreshMods();
             _modList.ModsChanged += ModListOnModsChanged;
         }
         catch (Exception e)
@@ -171,6 +222,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 $"An error occurred while loading the mods for this character.\n{e.Message}",
                 TimeSpan.FromSeconds(10));
             _navigationService.GoBack();
+        }
+
+        var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(skin =>
+            skin.DisplayName.Equals(_lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
+                StringComparison.CurrentCultureIgnoreCase));
+
+        if (lastSelectedSkin is not null)
+        {
+            await SwitchCharacterSkin(lastSelectedSkin);
         }
     }
 
@@ -281,6 +341,22 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             if (modSettings != null)
                 newModModel.WithModSettings(modSettings);
 
+            var inMemoryModNotification = _modNotificationManager.InMemoryModNotifications.FirstOrDefault(x =>
+                x.ModFolderName.Equals(skinEntry.Mod.Name, StringComparison.CurrentCultureIgnoreCase) &&
+                x.CharacterId == ShownCharacter.Id);
+
+            if (inMemoryModNotification != null)
+                newModModel.ModNotifications.Add(inMemoryModNotification);
+
+            //newModModel.ModNotifications.Add(new ModNotification()
+            //{
+            //    CharacterId = ShownCharacter.Id,
+            //    ShowOnOverview = false,
+            //    ModFolderName = Path.GetFileNameWithoutExtension(skinEntry.Mod.Name) ?? string.Empty,
+            //    AttentionType = AttentionType.Added,
+            //    Message = $"Mod '{skinEntry.Mod.Name}' was added to {ShownCharacter.DisplayName}'s mod folder.",
+            //});
+
 
             modList.Add(newModModel);
         }
@@ -328,7 +404,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         foreach (var selectableInGameSkin in SelectableInGameSkins)
             selectableInGameSkin.IsSelected = selectableInGameSkin.DisplayName.Equals(characterTemplate.DisplayName,
                 StringComparison.CurrentCultureIgnoreCase);
-
+        _lastSelectedSkin[ShownCharacter] = SelectedInGameSkin.Name;
         await RefreshMods().ConfigureAwait(false);
     }
 

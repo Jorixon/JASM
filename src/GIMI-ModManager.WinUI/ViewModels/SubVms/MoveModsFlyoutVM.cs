@@ -39,6 +39,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     [ObservableProperty] private string _searchText = string.Empty;
 
+    [ObservableProperty] private bool _selectedModHasCharacterSkinOverride;
+
+    [ObservableProperty] private string _selectedModCharacterSkinOverrideDisplayName = string.Empty;
+
 
     public ObservableCollection<GenshinCharacter> SuggestedCharacters { get; init; } = new();
     private List<NewModModel> SelectedMods { get; init; } = new();
@@ -85,12 +89,26 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SelectedMods.Clear();
         SelectedMods.AddRange(modModel);
         SelectedModsCount = SelectedMods.Count;
+        if (SelectedModsCount == 1)
+        {
+            var selectedMod = SelectedMods.First();
+            SelectedModHasCharacterSkinOverride =  !string.IsNullOrWhiteSpace(selectedMod.CharacterSkinOverride);
+            SelectedModCharacterSkinOverrideDisplayName = selectedMod.CharacterSkinOverride;
+        }
+        else
+        {
+            SelectedModHasCharacterSkinOverride = false;
+            SelectedModCharacterSkinOverrideDisplayName = string.Empty;
+        }
     }
 
     private bool CanMoveModsCommandExecute()
     {
-        return SelectedCharacter is not null && SelectedModsCount > 0 
-                                             && (SelectedCharacterSkin is null || SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName, StringComparison.CurrentCultureIgnoreCase));
+        return SelectedCharacter is not null && SelectedModsCount > 0
+                                             && (SelectedCharacterSkin is null ||
+                                                 SelectedCharacterSkin.DisplayName.Equals(
+                                                     _backendSelectedCharacterSkin?.DisplayName,
+                                                     StringComparison.CurrentCultureIgnoreCase));
     }
 
     [RelayCommand(CanExecute = nameof(CanMoveModsCommandExecute))]
@@ -221,6 +239,55 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     public event EventHandler? ModsDeleted;
 
+    private bool CanOverrideModCharacterSkin()
+    {
+        return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0
+               && !SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName,
+                   StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
+    private async Task OverrideModCharacterSkin()
+    {
+        if (SelectedCharacterSkin == null) return;
+
+        var characterSkinToSet = _shownCharacter.InGameSkins.FirstOrDefault(charSkin =>
+            charSkin.Name.Equals(SelectedCharacterSkin.Name, StringComparison.CurrentCultureIgnoreCase));
+
+        if (characterSkinToSet == null)
+            return;
+
+
+        foreach (var modModel in SelectedMods)
+        {
+            var skinMod = _skinManagerService.GetCharacterModList(_shownCharacter).Mods
+                .First(mod => mod.Id == modModel.Id).Mod;
+
+            var skinModSettings = modModel.WithModSettings(await skinMod.ReadSkinModSettings());
+
+            skinModSettings.CharacterSkinOverride = characterSkinToSet.Name;
+
+            try
+            {
+                await skinMod.SaveSkinModSettings(skinModSettings.ToModSettings());
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error saving skin mod settings");
+                var notificationManager = App.GetService<NotificationManager>();
+                notificationManager.ShowNotification("Error Saving Skin Mod Settings",
+                    $"Error saving skin mod settings for {skinMod.Name}\n{e.Message}",
+                    TimeSpan.FromSeconds(10));
+            }
+        }
+
+        ModCharactersSkinOverriden?.Invoke(this, EventArgs.Empty);
+        CloseFlyoutCommand.Execute(null);
+    }
+
+    public event EventHandler? ModCharactersSkinOverriden;
+
+
 
     [RelayCommand]
     private void CloseFlyout()
@@ -284,53 +351,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         return true;
     }
 
-    public event EventHandler? ModCharactersSkinOverriden;
 
-    private bool CanOverrideModCharacterSkin()
-    {
-        return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0
-               && !SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName,
-                   StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
-    private async Task OverrideModCharacterSkin()
-    {
-        if (SelectedCharacterSkin == null) return;
-
-        var characterSkinToSet = _shownCharacter.InGameSkins.FirstOrDefault(charSkin =>
-            charSkin.Name.Equals(SelectedCharacterSkin.Name, StringComparison.CurrentCultureIgnoreCase));
-
-        if (characterSkinToSet == null)
-            return;
-
-
-        foreach (var modModel in SelectedMods)
-        {
-            var skinMod = _skinManagerService.GetCharacterModList(_shownCharacter).Mods
-                .First(mod => mod.Id == modModel.Id).Mod;
-
-            var skinModSettings = modModel.WithModSettings(await skinMod.ReadSkinModSettings());
-
-            skinModSettings.CharacterSkinOverride = characterSkinToSet.Name;
-
-            try
-            {
-                await skinMod.SaveSkinModSettings(skinModSettings.ToModSettings());
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e, "Error saving skin mod settings");
-                var notificationManager = App.GetService<NotificationManager>();
-                notificationManager.ShowNotification("Error Saving Skin Mod Settings",
-                    $"Error saving skin mod settings for {skinMod.Name}\n{e.Message}",
-                    TimeSpan.FromSeconds(10));
-            }
-        }
-
-        ModCharactersSkinOverriden?.Invoke(this, EventArgs.Empty);
-        CloseFlyoutCommand.Execute(null);
-    }
 
     [RelayCommand]
     private void SelectNewCharacterSkin(SelectCharacterTemplate? characterTemplate)
