@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.4.0](https://github.com/Jorixon/JASM/compare/v1.3.0...v1.4.0) (2023-09-24)
+
+
+### Features
+
+* Recently added mods are marked with an icon to make it easier to see what mod was just added ([be0947b](https://github.com/Jorixon/JASM/commit/be0947b9cad897da9c123633b0a14664f44793b2))
+* Support for handling mods for different ingame skins for characters ([#41](https://github.com/Jorixon/JASM/issues/41)) ([be0947b](https://github.com/Jorixon/JASM/commit/be0947b9cad897da9c123633b0a14664f44793b2))
+
+
+### Bug Fixes
+
+* Character overview not showing multiple mods active warning when "Only show characters with mods" was enabled ([be0947b](https://github.com/Jorixon/JASM/commit/be0947b9cad897da9c123633b0a14664f44793b2))
+* Crash when adding duplicate mod, and better handling of duplicate folder names ([a47fa80](https://github.com/Jorixon/JASM/commit/a47fa8021d94667fbfe557c23e037bf9d497e04b))
+* Export progress ring not showing progress if exporting too many mods ([be0947b](https://github.com/Jorixon/JASM/commit/be0947b9cad897da9c123633b0a14664f44793b2))
+
+
+### Tweaks
+
+* Made the duplicate folder name checker a bit more robust ([be0947b](https://github.com/Jorixon/JASM/commit/be0947b9cad897da9c123633b0a14664f44793b2))
+* Reduced number of releases retrieved from GitHub Api when checking for updates ([a47fa80](https://github.com/Jorixon/JASM/commit/a47fa8021d94667fbfe557c23e037bf9d497e04b))
+
+
+### Miscellaneous
+
+* Bundled 7zip with JASM ([#39](https://github.com/Jorixon/JASM/issues/39)) ([a47fa80](https://github.com/Jorixon/JASM/commit/a47fa8021d94667fbfe557c23e037bf9d497e04b))
+
 ## [1.3.0](https://github.com/Jorixon/JASM/compare/v1.2.0...v1.3.0) (2023-09-16)
 
 
