@@ -483,6 +483,19 @@ public class SkinModSettings // "internal set" messes with the json serializer
         return HashCode.Combine(CustomName, Author, Version, ModUrl, ImagePath);
     }
 
+    public SkinModSettings DeepClone()
+    {
+        return new ()
+        {
+            CustomName = CustomName,
+            Author = Author,
+            Version = Version,
+            ModUrl = ModUrl,
+            ImagePath = ImagePath,
+            CharacterSkinOverride = CharacterSkinOverride
+        };
+    }
+
     public string? CustomName { get; set; }
     public string? Author { get; set; }
     public string? Version { get; set; }

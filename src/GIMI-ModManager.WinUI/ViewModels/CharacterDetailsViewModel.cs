@@ -347,7 +347,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             }
 
             var detectedSkin = _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter);
-            if (detectedSkin is null)
+            if (detectedSkin is null && modSkin is null)
             {
                 // In this case, we don't know what skin the mod is for, so we just add it.
                 filteredMods.Add(mod);

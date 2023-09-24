@@ -89,7 +89,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     private bool CanMoveModsCommandExecute()
     {
-        return SelectedCharacter is not null && SelectedModsCount > 0 && SelectedCharacterSkin is null;
+        return SelectedCharacter is not null && SelectedModsCount > 0 
+                                             && (SelectedCharacterSkin is null || SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName, StringComparison.CurrentCultureIgnoreCase));
     }
 
     [RelayCommand(CanExecute = nameof(CanMoveModsCommandExecute))]
@@ -105,8 +106,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
         try
         {
-            await Task.Run(() =>
-                _skinManagerService.TransferMods(sourceModList, destinationModList,
+            await Task.Run(async () =>
+                await _skinManagerService.TransferMods(sourceModList, destinationModList,
                     SelectedMods.Select(modEntry => modEntry.Id)));
         }
         catch (InvalidOperationException e)

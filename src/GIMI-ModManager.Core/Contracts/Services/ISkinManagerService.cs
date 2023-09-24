@@ -27,7 +27,7 @@ public interface ISkinManagerService : IDisposable
     /// </summary>
     public Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
 
-    public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
+    public Task TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
 
     public Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId);
 

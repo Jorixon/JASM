@@ -146,7 +146,7 @@ public sealed class SkinManagerService : ISkinManagerService
     }
 
 
-    public void TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds)
+    public async Task TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds)
     {
         var mods = source.Mods.Where(x => modsEntryIds.Contains(x.Id)).Select(x => x.Mod).ToList();
         foreach (var mod in mods)
@@ -172,6 +172,11 @@ public sealed class SkinManagerService : ISkinManagerService
             source.UnTrackMod(mod);
             mod.MoveTo(destination.AbsModsFolderPath);
             destination.TrackMod(mod);
+
+            // Remove overrides, i.e. skinOverride
+            var skinModSettings = (await mod.ReadSkinModSettings()).DeepClone();
+            skinModSettings.CharacterSkinOverride = null;
+            await mod.SaveSkinModSettings(skinModSettings);
         }
     }
 
