@@ -250,6 +250,8 @@
                                 Margin="{StaticResource XXSmallTopMargin}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
+                                FontFamily="{StaticResource GenshinFont}"
+                                FontSize="14"
                                 Text="{x:Bind Character.DisplayName}" />
                         </Grid>
                     </Grid>

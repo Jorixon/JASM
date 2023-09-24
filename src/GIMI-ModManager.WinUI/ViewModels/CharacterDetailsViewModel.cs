@@ -308,6 +308,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private async Task SwitchCharacterSkin(SelectCharacterTemplate characterTemplate)
     {
+        if (characterTemplate?.DisplayName is not null && characterTemplate.DisplayName.Equals(
+                SelectedInGameSkin.DisplayName,
+                StringComparison.CurrentCultureIgnoreCase))
+            return;
+
         var characterSkin = ShownCharacter.InGameSkins.FirstOrDefault(skin =>
             skin.DisplayName.Equals(characterTemplate.DisplayName, StringComparison.CurrentCultureIgnoreCase));
         if (characterSkin is null)

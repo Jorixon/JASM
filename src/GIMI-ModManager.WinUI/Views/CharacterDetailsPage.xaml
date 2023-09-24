@@ -189,10 +189,12 @@
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
+                        FontFamily="{StaticResource GenshinFont}"
+                        FontSize="28"
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.Below="itemHero"
-                        Style="{ThemeResource TitleTextBlockStyle}"
                         Text="{x:Bind ViewModel.ShownCharacter.DisplayName}" />
+                    <!--  Style="{ThemeResource TitleTextBlockStyle}"  -->
 
 
                     <StackPanel
@@ -214,7 +216,7 @@
                             Text="Selected Skin:" />
                         <TextBlock
                             HorizontalAlignment="Center"
-                            Style="{ThemeResource BodyTextBlockStyle}"
+                            FontFamily="{StaticResource GenshinFont}"
                             Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay}"
                             TextWrapping="WrapWholeWords" />
                         <Button

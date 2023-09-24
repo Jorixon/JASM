@@ -94,7 +94,7 @@
         "DisplayName": "AmberCN",
         "Name": "AmberCN",
         "SkinSuffix": "CN",
-        "ImageUri": "Character_Skin_Amber_Thumb.webp"
+        "ImageUri": "Character_Skin_AmberCN_Thumb.webp"
       }
     ]
   },
@@ -684,7 +684,7 @@
         "DisplayName": "Sea Breeze Dandelion",
         "Name": "JeanSea",
         "SkinSuffix": "Sea",
-        "ImageUri": ""
+        "ImageUri": "Character_Skin_JeanSea_Thumb.webp"
       }
     ]
   },
