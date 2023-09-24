@@ -32,6 +32,7 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - "F5" - In character view, refresh the character's mods from disk
 - "CTRL + F" - In character overview, focus on the search bar
 - "ESCAPE" - In character view, Go back to character overview
+- "F1" - In character view, opens selectable in-game skins
 
 ## Download
 Latest release can be downloaded either from GameBanana or from the [Releases](https://github.com/Jorixon/JASM/releases) page. To start the app run ```JASM - Just Another Skin Manager.exe``` in ```JASM/``` folder, I suggest creating a shortcut to it.
