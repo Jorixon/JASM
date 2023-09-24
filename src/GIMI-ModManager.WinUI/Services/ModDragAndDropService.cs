@@ -3,9 +3,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
-using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
-using FuzzySharp.Extractor;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -26,7 +24,8 @@ public class ModDragAndDropService
     // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
     // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
     // This code is a mess, but it works.
-    public async Task<IReadOnlyList<DragAndDropFinishedArgs.ExtractPaths>> AddStorageItemFoldersAsync(ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
+    public async Task<IReadOnlyList<DragAndDropFinishedArgs.ExtractPaths>> AddStorageItemFoldersAsync(
+        ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
     {
         if (storageItems is null || !storageItems.Any())
         {
@@ -52,7 +51,6 @@ public class ModDragAndDropService
             destDirectoryInfo.Create();
 
             var destFolderPath = destDirectoryInfo.FullName;
-
 
 
             if (storageItem is StorageFile)
@@ -119,7 +117,6 @@ public class ModDragAndDropService
             }
 
 
-
             if (destFolderPath.Equals(modList.AbsModsFolderPath, StringComparison.CurrentCultureIgnoreCase))
                 destFolderPath = Path.Combine(destFolderPath, sourceFolder.Name);
 
@@ -131,9 +128,17 @@ public class ModDragAndDropService
 
             Directory.CreateDirectory(destFolderPath);
 
+            try
+            {
+                recursiveCopy.Invoke(sourceFolder,
+                    await StorageFolder.GetFolderFromPathAsync(destFolderPath));
+            }
+            catch (Exception e)
+            {
+                Directory.Delete(destFolderPath);
+                throw;
+            }
 
-            recursiveCopy.Invoke(sourceFolder,
-                await StorageFolder.GetFolderFromPathAsync(destFolderPath));
             extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path, destFolderPath));
         }
 
@@ -203,8 +208,10 @@ public class ModDragAndDropService
         {
             public ExtractPaths(string sourcePath, string extractedFolderPath)
             {
-                this.SourcePath = sourcePath;
-                this.ExtractedFolderPath = Path.EndsInDirectorySeparator(extractedFolderPath) ? extractedFolderPath : extractedFolderPath + Path.DirectorySeparatorChar;
+                SourcePath = sourcePath;
+                ExtractedFolderPath = Path.EndsInDirectorySeparator(extractedFolderPath)
+                    ? extractedFolderPath
+                    : extractedFolderPath + Path.DirectorySeparatorChar;
             }
 
             public string SourcePath { get; init; }

@@ -109,7 +109,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
 
         if (recentlyAddedModNotifications.Any())
-        {
             foreach (var modNotification in recentlyAddedModNotifications)
             {
                 await _modNotificationManager.RemoveModNotification(modNotification.Id);
@@ -120,7 +119,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                     if (notification is not null) newModModel.ModNotifications.Remove(notification);
                 }
             }
-        }
 
 
         await ModPaneVM.LoadMod(selectedMod).ConfigureAwait(false);
@@ -131,12 +129,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
             if (!IsAddingModFolder)
-            {
                 _notificationService.ShowNotification(
                     $"Folder Activity Detected in {ShownCharacter.DisplayName}'s Mod Folder",
                     "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
                     TimeSpan.FromSeconds(5));
-            }
 
 
             if (e.ChangeType == ModFolderChangeType.Renamed)
@@ -159,7 +155,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                         ModFolderChangeType.Renamed =>
                             $"Mod '{e.OldName}' was renamed to '{e.NewName}' in {ShownCharacter.DisplayName}'s mod folder.",
                         _ => string.Empty
-                    },
+                    }
                 };
 
                 await _modNotificationManager.AddModNotification(inMemoryModNotification);
@@ -244,10 +240,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 _lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
                 StringComparison.CurrentCultureIgnoreCase));
 
-        if (lastSelectedSkin is not null)
-        {
-            await SwitchCharacterSkin(lastSelectedSkin);
-        }
+        if (lastSelectedSkin is not null) await SwitchCharacterSkin(lastSelectedSkin);
     }
 
 
@@ -492,7 +485,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             _logger.Error(e, "Error while adding storage items.");
             _notificationService.ShowNotification("Drag And Drop operation failed",
-                $"An error occurred while adding the storage items. Mod may have been partially copied. Reason:\n{e.Message}",
+                $"An error occurred while adding the storage items. Reason:\n{e.Message}",
                 TimeSpan.FromSeconds(5));
         }
         finally
@@ -610,7 +603,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             ShowOnOverview = false,
             ModFolderName = newModFolderName,
             AttentionType = attentionType,
-            Message = message ?? string.Empty,
+            Message = message ?? string.Empty
         };
 
         return _modNotificationManager.AddModNotification(inMemoryModNotification);
