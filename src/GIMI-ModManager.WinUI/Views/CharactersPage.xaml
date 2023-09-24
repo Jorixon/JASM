@@ -16,6 +16,7 @@
     <Page.Resources>
         <helpers:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
         <helpers:BoolInverterConverter x:Name="BoolInverterConverter" />
+        <helpers:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
     </Page.Resources>
     <!--
         DragEnter="Page_OnDragEnter"
@@ -214,11 +215,21 @@
                                     <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind Character.ImageUri}" />
                                 </Image.Source>
                             </Image>
-                            <FontIcon
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Glyph="&#xE840;"
-                                Visibility="{x:Bind IsPinned, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                            <StackPanel>
+                                <FontIcon
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Glyph="&#xE840;"
+                                    Visibility="{x:Bind IsPinned, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+
+                                <FontIcon
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                    Glyph="{x:Bind NotificationType, Mode=OneWay, Converter={StaticResource AttentionTypeToSymbolConverter}}"
+                                    Visibility="{x:Bind Notification, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                            </StackPanel>
+
 
                             <FontIcon
                                 Margin="-8"

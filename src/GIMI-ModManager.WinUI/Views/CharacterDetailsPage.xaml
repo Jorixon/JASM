@@ -229,7 +229,7 @@
                         <TextBlock
                             Padding="0,0,0,16"
                             HorizontalAlignment="Center"
-                            Text="Selected Skin:" />
+                            Text="Selected Character Skin:" />
                         <TextBlock
                             HorizontalAlignment="Center"
                             FontFamily="{StaticResource GenshinFont}"

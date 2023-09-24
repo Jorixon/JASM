@@ -11,6 +11,7 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -23,6 +24,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly ModDragAndDropService _modDragAndDropService;
+    private readonly ModNotificationManager _modNotificationManager;
 
     public readonly GenshinProcessManager GenshinProcessManager;
 
@@ -47,7 +49,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        ModDragAndDropService modDragAndDropService)
+        ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -59,6 +61,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _modDragAndDropService = modDragAndDropService;
+        _modNotificationManager = modNotificationManager;
 
         ElevatorService.PropertyChanged += (sender, args) =>
         {
@@ -299,6 +302,20 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         ResetContent();
 
+        foreach (var genshinCharacter in _characters)
+        {
+            var characterGridItemModel = FindCharacterById(genshinCharacter.Id);
+            if (characterGridItemModel is null) continue;
+            var notifications = _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
+            foreach (var modNotification in notifications)
+            {
+                if (modNotification.AttentionType != AttentionType.Added) continue;
+
+                characterGridItemModel.Notification = true;
+                characterGridItemModel.NotificationType = modNotification.AttentionType;
+            }
+        }
+
         // Character Ids where more than 1 skin is enabled
         var charactersWithMultipleActiveSkins = _skinManagerService.CharacterModLists
             .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1).Select(x => x.Character.Id);
@@ -311,6 +328,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             characterGridItemModel.Warning = true;
         }
+
 
         if (!pinnedCharactersOptions.ShowOnlyCharactersWithMods) return;
 
@@ -550,7 +568,22 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         try
         {
             IsAddingMod = true;
-            await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
+            var extractResults = await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
+
+            foreach (var extractResult in extractResults)
+            {
+                var notfiy = new ModNotification()
+                {
+                    CharacterId = modList.Character.Id,
+                    AttentionType = AttentionType.Added,
+                    ModFolderName = Path.GetFileNameWithoutExtension(extractResult.ExtractedFolderPath),
+                    Message = "Mod added from character overview",
+                };
+                await _modNotificationManager.AddModNotification(notfiy);
+
+                characterGridItemModel.Notification = true;
+                characterGridItemModel.NotificationType = notfiy.AttentionType;
+            }
         }
         catch (Exception e)
         {
@@ -595,5 +628,19 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         return Task.CompletedTask;
+    }
+
+    private CharacterGridItemModel? FindCharacterById(int id)
+    {
+        if (PinnedCharacters.Any(x => x.Character.Id == id))
+            return PinnedCharacters.First(x => x.Character.Id == id);
+
+        if (HiddenCharacters.Any(x => x.Character.Id == id))
+            return HiddenCharacters.First(x => x.Character.Id == id);
+
+        if (Characters.Any(x => x.Character.Id == id))
+            return Characters.First(x => x.Character.Id == id);
+
+        return null;
     }
 }

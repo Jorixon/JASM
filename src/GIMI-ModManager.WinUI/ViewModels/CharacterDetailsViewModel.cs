@@ -107,7 +107,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             return;
         }
 
-        var recentlyAddedModNotifications = args.Mods.SelectMany(x => x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
+        var recentlyAddedModNotifications = args.Mods.SelectMany(x =>
+            x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
 
         if (recentlyAddedModNotifications.Any())
         {
@@ -120,7 +121,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                     var notification = newModModel.ModNotifications.FirstOrDefault(x => x.Id == modNotification.Id);
                     if (notification is not null) newModModel.ModNotifications.Remove(notification);
                 }
-
             }
         }
 
@@ -241,8 +241,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             _navigationService.GoBack();
         }
 
-        var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(skin =>
-            skin.DisplayName.Equals(_lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
+        var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(selectCharacterTemplate =>
+            selectCharacterTemplate.DisplayName.Equals(
+                _lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
                 StringComparison.CurrentCultureIgnoreCase));
 
         if (lastSelectedSkin is not null)
@@ -423,7 +424,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         foreach (var selectableInGameSkin in SelectableInGameSkins)
             selectableInGameSkin.IsSelected = selectableInGameSkin.DisplayName.Equals(characterTemplate.DisplayName,
                 StringComparison.CurrentCultureIgnoreCase);
-        _lastSelectedSkin[ShownCharacter] = SelectedInGameSkin.Name;
+        _lastSelectedSkin[ShownCharacter] = SelectedInGameSkin.DisplayName;
         await RefreshMods().ConfigureAwait(false);
     }
 

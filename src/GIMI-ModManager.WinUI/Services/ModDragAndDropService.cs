@@ -26,12 +26,12 @@ public class ModDragAndDropService
     // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
     // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
     // This code is a mess, but it works.
-    public async Task AddStorageItemFoldersAsync(ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
+    public async Task<IReadOnlyList<DragAndDropFinishedArgs.ExtractPaths>> AddStorageItemFoldersAsync(ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
     {
         if (storageItems is null || !storageItems.Any())
         {
             _logger.Warning("Drag and drop files called with null/0 storage items.");
-            return;
+            return Array.Empty<DragAndDropFinishedArgs.ExtractPaths>();
         }
 
 
@@ -40,7 +40,7 @@ public class ModDragAndDropService
             _notificationManager.ShowNotification(
                 "Drag and drop called with more than one storage item, this is currently not supported", "",
                 TimeSpan.FromSeconds(5));
-            return;
+            return Array.Empty<DragAndDropFinishedArgs.ExtractPaths>();
         }
 
         var extractResults = new List<DragAndDropFinishedArgs.ExtractPaths>();
@@ -122,6 +122,7 @@ public class ModDragAndDropService
         }
 
         DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(extractResults));
+        return extractResults;
     }
 
     // ReSharper disable once InconsistentNaming
@@ -175,13 +176,29 @@ public class ModDragAndDropService
 
     public class DragAndDropFinishedArgs : EventArgs
     {
-        public DragAndDropFinishedArgs(ICollection<ExtractPaths> extractResults)
+        public DragAndDropFinishedArgs(IReadOnlyCollection<ExtractPaths> extractResults)
         {
             ExtractResults = extractResults;
         }
 
-        public ICollection<ExtractPaths> ExtractResults { get; }
+        public IReadOnlyCollection<ExtractPaths> ExtractResults { get; }
 
-        public record ExtractPaths(string SourcePath, string ExtractedFolderPath);
+        public record ExtractPaths
+        {
+            public ExtractPaths(string sourcePath, string extractedFolderPath)
+            {
+                this.SourcePath = sourcePath;
+                this.ExtractedFolderPath = Path.EndsInDirectorySeparator(sourcePath) ? sourcePath[..^1] : sourcePath;
+            }
+
+            public string SourcePath { get; init; }
+            public string ExtractedFolderPath { get; init; }
+
+            public void Deconstruct(out string SourcePath, out string ExtractedFolderPath)
+            {
+                SourcePath = this.SourcePath;
+                ExtractedFolderPath = this.ExtractedFolderPath;
+            }
+        }
     }
 }
