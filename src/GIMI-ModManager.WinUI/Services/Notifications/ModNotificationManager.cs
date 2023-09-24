@@ -21,7 +21,7 @@ public class ModNotificationManager
         _localSettingsService = localSettingsService;
     }
 
-    public async Task ShowModNotification(ModNotification modNotification, bool persistent = false)
+    public async Task AddModNotification(ModNotification modNotification, bool persistent = false)
     {
         if (!persistent)
         {

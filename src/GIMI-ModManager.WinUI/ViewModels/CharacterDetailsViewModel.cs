@@ -69,9 +69,21 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _modCrawlerService = modCrawlerService;
         _modNotificationManager = modNotificationManager;
 
-        _modDragAndDropService.DragAndDropFinished += (sender, args) =>
-            App.MainWindow.DispatcherQueue.EnqueueAsync(
-                async () => { await RefreshMods(); });
+        _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
+        {
+            foreach (var extractResult in args.ExtractResults)
+            {
+                var extractedFolderName = Path.EndsInDirectorySeparator(extractResult.ExtractedFolderPath)
+                    ? extractResult.ExtractedFolderPath[..^1]
+                    : extractResult.ExtractedFolderPath;
+
+                await AddNewModAddedNotificationAsync(AttentionType.Added,
+                    Path.GetFileNameWithoutExtension(extractedFolderName), null);
+            }
+
+            await App.MainWindow.DispatcherQueue.EnqueueAsync(
+                async () => { await RefreshMods(); }).ConfigureAwait(false);
+        };
 
         MoveModsFlyoutVM = new MoveModsFlyoutVM(_genshinService, _skinManagerService);
         MoveModsFlyoutVM.ModsMoved += async (sender, args) => await RefreshMods().ConfigureAwait(false);
@@ -80,35 +92,40 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             async (sender, args) => await RefreshMods().ConfigureAwait(false);
 
         ModListVM = new ModListVM(skinManagerService, modNotificationManager);
-        ModListVM.OnModsSelected += async (sender, args) =>
-        {
-            var selectedMod = args.Mods.FirstOrDefault();
-            var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
-            if (mod is null || selectedMod is null)
-            {
-                ModPaneVM.UnloadMod();
-                return;
-            }
-
-            var recentlyAddedModNotifications = args.Mods.SelectMany(x =>
-                x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
-
-            if (recentlyAddedModNotifications.Any())
-            {
-                foreach (var modNotification in recentlyAddedModNotifications)
-                {
-                    await _modNotificationManager.RemoveModNotification(modNotification.Id);
-                    var notification = selectedMod.ModNotifications.FirstOrDefault(x => x.Id == modNotification.Id);
-                    if (notification is not null)
-                        selectedMod.ModNotifications.Remove(notification);
-                }
-            }
-
-
-            await ModPaneVM.LoadMod(selectedMod).ConfigureAwait(false);
-        };
+        ModListVM.OnModsSelected += OnModsSelected;
 
         ModPaneVM = new ModPaneVM(skinManagerService, notificationService);
+    }
+
+    private async void OnModsSelected(object? sender, ModListVM.ModSelectedEventArgs args)
+    {
+        var selectedMod = args.Mods.FirstOrDefault();
+        var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
+        if (mod is null || selectedMod is null)
+        {
+            ModPaneVM.UnloadMod();
+            return;
+        }
+
+        var recentlyAddedModNotifications = args.Mods.SelectMany(x => x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
+
+        if (recentlyAddedModNotifications.Any())
+        {
+            foreach (var modNotification in recentlyAddedModNotifications)
+            {
+                await _modNotificationManager.RemoveModNotification(modNotification.Id);
+
+                foreach (var newModModel in args.Mods)
+                {
+                    var notification = newModModel.ModNotifications.FirstOrDefault(x => x.Id == modNotification.Id);
+                    if (notification is not null) newModModel.ModNotifications.Remove(notification);
+                }
+
+            }
+        }
+
+
+        await ModPaneVM.LoadMod(selectedMod).ConfigureAwait(false);
     }
 
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
@@ -124,7 +141,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             }
 
 
-            if (e.ChangeType != ModFolderChangeType.Deleted)
+            if (e.ChangeType == ModFolderChangeType.Renamed)
             {
                 var inMemoryModNotification = new ModNotification()
                 {
@@ -147,7 +164,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                     },
                 };
 
-                await _modNotificationManager.ShowModNotification(inMemoryModNotification);
+                await _modNotificationManager.AddModNotification(inMemoryModNotification);
             }
 
             await RefreshMods().ConfigureAwait(false);
@@ -268,8 +285,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             IsAddingModFolder = true;
             await Task.Run(async () =>
+            {
                 await _modDragAndDropService.AddStorageItemFoldersAsync(_modList,
-                    new ReadOnlyCollection<IStorageItem>(new List<IStorageItem> { folder })));
+                    new ReadOnlyCollection<IStorageItem>(new List<IStorageItem> { folder }));
+            });
         }
         finally
         {
@@ -580,5 +599,20 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                     _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
             });
         });
+    }
+
+
+    public Task AddNewModAddedNotificationAsync(AttentionType attentionType, string newModFolderName, string? message)
+    {
+        var inMemoryModNotification = new ModNotification()
+        {
+            CharacterId = ShownCharacter.Id,
+            ShowOnOverview = false,
+            ModFolderName = Path.GetFileNameWithoutExtension(newModFolderName),
+            AttentionType = attentionType,
+            Message = message ?? string.Empty,
+        };
+
+        return _modNotificationManager.AddModNotification(inMemoryModNotification);
     }
 }

@@ -5,6 +5,7 @@ using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
+using FuzzySharp.Extractor;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -13,14 +14,12 @@ public class ModDragAndDropService
     private readonly ILogger _logger;
 
     private readonly NotificationManager _notificationManager;
-    private readonly ModNotificationManager _modNotificationManager;
 
-    public event EventHandler? DragAndDropFinished;
+    public event EventHandler<DragAndDropFinishedArgs>? DragAndDropFinished;
 
-    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager, ModNotificationManager modNotificationManager)
+    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager)
     {
         _notificationManager = notificationManager;
-        _modNotificationManager = modNotificationManager;
         _logger = logger.ForContext<ModDragAndDropService>();
     }
 
@@ -44,6 +43,8 @@ public class ModDragAndDropService
             return;
         }
 
+        var extractResults = new List<DragAndDropFinishedArgs.ExtractPaths>();
+
         // Warning mess below
         foreach (var storageItem in storageItems)
         {
@@ -62,6 +63,9 @@ public class ModDragAndDropService
                             "Multiple folders detected during extraction, first one was extracted",
                             $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
                             TimeSpan.FromSeconds(7)));
+
+                extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path,
+                    extractResult.ExtractedMod.FullPath));
                 continue;
             }
 
@@ -114,9 +118,10 @@ public class ModDragAndDropService
 
             recursiveCopy.Invoke(sourceFolder,
                 await StorageFolder.GetFolderFromPathAsync(destFolderPath));
+            extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path, destFolderPath));
         }
 
-        DragAndDropFinished?.Invoke(this, EventArgs.Empty);
+        DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(extractResults));
     }
 
     // ReSharper disable once InconsistentNaming
@@ -170,8 +175,13 @@ public class ModDragAndDropService
 
     public class DragAndDropFinishedArgs : EventArgs
     {
+        public DragAndDropFinishedArgs(ICollection<ExtractPaths> extractResults)
+        {
+            ExtractResults = extractResults;
+        }
 
+        public ICollection<ExtractPaths> ExtractResults { get; }
 
-        public record ExtractResult(string SourcePath, string ExtractedFolderPath);
+        public record ExtractPaths(string SourcePath, string ExtractedFolderPath);
     }
 }

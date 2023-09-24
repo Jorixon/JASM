@@ -104,9 +104,11 @@
                         BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                         BorderThickness="0,4,0,0">
                         <Expander
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             ExpandDirection="Down"
                             Header="Move Mods to another Skin"
+                            IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}"
                             IsExpanded="False">
                             <Expander.Content>
                                 <StackPanel>
@@ -123,7 +125,7 @@
                                         </Button>
 
                                         <StackPanel Margin="4,0,0,0" Visibility="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModHasCharacterSkinOverride, Mode=OneWay}">
-                                            <TextBlock Text="Override Skin Set: " />
+                                            <TextBlock Text="Override Skin Set To: " />
                                             <TextBlock HorizontalAlignment="Center" Text="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModCharacterSkinOverrideDisplayName, Mode=OneWay}" />
                                         </StackPanel>
                                     </StackPanel>
@@ -345,6 +347,7 @@
                                 CanUserResizeColumns="True"
                                 CellEditEnded="ModListGrid_OnCellEditEnded"
                                 ContextFlyout="{Binding ElementName=ModRowFlyout}"
+                                FrozenColumnCount="3"
                                 GridLinesVisibility="All"
                                 ItemsSource="{x:Bind ViewModel.ModListVM.Mods, Mode=OneWay}"
                                 KeyDown="ModListGrid_OnKeyDown"
@@ -367,6 +370,38 @@
                                                         IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
                                                         IsTabStop="False" />
                                                 </Grid>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+
+
+                                    <controls:DataGridTemplateColumn
+                                        Width="SizeToCells"
+                                        CanUserSort="False"
+                                        Header=""
+                                        IsReadOnly="True"
+                                        Tag="NotificationColumn">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:NewModModel">
+
+                                                <StackPanel
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal">
+                                                    <ItemsRepeater ItemsSource="{x:Bind ModNotifications, Mode=OneWay}">
+                                                        <ItemsRepeater.ItemTemplate>
+                                                            <DataTemplate x:DataType="options:ModNotification">
+                                                                <Grid Margin="4,0" VerticalAlignment="Center">
+                                                                    <FontIcon
+                                                                        VerticalAlignment="Bottom"
+                                                                        Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                                                        Glyph="{x:Bind AttentionType, Converter={StaticResource AttentionTypeToSymbolConverter}}" />
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsRepeater.ItemTemplate>
+                                                    </ItemsRepeater>
+                                                </StackPanel>
+
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
                                     </controls:DataGridTemplateColumn>
@@ -396,37 +431,6 @@
                                         Header="Mod Folder Name"
                                         IsReadOnly="True"
                                         Tag="Folder Name" />
-
-                                    <controls:DataGridTemplateColumn
-                                        Width="SizeToCells"
-                                        CanUserSort="False"
-                                        Header=""
-                                        IsReadOnly="True">
-
-                                        <controls:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate x:DataType="models:NewModModel">
-                                                <StackPanel
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Orientation="Horizontal">
-                                                    <ItemsRepeater ItemsSource="{x:Bind ModNotifications, Mode=OneWay}">
-                                                        <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="options:ModNotification">
-                                                                <Grid Margin="4,0" VerticalAlignment="Center">
-                                                                    <FontIcon
-                                                                        VerticalAlignment="Bottom"
-                                                                        Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                                                                        Glyph="{x:Bind AttentionType, Converter={StaticResource AttentionTypeToSymbolConverter}}" />
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsRepeater.ItemTemplate>
-                                                    </ItemsRepeater>
-
-
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </controls:DataGridTemplateColumn.CellTemplate>
-                                    </controls:DataGridTemplateColumn>
 
                                 </controls:DataGrid.Columns>
 
