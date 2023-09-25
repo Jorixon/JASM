@@ -38,7 +38,19 @@
 		<Content Remove="Assets\characters.json" />
 		<Content Remove="Assets\Images\AltCharacterSkins\BarbaraSummertime_Thumb.webp" />
 		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_AmberCN_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_AyakaSpringbloom_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_BarbaraSummertime_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_DilucFlamme_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.webp" />
 		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_JeanSea_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_KaeyaSailwind_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_KleeBlossoming_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.webp" />
+		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.webp" />
 		<Content Remove="Assets\Images\AltCharacterSkins\DilucFlamme_Thumb.webp" />
 		<Content Remove="Assets\Images\AltCharacterSkins\Gunnhildr's_Legacy_Icon.webp" />
 		<Content Remove="Assets\Images\Character_Albedo_Thumb.png" />
@@ -483,33 +495,42 @@
 		<Content Update="Assets\Images\AltCharacterSkins\AmberCN_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_BarbaraSummertime_Thumb.webp">
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_AyakaSpringbloom_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_DilucFlamme_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_BarbaraSummertime_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_DilucFlamme_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_KaeyaSailwind_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_KleeBlossoming_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.webp">
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<Content Update="Assets\Images\AltCharacterSkins\FischlHighness_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

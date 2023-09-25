@@ -732,6 +732,13 @@
         "DisplayName": "Default",
         "Name": "Kaeya",
         "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Sailwind Shadow",
+        "Name": "KaeyaSailwind",
+        "SkinSuffix": "Sailwind",
+        "ImageUri": "Character_Skin_KaeyaSailwind_Thumb.webp"
       }
     ]
   },
@@ -756,6 +763,13 @@
         "DisplayName": "Default",
         "Name": "Ayaka",
         "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Springbloom Missive",
+        "Name": "AyakaSpringbloom",
+        "SkinSuffix": "Springbloom",
+        "ImageUri": "Character_Skin_AyakaSpringbloom_Thumb.webp"
       }
     ]
   },
@@ -879,6 +893,13 @@
         "DisplayName": "Default",
         "Name": "Klee",
         "SkinSuffix": ""
+      },
+      {
+        "DefaultSkin": false,
+        "DisplayName": "Blossoming Starlight",
+        "Name": "KleeBlossoming",
+        "SkinSuffix": "Blossoming",
+        "ImageUri": "Character_Skin_KleeBlossoming_Thumb.webp"
       }
     ]
   },
