@@ -1,4 +1,6 @@
-﻿using Windows.Foundation;
+﻿using System.Security.Principal;
+using Windows.Foundation;
+using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -23,6 +25,7 @@ public class ActivationService : IActivationService
     private readonly GenshinProcessManager _genshinProcessManager;
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
     private readonly UpdateChecker _updateChecker;
+    private readonly IWindowManagerService _windowManagerService;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -31,7 +34,8 @@ public class ActivationService : IActivationService
         IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService,
         ILocalSettingsService localSettingsService,
         IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
-        ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker)
+        ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
+        IWindowManagerService windowManagerService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -42,6 +46,7 @@ public class ActivationService : IActivationService
         _genshinProcessManager = genshinProcessManager;
         _threeDMigtoProcessManager = threeDMigtoProcessManager;
         _updateChecker = updateChecker;
+        _windowManagerService = windowManagerService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -72,6 +77,9 @@ public class ActivationService : IActivationService
 
         // Execute tasks after activation.
         await StartupAsync();
+
+        // Show admin warning if running as admin.
+        AdminWarningPopup();
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -179,5 +187,63 @@ public class ActivationService : IActivationService
 
         _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
         tmpDir.Delete(true);
+    }
+
+    // Declared here for now, might move to a different class later.
+    private const string IgnoreAdminWarningKey = "IgnoreAdminPrivelegesWarning";
+
+    private void AdminWarningPopup()
+    {
+        var identity = WindowsIdentity.GetCurrent();
+        var principal = new WindowsPrincipal(identity);
+
+        if (!principal.IsInRole(WindowsBuiltInRole.Administrator)) return;
+
+        App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+        {
+            await Task.Delay(1000);
+
+            var ignoreWarning = await _localSettingsService.ReadSettingAsync<bool>(IgnoreAdminWarningKey);
+
+            if (ignoreWarning) return;
+
+            var stackPanel = new StackPanel();
+            var textWarning = new TextBlock()
+            {
+                Text = "You are running JASM as an administrator. This is not recommended.\n" +
+                       "JASM was NOT designed to run with administrator privileges.\n" +
+                       "Simple bugs, though unlikely, can potentially cause serious damage to your file system.\n\n" +
+                       "Please consider running JASM without administrator privileges.\n\n" +
+                       "Use at your own risk, you have been warned",
+                TextWrapping = TextWrapping.WrapWholeWords
+            };
+            stackPanel.Children.Add(textWarning);
+
+            var doNotShowAgain = new CheckBox()
+            {
+                IsChecked = false,
+                Content = "Do not show this warning again",
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+
+            stackPanel.Children.Add(doNotShowAgain);
+
+
+            var dialog = new ContentDialog
+            {
+                Title = "Running as Administrator Warning",
+                Content = stackPanel,
+                PrimaryButtonText = "I understand",
+                SecondaryButtonText = "Exit",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            var result = await _windowManagerService.ShowDialogAsync(dialog);
+
+            if (result == ContentDialogResult.Secondary) Application.Current.Exit();
+
+            if (doNotShowAgain.IsChecked == true)
+                await _localSettingsService.SaveSettingAsync(IgnoreAdminWarningKey, true);
+        });
     }
 }
