@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.1](https://github.com/Jorixon/JASM/compare/v1.4.0...v1.4.1) (2023-09-25)
+
+
+### Miscellaneous
+
+* Added a warning popup if JASM is running with administrator privileges, can be turned off ([#46](https://github.com/Jorixon/JASM/issues/46)) ([93e7a08](https://github.com/Jorixon/JASM/commit/93e7a0850f89b1b049c9d26022c346a7537cc3a9))
+* Added missing skin for Klee, Ayaka and Kaeya ([#44](https://github.com/Jorixon/JASM/issues/44)) ([dff8ec0](https://github.com/Jorixon/JASM/commit/dff8ec05861171c252c7c143647e2d3e1bf4821a))
+* **Dependencies:** Updated WinAppSDK and WinUIEx ([93e7a08](https://github.com/Jorixon/JASM/commit/93e7a0850f89b1b049c9d26022c346a7537cc3a9))
+
 ## [1.4.0](https://github.com/Jorixon/JASM/compare/v1.3.0...v1.4.0) (2023-09-24)
 
 
