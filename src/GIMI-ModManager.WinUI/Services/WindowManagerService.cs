@@ -2,10 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Media.Ocr;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -26,7 +24,6 @@ public class WindowManagerService : IWindowManagerService
             _windows.Remove(App.MainWindow);
             var window = new List<WindowEx>(_windows);
             foreach (var windowEx in window)
-            {
                 try
                 {
                     windowEx.Close();
@@ -35,14 +32,15 @@ public class WindowManagerService : IWindowManagerService
                 {
                     _logger?.LogError(e, "Could not close window.");
                 }
-            }
 
             Application.Current.Exit();
         };
     }
 
     public void ShowWindow(WindowEx window)
-        => GetWindow(window).Show();
+    {
+        GetWindow(window).Show();
+    }
 
 
     public void ResizeWindow(WindowEx window, int width, int height)
@@ -53,7 +51,9 @@ public class WindowManagerService : IWindowManagerService
     }
 
     public void ResizeWindow(WindowEx window, ScreenSize newSize)
-        => ResizeWindow(window, newSize.Width, newSize.Height);
+    {
+        ResizeWindow(window, newSize.Width, newSize.Height);
+    }
 
 
     public void ResizeWindowPercent(WindowEx window, int widthPercent, int heightPercent)
@@ -102,7 +102,7 @@ public class WindowManagerService : IWindowManagerService
 
     public async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null)
     {
-        var currentWindow = window is not null ?  GetWindow(window) : MainWindow;
+        var currentWindow = window is not null ? GetWindow(window) : MainWindow;
 
         if (_windowDialogOpen.Contains(currentWindow))
             throw new InvalidOperationException("Window already has a dialog open.");
@@ -115,10 +115,6 @@ public class WindowManagerService : IWindowManagerService
             dialog.XamlRoot = currentWindow.Content.XamlRoot;
             result = await dialog.ShowAsync();
         }
-        catch (Exception e)
-        {
-            _logger?.LogError(e, "Error with dialog");
-        }
         finally
         {
             _windowDialogOpen.Remove(currentWindow);
@@ -128,7 +124,9 @@ public class WindowManagerService : IWindowManagerService
     }
 
     private WindowEx GetWindow(WindowEx window)
-        => _windows.Find(x => x.Equals(window)) ?? throw new ArgumentException("Window not found.", nameof(window));
+    {
+        return _windows.Find(x => x.Equals(window)) ?? throw new ArgumentException("Window not found.", nameof(window));
+    }
 }
 
 public interface IWindowManagerService
