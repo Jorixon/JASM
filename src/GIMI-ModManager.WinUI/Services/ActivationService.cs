@@ -189,6 +189,8 @@ public class ActivationService : IActivationService
         tmpDir.Delete(true);
     }
 
+    // Declared here for now, might move to a different class later.
+    private const string IgnoreAdminWarningKey = "IgnoreAdminPrivelegesWarning";
 
     private void AdminWarningPopup()
     {
@@ -200,6 +202,10 @@ public class ActivationService : IActivationService
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
             await Task.Delay(1000);
+
+            var ignoreWarning = await _localSettingsService.ReadSettingAsync<bool>(IgnoreAdminWarningKey);
+
+            if (ignoreWarning) return;
 
             var stackPanel = new StackPanel();
             var textWarning = new TextBlock()
@@ -213,13 +219,14 @@ public class ActivationService : IActivationService
             };
             stackPanel.Children.Add(textWarning);
 
-            //var doNotShowAgain = new CheckBox()
-            //{
-            //    Content = "Do not show this warning again",
-            //    Margin = new Thickness(0, 10, 0, 0)
-            //};
+            var doNotShowAgain = new CheckBox()
+            {
+                IsChecked = false,
+                Content = "Do not show this warning again",
+                Margin = new Thickness(0, 10, 0, 0)
+            };
 
-            //stackPanel.Children.Add(doNotShowAgain);
+            stackPanel.Children.Add(doNotShowAgain);
 
 
             var dialog = new ContentDialog
@@ -234,6 +241,9 @@ public class ActivationService : IActivationService
             var result = await _windowManagerService.ShowDialogAsync(dialog);
 
             if (result == ContentDialogResult.Secondary) Application.Current.Exit();
+
+            if (doNotShowAgain.IsChecked == true)
+                await _localSettingsService.SaveSettingAsync(IgnoreAdminWarningKey, true);
         });
     }
 }
