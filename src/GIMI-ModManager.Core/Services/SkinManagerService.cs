@@ -568,6 +568,34 @@ public sealed class SkinManagerService : ISkinManagerService
         return returnVar;
     }
 
+
+    public void ActivateModList(ModList modList)
+    {
+        var allTrackedMods = _characterModLists.SelectMany(x => x.Mods).ToList();
+
+
+        foreach (var mod in modList.Mods)
+        {
+            var modEntry = allTrackedMods.FirstOrDefault(x =>
+                x.Mod.FullPath.Equals(mod.Path, StringComparison.CurrentCultureIgnoreCase));
+
+
+            if (modEntry is null)
+            {
+                _logger.Warning("Mod '{ModName}' is not tracked, skipping", mod.Path);
+                continue;
+            }
+
+            var characterModList = modEntry.ModList;
+            characterModList.EnableMod(modEntry.Id);
+
+            allTrackedMods.Remove(modEntry);
+        }
+
+        allTrackedMods.ForEach(x => x.ModList.DisableMod(x.Id));
+    }
+
+
     public void Dispose()
     {
         _userIniWatcher?.Dispose();
