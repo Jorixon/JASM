@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.Services;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -17,7 +18,10 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     private readonly FileSystemWatcher _watcher;
     public GenshinCharacter Character { get; }
 
-    internal CharacterModList(GenshinCharacter character, string absPath, ILogger? logger = null)
+    public ModListManager ModListManager { get; }
+
+    internal CharacterModList(GenshinCharacter character, ModListManager modListManager, string absPath,
+        ILogger? logger = null)
     {
         _logger = logger?.ForContext<CharacterModList>();
         Character = character;

@@ -12,6 +12,8 @@ public class ModListManager
 
     public IReadOnlyList<ModList> ModLists => _modLists;
 
+    public ModList ActiveModList { get; private set; } = null!;
+
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
         ReadCommentHandling = JsonCommentHandling.Skip,
@@ -49,10 +51,32 @@ public class ModListManager
             modLists.Add(modList);
         }
 
+        if (modLists.Count == 0)
+        {
+            modLists.Add(new ModList { Id = 0, DisplayName = "Default", IsEnabled = true });
+            await SaveModList(modLists[0]);
+            ActiveModList = modLists[0];
+            return null;
+        }
+
+        if (modLists.Count == 1)
+            modLists[0].IsEnabled = true;
+
+        var enabledModLists = modLists.Where(modList => modList.IsEnabled).ToArray();
+        if (enabledModLists.Length > 1)
+        {
+            ActiveModList = enabledModLists[0];
+            foreach (var modList in enabledModLists.Skip(1))
+                modList.IsEnabled = false;
+
+            errors.Add(
+                $"Multiple mod lists are enabled. Only one mod list can be enabled at a time. The first enabled mod list will be used. ({ActiveModList.DisplayName})");
+        }
+
         return errors.Count > 0 ? new Errors(errors.ToArray()) : null;
     }
 
-    internal async Task SaveModList(ModList modList)
+    internal Task SaveModList(ModList modList)
     {
         var modListDir = new DirectoryInfo(_modListPath);
         if (!modListDir.Exists)
@@ -61,9 +85,11 @@ public class ModListManager
         var modListFileName =
             string.IsNullOrWhiteSpace(modList.DisplayName) ? modList.Id.ToString() : modList.DisplayName;
 
+        if (File.Exists(Path.Combine(modListDir.FullName, $"{modListFileName}.json")))
+            throw new Exception($"Mod list {modListFileName} already exists");
 
         var file = new FileInfo(Path.Combine(modListDir.FullName, $"{modListFileName}.json"));
-        await File.WriteAllTextAsync(file.FullName, JsonSerializer.Serialize(modList, _jsonSerializerOptions));
+        return File.WriteAllTextAsync(file.FullName, JsonSerializer.Serialize(modList, _jsonSerializerOptions));
     }
 
     public async Task<ModList> CreateModList(string displayName)
@@ -73,6 +99,28 @@ public class ModListManager
         await SaveModList(modList);
         return modList;
     }
+
+    public Task SetActiveModList(ModList modList)
+    {
+        if (!_modLists.Contains(modList))
+            throw new Exception("Mod list does not exist");
+
+        foreach (var list in _modLists)
+            list.IsEnabled = false;
+
+        modList.IsEnabled = true;
+        ActiveModList = modList;
+
+        var modListDir = new DirectoryInfo(_modListPath);
+        if (!modListDir.Exists)
+            modListDir.Create();
+
+        var modListFileName =
+            string.IsNullOrWhiteSpace(modList.DisplayName) ? modList.Id.ToString() : modList.DisplayName;
+
+        var file = new FileInfo(Path.Combine(modListDir.FullName, $"{modListFileName}.json"));
+        return File.WriteAllTextAsync(file.FullName, JsonSerializer.Serialize(modList, _jsonSerializerOptions));
+    }
 }
 
 public class ModList
@@ -80,30 +128,43 @@ public class ModList
     public int Id { get; init; }
     public string DisplayName { get; set; } = string.Empty;
 
+    public bool IsEnabled { get; internal set; }
+
     private readonly List<IModListItem> _mods = new();
 
     public IReadOnlyList<IModListItem> Mods => _mods;
 
+    private readonly object _lock = new();
+
     internal void AddMod(IModListItem mod)
     {
-        if (_mods.Contains(mod))
-            return;
-        _mods.Add(mod);
+        lock (_lock)
+        {
+            if (_mods.Contains(mod))
+                return;
+            _mods.Add(mod);
+        }
     }
 
     internal void RemoveMod(IModListItem mod)
     {
-        if (!_mods.Contains(mod))
-            return;
-        _mods.Remove(mod);
+        lock (_lock)
+        {
+            if (!_mods.Contains(mod))
+                return;
+            _mods.Remove(mod);
+        }
     }
 
     internal bool ReplaceMod(IModListItem oldMod, IModListItem newMod)
     {
-        if (!_mods.Contains(oldMod))
-            return false;
-        _mods[_mods.IndexOf(oldMod)] = newMod;
-        return true;
+        lock (_lock)
+        {
+            if (!_mods.Contains(oldMod))
+                return false;
+            _mods[_mods.IndexOf(oldMod)] = newMod;
+            return true;
+        }
     }
 }
 
@@ -111,6 +172,7 @@ public sealed class ModListItem : IModListItem, IEqualityComparer<ModListItem>
 {
     private readonly ISkinMod _mod;
 
+    // DISPLAY_NAME/MOD_FOLDER_NAME without the disabled prefix
     internal ModListItem(ISkinMod mod)
     {
         _mod = mod;
