@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
-using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
-using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using Serilog;
 
@@ -18,52 +16,49 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGenshinService _genshinService;
     private readonly ModCrawlerService _modCrawlerService;
+    private readonly IModUpdateCheckerService _modUpdateCheckerService;
 
 
     public DebugViewModel(ILogger logger, NotificationManager notificationManager,
-        ISkinManagerService skinManagerService, IGenshinService genshinService, ModCrawlerService modCrawlerService)
+        ISkinManagerService skinManagerService, IGenshinService genshinService, ModCrawlerService modCrawlerService,
+        IModUpdateCheckerService modUpdateCheckerService)
     {
         _logger = logger;
         _notificationManager = notificationManager;
         _skinManagerService = skinManagerService;
         _genshinService = genshinService;
         _modCrawlerService = modCrawlerService;
+        _modUpdateCheckerService = modUpdateCheckerService;
     }
 
-    [ObservableProperty] private string _path = string.Empty;
-
-    public ObservableCollection<SkinVM> InGameSkins = new();
+    [ObservableProperty] private string _url = string.Empty;
 
     [RelayCommand]
-    private async Task TestCrawlerAsync()
+    private async Task CheckAsync()
     {
-        foreach (var subSkin in _modCrawlerService.GetSubSkinsRecursive(Path))
-            InGameSkins.Add(SkinVM.FromSkin(subSkin));
+        ModsRetrievedResult result;
+        try
+        {
+            result =
+                await _modUpdateCheckerService.CheckForUpdatesAsync(Url, DateTime.MinValue, CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to check for updates");
+            return;
+        }
+
+        _logger.Information("Result: {result}", result);
+
+        Results.Clear();
+        foreach (var updateCheckResult in result.Mods) Results.Add(updateCheckResult);
     }
 
-    [RelayCommand]
-    private async Task ItemClicked(object item)
-    {
-        await Task.Delay(2000);
-        Log.Information("Item clicked: {item}", item);
-    }
+    public ObservableCollection<UpdateCheckResult> Results { get; } = new();
 
-
-    public ObservableCollection<SelectCharacterTemplate> Items { get; } = new();
 
     public void OnNavigatedTo(object parameter)
     {
-        var characters = _genshinService.GetCharacters().Take(5);
-        foreach (var character in characters)
-        {
-            var vm = new SelectCharacterTemplate
-            {
-                DisplayName = character.DisplayName,
-                ImagePath = character.ImageUri ?? " ",
-                IsSelected = false
-            };
-            Items.Add(vm);
-        }
     }
 
     public void OnNavigatedFrom()

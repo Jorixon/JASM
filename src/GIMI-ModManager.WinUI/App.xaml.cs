@@ -11,6 +11,10 @@ using GIMI_ModManager.WinUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using Polly;
+using Polly.Contrib.WaitAndRetry;
+using Polly.Extensions.Http;
+using Polly.Timeout;
 using Serilog;
 using Serilog.Templates;
 
@@ -75,7 +79,7 @@ public partial class App : Application
 
                 services.AddSingleton<IWindowManagerService, WindowManagerService>();
                 services.AddSingleton<NotificationManager>();
-                services.AddSingleton<ModNotificationManager>();    
+                services.AddSingleton<ModNotificationManager>();
                 services.AddTransient<ModDragAndDropService>();
 
                 services.AddSingleton<ElevatorService>();
@@ -89,6 +93,40 @@ public partial class App : Application
                 services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();
+                services.AddSingleton<IModUpdateCheckerService, GameBananaService>();
+
+
+                var rateLimitPolicy = Policy.RateLimitAsync(2, TimeSpan.FromSeconds(1));
+
+
+                var circuitBreakerPolicy = HttpPolicyExtensions.HandleTransientHttpError()
+                    .Or<TimeoutRejectedException>()
+                    .WaitAndRetryAsync(
+                        Backoff.DecorrelatedJitterBackoffV2(
+                            TimeSpan.FromSeconds(1),
+                            5,
+                            fastFirst: false
+                        ), onRetry: (result, span) =>
+                        {
+                            Log.Debug($"[{DateTime.Now}] Retrying...");
+                            if (result.Result != null)
+                                Log.Debug(
+                                    $"Status code: {result.Result.StatusCode}, Message: {result.Result.ReasonPhrase}");
+                            Log.Debug("Waiting for " + span.TotalMilliseconds + " milliseconds");
+                        });
+
+                var timeOutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(6));
+
+
+                services.AddHttpClient(GameBananaService.HttpClientName, client =>
+                    {
+                        client.BaseAddress = new Uri("https://gamebanana.com/");
+                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
+                        client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    })
+                    .AddPolicyHandler(rateLimitPolicy.AsAsyncPolicy<HttpResponseMessage>())
+                    .AddPolicyHandler(circuitBreakerPolicy)
+                    .AddPolicyHandler(timeOutPolicy);
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();

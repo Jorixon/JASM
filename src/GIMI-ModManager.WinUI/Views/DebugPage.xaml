@@ -7,15 +7,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:GIMI_ModManager.Core.Services"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.Models.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Flyout x:Name="Flyout">
-            <Grid>
-                    <controls:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.Items, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.ItemClickedCommand}" />
-            </Grid>
-        </Flyout>
+        <DataTemplate x:Name="Template" x:DataType="services:UpdateCheckResult">
+            <StackPanel
+                Padding="8"
+                BorderBrush="Gray"
+                BorderThickness="1">
+                <TextBlock Text="{x:Bind FileName}" />
+                <TextBlock Text="{x:Bind Description}" />
+                <TextBlock Text="{x:Bind DateAdded}" />
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
@@ -24,18 +30,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel>
-            <Button Command="{x:Bind ViewModel.TestCrawlerCommand}" Content="Test" />
-            <TextBox Text="{x:Bind ViewModel.Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="Open" Flyout="{StaticResource Flyout}" />
+        <StackPanel Orientation="Horizontal">
+            <TextBox Text="{x:Bind ViewModel.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Command="{x:Bind ViewModel.CheckCommand}" Content="Check" />
         </StackPanel>
 
-        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.InGameSkins}">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:SkinVM">
-                    <TextBlock Text="{x:Bind DisplayName}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <ListView
+            Grid.Row="1"
+            ItemTemplate="{x:Bind Template}"
+            ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}" />
     </Grid>
 </Page>
