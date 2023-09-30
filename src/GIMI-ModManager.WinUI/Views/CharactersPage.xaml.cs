@@ -127,8 +127,13 @@ public sealed partial class CharactersPage : Page
         Log.Error("Failed to load dock panel element icon. Reason: {e}", e.ErrorMessage);
     }
 
-    private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+    private void ItemsView_OnItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs args)
     {
-        ViewModel.DockPanelVM.ElementSelectedCommand.Execute(e.ClickedItem);
+        ViewModel.DockPanelVM.ElementSelectedCommand.Execute(args.InvokedItem);
+    }
+
+    private void ItemsView_OnSelectionChanged(ItemsView sender, ItemsViewSelectionChangedEventArgs args)
+    {
+        ViewModel.DockPanelVM.ElementSelectedCommand.Execute(sender.SelectedItems.FirstOrDefault());
     }
 }

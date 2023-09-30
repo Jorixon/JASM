@@ -46,46 +46,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <Button
-                Command="{x:Bind ViewModel.RefreshModsInGameCommand}"
-                Content="Refresh Mods"
-                IsHitTestVisible="True" />
-            <Button
-                Margin="32,0,32,0"
-                Command="{x:Bind ViewModel.Start3DmigotoCommand}"
-                Content="Start 3Dmigoto">
-                <ToolTipService.ToolTip>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
-                    </StackPanel>
-                </ToolTipService.ToolTip>
-            </Button>
-            <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,4,0" Text="Start Genshin" />
-                    <Image
-                        Width="16"
-                        Height="16"
-                        Source="../Assets/Images/Start_Genshin.png" />
-                </StackPanel>
-                <ToolTipService.ToolTip>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
-                    </StackPanel>
-                </ToolTipService.ToolTip>
-            </Button>
-        </StackPanel>
-
-        <Grid Grid.Row="1">
-
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <StackPanel
@@ -110,6 +74,94 @@
 
 
             </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+
+                <Button
+                    Command="{x:Bind ViewModel.RefreshModsInGameCommand}"
+                    Content="Refresh Mods"
+                    IsHitTestVisible="True" />
+                <Button
+                    Margin="32,0,32,0"
+                    Command="{x:Bind ViewModel.Start3DmigotoCommand}"
+                    Content="Start 3Dmigoto">
+                    <ToolTipService.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                        </StackPanel>
+                    </ToolTipService.ToolTip>
+                </Button>
+                <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,4,0" Text="Start Genshin" />
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="../Assets/Images/Start_Genshin.png" />
+                    </StackPanel>
+                    <ToolTipService.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                        </StackPanel>
+                    </ToolTipService.ToolTip>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <!--<StackPanel
+                x:Name="ElementFilter"
+                Padding="4"
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="10"
+                Orientation="Horizontal">-->
+
+            <ItemsView
+                IsItemInvokedEnabled="True"
+                ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=OneWay}"
+                SelectionChanged="ItemsView_OnSelectionChanged"
+                SelectionMode="Single">
+                <ItemsView.ItemTemplate>
+                    <DataTemplate x:DataType="subVms:ElementIcon">
+                        <ItemContainer
+                            Width="60"
+                            MaxWidth="80"
+                            MaxHeight="40">
+                            <Grid Padding="4,0" HorizontalAlignment="Center">
+                                <Image
+                                    VerticalAlignment="Center"
+                                    ImageFailed="BitmapImage_OnImageFailed"
+                                    Source="{x:Bind ImageUri}" />
+                            </Grid>
+
+                        </ItemContainer>
+                    </DataTemplate>
+                </ItemsView.ItemTemplate>
+                <ItemsView.Layout>
+                    <StackLayout Orientation="Horizontal" />
+                </ItemsView.Layout>
+            </ItemsView>
+
+            <!--<Button>
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE894;" />
+                    </Button.Content>
+                </Button>
+
+            </StackPanel>-->
+
 
             <Grid
                 x:Name="DragAndDropArea"
@@ -172,7 +224,7 @@
 
         <controls:AdaptiveGridView
             Grid.Row="2"
-            Margin="0,0,0,68"
+            Margin="0,0,0,8"
             animations:Connected.ListItemElementName="itemThumbnail"
             animations:Connected.ListItemKey="animationKeyContentGrid"
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
@@ -260,7 +312,7 @@
                 </DataTemplate>
             </controls:AdaptiveGridView.ItemTemplate>
         </controls:AdaptiveGridView>
-        <controls:DockPanel Grid.Row="2" HorizontalAlignment="Center">
+        <!--<controls:DockPanel Grid.Row="2" HorizontalAlignment="Center">
             <StackPanel
                 x:Name="ElementFilter"
                 Padding="4"
@@ -300,6 +352,6 @@
                 </Button>
 
             </StackPanel>
-        </controls:DockPanel>
+        </controls:DockPanel>-->
     </Grid>
 </Page>

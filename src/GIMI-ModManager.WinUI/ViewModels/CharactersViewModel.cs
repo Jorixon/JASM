@@ -34,7 +34,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
-    public OverviewDockPanelVM DockPanelVM { get; } = new();
+    public OverviewDockPanelVM DockPanelVM { get; }
 
 
     private GenshinCharacter[] _characters = Array.Empty<GenshinCharacter>();
@@ -76,6 +76,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             if (args.PropertyName == nameof(ElevatorService.ElevatorStatus))
                 RefreshModsInGameCommand.NotifyCanExecuteChanged();
         };
+        DockPanelVM = new OverviewDockPanelVM();
+        DockPanelVM.FilterElementSelected += FilterElementSelected;
+    }
+
+    private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
+    {
+        _logger.Debug("Filtering characters by element {Element}", e.Element);
     }
 
     private readonly CharacterGridItemModel _noCharacterFound =
@@ -291,6 +298,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             characters.Remove(weapons);
             characters.Add(weapons);
         }
+
+
+        DockPanelVM.Initialize();
 
         _characters = characters.ToArray();
 

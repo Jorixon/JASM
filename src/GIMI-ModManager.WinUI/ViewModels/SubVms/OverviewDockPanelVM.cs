@@ -13,10 +13,12 @@ public partial class OverviewDockPanelVM : ObservableRecipient
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<OverviewDockPanelVM>();
     private readonly IGenshinService _genshinService = App.GetService<IGenshinService>();
 
+    public event EventHandler<FilterElementSelectedArgs>? FilterElementSelected;
     public ObservableCollection<ElementIcon> Elements { get; } = new();
-    [ObservableProperty] private ElementIcon? _selectedElement;
+    public ElementIcon? SelectedElement { get; private set; }
 
-    public OverviewDockPanelVM()
+
+    public void Initialize()
     {
         _logger.Debug("Initializing OverviewDockPanelVM");
         var elements = _genshinService.GetElements().Where(e => e != Core.Entities.Genshin.Elements.None).Reverse();
@@ -47,6 +49,17 @@ public partial class OverviewDockPanelVM : ObservableRecipient
 
         _logger.Debug("ElementSelected: {Element}", element.Element);
         SelectedElement = element;
+        FilterElementSelected?.Invoke(this, new FilterElementSelectedArgs(element.Element));
+    }
+}
+
+public sealed class FilterElementSelectedArgs : EventArgs
+{
+    public Elements Element { get; }
+
+    public FilterElementSelectedArgs(Elements element)
+    {
+        Element = element;
     }
 }
 
