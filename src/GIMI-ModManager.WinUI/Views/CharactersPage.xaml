@@ -11,6 +11,7 @@
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
+    xmlns:subVms="using:GIMI_ModManager.WinUI.ViewModels.SubVms"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -36,17 +37,6 @@
                         <FontIcon Glyph="{x:Bind ViewModel.PinGlyph, Mode=OneWay}" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
-                <!--<MenuFlyoutSeparator />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{x:Bind ViewModel.HideCharacterCommand}"
-                    CommandParameter="{Binding}"
-                    Text="Hide Character">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xED1A;" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>-->
             </MenuFlyout>
         </Grid.Resources>
 
@@ -182,6 +172,7 @@
 
         <controls:AdaptiveGridView
             Grid.Row="2"
+            Margin="0,0,0,68"
             animations:Connected.ListItemElementName="itemThumbnail"
             animations:Connected.ListItemKey="animationKeyContentGrid"
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
@@ -269,5 +260,46 @@
                 </DataTemplate>
             </controls:AdaptiveGridView.ItemTemplate>
         </controls:AdaptiveGridView>
+        <controls:DockPanel Grid.Row="2" HorizontalAlignment="Center">
+            <StackPanel
+                x:Name="ElementFilter"
+                Padding="4"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                controls:DockPanel.Dock="Bottom"
+                Background="{ThemeResource SmokeFillColorDefaultBrush}"
+                CornerRadius="10"
+                Orientation="Horizontal">
+                <GridView
+                    VerticalAlignment="Bottom"
+                    BorderThickness="0"
+                    IsItemClickEnabled="True"
+                    IsMultiSelectCheckBoxEnabled="False"
+                    ItemClick="ListViewBase_OnItemClick"
+                    ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.DockPanelVM.SelectedElement, Mode=TwoWay}"
+                    SelectionMode="Single">
+
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="subVms:ElementIcon">
+                            <Grid
+                                Margin="8,0,8,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <Image MaxWidth="40" Source="{x:Bind ImageUri}" />
+                            </Grid>
+
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+
+                <Button>
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE894;" />
+                    </Button.Content>
+                </Button>
+
+            </StackPanel>
+        </controls:DockPanel>
     </Grid>
 </Page>

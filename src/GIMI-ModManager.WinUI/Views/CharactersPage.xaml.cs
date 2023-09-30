@@ -121,4 +121,14 @@ public sealed partial class CharactersPage : Page
         await ViewModel.ModDroppedOnAutoDetect(await e.DataView.GetStorageItemsAsync());
         DragAndDropArea.Visibility = Visibility.Collapsed;
     }
+
+    private void BitmapImage_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
+    {
+        Log.Error("Failed to load dock panel element icon. Reason: {e}", e.ErrorMessage);
+    }
+
+    private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+    {
+        ViewModel.DockPanelVM.ElementSelectedCommand.Execute(e.ClickedItem);
+    }
 }

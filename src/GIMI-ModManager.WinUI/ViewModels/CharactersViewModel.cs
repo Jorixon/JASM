@@ -12,6 +12,7 @@ using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -32,6 +33,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
+
+    public OverviewDockPanelVM DockPanelVM { get; } = new();
 
 
     private GenshinCharacter[] _characters = Array.Empty<GenshinCharacter>();
@@ -624,7 +627,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                     CharacterId = modList.Character.Id,
                     AttentionType = AttentionType.Added,
                     ModFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name,
-                    Message = "Mod added from character overview",
+                    Message = "Mod added from character overview"
                 };
                 await _modNotificationManager.AddModNotification(notfiy);
 

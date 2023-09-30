@@ -45,13 +45,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty] private GenshinCharacter _shownCharacter = null!;
 
-    public ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
+    public readonly ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
 
     [ObservableProperty] public bool _multipleInGameSkins = false;
 
     [ObservableProperty] private SkinVM _selectedInGameSkin = new();
 
-    private static Dictionary<GenshinCharacter, string> _lastSelectedSkin = new();
+    private static readonly Dictionary<GenshinCharacter, string> _lastSelectedSkin = new();
 
     public ModListVM.SortMethod? SortMethod { get; set; }
 
@@ -518,6 +518,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private async Task DisableAllMods()
     {
+        if (ModListVM.Mods.Count == 0) return;
         var shownMods = ModListVM.Mods.Where(mod => mod.IsEnabled).ToArray();
         await Task.Run(() =>
         {

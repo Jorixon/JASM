@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System.Reflection;
 using FuzzySharp;
 using GIMI_ModManager.Core.Entities.Genshin;
 using Newtonsoft.Json;
@@ -70,6 +69,11 @@ public class GenshinService : IGenshinService
     public IEnumerable<GenshinCharacter> GetCharacters()
     {
         return _characters;
+    }
+
+    public List<Elements> GetElements()
+    {
+        return Enum.GetValues<Elements>().ToList();
     }
 
     public GenshinCharacter? GetCharacter(string keywords,
@@ -235,6 +239,7 @@ public interface IGenshinService
 {
     public Task InitializeAsync(string jsonFile);
     public IEnumerable<GenshinCharacter> GetCharacters();
+    public List<Elements> GetElements();
 
     public GenshinCharacter? GetCharacter(string keywords,
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70);

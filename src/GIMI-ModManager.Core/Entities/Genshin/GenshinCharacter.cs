@@ -11,8 +11,10 @@ public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCha
     public DateTime ReleaseDate { get; set; } = DateTime.MinValue;
     public string? ImageUri { get; set; }
     public int Rarity { get; set; }
+
     [JsonConverter(typeof(StringEnumConverter))]
     public Elements Element { get; set; }
+
     public string Weapon { get; set; } = string.Empty;
     public string[] Region { get; set; } = Array.Empty<string>();
     public IReadOnlyCollection<ISubSkin> InGameSkins { get; set; } = Array.Empty<Skin>();
@@ -116,8 +118,10 @@ public interface IGenshinCharacter : IEqualityComparer<GenshinCharacter>, IEqual
     public DateTime ReleaseDate { get; }
     public string? ImageUri { get; }
     public int Rarity { get; }
+
     [JsonConverter(typeof(StringEnumConverter))]
     public Elements Element { get; }
+
     public string Weapon { get; }
     public string[] Region { get; }
     public IReadOnlyCollection<ISubSkin> InGameSkins { get; }
@@ -147,11 +151,11 @@ public interface ISubSkin : IEqualityComparer<ISubSkin>
 public enum Elements
 {
     None,
-    Anemo,
     Geo,
-    Electro,
-    Hydro,
-    Pyro,
     Cryo,
     Dendro,
+    Electro,
+    Anemo,
+    Hydro,
+    Pyro
 }
