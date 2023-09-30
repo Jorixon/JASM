@@ -40,7 +40,8 @@
                 Closed="MoveRowFlyout_OnClosed"
                 Opened="ModRowFlyout_OnOpened"
                 Opening="ModRowFlyout_OnOpening"
-                Placement="RightEdgeAlignedBottom">
+                Placement="RightEdgeAlignedBottom"
+                ShouldConstrainToRootBounds="False">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />

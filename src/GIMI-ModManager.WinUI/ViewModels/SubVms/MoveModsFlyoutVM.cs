@@ -43,7 +43,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     [ObservableProperty] private string _selectedModCharacterSkinOverrideDisplayName = string.Empty;
 
-
+    public event EventHandler? CloseFlyoutEvent;
     public ObservableCollection<GenshinCharacter> SuggestedCharacters { get; init; } = new();
     private List<NewModModel> SelectedMods { get; init; } = new();
 
@@ -92,7 +92,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         if (SelectedModsCount == 1)
         {
             var selectedMod = SelectedMods.First();
-            SelectedModHasCharacterSkinOverride =  !string.IsNullOrWhiteSpace(selectedMod.CharacterSkinOverride);
+            SelectedModHasCharacterSkinOverride = !string.IsNullOrWhiteSpace(selectedMod.CharacterSkinOverride);
             SelectedModCharacterSkinOverrideDisplayName = selectedMod.CharacterSkinOverride;
         }
         else
@@ -202,6 +202,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             DefaultButton = ContentDialogButton.Primary
         };
 
+        CloseFlyout();
         var result = await windowManager.ShowDialogAsync(dialog);
 
         if (result != ContentDialogResult.Primary)
@@ -288,11 +289,11 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     public event EventHandler? ModCharactersSkinOverriden;
 
 
-
     [RelayCommand]
     private void CloseFlyout()
     {
         IsMoveModsFlyoutOpen = false;
+        CloseFlyoutEvent?.Invoke(this, EventArgs.Empty);
     }
 
     private readonly GenshinCharacter
@@ -350,7 +351,6 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SearchText = character.DisplayName;
         return true;
     }
-
 
 
     [RelayCommand]
