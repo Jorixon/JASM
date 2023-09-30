@@ -63,6 +63,8 @@ public sealed partial class CharacterDetailsPage : Page
             // set focus to the first item
             ModListGrid.Focus(FocusState.Programmatic);
         };
+
+        ViewModel.MoveModsFlyoutVM.CloseFlyoutEvent += (sender, args) => { ModRowFlyout.Hide(); };
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
