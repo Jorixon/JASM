@@ -5,6 +5,7 @@
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     xmlns:xaml="using:Microsoft.UI.Xaml"
@@ -21,10 +22,9 @@
         </Grid.RowDefinitions>
 
         <!--  Only the  "ContentDialog.ContentTemplate" xaml markup i used  -->
-        <ContentDialog x:Name="ExportDialog">
+        <ContentDialog x:Name="ExportDialog" l:Uids.Uid="Settings_ExportDialogButtons">
             <ContentDialog.ContentTemplate>
                 <DataTemplate x:DataType="viewModels:ExportModsDialogModel">
-
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -35,56 +35,30 @@
                             <RowDefinition />
                         </Grid.RowDefinitions>
 
-                        <TextBlock IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords">
-                            <TextBlock.Text>
-                                This will export all mods that JASM is managing to a an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder.
-                            </TextBlock.Text>
-                        </TextBlock>
+                        <TextBlock
+                            l:Uids.Uid="Settings_ExportDialog"
+                            IsTextSelectionEnabled="True"
+                            TextWrapping="WrapWholeWords" />
 
                         <StackPanel Grid.Row="1" Orientation="Horizontal">
                             <CheckBox IsChecked="{x:Bind KeepFolderStructure, Mode=TwoWay}" />
                             <TextBlock
+                                l:Uids.Uid="Settings_ExportDialog_KeepStructure"
                                 IsTextSelectionEnabled="True"
-                                Text="Keep folder structure of CharacterName/Mods in export folder"
                                 TextWrapping="WrapWholeWords" />
                         </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                             <CheckBox IsChecked="{x:Bind RemoveJasmSettings, Mode=TwoWay}" />
-                            <TextBlock IsTextSelectionEnabled="True" Text="Removes JASM configuration files from the exported Mods" />
+                            <TextBlock l:Uids.Uid="Settings_ExportDialog_RemoveJasm" IsTextSelectionEnabled="True" />
                         </StackPanel>
 
                         <StackPanel Grid.Row="3" Orientation="Horizontal">
                             <ComboBox ItemsSource="{x:Bind SetModStatuses, Mode=TwoWay}" SelectedItem="{x:Bind SetModStatus, Mode=TwoWay}" />
                             <TextBlock
                                 VerticalAlignment="Center"
-                                IsTextSelectionEnabled="True"
-                                Text="Change status of exported mods" />
+                                l:Uids.Uid="Settings_ExportDialog_ChangeStatus"
+                                IsTextSelectionEnabled="True" />
                         </StackPanel>
-                        <!--<ScrollViewer Grid.Row="3">
-
-                            <StackPanel>
-                                <TextBlock Text="Select which character's mods to export:" />
-
-                                <ListView ItemsSource="{x:Bind CharacterModsToBackup, Mode=OneWay}" SelectionMode="None">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="viewModels:CharacterCheckboxModel">
-                                            <StackPanel Orientation="Horizontal">
-                                                <CheckBox IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
-                                                <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Character.DisplayName, Mode=OneWay}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </StackPanel>
-                        </ScrollViewer>
-
-                        <StackPanel Grid.Row="4" Orientation="Horizontal">
-                            <Button Content="Select All" />
-                            <Button Content="Disble All" />
-
-                        </StackPanel>-->
-
-
 
                     </Grid>
                 </DataTemplate>
@@ -92,19 +66,18 @@
         </ContentDialog>
 
         <TextBlock
-            x:Uid="Settings_Title"
             Grid.Row="0"
+            l:Uids.Uid="Settings_Title"
             Style="{StaticResource PageTitleStyle}" />
         <ScrollViewer Grid.Row="1">
-
             <StackPanel x:Name="ContentArea">
-                <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                    <TextBlock x:Uid="Settings_Theme" />
+                    <TextBlock l:Uids.Uid="Settings_Theme" />
 
                     <StackPanel Margin="{StaticResource XSmallTopMargin}">
                         <RadioButton
-                            x:Uid="Settings_Theme_Light"
+                            l:Uids.Uid="Settings_Theme_Light"
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
@@ -114,7 +87,7 @@
                             </RadioButton.CommandParameter>
                         </RadioButton>
                         <RadioButton
-                            x:Uid="Settings_Theme_Dark"
+                            l:Uids.Uid="Settings_Theme_Dark"
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
@@ -124,7 +97,7 @@
                             </RadioButton.CommandParameter>
                         </RadioButton>
                         <RadioButton
-                            x:Uid="Settings_Theme_Default"
+                            l:Uids.Uid="Settings_Theme_Default"
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
                             FontSize="15"
                             GroupName="AppTheme"
@@ -134,6 +107,22 @@
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>
+                </StackPanel>
+
+                <TextBlock l:Uids.Uid="Settings_Language" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        l:Uids.Uid="Settings_Language_TexBlock"
+                        TextWrapping="WrapWholeWords" />
+
+                    <ComboBox
+                        x:Name="LanguageSelectorComboBox"
+                        l:Uids.Uid="Settings_ComboBox_Header"
+                        ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
+                        SelectionChanged="LanguageSelectorComboBox_OnSelectionChanged" />
+
                 </StackPanel>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Elevator Process" />
@@ -207,7 +196,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Export/Backup Mods" />
+                <TextBlock l:Uids.Uid="Settings_Export_Title" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}" Orientation="Horizontal">
                     <Button Command="{x:Bind ViewModel.ExportModsCommand}" CommandParameter="{x:Bind ExportDialog}">
@@ -215,7 +204,7 @@
                             <TextBlock
                                 Margin="0,0,8,0"
                                 VerticalAlignment="Center"
-                                Text="Export Mods" />
+                                l:Uids.Uid="Settings_Export_Button" />
                             <FontIcon
                                 VerticalAlignment="Bottom"
                                 FontSize="16"
@@ -237,14 +226,14 @@
                 </StackPanel>
 
 
-                <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
                     <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
 
                     <TextBlock
                         Margin="{StaticResource XSmallTopMargin}"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="The goal of JASM is to make it easy to organize a larger amount of skin mods" />
+                        l:Uids.Uid="Settings_AboutDescription"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
                     <HyperlinkButton
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                         Content="Just Another Skin Manager Github"

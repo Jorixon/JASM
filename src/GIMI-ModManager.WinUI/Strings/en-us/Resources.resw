@@ -161,11 +161,8 @@
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
     <value>Default</value>
   </data>
-  <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
-  </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>TODO: Replace with your app description.</value>
+    <value>The goal of JASM is to make it easy to organize a larger amount of skin mods</value>
   </data>
   <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
@@ -188,5 +185,41 @@
   </data>
   <data name="Startup/Tooltip3.Text" xml:space="preserve">
     <value>This can be activated later in the settings page.</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>About this application</value>
+  </data>
+  <data name="Settings_ComboBox_Header.Text" xml:space="preserve">
+    <value>Select Display Language:</value>
+  </data>
+  <data name="Settings_ExportDialog.Text" xml:space="preserve">
+    <value>This will export all mods that JASM is managing to a an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder.</value>
+  </data>
+  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
+    <value>Change status of exported mods</value>
+  </data>
+  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
+    <value>Keep folder structure of CharacterName/Mods in export folder</value>
+  </data>
+  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
+    <value>Removes JASM configuration files from the exported Mods</value>
+  </data>
+  <data name="Settings_Export_Button.Text" xml:space="preserve">
+    <value>Export Mods</value>
+  </data>
+  <data name="Settings_Export_Title.Text" xml:space="preserve">
+    <value>Export/Backup Mods</value>
+  </data>
+  <data name="Settings_Language.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Settings_Language_TexBlock.Text" xml:space="preserve">
+    <value>Language options are currently limited. It is a work in progress.</value>
   </data>
 </root>

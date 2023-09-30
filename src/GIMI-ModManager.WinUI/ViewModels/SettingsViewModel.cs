@@ -19,6 +19,7 @@ using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
+using System.Globalization;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -54,6 +55,9 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(IgnoreNewVersionCommand))]
     private bool _CanIgnoreUpdate = false;
 
+    [ObservableProperty] private ObservableCollection<string> _languages = new();
+    [ObservableProperty] private string _selectedLanguage = string.Empty;
+    private Dictionary<string, string> _nameToLangCode = new();
 
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
@@ -122,6 +126,27 @@ public partial class SettingsViewModel : ObservableRecipient
                 SaveSettingsCommand.NotifyCanExecuteChanged();
         };
         ElevatorService.CheckStatus();
+
+
+        var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+         cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
+
+
+        var supportedCultures = App.Localizer.GetAvailableLanguages().ToArray();
+
+        foreach (var culture in cultures)
+        {
+            if (!supportedCultures.Contains(culture.Name.ToLower())) continue;
+
+            Languages.Add(culture.NativeName);
+            _nameToLangCode.Add(culture.NativeName, culture.Name.ToLower());
+
+            if (culture.Name.ToLower() == App.Localizer.GetCurrentLanguage())
+                SelectedLanguage = culture.NativeName;
+
+        }
+
+
     }
 
 
@@ -503,6 +528,19 @@ public partial class SettingsViewModel : ObservableRecipient
             ExportProgressText = args.Operation;
             CurrentModName = args.ModName;
         });
+    }
+
+
+    [RelayCommand]
+    private async Task SelectLanguage(string selectedLanguageName)
+    {
+        if (_nameToLangCode.TryGetValue(selectedLanguageName, out var langCode))
+        {
+            if (langCode == App.Localizer.GetCurrentLanguage())
+                return;
+
+            await App.Localizer.SetLanguage(langCode);
+        }
     }
 }
 
