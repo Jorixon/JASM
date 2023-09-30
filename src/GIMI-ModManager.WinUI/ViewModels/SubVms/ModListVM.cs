@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Xaml.Controls;
@@ -78,13 +77,72 @@ public partial class ModListVM : ObservableRecipient
         }
     }
 
-    public void ResetContent()
+
+    public class SortMethod
+    {
+        public SortMethod(string propertyName, bool isDescending = false)
+        {
+            PropertyName = propertyName;
+            IsDescending = isDescending;
+        }
+
+        public bool IsDescending { get; }
+        public string PropertyName { get; }
+    }
+
+    public void ResetContent(SortMethod? sortMethod = null)
     {
         Mods.Clear();
-        foreach (var mod in BackendMods)
+        var isEnabledComparer = new ModEnabledComparer();
+
+        if (sortMethod is not null)
         {
-            Mods.Add(mod);
+            isEnabledComparer.IsDescending = sortMethod.IsDescending;
+
+            void AddMods(IEnumerable<NewModModel> mods)
+            {
+                foreach (var mod in mods)
+                {
+                    Mods.Add(mod);
+                }
+            }
+
+            switch (sortMethod.PropertyName)
+            {
+                case nameof(NewModModel.IsEnabled):
+                    AddMods(sortMethod.IsDescending
+                        ? BackendMods.OrderByDescending(modModel => modModel, isEnabledComparer)
+                        : BackendMods.OrderBy(modModel => modModel, isEnabledComparer));
+
+                    break;
+
+                case nameof(NewModModel.Name):
+                    AddMods(sortMethod.IsDescending
+                        ? BackendMods.OrderByDescending(modModel => modModel.Name)
+                        : BackendMods.OrderBy(modModel => modModel.Name));
+
+                    break;
+
+                case nameof(NewModModel.FolderName):
+                    AddMods(sortMethod.IsDescending
+                        ? BackendMods.OrderByDescending(modModel => modModel.FolderName)
+                        : BackendMods.OrderBy(modModel => modModel.FolderName));
+                    break;
+
+                default:
+                    Debug.Assert(false, "Unknown sort method");
+                    AddMods(BackendMods.OrderBy(modModel => modModel.Name));
+                    break;
+            }
         }
+        else
+        {
+            foreach (var mod in BackendMods.OrderBy(newModModel => newModModel.Name))
+            {
+                Mods.Add(mod);
+            }
+        }
+
 
         if (Mods.Count(x => x.IsEnabled) > 1)
             SetInfoBarMessage("More than one skin enabled", InfoBarSeverity.Warning);
@@ -145,9 +203,23 @@ public partial class ModListVM : ObservableRecipient
     }
 }
 
-
-
-public class SortMethod
+public sealed class ModEnabledComparer : IComparer<NewModModel>
 {
-    public bool IsDescending { get; set; }
+    public bool IsDescending;
+
+
+    public int Compare(NewModModel? x, NewModModel? y)
+    {
+        if (x is null || y is null) return 0;
+        if (x.IsEnabled == y.IsEnabled)
+        {
+            var nameComparison = x.Name.CompareTo(y.Name);
+            if (IsDescending && nameComparison != 0)
+                return -nameComparison;
+
+            return nameComparison;
+        }
+
+        return x.IsEnabled.CompareTo(y.IsEnabled);
+    }
 }

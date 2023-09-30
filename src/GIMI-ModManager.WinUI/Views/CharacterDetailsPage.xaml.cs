@@ -8,6 +8,7 @@ using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -184,6 +185,7 @@ public sealed partial class CharacterDetailsPage : Page
 
 
                 e.Column.SortDirection = DataGridSortDirection.Ascending;
+                ViewModel.SortMethod = new ModListVM.SortMethod("Name", false);
             }
             else
             {
@@ -195,6 +197,7 @@ public sealed partial class CharacterDetailsPage : Page
 
 
                 e.Column.SortDirection = DataGridSortDirection.Descending;
+                ViewModel.SortMethod = new ModListVM.SortMethod("Name", true);
             }
         }
 
@@ -211,6 +214,7 @@ public sealed partial class CharacterDetailsPage : Page
 
 
                 e.Column.SortDirection = DataGridSortDirection.Ascending;
+                ViewModel.SortMethod = new ModListVM.SortMethod("FolderName", false);
             }
             else
             {
@@ -222,6 +226,7 @@ public sealed partial class CharacterDetailsPage : Page
 
 
                 e.Column.SortDirection = DataGridSortDirection.Descending;
+                ViewModel.SortMethod = new ModListVM.SortMethod("FolderName", true);
             }
         }
 
@@ -235,15 +240,17 @@ public sealed partial class CharacterDetailsPage : Page
             {
                 var sortedMods = enabledMods.Concat(disabledMods);
 
-                ViewModel.ModListVM.ReplaceMods(sortedMods);
                 e.Column.SortDirection = DataGridSortDirection.Ascending;
+                ViewModel.SortMethod = new ModListVM.SortMethod("IsEnabled", true);
+                ViewModel.ModListVM.ResetContent(ViewModel.SortMethod);
             }
             else
             {
                 var sortedMods = disabledMods.Concat(enabledMods);
 
-                ViewModel.ModListVM.ReplaceMods(sortedMods);
                 e.Column.SortDirection = DataGridSortDirection.Descending;
+                ViewModel.SortMethod = new ModListVM.SortMethod("IsEnabled", false);
+                ViewModel.ModListVM.ResetContent(ViewModel.SortMethod);
             }
         }
 
