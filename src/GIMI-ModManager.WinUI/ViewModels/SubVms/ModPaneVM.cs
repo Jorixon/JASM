@@ -56,7 +56,8 @@ public partial class ModPaneVM : ObservableRecipient
         if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
         try
         {
-            var skinModSettings = await _selectedSkinMod.ReadSkinModSettings(cancellationToken: cancellationToken);
+            var skinModSettings =
+                await _selectedSkinMod.ReadSkinModSettings(true, cancellationToken: cancellationToken);
 
             _backendModModel.WithModSettings(skinModSettings);
             SelectedModModel.WithModSettings(skinModSettings);

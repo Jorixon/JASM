@@ -24,7 +24,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private string _characterSkinOverride = string.Empty;
 
-    [ObservableProperty] private ObservableCollection<ModNotification> _modNotifications = new ();
+    [ObservableProperty] private ObservableCollection<ModNotification> _modNotifications = new();
 
     public static readonly Uri PlaceholderImagePath =
         new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
@@ -122,13 +122,12 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
 
     // Due to some binding issues with datagrids, this is a hacky way to get the toggle button to work.
     [RelayCommand]
-    private async Task ToggleModAsync()
+    private Task ToggleModAsync()
     {
         if (_toggleMod is not null)
             try
             {
-                await Task.Run(() => _toggleMod(this));
-                IsEnabled = !IsEnabled;
+                _toggleMod(this);
             }
             catch (Exception e)
             {
@@ -137,6 +136,8 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
                                                                        $" the mod: {Name}",
                     e.ToString(), TimeSpan.MaxValue);
             }
+
+        return Task.CompletedTask;
     }
 
     public bool Equals(NewModModel? other)
