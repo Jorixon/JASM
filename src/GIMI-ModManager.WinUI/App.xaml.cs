@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
+using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Serilog.Templates;
+using WinUI3Localizer;
 
 namespace GIMI_ModManager.WinUI;
 
@@ -38,6 +41,8 @@ public partial class App : Application
     public static string TMP_DIR { get; } = Path.Combine(Path.GetTempPath(), "JASM_TMP");
     public static string ROOT_DIR { get; } = AppDomain.CurrentDomain.BaseDirectory;
     public static WindowEx MainWindow { get; } = new MainWindow();
+
+    public static ILocalizer Localizer { get; private set; } = null!;
 
     public static UIElement? AppTitlebar { get; set; }
 
@@ -75,7 +80,7 @@ public partial class App : Application
 
                 services.AddSingleton<IWindowManagerService, WindowManagerService>();
                 services.AddSingleton<NotificationManager>();
-                services.AddSingleton<ModNotificationManager>();    
+                services.AddSingleton<ModNotificationManager>();
                 services.AddTransient<ModDragAndDropService>();
 
                 services.AddSingleton<ElevatorService>();
@@ -123,8 +128,29 @@ public partial class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
+        await InitializeLocalizer();
         NotImplemented.NotificationManager = GetService<NotificationManager>();
         base.OnLaunched(args);
         await GetService<IActivationService>().ActivateAsync(args);
+    }
+
+    private async Task InitializeLocalizer()
+    {
+        // Initialize a "Strings" folder in the executables folder.
+        var StringsFolderPath = Path.Combine(AppContext.BaseDirectory, "Strings");
+        var stringsFolder = await StorageFolder.GetFolderFromPathAsync(StringsFolderPath);
+
+        Localizer = await new LocalizerBuilder()
+            .AddStringResourcesFolderForLanguageDictionaries(StringsFolderPath)
+            .SetOptions(options => { options.DefaultLanguage = "en-us"; })
+            .Build();
+
+        var ci = CultureInfo.CurrentUICulture.Name.ToLower();
+
+        Log.Information("Current culture: {ci}", ci);
+
+        if (ci != "en-us")
+            if (Localizer.GetAvailableLanguages().Contains(ci))
+                await Localizer.SetLanguage(ci);
     }
 }

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Entities;
@@ -11,8 +12,8 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     public IReadOnlyCollection<CharacterSkinEntry> Mods => new List<CharacterSkinEntry>(_mods).AsReadOnly();
     public string AbsModsFolderPath { get; }
     private readonly List<CharacterSkinEntry> _mods = new();
-    public const string DISABLED_PREFIX = "DISABLED_";
-    public const string ALT_DISABLED_PREFIX = "DISABLED";
+    public const string DISABLED_PREFIX = ModFolderHelpers.DISABLED_PREFIX;
+    public const string ALT_DISABLED_PREFIX = ModFolderHelpers.ALT_DISABLED_PREFIX;
     public string DisabledPrefix => DISABLED_PREFIX;
     private readonly FileSystemWatcher _watcher;
     public GenshinCharacter Character { get; }
@@ -138,7 +139,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             if (!mod.Name.StartsWith(DISABLED_PREFIX))
                 throw new InvalidOperationException("Cannot enable a enabled mod");
 
-            var newName = GetFolderNameWithoutDisabledPrefix(mod.Name);
+            var newName = ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(mod.Name);
 
             if (Directory.Exists(Path.Combine(AbsModsFolderPath, newName)))
                 throw new InvalidOperationException("Cannot disable a mod with the same name as a disabled mod");
@@ -167,7 +168,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             if (mod.Name.StartsWith(DISABLED_PREFIX))
                 throw new InvalidOperationException("Cannot disable a disabled mod");
 
-            var newName = GetFolderNameWithDisabledPrefix(mod.Name);
+            var newName = ModFolderHelpers.GetFolderNameWithDisabledPrefix(mod.Name);
 
             if (Directory.Exists(Path.Combine(AbsModsFolderPath, newName)))
                 throw new InvalidOperationException("Cannot disable a mod with the same name as a disabled mod");
@@ -214,32 +215,12 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         if (Path.IsPathFullyQualified(folderName))
             folderName = Path.GetDirectoryName(folderName) ?? folderName;
 
-        var enabledFolderNamePath = Path.Combine(AbsModsFolderPath, GetFolderNameWithoutDisabledPrefix(folderName));
-        var disabledFolderNamePath = Path.Combine(AbsModsFolderPath, GetFolderNameWithDisabledPrefix(folderName));
+        var enabledFolderNamePath = Path.Combine(AbsModsFolderPath,
+            ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(folderName));
+        var disabledFolderNamePath =
+            Path.Combine(AbsModsFolderPath, ModFolderHelpers.GetFolderNameWithDisabledPrefix(folderName));
 
         return Directory.Exists(enabledFolderNamePath) || Directory.Exists(disabledFolderNamePath);
-    }
-
-    public string GetFolderNameWithoutDisabledPrefix(string folderName)
-    {
-        if (folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
-            return folderName.Replace(DISABLED_PREFIX, string.Empty);
-
-        if (folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
-            return folderName.Replace(ALT_DISABLED_PREFIX, string.Empty);
-
-        return folderName;
-    }
-
-    public string GetFolderNameWithDisabledPrefix(string folderName)
-    {
-        if (folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
-            return folderName;
-
-        if (folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase))
-            return folderName.Replace(ALT_DISABLED_PREFIX, DISABLED_PREFIX);
-
-        return DISABLED_PREFIX + folderName;
     }
 
     public void DeleteMod(Guid modId, bool moveToRecycleBin = true)
