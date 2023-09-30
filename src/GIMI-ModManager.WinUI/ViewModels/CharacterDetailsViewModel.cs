@@ -243,17 +243,18 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (lastSelectedSkin is not null) await SwitchCharacterSkin(lastSelectedSkin);
     }
 
-
-    // Does not run on UI thread
-    private void ToggleMod(NewModModel mod)
+    // This function is called from the NewModModel _toggleMod delegate.
+    // This is a hacky way to get the toggle button to work.
+    private void ToggleMod(NewModModel thisMod)
     {
-        var modList = _skinManagerService.GetCharacterModList(mod.Character);
-        if (mod.IsEnabled)
-            modList.DisableMod(mod.Id);
-
+        var modList = _skinManagerService.GetCharacterModList(thisMod.Character);
+        if (thisMod.IsEnabled)
+            modList.DisableMod(thisMod.Id);
         else
+            modList.EnableMod(thisMod.Id);
 
-            modList.EnableMod(mod.Id);
+        thisMod.IsEnabled = !thisMod.IsEnabled;
+        thisMod.FolderName = _modList.Mods.First(mod => mod.Id == thisMod.Id).Mod.Name;
     }
 
     [ObservableProperty] private bool _isAddingModFolder = false;
@@ -541,21 +542,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 TimeSpan.FromSeconds(10));
     }
 
-    public void ModList_KeyHandler(IEnumerable<Guid> modEntryId, VirtualKey key)
+    public async Task ModList_KeyHandler(IEnumerable<Guid> modEntryId, VirtualKey key)
     {
         var selectedMods = ModListVM.Mods.Where(mod => modEntryId.Contains(mod.Id)).ToArray();
 
         if (key == VirtualKey.Space)
             foreach (var newModModel in selectedMods)
-            {
-                if (newModModel.IsEnabled)
-                    _modList.DisableMod(newModModel.Id);
-                else
-                    _modList.EnableMod(newModModel.Id);
-
-                newModModel.IsEnabled = !newModModel.IsEnabled;
-                newModModel.FolderName = _modList.Mods.First(mod => mod.Id == newModModel.Id).Mod.Name;
-            }
+                await newModModel.ToggleModCommand.ExecuteAsync(newModModel);
     }
 
 

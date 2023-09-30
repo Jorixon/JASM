@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Windows.ApplicationModel.DataTransfer;
+﻿using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -277,7 +276,8 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (e.Key == VirtualKey.Space)
         {
-            ViewModel.ModList_KeyHandler(ModListGrid.SelectedItems.OfType<NewModModel>().Select(mod => mod.Id), e.Key);
+            await ViewModel.ModList_KeyHandler(ModListGrid.SelectedItems.OfType<NewModModel>().Select(mod => mod.Id),
+                e.Key);
             e.Handled = true;
         }
 
@@ -383,8 +383,8 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void Image_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
-        Log.Warning(e.ErrorMessage);
-        Debug.WriteLine(e.ErrorMessage);
+        Log.Error("Failed to load mod preview image: {Error}", e.ErrorMessage);
+        var image = (Image)sender;
     }
 
     private void ModNameCell_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
