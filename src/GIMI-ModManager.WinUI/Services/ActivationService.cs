@@ -73,7 +73,7 @@ public class ActivationService : IActivationService
         App.MainWindow.Activate();
 
         // Set MainWindow Cleanup on Close.
-        App.MainWindow.Closed += (_, _) => OnApplicationExit();
+        App.MainWindow.Closed += OnApplicationExit;
 
         // Execute tasks after activation.
         await StartupAsync();
@@ -178,15 +178,23 @@ public class ActivationService : IActivationService
     }
 
 
-    private void OnApplicationExit()
+    private async void OnApplicationExit(object sender, WindowEventArgs e)
     {
         _logger.Debug("JASM shutting down...");
-        _updateChecker.Dispose();
-        var tmpDir = new DirectoryInfo(App.TMP_DIR);
-        if (!tmpDir.Exists) return;
+        _updateChecker.Cancel();
 
-        _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
-        tmpDir.Delete(true);
+
+        var tmpDir = new DirectoryInfo(App.TMP_DIR);
+        if (tmpDir.Exists)
+        {
+            _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
+            tmpDir.Delete(true);
+        }
+
+
+        var t = Application.Current as App;
+        if (t is null) return;
+        await t.Host.StopAsync().ConfigureAwait(false);
     }
 
     // Declared here for now, might move to a different class later.

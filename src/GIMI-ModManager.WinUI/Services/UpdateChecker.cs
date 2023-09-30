@@ -6,7 +6,8 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services;
 
-public sealed class UpdateChecker : IDisposable
+// TODO: Convert to BackgroundService
+public sealed class UpdateChecker
 {
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
@@ -41,7 +42,6 @@ public sealed class UpdateChecker : IDisposable
         }
 
         CurrentVersion = version;
-        App.MainWindow.Closed += (sender, args) => Dispose();
     }
 
     public async Task InitializeAsync()
@@ -158,10 +158,6 @@ public sealed class UpdateChecker : IDisposable
         return httpClient;
     }
 
-    public void Dispose()
-    {
-        _cancellationTokenSource.Cancel();
-    }
 
     private void OnNewVersionAvailable(Version e)
     {
@@ -177,6 +173,11 @@ public sealed class UpdateChecker : IDisposable
         {
             Version = version;
         }
+    }
+
+    public void Cancel()
+    {
+        _cancellationTokenSource.Cancel();
     }
 
 

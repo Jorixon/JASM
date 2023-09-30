@@ -24,7 +24,10 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private string _characterSkinOverride = string.Empty;
 
-    [ObservableProperty] private ObservableCollection<ModNotification> _modNotifications = new ();
+    [ObservableProperty] private DateTime? _lastChecked = DateTime.MinValue;
+    [ObservableProperty] private DateTime? _dateAdded = DateTime.MinValue;
+
+    [ObservableProperty] private ObservableCollection<IModNotification> _modNotifications = new();
 
     public static readonly Uri PlaceholderImagePath =
         new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets\\ModPanePlaceholder.webp"));
@@ -97,7 +100,9 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
             ImagePath = ImagePath.Equals(PlaceholderImagePath) ? string.Empty : ImagePath.ToString(),
             CharacterSkinOverride = string.IsNullOrWhiteSpace(CharacterSkinOverride)
                 ? null
-                : CharacterSkinOverride
+                : CharacterSkinOverride,
+            LastChecked = LastChecked,
+            DateAdded = DateAdded
         };
     }
 
@@ -167,6 +172,8 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
 
         return Name == other.Name && ModUrl == other.ModUrl && ModVersion == other.ModVersion &&
                ImagePath == other.ImagePath && Author == other.Author &&
+               CharacterSkinOverride == other.CharacterSkinOverride && DateAdded == other.DateAdded &&
+               LastChecked == other.LastChecked &&
                SkinModKeySwaps.SequenceEqual(other.SkinModKeySwaps);
     }
 }

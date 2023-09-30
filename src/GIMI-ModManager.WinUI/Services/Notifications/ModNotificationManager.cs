@@ -9,8 +9,8 @@ public class ModNotificationManager
 {
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly List<ModNotification> _inMemoryModNotifications = new();
-    public IReadOnlyCollection<ModNotification> InMemoryModNotifications => _inMemoryModNotifications.AsReadOnly();
+    private readonly List<IModNotification> _inMemoryModNotifications = new();
+    public IReadOnlyCollection<IModNotification> InMemoryModNotifications => _inMemoryModNotifications.AsReadOnly();
 
     public event EventHandler<ModNotificationEvent>? ModNotificationAdded;
     public event EventHandler<ModNotificationEvent[]>? ModNotificationsCleared;
@@ -21,7 +21,7 @@ public class ModNotificationManager
         _localSettingsService = localSettingsService;
     }
 
-    public async Task AddModNotification(ModNotification modNotification, bool persistent = false)
+    public async Task AddModNotification(IModNotification modNotification, bool persistent = false)
     {
         if (!persistent)
         {
@@ -42,7 +42,7 @@ public class ModNotificationManager
         }
 
         modAttentionSettings.ModNotifications.Add(modNotification.CharacterId,
-            new ModNotification[1] { modNotification });
+            new IModNotification[] { modNotification });
 
         await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)
             .ConfigureAwait(false);
@@ -50,7 +50,7 @@ public class ModNotificationManager
         ModNotificationAdded?.Invoke(this, new ModNotificationEvent(modNotification, true));
     }
 
-    public async Task<ModNotification[]> GetPersistentModNotifications(GenshinCharacter? genshinCharacter = null)
+    public async Task<IModNotification[]> GetPersistentModNotifications(GenshinCharacter? genshinCharacter = null)
     {
         var modAttentionSettings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModAttentionSettings>(ModAttentionSettings.Key);
@@ -60,7 +60,7 @@ public class ModNotificationManager
             : modAttentionSettings.ModNotifications.First(x => x.Key == genshinCharacter.Id).Value;
     }
 
-    public ModNotification[] GetInMemoryModNotifications(GenshinCharacter? genshinCharacter = null)
+    public IModNotification[] GetInMemoryModNotifications(GenshinCharacter? genshinCharacter = null)
     {
         return genshinCharacter is null
             ? _inMemoryModNotifications.ToArray()
@@ -95,13 +95,9 @@ public class ModNotificationManager
             : modAttentionSettings.ModNotifications.First(x => x.Key == genshinCharacter.Id).Value;
 
         if (genshinCharacter is null)
-        {
             modAttentionSettings.ModNotifications.Clear();
-        }
         else
-        {
             modAttentionSettings.ModNotifications.Remove(genshinCharacter.Id);
-        }
 
         await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)
             .ConfigureAwait(false);
@@ -145,7 +141,7 @@ public class ModNotificationManager
         await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)
             .ConfigureAwait(false);
 
-        ModNotificationsCleared?.Invoke(this, new ModNotificationEvent[1]
+        ModNotificationsCleared?.Invoke(this, new ModNotificationEvent[]
         {
             new(removedPersistentNotification, true)
         });
@@ -153,14 +149,12 @@ public class ModNotificationManager
     }
 
 
-
-
     public class ModNotificationEvent : EventArgs
     {
-        public ModNotification ModNotification { get; }
+        public IModNotification ModNotification { get; }
         public bool IsPersistent { get; }
 
-        public ModNotificationEvent(ModNotification modNotification, bool isPersistent)
+        public ModNotificationEvent(IModNotification modNotification, bool isPersistent)
         {
             ModNotification = modNotification;
             IsPersistent = isPersistent;

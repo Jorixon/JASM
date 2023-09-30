@@ -20,6 +20,8 @@ public sealed class SkinManagerService : ISkinManagerService
     private FileSystemWatcher _userIniWatcher = null!;
     private readonly List<ICharacterModList> _characterModLists = new();
     public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
+    public bool IsInitialized { get; private set; }
+
 
     public SkinManagerService(IGenshinService genshinService, ILogger logger)
     {
@@ -421,6 +423,7 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder.Create();
         InitializeFolderStructure();
         await ScanForModsAsync();
+        IsInitialized = true;
     }
 
     private void InitializeFolderStructure()

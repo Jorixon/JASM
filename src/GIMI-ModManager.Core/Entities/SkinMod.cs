@@ -470,7 +470,8 @@ public class SkinModSettings // "internal set" messes with the json serializer
         if (ReferenceEquals(this, other)) return true;
         return CustomName == other.CustomName && Author == other.Author && Version == other.Version &&
                ModUrl == other.ModUrl && Path.GetFileName(ImagePath) == Path.GetFileName(other.ImagePath) &&
-               CharacterSkinOverride == other.CharacterSkinOverride;
+               CharacterSkinOverride == other.CharacterSkinOverride && LastChecked == other.LastChecked &&
+               DateAdded == other.DateAdded;
     }
 
     public override bool Equals(object? obj)
@@ -485,14 +486,16 @@ public class SkinModSettings // "internal set" messes with the json serializer
 
     public SkinModSettings DeepClone()
     {
-        return new ()
+        return new SkinModSettings
         {
             CustomName = CustomName,
             Author = Author,
             Version = Version,
             ModUrl = ModUrl,
             ImagePath = ImagePath,
-            CharacterSkinOverride = CharacterSkinOverride
+            CharacterSkinOverride = CharacterSkinOverride,
+            LastChecked = LastChecked,
+            DateAdded = DateAdded
         };
     }
 
@@ -501,6 +504,12 @@ public class SkinModSettings // "internal set" messes with the json serializer
     public string? Version { get; set; }
     public string? ModUrl { get; set; }
     public string? ImagePath { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public DateTime? DateAdded { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public DateTime? LastChecked { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? CharacterSkinOverride { get; set; }

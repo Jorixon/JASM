@@ -33,6 +33,11 @@
         <StackPanel Orientation="Horizontal">
             <TextBox Text="{x:Bind ViewModel.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Command="{x:Bind ViewModel.CheckCommand}" Content="Check" />
+            <ProgressRing
+                IsIndeterminate="False"
+                IsActive="{x:Bind ViewModel.IsChecking, Mode=OneWay}"
+                Maximum="{x:Bind ViewModel.ModsToCheckCount, Mode=OneWay}"
+                Value="{x:Bind ViewModel.ModsCheckedCount, Mode=OneWay}" />
         </StackPanel>
 
         <ListView

@@ -352,7 +352,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             if (modSettings != null)
                 newModModel.WithModSettings(modSettings);
 
-            ModNotification? inMemoryModNotification =
+            IModNotification? inMemoryModNotification =
                 _modNotificationManager.InMemoryModNotifications.FirstOrDefault(x =>
                     x.ModFolderName.Equals(skinEntry.Mod.Name, StringComparison.CurrentCultureIgnoreCase) &&
                     x.CharacterId == ShownCharacter.Id);
@@ -428,6 +428,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             var modSkin = (await LoadModSettings(mod))?.CharacterSkinOverride;
 
+            // If the mod has a skin override, we check if it matches the skin we want to filter to.
             if (modSkin != null && modSkin.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
             {
                 filteredMods.Add(mod);
@@ -442,7 +443,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 continue;
             }
 
-            if (modSkin == null && detectedSkin.Name.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
+            // Skin does not have override, check if the detected skin matches the skin we want to filter to.
+            if (modSkin == null && detectedSkin is not null &&
+                detectedSkin.Name.Equals(skin.Name, StringComparison.CurrentCultureIgnoreCase))
                 filteredMods.Add(mod);
         }
 

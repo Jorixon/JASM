@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
+using GIMI_ModManager.WinUI.BackgroundServices;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
@@ -12,10 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Polly;
-using Polly.Contrib.WaitAndRetry;
-using Polly.Extensions.Http;
-using Polly.Timeout;
+using Polly.RateLimiting;
+using Polly.Retry;
 using Serilog;
+using Serilog.Events;
 using Serilog.Templates;
 
 namespace GIMI_ModManager.WinUI;
@@ -53,8 +55,11 @@ public partial class App : Application
             .UseContentRoot(AppContext.BaseDirectory)
             .UseSerilog((context, configuration) =>
             {
-                configuration.ReadFrom.Configuration(context.Configuration);
+                configuration.MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning);
+                configuration.Filter.ByExcluding(logEvent =>
+                    logEvent.Exception is RateLimiterRejectedException);
                 configuration.Enrich.FromLogContext();
+                configuration.ReadFrom.Configuration(context.Configuration);
                 var mt = new ExpressionTemplate(
                     "[{@t:yyyy-MM-dd'T'HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
                 configuration.WriteTo.File(formatter: mt, "logs\\log.txt");
@@ -93,40 +98,40 @@ public partial class App : Application
                 services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();
-                services.AddSingleton<IModUpdateCheckerService, GameBananaService>();
 
+                services.AddHttpClient<IModUpdateChecker, GameBanana>(client =>
+                {
+                    client.BaseAddress = new Uri("https://gamebanana.com/");
+                    client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                });
 
-                var rateLimitPolicy = Policy.RateLimitAsync(2, TimeSpan.FromSeconds(1));
-
-
-                var circuitBreakerPolicy = HttpPolicyExtensions.HandleTransientHttpError()
-                    .Or<TimeoutRejectedException>()
-                    .WaitAndRetryAsync(
-                        Backoff.DecorrelatedJitterBackoffV2(
-                            TimeSpan.FromSeconds(1),
-                            5,
-                            fastFirst: false
-                        ), onRetry: (result, span) =>
+                services.AddResiliencePipeline(GameBanana.HttpClientName, (builder, context) =>
+                {
+                    builder
+                        .AddTimeout(TimeSpan.FromSeconds(10))
+                        .AddRateLimiter(new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions()
                         {
-                            Log.Debug($"[{DateTime.Now}] Retrying...");
-                            if (result.Result != null)
-                                Log.Debug(
-                                    $"Status code: {result.Result.StatusCode}, Message: {result.Result.ReasonPhrase}");
-                            Log.Debug("Waiting for " + span.TotalMilliseconds + " milliseconds");
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 0,
+                            TokenLimit = 10,
+                            AutoReplenishment = true,
+                            TokensPerPeriod = 2,
+                            ReplenishmentPeriod = TimeSpan.FromSeconds(1)
+                        }))
+                        .AddRetry(new RetryStrategyOptions()
+                        {
+                            BackoffType = DelayBackoffType.Linear,
+                            UseJitter = true,
+                            MaxRetryAttempts = 8,
+                            Delay = TimeSpan.FromMilliseconds(200)
                         });
+                    builder.TelemetryListener = null;
+                });
 
-                var timeOutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(6));
+                services.AddTransient<IModUpdateChecker, GameBanana>();
 
-
-                services.AddHttpClient(GameBananaService.HttpClientName, client =>
-                    {
-                        client.BaseAddress = new Uri("https://gamebanana.com/");
-                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
-                        client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    })
-                    .AddPolicyHandler(rateLimitPolicy.AsAsyncPolicy<HttpResponseMessage>())
-                    .AddPolicyHandler(circuitBreakerPolicy)
-                    .AddPolicyHandler(timeOutPolicy);
+                services.AddHostedService<ModUpdateAvailableChecker>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
@@ -148,6 +153,7 @@ public partial class App : Application
                 services.Configure<LocalSettingsOptions>(
                     context.Configuration.GetSection(nameof(LocalSettingsOptions)));
             }).Build();
+        Task.Run(() => { Host.StartAsync(); });
 
         UnhandledException += App_UnhandledException;
     }

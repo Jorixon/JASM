@@ -1,45 +1,40 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Polly;
+using Polly.RateLimiting;
+using Polly.Registry;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
 
-public class GameBananaService : IModUpdateCheckerService
+public class GameBanana : IModUpdateChecker
 {
     private readonly ILogger _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ResiliencePipeline _resiliencePipeline;
     public const string HttpClientName = "GameBanana";
 
     private const string DownloadUrl = "https://gamebanana.com/dl/";
     private const string DownloadsApiUrl = "https://gamebanana.com/apiv11/Mod/";
 
-    public GameBananaService(ILogger logger, IHttpClientFactory httpClientFactory)
+    public GameBanana(ILogger logger, IHttpClientFactory httpClientFactory,
+        ResiliencePipelineProvider<string> resiliencePipelineProvider)
     {
         _httpClientFactory = httpClientFactory;
-        _logger = logger.ForContext<GameBananaService>();
+        _logger = logger.ForContext<GameBanana>();
+        _resiliencePipeline = resiliencePipelineProvider.GetPipeline(HttpClientName);
     }
 
-    public async Task<ModsRetrievedResult> CheckForUpdatesAsync(string url, DateTime lastCheck,
+    public async Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
         CancellationToken cancellationToken)
     {
-        // Validate url
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
-        {
-            _logger.Error("Invalid url: {url}", url);
-            throw new ArgumentException("Invalid url", nameof(url));
-        }
+        ArgumentNullException.ThrowIfNull(url);
 
-        // Validate lastCheck
-
-        if (lastCheck > DateTime.Now)
-        {
-            _logger.Error("Invalid lastCheck: {lastCheck}", lastCheck);
-            throw new ArgumentException("Invalid lastCheck", nameof(lastCheck));
-        }
+        if (url.Scheme != "https" || url.Host != "gamebanana.com")
+            throw new ArgumentException("Invalid GameBanana url", nameof(url));
 
         // Get DownloadsApiUrl
-
-        var modId = GetModIdFromUrl(uri);
+        var modId = GetModIdFromUrl(url);
 
         if (modId == null)
         {
@@ -51,18 +46,40 @@ public class GameBananaService : IModUpdateCheckerService
 
         var downloadsApiUrl = GetDownloadsApiUrl(modId);
 
-        var client = _httpClientFactory.CreateClient(HttpClientName);
-        var response = await client.GetAsync(downloadsApiUrl, cancellationToken);
+        var client = _httpClientFactory.CreateClient();
+        HttpResponseMessage response = null!;
+
+        retry:
+        try
+        {
+            await _resiliencePipeline.ExecuteAsync(
+                    async (ct) => { response = await client.GetAsync(downloadsApiUrl, ct).ConfigureAwait(false); },
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (RateLimiterRejectedException e)
+        {
+            _logger.Debug("Rate limit exceeded, retrying after {retryAfter}", e.RetryAfter);
+            var delay = e.RetryAfter ?? TimeSpan.FromSeconds(1);
+
+            await Task.Delay(delay, cancellationToken);
+            goto retry;
+        }
+
 
         if (!response.IsSuccessStatusCode)
         {
             _logger.Error("Failed to get mod info from GameBanana: {response}", response);
-            throw new HttpRequestException($"Failed to get mod info from GameBanana. Reason: {response?.ReasonPhrase}");
+            throw new HttpRequestException(
+                $"Failed to get mod info from GameBanana. Reason: {response?.ReasonPhrase ?? "Unknown"}");
         }
 
-        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
+        await using var content = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-        var apiMods = JsonSerializer.Deserialize<ApiRootResponse>(content);
+        var apiMods =
+            await JsonSerializer.DeserializeAsync<ApiRootResponse>(content, cancellationToken: cancellationToken);
+
 
         if (apiMods == null)
         {
@@ -71,7 +88,7 @@ public class GameBananaService : IModUpdateCheckerService
                 $"Failed to deserialize GameBanana response. Reason: {response?.ReasonPhrase}");
         }
 
-        return ApiToResultMapper.Map(apiMods, lastCheck, uri);
+        return ApiToResultMapper.Map(apiMods, lastCheck, url);
     }
 
     private static string? GetModIdFromUrl(Uri url)
@@ -89,9 +106,9 @@ public class GameBananaService : IModUpdateCheckerService
     }
 }
 
-public interface IModUpdateCheckerService
+public interface IModUpdateChecker
 {
-    public Task<ModsRetrievedResult> CheckForUpdatesAsync(string url, DateTime lastCheck,
+    public Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
         CancellationToken cancellationToken);
 }
 
@@ -133,7 +150,7 @@ public record UpdateCheckResult
 
 public record ModsRetrievedResult
 {
-    public Uri SitePageUrl { get; init; } = new("https://gamebanana.com/games/8552");
+    public Uri SitePageUrl { get; init; } = null!;
     public bool AnyNewMods { get; init; }
     public ICollection<UpdateCheckResult> Mods { get; init; } = Array.Empty<UpdateCheckResult>();
 }

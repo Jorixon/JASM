@@ -11,6 +11,7 @@ public interface ISkinManagerService : IDisposable
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     public Task ScanForModsAsync();
     public ICharacterModList GetCharacterModList(GenshinCharacter character);
+    public bool IsInitialized { get; }
 
     public Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
         string? threeMigotoRootfolder = null);
