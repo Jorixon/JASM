@@ -20,6 +20,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
 using System.Globalization;
+using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -540,6 +541,10 @@ public partial class SettingsViewModel : ObservableRecipient
                 return;
 
             await App.Localizer.SetLanguage(langCode);
+
+            var appSettings = await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key);
+            appSettings.Language = langCode;
+            await _localSettingsService.SaveSettingAsync(AppSettings.Key, appSettings);
         }
     }
 }

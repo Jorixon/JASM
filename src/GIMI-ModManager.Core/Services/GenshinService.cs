@@ -171,7 +171,7 @@ public class GenshinService : IGenshinService
             Rarity = -1,
             Keys = new[] { "others", "unknown" },
             ImageUri = "Character_Others.png",
-            Element = string.Empty,
+            Element = Elements.None,
             Weapon = string.Empty
         };
         SetImageUriForCharacter(assetsUriPath, character);
@@ -249,45 +249,4 @@ public interface IGenshinService
 
     public bool IsMultiModCharacter(GenshinCharacter character);
     public bool IsMultiModCharacter(int characterId);
-}
-
-internal static class GenshinCharacters
-{
-    internal static IEnumerable<GenshinCharacter> AllCharacters()
-    {
-        return typeof(GenshinCharacters).GetFields(BindingFlags.Static | BindingFlags.NonPublic)
-            .Where(f => f.FieldType == typeof(GenshinCharacter))
-            .Select(f => (GenshinCharacter)f.GetValue(null)!);
-    }
-
-
-    internal static readonly GenshinCharacter Amber = new()
-    {
-        DisplayName = "Amber",
-        ReleaseDate = new DateTime(2020, 9, 28),
-        Rarity = 4,
-        Element = "Pyro",
-        Weapon = "Bow",
-        Region = new[] { "Mondstadt" }
-    };
-
-    internal static readonly GenshinCharacter Barbara = new()
-    {
-        DisplayName = "Barbara",
-        ReleaseDate = new DateTime(2020, 9, 28),
-        Rarity = 4,
-        Element = "Hydro",
-        Weapon = "Catalyst",
-        Region = new[] { "Mondstadt" }
-    };
-
-    internal static readonly GenshinCharacter Deluc = new()
-    {
-        DisplayName = "Deluc",
-        ReleaseDate = new DateTime(2020, 9, 28),
-        Rarity = 5,
-        Element = "Pyro",
-        Weapon = "Claymore",
-        Region = new[] { "Mondstadt" }
-    };
 }
