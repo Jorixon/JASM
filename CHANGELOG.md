@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.2](https://github.com/Jorixon/JASM/compare/v1.4.1...v1.4.2) (2023-09-30)
+
+
+### Bug Fixes
+
+* Image failing to load after disabling/enabling mod ([#48](https://github.com/Jorixon/JASM/issues/48)) ([352de20](https://github.com/Jorixon/JASM/commit/352de20a839d4724e621d52ba1dd8ca4df41b3bf))
+* Issue where the delete button on the flyout was not clickable if it was infront of the window titlebar ([#50](https://github.com/Jorixon/JASM/issues/50)) ([1fd5495](https://github.com/Jorixon/JASM/commit/1fd54951794d3cdd0dce86bf222c42670d109598))
+
 ## [1.4.1](https://github.com/Jorixon/JASM/compare/v1.4.0...v1.4.1) (2023-09-25)
 
 
