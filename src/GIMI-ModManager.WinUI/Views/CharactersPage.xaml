@@ -80,6 +80,20 @@
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
 
+                <TextBlock
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Text="Sort by:"
+                    TextWrapping="WrapWholeWords" />
+
+                <ComboBox
+                    x:Name="SortingComboBox"
+                    Margin="0,0,32,0"
+                    VerticalAlignment="Center"
+                    ItemsSource="{x:Bind ViewModel.SortingMethods, Mode=OneWay}"
+                    PlaceholderText="Sort Characters..."
+                    SelectionChanged="SortingComboBox_OnSelectionChanged"/>
+
                 <Button
                     Command="{x:Bind ViewModel.RefreshModsInGameCommand}"
                     Content="Refresh Mods"

@@ -133,4 +133,9 @@ public sealed partial class CharactersPage : Page
         ViewModel.DockPanelVM.ElementSelectionChanged(e.AddedItems.OfType<ElementIcon>(),
             e.RemovedItems.OfType<ElementIcon>());
     }
+
+    private void SortingComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ViewModel.SortByCommand.Execute(e.AddedItems.OfType<SortingMethodType>());
+    }
 }

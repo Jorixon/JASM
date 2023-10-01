@@ -48,7 +48,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private Dictionary<FilterType, GridFilter> _filters = new();
 
+
+    public ObservableCollection<SortingMethodType> SortingMethods { get; } =
+        new() { SortingMethodType.Alphabetical, SortingMethodType.ReleaseDate, SortingMethodType.Rarity };
+
     private SortingMethod _sortingMethod = null!;
+
+
     private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
 
     public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
@@ -725,6 +731,17 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private CharacterGridItemModel? FindCharacterById(int id)
     {
         return _backendCharacters.FirstOrDefault(x => x.Character.Id == id);
+    }
+
+
+    [RelayCommand]
+    private void SortBy(IEnumerable<SortingMethodType> methodTypes)
+    {
+        var sortingMethodType = methodTypes.First();
+
+        _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_genshinService.OtherCharacterId),
+            _lastCharacters);
+        ResetContent();
     }
 }
 

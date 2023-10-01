@@ -5,7 +5,7 @@
     "Keys": [
       "albedo"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-12-23T00:00:00",
     "ImageUri": "Character_Albedo_Thumb.png",
     "Rarity": 5,
     "Element": "Geo",
@@ -28,7 +28,7 @@
     "Keys": [
       "alhaitham"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-01-18T00:00:00",
     "ImageUri": "Character_Alhaitham_Thumb.png",
     "Rarity": 5,
     "Element": "Dendro",
@@ -51,7 +51,7 @@
     "Keys": [
       "aloy"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-09-01T00:00:00",
     "ImageUri": "Character_Aloy_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
@@ -74,7 +74,7 @@
     "Keys": [
       "amber"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Amber_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -105,7 +105,7 @@
       "arataki",
       "itto"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-11-24T00:00:00",
     "ImageUri": "Character_Arataki_Itto_Thumb.png",
     "Rarity": 5,
     "Element": "Geo",
@@ -128,7 +128,7 @@
     "Keys": [
       "baizhu"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-04-12T00:00:00",
     "ImageUri": "Character_Baizhu_Thumb.png",
     "Rarity": 5,
     "Element": "Dendro",
@@ -151,7 +151,7 @@
     "Keys": [
       "barbara"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Barbara_Thumb.png",
     "Rarity": 4,
     "Element": "Hydro",
@@ -181,7 +181,7 @@
     "Keys": [
       "beidou"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Beidou_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -204,7 +204,7 @@
     "Keys": [
       "bennett"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Bennett_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -227,7 +227,7 @@
     "Keys": [
       "candace"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-09-28T00:00:00",
     "ImageUri": "Character_Candace_Thumb.png",
     "Rarity": 4,
     "Element": "Hydro",
@@ -273,7 +273,7 @@
     "Keys": [
       "chongyun"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Chongyun_Thumb.png",
     "Rarity": 4,
     "Element": "Cryo",
@@ -319,7 +319,7 @@
     "Keys": [
       "collei"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-08-24T00:00:00",
     "ImageUri": "Character_Collei_Thumb.png",
     "Rarity": 4,
     "Element": "Dendro",
@@ -342,7 +342,7 @@
     "Keys": [
       "cyno"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-09-28T00:00:00",
     "ImageUri": "Character_Cyno_Thumb.png",
     "Rarity": 5,
     "Element": "Electro",
@@ -365,7 +365,7 @@
     "Keys": [
       "dehya"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-03-01T00:00:00",
     "ImageUri": "Character_Dehya_Thumb.png",
     "Rarity": 5,
     "Element": "Pyro",
@@ -388,7 +388,7 @@
     "Keys": [
       "diluc"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Diluc_Thumb.png",
     "Rarity": 5,
     "Element": "Pyro",
@@ -418,7 +418,7 @@
     "Keys": [
       "diona"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-11-11T00:00:00",
     "ImageUri": "Character_Diona_Thumb.png",
     "Rarity": 4,
     "Element": "Cryo",
@@ -441,7 +441,7 @@
     "Keys": [
       "dori"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-08-24T00:00:00",
     "ImageUri": "Character_Dori_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -464,7 +464,7 @@
     "Keys": [
       "eula"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-01-28T00:00:00",
     "ImageUri": "Character_Eula_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
@@ -487,7 +487,7 @@
     "Keys": [
       "faruzan"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-12-07T00:00:00",
     "ImageUri": "Character_Faruzan_Thumb.png",
     "Rarity": 4,
     "Element": "Anemo",
@@ -510,7 +510,7 @@
     "Keys": [
       "fischl"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Fischl_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -587,7 +587,7 @@
     "Keys": [
       "ganyu"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-12-23T00:00:00",
     "ImageUri": "Character_Ganyu_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
@@ -610,7 +610,7 @@
     "Keys": [
       "gorou"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-11-24T00:00:00",
     "ImageUri": "Character_Gorou_Thumb.png",
     "Rarity": 4,
     "Element": "Geo",
@@ -634,7 +634,7 @@
       "hu",
       "tao"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-02-03T00:00:00",
     "ImageUri": "Character_Hu_Tao_Thumb.png",
     "Rarity": 5,
     "Element": "Pyro",
@@ -657,7 +657,7 @@
     "Keys": [
       "jean"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Jean_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -695,7 +695,7 @@
       "kaedehara",
       "kazuha"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-06-09T00:00:00",
     "ImageUri": "Character_Kaedehara_Kazuha_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -718,7 +718,7 @@
     "Keys": [
       "kaeya"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Kaeya_Thumb.png",
     "Rarity": 4,
     "Element": "Cryo",
@@ -749,7 +749,7 @@
       "kamisato",
       "ayaka"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-07-21T00:00:00",
     "ImageUri": "Character_Kamisato_Ayaka_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
@@ -780,7 +780,7 @@
       "kamisato",
       "ayato"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-03-30T00:00:00",
     "ImageUri": "Character_Kamisato_Ayato_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
@@ -803,7 +803,7 @@
     "Keys": [
       "kaveh"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-04-12T00:00:00",
     "ImageUri": "Character_Kaveh_Thumb.png",
     "Rarity": 4,
     "Element": "Dendro",
@@ -826,7 +826,7 @@
     "Keys": [
       "keqing"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Keqing_Thumb.png",
     "Rarity": 5,
     "Element": "Electro",
@@ -856,7 +856,7 @@
     "Keys": [
       "kirara"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-06-24T00:00:00",
     "ImageUri": "Character_Kirara_Thumb.png",
     "Rarity": 4,
     "Element": "Dendro",
@@ -879,7 +879,7 @@
     "Keys": [
       "klee"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Klee_Thumb.png",
     "Rarity": 5,
     "Element": "Pyro",
@@ -910,7 +910,7 @@
       "kujou",
       "sara"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-09-01T00:00:00",
     "ImageUri": "Character_Kujou_Sara_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -934,7 +934,7 @@
       "kuki",
       "shinobu"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-03-31T00:00:00",
     "ImageUri": "Character_Kuki_Shinobu_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -957,7 +957,7 @@
     "Keys": [
       "layla"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-11-02T00:00:00",
     "ImageUri": "Character_Layla_Thumb.png",
     "Rarity": 4,
     "Element": "Cryo",
@@ -980,7 +980,7 @@
     "Keys": [
       "lisa"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Lisa_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -1017,7 +1017,7 @@
     "Keys": [
       "lynette"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-08-16T00:00:00",
     "ImageUri": "Character_Lynette_Thumb.png",
     "Rarity": 4,
     "Element": "Anemo",
@@ -1040,7 +1040,7 @@
     "Keys": [
       "lyney"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-08-16T00:00:00",
     "ImageUri": "Character_Lyney_Thumb.png",
     "Rarity": 5,
     "Element": "Pyro",
@@ -1063,7 +1063,7 @@
     "Keys": [
       "mika"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-03-01T00:00:00",
     "ImageUri": "Character_Mika_Thumb.png",
     "Rarity": 4,
     "Element": "Cryo",
@@ -1086,7 +1086,7 @@
     "Keys": [
       "mona"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Mona_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
@@ -1117,7 +1117,7 @@
       "nahida",
       "buer"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-11-02T00:00:00",
     "ImageUri": "Character_Nahida_Thumb.png",
     "Rarity": 5,
     "Element": "Dendro",
@@ -1163,7 +1163,7 @@
     "Keys": [
       "nilou"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-09-28T00:00:00",
     "ImageUri": "Character_Nilou_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
@@ -1186,7 +1186,7 @@
     "Keys": [
       "ningguang"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Ningguang_Thumb.png",
     "Rarity": 4,
     "Element": "Geo",
@@ -1216,7 +1216,7 @@
     "Keys": [
       "noelle"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Noelle_Thumb.png",
     "Rarity": 4,
     "Element": "Geo",
@@ -1262,7 +1262,7 @@
     "Keys": [
       "qiqi"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Qiqi_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
@@ -1286,7 +1286,7 @@
       "raiden",
       "shogun"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-09-01T00:00:00",
     "ImageUri": "Character_Raiden_Shogun_Thumb.png",
     "Rarity": 5,
     "Element": "Electro",
@@ -1309,7 +1309,7 @@
     "Keys": [
       "razor"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Razor_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
@@ -1332,7 +1332,7 @@
     "Keys": [
       "rosaria"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-03-17T00:00:00",
     "ImageUri": "Character_Rosaria_Thumb.png",
     "Rarity": 4,
     "Element": "Cryo",
@@ -1363,7 +1363,7 @@
       "sangonomiya",
       "kokomi"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-09-01T00:00:00",
     "ImageUri": "Character_Sangonomiya_Kokomi_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
@@ -1386,7 +1386,7 @@
     "Keys": [
       "sayu"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-07-21T00:00:00",
     "ImageUri": "Character_Sayu_Thumb.png",
     "Rarity": 4,
     "Element": "Anemo",
@@ -1409,7 +1409,7 @@
     "Keys": [
       "shenhe"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-01-05T00:00:00",
     "ImageUri": "Character_Shenhe_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
@@ -1433,7 +1433,7 @@
       "shikanoin",
       "heizou"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-07-13T00:00:00",
     "ImageUri": "Character_Shikanoin_Heizou_Thumb.png",
     "Rarity": 4,
     "Element": "Anemo",
@@ -1456,7 +1456,7 @@
     "Keys": [
       "sucrose"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Sucrose_Thumb.png",
     "Rarity": 4,
     "Element": "Anemo",
@@ -1479,7 +1479,7 @@
     "Keys": [
       "tartaglia"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-11-11T00:00:00",
     "ImageUri": "Character_Tartaglia_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
@@ -1502,7 +1502,7 @@
     "Keys": [
       "thoma"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-10-13T00:00:00",
     "ImageUri": "Character_Thoma_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -1525,7 +1525,7 @@
     "Keys": [
       "tighnari"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-08-24T00:00:00",
     "ImageUri": "Character_Tighnari_Thumb.png",
     "Rarity": 5,
     "Element": "Dendro",
@@ -1550,7 +1550,7 @@
       "(female)",
       "lumine"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Traveler_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -1575,7 +1575,7 @@
       "(male)",
       "aether"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Traveler_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -1598,7 +1598,7 @@
     "Keys": [
       "venti"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Venti_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -1621,7 +1621,7 @@
     "Keys": [
       "wanderer"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-12-07T00:00:00",
     "ImageUri": "Character_Wanderer_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -1646,7 +1646,7 @@
     "Keys": [
       "xiangling"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Xiangling_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -1669,7 +1669,7 @@
     "Keys": [
       "xiao"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-02-03T00:00:00",
     "ImageUri": "Character_Xiao_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
@@ -1692,7 +1692,7 @@
     "Keys": [
       "xingqiu"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-09-28T00:00:00",
     "ImageUri": "Character_Xingqiu_Thumb.png",
     "Rarity": 4,
     "Element": "Hydro",
@@ -1715,7 +1715,7 @@
     "Keys": [
       "xinyan"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-11-11T00:00:00",
     "ImageUri": "Character_Xinyan_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -1739,7 +1739,7 @@
       "yae",
       "miko"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-02-16T00:00:00",
     "ImageUri": "Character_Yae_Miko_Thumb.png",
     "Rarity": 5,
     "Element": "Electro",
@@ -1762,7 +1762,7 @@
     "Keys": [
       "yanfei"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-04-28T00:00:00",
     "ImageUri": "Character_Yanfei_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -1785,7 +1785,7 @@
     "Keys": [
       "yaoyao"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2023-01-18T00:00:00",
     "ImageUri": "Character_Yaoyao_Thumb.png",
     "Rarity": 4,
     "Element": "Dendro",
@@ -1808,7 +1808,7 @@
     "Keys": [
       "yelan"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-03-31T00:00:00",
     "ImageUri": "Character_Yelan_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
@@ -1831,7 +1831,7 @@
     "Keys": [
       "yoimiya"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2021-07-21T00:00:00",
     "ImageUri": "Character_Yoimiya_Thumb.png",
     "Rarity": 5,
     "Element": "Pyro",
@@ -1855,7 +1855,7 @@
       "yun",
       "jin"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2022-01-05T00:00:00",
     "ImageUri": "Character_Yun_Jin_Thumb.png",
     "Rarity": 4,
     "Element": "Geo",
@@ -1878,7 +1878,7 @@
     "Keys": [
       "zhongli"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2020-11-11T00:00:00",
     "ImageUri": "Character_Zhongli_Thumb.png",
     "Rarity": 5,
     "Element": "Geo",
