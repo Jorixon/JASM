@@ -118,7 +118,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         suitableItems.ForEach(suggestion => SuggestionsBox.Add(suggestion));
 
-        _filters[FilterType.Search] = new GridFilter(character => suitableItems.Contains(character));
+        _filters[FilterType.Search] = new GridFilter(character => SuggestionsBox.Contains(character));
         ResetContent();
     }
 
@@ -271,37 +271,30 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             }
         }
 
-        foreach (var filter in _filters.Values)
-        {
-            var filteredCharacters = filter.Filter(characters);
+        var modsFoundForFilter = new Dictionary<FilterType, IEnumerable<CharacterGridItemModel>>();
 
-            foreach (var characterGridItemModel in filteredCharacters)
-            {
-                yield return characterGridItemModel;
-            }
+
+        foreach (var filter in _filters)
+        {
+            modsFoundForFilter.Add(filter.Key, filter.Value.Filter(characters));
+        }
+
+
+        IEnumerable<CharacterGridItemModel>? intersectedMods = null;
+
+        foreach (var kvp in modsFoundForFilter)
+        {
+            intersectedMods = intersectedMods == null
+                ? kvp.Value
+                : intersectedMods.Intersect(kvp.Value);
+        }
+
+
+        foreach (var characterGridItemModel in intersectedMods ?? Array.Empty<CharacterGridItemModel>())
+        {
+            yield return characterGridItemModel;
         }
     }
-
-
-    //private void ShowOnlyCharacters(IEnumerable<CharacterGridItemModel> charactersToShow, bool hardClear = false)
-    //{
-    //    var tmpList = new List<CharacterGridItemModel>(_backendCharacters);
-
-
-    //    var characters = tmpList.Where(charactersToShow.Contains).ToArray();
-
-    //    var pinnedCharacters = characters.Intersect(PinnedCharacters).ToArray();
-    //    characters = characters.Except(pinnedCharacters).ToArray();
-    //    Characters.Clear();
-
-    //    foreach (var genshinCharacter in pinnedCharacters) Characters.Add(genshinCharacter);
-
-    //    foreach (var genshinCharacter in characters) Characters.Add(genshinCharacter);
-
-    //    Debug.Assert(Characters.Distinct().Count() == Characters.Count,
-    //        $"Characters.Distinct().Count(): {Characters.Distinct().Count()} != Characters.Count: {Characters.Count}\n\t" +
-    //        $"Duplicate characters found in character overview");
-    //}
 
     public async void OnNavigatedTo(object parameter)
     {
@@ -438,6 +431,17 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
             FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters);
+
+        // ShowOnlyModsCharacters
+        var settings =
+            await _localSettingsService
+                .ReadOrCreateSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key);
+        if (settings.ShowOnlyCharactersWithMods)
+        {
+            ShowOnlyCharactersWithMods = true;
+            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+        }
 
         ResetContent();
     }
@@ -738,6 +742,7 @@ public sealed class GridFilter
 
 public enum FilterType
 {
+    NotSet,
     Element,
     WeaponType,
     Search,
