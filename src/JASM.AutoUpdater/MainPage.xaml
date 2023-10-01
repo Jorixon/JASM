@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="JASM.AutoUpdater.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:JASM.AutoUpdater.Helpers"
+    xmlns:local="using:JASM.AutoUpdater"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <helpers:BoolToVisibleConverter x:Key="BoolToVisibilityConverter" />
+
+    </Page.Resources>
+
+    <Grid Margin="32" HorizontalAlignment="Center">
+
+
+
+
+        <StackPanel VerticalAlignment="Center" Visibility="{x:Bind ViewModel.InStartupView, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <TextBlock Text="The Auto updater will delete JASM program files and then download the latest version from GitHub." />
+            <TextBlock Text="The updater will then run the new version of JASM" />
+            <Button
+                Margin="0,16,0,0"
+                HorizontalAlignment="Center"
+                Command="{x:Bind ViewModel.StartUpdateCommand}"
+                Content="Start Update Process" />
+        </StackPanel>
+
+
+
+        <Grid VerticalAlignment="Center" Visibility="{x:Bind ViewModel.UpdateProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Margin="16"
+                    HorizontalAlignment="Left"
+                    Style="{ThemeResource TitleTextBlockStyle}"
+                    Text="Updating to Version 1.1.1" />
+
+                <ProgressRing
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    IsIndeterminate="True" />
+            </Grid>
+
+            <controls:Segmented
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                IsItemClickEnabled="False"
+                SelectionMode="Multiple">
+                <controls:SegmentedItem
+                    Content="Checking for Latest Version"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.CheckingForLatestUpdate, Mode=OneWay}" />
+                <controls:SegmentedItem
+                    Content="Downloading Latest Version"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.DownloadingLatestUpdate, Mode=OneWay}" />
+                <controls:SegmentedItem
+                    Content="Unziping Download"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.ExtractingLatestUpdate, Mode=OneWay}" />
+                <controls:SegmentedItem
+                    Content="Installing JASM"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.InstallingLatestUpdate, Mode=OneWay}" />
+            </controls:Segmented>
+
+
+            <Button
+                Grid.Row="2"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Content="Cancel" />
+
+            <ListView Grid.Row="3" />
+
+        </Grid>
+
+    </Grid>
+</Page>
