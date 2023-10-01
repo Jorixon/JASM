@@ -53,6 +53,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         new() { SortingMethodType.Alphabetical, SortingMethodType.ReleaseDate, SortingMethodType.Rarity };
 
     private SortingMethod _sortingMethod = null!;
+    [ObservableProperty] private SortingMethodType _selectedSortingMethod = SortingMethodType.Alphabetical;
+    [ObservableProperty] private bool _sortByDescending;
 
 
     private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
@@ -457,6 +459,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
         }
 
+        SortByDescending = settings.SortByDescending;
+
+        _sortingMethod = new SortingMethod(settings.SortingMethod,
+            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters, SortByDescending);
+        SelectedSortingMethod = settings.SortingMethod;
+
         ResetContent();
     }
 
@@ -735,13 +743,29 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
     [RelayCommand]
-    private void SortBy(IEnumerable<SortingMethodType> methodTypes)
+    private async Task SortBy(IEnumerable<SortingMethodType> methodTypes)
     {
         var sortingMethodType = methodTypes.First();
 
         _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_genshinService.OtherCharacterId),
-            _lastCharacters);
+            _lastCharacters, isDescending: SortByDescending);
         ResetContent();
+
+        var settings = await ReadCharacterSettings();
+        settings.SortingMethod = sortingMethodType;
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
+
+    [RelayCommand]
+    private async Task InvertSorting()
+    {
+        _sortingMethod.IsDescending = SortByDescending;
+        ResetContent();
+
+        var settings = await ReadCharacterSettings();
+        settings.SortByDescending = SortByDescending;
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 }
 
@@ -777,7 +801,7 @@ public enum FilterType
 public sealed class SortingMethod
 {
     public SortingMethodType SortingMethodType { get; }
-    public bool IsDescending { get; }
+    public bool IsDescending { get; set; }
 
     private readonly CharacterGridItemModel[] _lastCharacters;
     private readonly CharacterGridItemModel? _firstCharacter;

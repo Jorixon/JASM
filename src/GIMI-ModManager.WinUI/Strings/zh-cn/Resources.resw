@@ -127,7 +127,7 @@
     <value>作为首次设置的一部分，您需要选择原神模型导入器（GIMI）文件夹及其关联的模组文件夹。GIMI/3dmigoto文件夹包含3DMigoto Loader.exe和一个模组文件夹。如果您尚未设置GIMI，请立即执行此操作，请参见下面的链接。我发现大多数模组在Gamebanana上，但Nexusmods也有一些。</value>
   </data>
   <data name="Startup2.Text" xml:space="preserve">
-    <value>保存设置后，应用程序将在模组文件夹内为每个角色创建一个模组文件夹。该应用程序通过在模组文件夹前缀中添加“DISABLED_”来启用和禁用模组。JASM还支持导出由其管理的模组，如果您希望将其与其他应用程序一起使用。</value>
+    <value>保存设置后，应用程序将在模组文件夹内为每个角色创建一个模组文件夹。该应用程序通过在模组文件夹前缀中添加“DISABLED_”来启用和禁用模组。JASM还支持导出由其管理的模组，如果您希望将其与其他应用程序一起使用。目前，只有这个页面和部分设置页面已经翻译完成。翻译是通过ChatGPT进行的，可能包含错误。</value>
   </data>
   <data name="Startup3.Text" xml:space="preserve">
     <value>在使用与您的文件交互的应用程序之前，备份您的文件/模组总是一个好主意。</value>
@@ -176,30 +176,30 @@
     <value>设置</value>
     <comment>设置页面的页面标题</comment>
   </data>
-<data name="Settings_ExportDialog.Text" xml:space="preserve">
+  <data name="Settings_ExportDialog.Text" xml:space="preserve">
     <value>这将导出JASM管理的所有模组到您选择的导出文件夹。模组将被复制到导出文件夹，而不会从原始文件夹中删除。</value>
-</data>
-<data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
+  </data>
+  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
     <value>取消</value>
-</data>
-<data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
+  </data>
+  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
     <value>导出</value>
-</data>
-<data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
+  </data>
+  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
     <value>更改导出的模组状态</value>
-</data>
-<data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
+  </data>
+  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
     <value>在导出文件夹中保留CharacterName/Mods的文件夹结构</value>
-</data>
-<data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
+  </data>
+  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
     <value>从导出的模组中移除JASM配置文件</value>
-</data>
-<data name="Settings_Export_Button.Text" xml:space="preserve">
+  </data>
+  <data name="Settings_Export_Button.Text" xml:space="preserve">
     <value>导出模组</value>
-</data>
-<data name="Settings_Export_Title.Text" xml:space="preserve">
+  </data>
+  <data name="Settings_Export_Title.Text" xml:space="preserve">
     <value>导出/备份模组</value>
-</data>
+  </data>
   <data name="Settings_Language.Text" xml:space="preserve">
     <value>语言</value>
   </data>

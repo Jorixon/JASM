@@ -88,11 +88,21 @@
 
                 <ComboBox
                     x:Name="SortingComboBox"
-                    Margin="0,0,32,0"
+                    Margin="0,0,8,0"
                     VerticalAlignment="Center"
                     ItemsSource="{x:Bind ViewModel.SortingMethods, Mode=OneWay}"
                     PlaceholderText="Sort Characters..."
-                    SelectionChanged="SortingComboBox_OnSelectionChanged"/>
+                    SelectedItem="{x:Bind ViewModel.SelectedSortingMethod, Mode=TwoWay}"
+                    SelectionChanged="SortingComboBox_OnSelectionChanged" />
+
+                <ToggleButton
+                    Margin="0,0,16,0"
+                    Command="{x:Bind ViewModel.InvertSortingCommand}"
+                    IsChecked="{x:Bind ViewModel.SortByDescending, Mode=TwoWay}">
+                    <ToggleButton.Content>
+                        <FontIcon Glyph="&#xE8CB;" />
+                    </ToggleButton.Content>
+                </ToggleButton>
 
                 <Button
                     Command="{x:Bind ViewModel.RefreshModsInGameCommand}"
