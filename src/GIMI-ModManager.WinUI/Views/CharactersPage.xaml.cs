@@ -1,6 +1,7 @@
 using Windows.ApplicationModel.DataTransfer;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -127,13 +128,9 @@ public sealed partial class CharactersPage : Page
         Log.Error("Failed to load dock panel element icon. Reason: {e}", e.ErrorMessage);
     }
 
-    private void ItemsView_OnItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs args)
+    private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel.DockPanelVM.ElementSelectedCommand.Execute(args.InvokedItem);
-    }
-
-    private void ItemsView_OnSelectionChanged(ItemsView sender, ItemsViewSelectionChangedEventArgs args)
-    {
-        ViewModel.DockPanelVM.ElementSelectedCommand.Execute(sender.SelectedItems.FirstOrDefault());
+        ViewModel.DockPanelVM.ElementSelectionChanged(e.AddedItems.OfType<ElementIcon>(),
+            e.RemovedItems.OfType<ElementIcon>());
     }
 }

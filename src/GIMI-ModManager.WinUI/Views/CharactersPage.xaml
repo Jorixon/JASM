@@ -128,33 +128,37 @@
                 CornerRadius="10"
                 Orientation="Horizontal">-->
 
-            <ItemsView
-                Padding="0,0,0,4"
-                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                IsItemInvokedEnabled="True"
-                ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=OneWay}"
-                SelectionChanged="ItemsView_OnSelectionChanged"
-                SelectionMode="Single">
-                <ItemsView.ItemTemplate>
-                    <DataTemplate x:DataType="subVms:ElementIcon">
-                        <ItemContainer
-                            Width="60"
-                            MaxWidth="80"
-                            MaxHeight="40">
-                            <Grid Padding="4,0" HorizontalAlignment="Center">
-                                <Image
-                                    VerticalAlignment="Center"
-                                    ImageFailed="BitmapImage_OnImageFailed"
-                                    Source="{x:Bind ImageUri}" />
-                            </Grid>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
 
-                        </ItemContainer>
-                    </DataTemplate>
-                </ItemsView.ItemTemplate>
-                <ItemsView.Layout>
+                <GridView
+                    Padding="0,0,0,4"
+                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                    IsItemClickEnabled="True"
+                    IsMultiSelectCheckBoxEnabled="False"
+                    ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=TwoWay}"
+                    SelectionChanged="Selector_OnSelectionChanged"
+                    SelectionMode="Multiple">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="subVms:ElementIcon">
+                            <ItemContainer
+                                Width="60"
+                                MaxWidth="80"
+                                MaxHeight="40"
+                                IsSelected="{x:Bind IsSelected, Mode=TwoWay}">
+                                <Grid Padding="4,0" HorizontalAlignment="Center">
+                                    <Image
+                                        VerticalAlignment="Center"
+                                        ImageFailed="BitmapImage_OnImageFailed"
+                                        Source="{x:Bind ImageUri}" />
+                                </Grid>
+                            </ItemContainer>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <!--<GridView.Layout>
                     <StackLayout Orientation="Horizontal" />
-                </ItemsView.Layout>
-            </ItemsView>
+                </GridView.Layout>-->
+                </GridView>
+            </ScrollViewer>
 
             <!--<Button>
                     <Button.Content>

@@ -83,7 +83,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
     {
-        _logger.Debug("Filtering characters by element {Element}", e.Element);
+        if (e.Element.Length == 0)
+        {
+            _filters.Remove(FilterType.Element);
+            ResetContent();
+            return;
+        }
+
+        _filters[FilterType.Element] = new GridFilter(character => e.Element.Contains(character.Character.Element));
+        ResetContent();
     }
 
     private readonly CharacterGridItemModel _noCharacterFound =
