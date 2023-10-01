@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
@@ -44,13 +45,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty] private GenshinCharacter _shownCharacter = null!;
 
-    public ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
+    public readonly ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
 
     [ObservableProperty] public bool _multipleInGameSkins = false;
 
     [ObservableProperty] private SkinVM _selectedInGameSkin = new();
 
-    private static Dictionary<GenshinCharacter, string> _lastSelectedSkin = new();
+    private static readonly Dictionary<GenshinCharacter, string> _lastSelectedSkin = new();
+
+    public ModListVM.SortMethod? SortMethod { get; set; }
 
 
     public CharacterDetailsViewModel(IGenshinService genshinService, ILogger logger,
@@ -330,7 +333,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var selectedModPaths = ModListVM.SelectedMods.Select(mod => mod.FolderName).ToArray();
         await _refreshMods();
         var selectedMods = ModListVM.Mods.Where(mod => selectedModPaths.Any(oldModPath =>
-            oldModPath.Equals(mod.FolderName, StringComparison.CurrentCultureIgnoreCase))).ToArray();
+            ModFolderHelpers.FolderNameEquals(mod.FolderName, oldModPath))).ToArray();
         ModListVM.SelectionChanged(selectedMods, new List<NewModModel>());
     }
 
@@ -391,7 +394,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
 
         ModListVM.SetBackendMods(modList);
-        ModListVM.ResetContent();
+        ModListVM.ResetContent(SortMethod);
     }
 
     [RelayCommand]
@@ -515,14 +518,14 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private async Task DisableAllMods()
     {
+        if (ModListVM.Mods.Count == 0) return;
+        var shownMods = ModListVM.Mods.Where(mod => mod.IsEnabled).ToArray();
         await Task.Run(() =>
         {
-            foreach (var modEntry in _modList.Mods.Where(mod => mod.IsEnabled))
+            foreach (var modEntry in shownMods)
                 _modList.DisableMod(modEntry.Id);
         });
-        ModListVM.SetBackendMods(_modList.Mods.Select(mod =>
-            NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod)));
-        ModListVM.ResetContent();
+        await RefreshMods().ConfigureAwait(false);
     }
 
     public void ChangeModDetails(NewModModel newModModel)

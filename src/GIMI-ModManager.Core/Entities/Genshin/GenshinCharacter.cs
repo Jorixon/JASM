@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace GIMI_ModManager.Core.Entities.Genshin;
 
@@ -10,7 +11,10 @@ public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCha
     public DateTime ReleaseDate { get; set; } = DateTime.MinValue;
     public string? ImageUri { get; set; }
     public int Rarity { get; set; }
-    public string Element { get; set; } = string.Empty;
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public Elements Element { get; set; }
+
     public string Weapon { get; set; } = string.Empty;
     public string[] Region { get; set; } = Array.Empty<string>();
     public IReadOnlyCollection<ISubSkin> InGameSkins { get; set; } = Array.Empty<Skin>();
@@ -54,7 +58,7 @@ public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCha
 
 public record Skin : ISubSkin, IEqualityComparer<ISubSkin>
 {
-    private IGenshinCharacter _character;
+    private IGenshinCharacter _character = null!;
 
     public Skin(bool defaultSkin, string displayName, string name, string skinSuffix)
     {
@@ -91,7 +95,9 @@ public record Skin : ISubSkin, IEqualityComparer<ISubSkin>
         if (ReferenceEquals(x, null)) return false;
         if (ReferenceEquals(y, null)) return false;
         if (x.GetType() != y.GetType()) return false;
-        return x.Character.Equals(y.Character) && string.Equals(x.Name, y.Name, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.SkinSuffix, y.SkinSuffix, StringComparison.CurrentCultureIgnoreCase);
+        return x.Character.Equals(y.Character) &&
+               string.Equals(x.Name, y.Name, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.SkinSuffix,
+                   y.SkinSuffix, StringComparison.CurrentCultureIgnoreCase);
     }
 
     public int GetHashCode(ISubSkin obj)
@@ -112,7 +118,10 @@ public interface IGenshinCharacter : IEqualityComparer<GenshinCharacter>, IEqual
     public DateTime ReleaseDate { get; }
     public string? ImageUri { get; }
     public int Rarity { get; }
-    public string Element { get; }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public Elements Element { get; }
+
     public string Weapon { get; }
     public string[] Region { get; }
     public IReadOnlyCollection<ISubSkin> InGameSkins { get; }
@@ -137,4 +146,16 @@ public interface ISubSkin : IEqualityComparer<ISubSkin>
 
     // If null, use default image
     public string? ImageUri { get; internal set; }
+}
+
+public enum Elements
+{
+    None,
+    Geo,
+    Cryo,
+    Dendro,
+    Electro,
+    Anemo,
+    Hydro,
+    Pyro
 }

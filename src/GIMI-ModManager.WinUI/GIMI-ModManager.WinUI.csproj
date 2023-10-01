@@ -135,6 +135,20 @@
 		<Content Remove="Assets\Images\Character_Yun_Jin_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Zhongli_Card.png" />
 		<Content Remove="Assets\Images\Character_Zhongli_Thumb.png" />
+		<Content Remove="Assets\Images\Elements\Element_Anemo.png" />
+		<Content Remove="Assets\Images\Elements\Element_Anemo.svg" />
+		<Content Remove="Assets\Images\Elements\Element_Cryo.png" />
+		<Content Remove="Assets\Images\Elements\Element_Cryo.svg" />
+		<Content Remove="Assets\Images\Elements\Element_Dendro.png" />
+		<Content Remove="Assets\Images\Elements\Element_Dendro.svg" />
+		<Content Remove="Assets\Images\Elements\Element_Electro.png" />
+		<Content Remove="Assets\Images\Elements\Element_Electro.svg" />
+		<Content Remove="Assets\Images\Elements\Element_Geo.png" />
+		<Content Remove="Assets\Images\Elements\Element_Geo.svg" />
+		<Content Remove="Assets\Images\Elements\Element_Hydro.png" />
+		<Content Remove="Assets\Images\Elements\Element_Hydro.svg" />
+		<Content Remove="Assets\Images\Elements\Element_Pyro.png" />
+		<Content Remove="Assets\Images\Elements\Element_Pyro.svg" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\Fonts\zh-cn2.ttf" />
@@ -175,6 +189,7 @@
 		<PackageReference Include="Serilog.Sinks.EventLog" Version="3.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
+		<PackageReference Include="WinUI3Localizer" Version="2.0.1" />
 		<PackageReference Include="WinUIEx" Version="2.3.1" />
 	</ItemGroup>
 
@@ -446,6 +461,48 @@
 		<None Update="Assets\Images\Character_Zhongli_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Assets\Images\Elements\Element_Anemo.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Anemo.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Cryo.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Cryo.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Dendro.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Dendro.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Electro.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Electro.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Geo.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Geo.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Hydro.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Hydro.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Pyro.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Elements\Element_Pyro.svg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<Page Update="Styles\FontTypes.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -589,5 +646,15 @@
 
 	<ItemGroup>
 	  <Folder Include="Assets\7z\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Strings\**\*.resw">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PRIResource Remove="Strings\en-us\Resources.resw" />
 	</ItemGroup>
 </Project>

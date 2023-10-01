@@ -62,6 +62,7 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 - The Json file that stores the characters is a stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and images are also from the same repository.
 - 7-Zip is bundled with the app, 7-Zip is licensed under the GNU Lesser General Public License (LGPL). You can find the full license details and source code at [www.7-zip.org](https://www.7-zip.org/).
 - SharpCompress is used if the bundled 7-zip is not found. SharpCompress is licensed under the MIT license. You can find the full license details and source code at [SharpCompress's GitHub Page](https://github.com/adamhathcock/sharpcompress)
+- WinUI3Localizer is used for localization. WinUI3Localizer is licensed under the MIT license. You can find the full license details and source code at [WinUI3Localizer's GitHub Page](https://github.com/AndrewKeepCoding/WinUI3Localizer)
 - I have tested this app mostly on two machines running Windows 11. I have tested it on Windows 10 in a virtual machine.
 - There are definitely bugs. I have not tested this app enough and there are not tests written for it.
 - Drag and drop is really finicky for some reason. It works but it's not perfect. So the code for it is still quite messy and it involed time consuming tirial and error until it worked.

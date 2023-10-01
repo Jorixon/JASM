@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -14,10 +15,10 @@
         </Grid.RowDefinitions>
 
         <TextBlock
-            x:Uid="Startup_Title"
             Grid.Row="0"
             Margin="{StaticResource SmallTopMargin}"
             HorizontalAlignment="Center"
+            l:Uids.Uid="Startup_Title"
             Style="{StaticResource TitleTextBlockStyle}"
             Text="First time startup" />
 
@@ -34,13 +35,10 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0">
-                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="WrapWholeWords">
-                            <TextBlock.Text>
-                                As part of the first time setup you will need to select Genshin-Impact-Model-Importer (GIMI) folder and its connected Mods folder.
-                                The GIMI/3dmigoto folder contains 3DMigoto Loader.exe and a Mods folder. If you have not set up GIMI yet, please do so now, see link below.
-                                I find most mods on Gamebanana but Nexusmods also has some.
-                            </TextBlock.Text>
-                        </TextBlock>
+                        <TextBlock
+                            l:Uids.Uid="Startup1"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            TextWrapping="WrapWholeWords" />
                         <StackPanel Orientation="Horizontal">
 
                             <HyperlinkButton NavigateUri="https://github.com/SilentNightSound/GI-Model-Importer">Genshin-Impact-Model-Importer (Github)</HyperlinkButton>
@@ -52,20 +50,15 @@
                     <TextBlock
                         Grid.Row="1"
                         Margin="0,8,0,0"
+                        l:Uids.Uid="Startup2"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        TextWrapping="WrapWholeWords">
-                        <TextBlock.Text>
-                            Once the settings are saved the application will create a mod folder for each character within the Mods folder.
-                            This application enables and disables mods by prefixing mod folders with 'DISABLED_'.
-                            JASM also supports exporting Mods managed by it if you wish to use them with other applications.
-                        </TextBlock.Text>
-                    </TextBlock>
+                        TextWrapping="WrapWholeWords" />
 
                     <TextBlock
                         Grid.Row="2"
                         Margin="0,4,0,0"
+                        l:Uids.Uid="Startup3"
                         Style="{ThemeResource BodyStrongTextBlockStyle}"
-                        Text="It is always a good idea to backup your files/mods before using applications that interact with your files"
                         TextWrapping="WrapWholeWords" />
 
                 </Grid>
@@ -86,7 +79,7 @@
                     SelectedFolderValue="{x:Bind ViewModel.PathToModsFolderPicker.Path, Mode=TwoWay}"
                     ValidationErrorText="{x:Bind ViewModel.PathToModsFolderPicker.ValidationMessages, Mode=OneWay}" />
 
-                <Grid Margin="{StaticResource SmallTopBottomMargin}">
+                <Grid Margin="{StaticResource SmallTopBottomMargin}" Visibility="Collapsed">
                     <TextBlock
                         Margin="0,8,0,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
@@ -96,7 +89,8 @@
                 <controls:FolderSelector
                     Title="Unloaded Mods Folder (Optional)"
                     Margin="4,8,4,8"
-                    IsEnabled="False" />
+                    IsEnabled="False"
+                    Visibility="Collapsed" />
 
 
                 <!--  Save  -->
@@ -120,24 +114,19 @@
 
                                     <TextBlock
                                         Margin="0,8,0,4"
+                                        l:Uids.Uid="Startup/Tooltip1"
                                         Style="{ThemeResource BodyTextBlockStyle}"
-                                        TextWrapping="WrapWholeWords">
-                                        <TextBlock.Text>
-                                            Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters.
-                                            Any mods that can't be reasonably matched will be placed in an 'Others' folder.
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                        TextWrapping="WrapWholeWords" />
 
-                                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="WrapWholeWords">
-                                        <TextBlock.Text>
-                                            A mod folder containing multiple character names may be wrongly moved to a character's directory.
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                    <TextBlock
+                                        l:Uids.Uid="Startup/Tooltip2"
+                                        Style="{ThemeResource BodyTextBlockStyle}"
+                                        TextWrapping="WrapWholeWords" />
 
                                     <TextBlock
                                         Margin="0,8,0,4"
+                                        l:Uids.Uid="Startup/Tooltip3"
                                         Style="{ThemeResource BaseTextBlockStyle}"
-                                        Text="This can be activated later in the settings page."
                                         TextWrapping="WrapWholeWords" />
                                 </StackPanel>
                             </Flyout>

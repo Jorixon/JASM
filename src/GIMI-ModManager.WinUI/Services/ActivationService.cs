@@ -105,6 +105,7 @@ public class ActivationService : IActivationService
     private async Task InitializeAsync()
     {
         var jsonPath = IsMsix ? "ms-appx:///Assets/characters.json" : $"{AppDomain.CurrentDomain.BaseDirectory}Assets";
+        await SetLanguage();
         await SetScreenSize();
         await _genshinService.InitializeAsync(jsonPath).ConfigureAwait(false);
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
@@ -245,5 +246,22 @@ public class ActivationService : IActivationService
             if (doNotShowAgain.IsChecked == true)
                 await _localSettingsService.SaveSettingAsync(IgnoreAdminWarningKey, true);
         });
+    }
+
+
+    private async Task SetLanguage()
+    {
+        var selectedLanguage = (await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key)).Language?.ToLower().Trim();
+        if (selectedLanguage == null)
+        {
+            return;
+        }
+
+        var supportedLanguages = App.Localizer.GetAvailableLanguages().ToArray();
+
+        if (supportedLanguages.Contains(selectedLanguage))
+            await App.Localizer.SetLanguage(selectedLanguage);
+
+
     }
 }

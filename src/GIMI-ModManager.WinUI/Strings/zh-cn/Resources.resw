@@ -124,102 +124,83 @@
     <value>JASM - Just Another Skin Manager</value>
   </data>
   <data name="Startup1.Text" xml:space="preserve">
-    <value>As part of the first time setup you will need to select Genshin-Impact-Model-Importer (GIMI) folder and its connected Mods folder. The GIMI/3dmigoto folder contains 3DMigoto Loader.exe and a Mods folder. If you have not set up GIMI yet, please do so now, see link below. I find most mods on Gamebanana but Nexusmods also has some.</value>
+    <value>作为首次设置的一部分，您需要选择原神模型导入器（GIMI）文件夹及其关联的模组文件夹。GIMI/3dmigoto文件夹包含3DMigoto Loader.exe和一个模组文件夹。如果您尚未设置GIMI，请立即执行此操作，请参见下面的链接。我发现大多数模组在Gamebanana上，但Nexusmods也有一些。</value>
   </data>
   <data name="Startup2.Text" xml:space="preserve">
-    <value>Once the settings are saved the application will create a mod folder for each character within the Mods folder. This application enables and disables mods by prefixing mod folders with 'DISABLED_'.  JASM also supports exporting Mods managed by it if you wish to use them with other applications.</value>
+    <value>保存设置后，应用程序将在模组文件夹内为每个角色创建一个模组文件夹。该应用程序通过在模组文件夹前缀中添加“DISABLED_”来启用和禁用模组。JASM还支持导出由其管理的模组，如果您希望将其与其他应用程序一起使用。目前，只有这个页面和部分设置页面已经翻译完成。翻译是通过ChatGPT进行的，可能包含错误。</value>
   </data>
   <data name="Startup3.Text" xml:space="preserve">
-    <value>It is always a good idea to backup your files/mods before using applications that interact with your files</value>
+    <value>在使用与您的文件交互的应用程序之前，备份您的文件/模组总是一个好主意。</value>
   </data>
-  <data name="ShellMenuItem_Views_Main.Text" xml:space="preserve">
-    <value>Main</value>
-  </data>
-  <data name="Main_Title.Text" xml:space="preserve">
-    <value>Main</value>
-    <comment>Page title for MainPage</comment>
-  </data>
-  <data name="ShellMenuItem_Views_Startup.Text" xml:space="preserve">
-    <value>Startup</value>
-  </data>
-  <data name="Startup_Title.Text" xml:space="preserve">
-    <value>First time startup</value>
-    <comment>Page title for StartupPage</comment>
-  </data>
-  <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>Personalization</value>
-  </data>
-  <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>Theme</value>
-  </data>
-  <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
-  </data>
-  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
-  </data>
-  <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Default</value>
-  </data>
-  <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>The goal of JASM is to make it easy to organize a larger amount of skin mods</value>
-  </data>
-  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
-    <value>Privacy Statement</value>
-  </data>
-  <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>https://YourPrivacyUrlGoesHere/</value>
-  </data>
-  <data name="ShellMenuBarSettingsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
-    <value>Settings</value>
-    <comment>Page title for SettingsPage</comment>
-  </data>
-  <data name="Startup/Tooltip1.Text" xml:space="preserve">
-    <value>Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters. Any mods that can't be reasonably matched will be placed in an 'Others' folder.</value>
+  <data name="Startup/Tooltip1.Text1" xml:space="preserve">
+    <value>启用此选项将提示应用程序将现有的模组按其各自角色分配的文件夹进行排序。任何无法合理匹配的模组将放入“其他”文件夹。</value>
   </data>
   <data name="Startup/Tooltip2.Text" xml:space="preserve">
-    <value>A mod folder containing multiple character names may be wrongly moved to a character's directory.</value>
+    <value>一个包含多个角色名称的模组文件夹可能会错误地移到一个角色的目录中。</value>
   </data>
   <data name="Startup/Tooltip3.Text" xml:space="preserve">
-    <value>This can be activated later in the settings page.</value>
+    <value>这可以在设置页面中稍后激活。</value>
+  </data>
+  <data name="Startup_Title.Text" xml:space="preserve">
+    <value>首次启动</value>
+    <comment>启动页面的页面标题</comment>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
+    <value>关于此应用程序</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>JASM的目标是使组织大量皮肤模组变得更容易</value>
   </data>
   <data name="Settings_ComboBox_Header.Text" xml:space="preserve">
-    <value>Select Display Language:</value>
-  </data>
-  <data name="Settings_ExportDialog.Text" xml:space="preserve">
-    <value>This will export all mods that JASM is managing to a an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder.</value>
-  </data>
-  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
-    <value>Export</value>
-  </data>
-  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
-    <value>Change status of exported mods</value>
-  </data>
-  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
-    <value>Keep folder structure of CharacterName/Mods in export folder</value>
-  </data>
-  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
-    <value>Removes JASM configuration files from the exported Mods</value>
-  </data>
-  <data name="Settings_Export_Button.Text" xml:space="preserve">
-    <value>Export Mods</value>
-  </data>
-  <data name="Settings_Export_Title.Text" xml:space="preserve">
-    <value>Export/Backup Mods</value>
-  </data>
-  <data name="Settings_Language.Text" xml:space="preserve">
-    <value>Language</value>
+    <value>选择显示语言：</value>
   </data>
   <data name="Settings_Language_TexBlock.Text" xml:space="preserve">
-    <value>Language options are currently limited. It is a work in progress.</value>
+    <value>语言选项目前有限。这是一个正在进行中的工作。这是由ChatGPT翻译的。</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>个性化</value>
+  </data>
+  <data name="Settings_Theme.Text" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>设置</value>
+    <comment>设置页面的页面标题</comment>
+  </data>
+  <data name="Settings_ExportDialog.Text" xml:space="preserve">
+    <value>这将导出JASM管理的所有模组到您选择的导出文件夹。模组将被复制到导出文件夹，而不会从原始文件夹中删除。</value>
+  </data>
+  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
+    <value>更改导出的模组状态</value>
+  </data>
+  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
+    <value>在导出文件夹中保留CharacterName/Mods的文件夹结构</value>
+  </data>
+  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
+    <value>从导出的模组中移除JASM配置文件</value>
+  </data>
+  <data name="Settings_Export_Button.Text" xml:space="preserve">
+    <value>导出模组</value>
+  </data>
+  <data name="Settings_Export_Title.Text" xml:space="preserve">
+    <value>导出/备份模组</value>
+  </data>
+  <data name="Settings_Language.Text" xml:space="preserve">
+    <value>语言</value>
   </data>
 </root>

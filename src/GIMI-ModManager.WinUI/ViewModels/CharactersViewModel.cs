@@ -12,6 +12,7 @@ using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -33,20 +34,30 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
+    public OverviewDockPanelVM DockPanelVM { get; }
 
-    private GenshinCharacter[] _characters = Array.Empty<GenshinCharacter>();
 
-    private CharacterGridItemModel[] _backendCharacters = Array.Empty<CharacterGridItemModel>();
-    public ObservableCollection<CharacterGridItemModel> Characters { get; } = new();
+    private IReadOnlyList<GenshinCharacter> _characters = new List<GenshinCharacter>();
 
+    private IReadOnlyList<CharacterGridItemModel> _backendCharacters = new List<CharacterGridItemModel>();
     public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
 
-    public ObservableCollection<CharacterGridItemModel> PinnedCharacters { get; } = new();
-
-    public ObservableCollection<CharacterGridItemModel> HiddenCharacters { get; } = new();
-
+    public ObservableCollection<CharacterGridItemModel> Characters { get; } = new();
 
     private string _searchText = string.Empty;
+
+    private Dictionary<FilterType, GridFilter> _filters = new();
+
+
+    public ObservableCollection<SortingMethodType> SortingMethods { get; } =
+        new() { SortingMethodType.Alphabetical, SortingMethodType.ReleaseDate, SortingMethodType.Rarity };
+
+    private SortingMethod _sortingMethod = null!;
+    [ObservableProperty] private SortingMethodType _selectedSortingMethod = SortingMethodType.Alphabetical;
+    [ObservableProperty] private bool _sortByDescending;
+
+
+    private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
 
     public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
@@ -73,6 +84,22 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             if (args.PropertyName == nameof(ElevatorService.ElevatorStatus))
                 RefreshModsInGameCommand.NotifyCanExecuteChanged();
         };
+        DockPanelVM = new OverviewDockPanelVM();
+        DockPanelVM.FilterElementSelected += FilterElementSelected;
+        DockPanelVM.Initialize();
+    }
+
+    private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
+    {
+        if (e.Element.Length == 0)
+        {
+            _filters.Remove(FilterType.Element);
+            ResetContent();
+            return;
+        }
+
+        _filters[FilterType.Element] = new GridFilter(character => e.Element.Contains(character.Character.Element));
+        ResetContent();
     }
 
     private readonly CharacterGridItemModel _noCharacterFound =
@@ -86,6 +113,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (string.IsNullOrWhiteSpace(_searchText))
         {
             SuggestionsBox.Clear();
+            _filters.Remove(FilterType.Search);
             ResetContent();
             return;
         }
@@ -99,13 +127,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (!suitableItems.Any())
         {
             SuggestionsBox.Add(_noCharacterFound);
+            _filters.Remove(FilterType.Search);
             ResetContent();
             return;
         }
 
         suitableItems.ForEach(suggestion => SuggestionsBox.Add(suggestion));
 
-        ShowOnlyCharacters(suitableItems);
+        _filters[FilterType.Search] = new GridFilter(character => SuggestionsBox.Contains(character));
+        ResetContent();
     }
 
 
@@ -197,72 +227,89 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ResetContent()
     {
-        var neitherPinnedNorHiddenCharacters = _characters.Where(x =>
-            !PinnedCharacters.Select(pch => pch.Character).Contains(x) &&
-            !HiddenCharacters.Select(pch => pch.Character).Contains(x));
+        var filteredCharacters = FilterCharacters(_backendCharacters);
+        var sortedCharacters = _sortingMethod.Sort(filteredCharacters).ToList();
 
+        var charactersToRemove = Characters.Except(sortedCharacters).ToArray();
 
-        var gridIndex = 0;
-        foreach (var genshinCharacter in PinnedCharacters)
+        if (Characters.Count == 0)
         {
-            InsertCharacterIntoView(genshinCharacter, gridIndex);
-            gridIndex++;
-        }
+            foreach (var characterGridItemModel in sortedCharacters)
+            {
+                Characters.Add(characterGridItemModel);
+            }
 
-        foreach (var genshinCharacter in neitherPinnedNorHiddenCharacters.Select(ch => new CharacterGridItemModel(ch)))
-        {
-            InsertCharacterIntoView(genshinCharacter, gridIndex);
-            gridIndex++;
-        }
-
-        foreach (var genshinCharacter in HiddenCharacters)
-        {
-            InsertCharacterIntoView(genshinCharacter, gridIndex);
-            gridIndex++;
-        }
-
-        for (int i = Characters.Count; i > gridIndex; i--) Characters.RemoveAt(i - 1);
-
-
-        Debug.Assert(Characters.Distinct().Count() == Characters.Count,
-            $"Characters.Distinct().Count(): {Characters.Distinct().Count()} != Characters.Count: {Characters.Count}\n\t" +
-            $"Duplicate characters found in character overview");
-    }
-
-
-    private void InsertCharacterIntoView(CharacterGridItemModel character, int gridIndex)
-    {
-        var characterAtGridIndex = Characters.ElementAtOrDefault(gridIndex);
-
-        if (characterAtGridIndex?.Character.Id == character.Character.Id) return;
-
-        if (characterAtGridIndex is null)
-        {
-            Characters.Add(character);
             return;
         }
 
-        if (character.Character.Id != characterAtGridIndex.Character.Id) Characters.Insert(gridIndex, character);
-    }
+        var missingCharacters = sortedCharacters.Except(Characters);
 
-    private void ShowOnlyCharacters(IEnumerable<CharacterGridItemModel> charactersToShow, bool hardClear = false)
-    {
-        var tmpList = new List<CharacterGridItemModel>(_backendCharacters);
+        foreach (var characterGridItemModel in missingCharacters)
+        {
+            Characters.Add(characterGridItemModel);
+        }
+
+        foreach (var characterGridItemModel in sortedCharacters)
+        {
+            var newIndex = sortedCharacters.IndexOf(characterGridItemModel);
+            var oldIndex = Characters.IndexOf(characterGridItemModel);
+            //Check if character is already at the right index
+
+            if (newIndex == Characters.IndexOf(characterGridItemModel)) continue;
+
+            if (oldIndex < 0 || oldIndex >= Characters.Count || newIndex < 0 || newIndex >= Characters.Count)
+                throw new ArgumentOutOfRangeException();
+
+            Characters.RemoveAt(oldIndex);
+            Characters.Insert(newIndex, characterGridItemModel);
+        }
 
 
-        var characters = tmpList.Where(charactersToShow.Contains).ToArray();
+        foreach (var characterGridItemModel in charactersToRemove)
+        {
+            Characters.Remove(characterGridItemModel);
+        }
 
-        var pinnedCharacters = characters.Intersect(PinnedCharacters).ToArray();
-        characters = characters.Except(pinnedCharacters).ToArray();
-        Characters.Clear();
-
-        foreach (var genshinCharacter in pinnedCharacters) Characters.Add(genshinCharacter);
-
-        foreach (var genshinCharacter in characters) Characters.Add(genshinCharacter);
 
         Debug.Assert(Characters.Distinct().Count() == Characters.Count,
             $"Characters.Distinct().Count(): {Characters.Distinct().Count()} != Characters.Count: {Characters.Count}\n\t" +
             $"Duplicate characters found in character overview");
+    }
+
+    private IEnumerable<CharacterGridItemModel> FilterCharacters(
+        IReadOnlyList<CharacterGridItemModel> characters)
+    {
+        if (!_filters.Any())
+        {
+            foreach (var characterGridItemModel in characters)
+            {
+                yield return characterGridItemModel;
+            }
+        }
+
+        var modsFoundForFilter = new Dictionary<FilterType, IEnumerable<CharacterGridItemModel>>();
+
+
+        foreach (var filter in _filters)
+        {
+            modsFoundForFilter.Add(filter.Key, filter.Value.Filter(characters));
+        }
+
+
+        IEnumerable<CharacterGridItemModel>? intersectedMods = null;
+
+        foreach (var kvp in modsFoundForFilter)
+        {
+            intersectedMods = intersectedMods == null
+                ? kvp.Value
+                : intersectedMods.Intersect(kvp.Value);
+        }
+
+
+        foreach (var characterGridItemModel in intersectedMods ?? Array.Empty<CharacterGridItemModel>())
+        {
+            yield return characterGridItemModel;
+        }
     }
 
     public async void OnNavigatedTo(object parameter)
@@ -289,34 +336,43 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             characters.Add(weapons);
         }
 
-        _characters = characters.ToArray();
+
+        _characters = characters;
+
+        characters = new List<GenshinCharacter>(_characters);
 
         var pinnedCharactersOptions = await ReadCharacterSettings();
 
+        var backendCharacters = new List<CharacterGridItemModel>();
         foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
         {
-            var character = _characters.FirstOrDefault(x => x.Id == pinedCharacterId);
-            if (character is not null) PinnedCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
+            var character = characters.FirstOrDefault(x => x.Id == pinedCharacterId);
+            if (character is not null)
+            {
+                backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
+                characters.Remove(character);
+            }
         }
 
         foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
         {
-            var character = _characters.FirstOrDefault(x => x.Id == hiddenCharacterId);
-            if (character is not null) HiddenCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
+            var character = characters.FirstOrDefault(x => x.Id == hiddenCharacterId);
+            if (character is not null)
+            {
+                backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
+                characters.Remove(character);
+            }
         }
 
-        ResetContent();
-
-        var allCharacters = new List<CharacterGridItemModel>();
-        foreach (var genshinCharacter in _characters)
+        // Add rest of characters
+        foreach (var genshinCharacter in characters)
         {
-            var characterGridItemModel = FindCharacterById(genshinCharacter.Id);
-            if (characterGridItemModel is null) continue;
-            allCharacters.Add(characterGridItemModel);
+            backendCharacters.Add(new CharacterGridItemModel(genshinCharacter));
         }
 
-        _backendCharacters = allCharacters.ToArray();
+        _backendCharacters = backendCharacters;
 
+        // Add notifcations
         foreach (var genshinCharacter in _characters)
         {
             var characterGridItemModel = FindCharacterById(genshinCharacter.Id);
@@ -377,15 +433,39 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
 
-        if (!pinnedCharactersOptions.ShowOnlyCharactersWithMods) return;
+        if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
+        {
+            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+        }
 
-        ShowOnlyCharactersWithMods = true;
-        var characterIdsWithMods =
-            _skinManagerService.CharacterModLists.Where(x => x.Mods.Any()).Select(x => x.Character.Id);
+        var lastCharacters = new List<CharacterGridItemModel>();
 
-        var charactersWithMods = Characters.Where(x => characterIdsWithMods.Contains(x.Character.Id));
+        lastCharacters.Add(FindCharacterById(_genshinService.GlidersCharacterId)!);
+        lastCharacters.Add(FindCharacterById(_genshinService.WeaponsCharacterId)!);
+        _lastCharacters = lastCharacters.ToArray();
 
-        ShowOnlyCharacters(charactersWithMods);
+        _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
+            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters);
+
+        // ShowOnlyModsCharacters
+        var settings =
+            await _localSettingsService
+                .ReadOrCreateSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key);
+        if (settings.ShowOnlyCharactersWithMods)
+        {
+            ShowOnlyCharactersWithMods = true;
+            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+        }
+
+        SortByDescending = settings.SortByDescending;
+
+        _sortingMethod = new SortingMethod(settings.SortingMethod,
+            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters, SortByDescending);
+        SelectedSortingMethod = settings.SortingMethod;
+
+        ResetContent();
     }
 
     public void OnNavigatedFrom()
@@ -407,6 +487,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (ShowOnlyCharactersWithMods)
         {
             ShowOnlyCharactersWithMods = false;
+
+            _filters.Remove(FilterType.HasMods);
+
             ResetContent();
             var settingss = await ReadCharacterSettings();
 
@@ -418,19 +501,18 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var charactersWithMods =
-            _skinManagerService.CharacterModLists.Where(x => x.Mods.Any())
-                .Select(x => new CharacterGridItemModel(x.Character));
-
-        ShowOnlyCharacters(charactersWithMods);
+        _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+            _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
 
         ShowOnlyCharactersWithMods = true;
+
+        ResetContent();
 
         var settings = await ReadCharacterSettings();
 
         settings.ShowOnlyCharactersWithMods = ShowOnlyCharactersWithMods;
 
-        await SaveCharacterSettings(settings);
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 
 
@@ -445,7 +527,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public void OnRightClickContext(CharacterGridItemModel clickedCharacter)
     {
-        if (PinnedCharacters.Contains(clickedCharacter))
+        if (clickedCharacter.IsPinned)
         {
             PinText = DefaultUnpinText;
             PinGlyph = DefaultUnpinGlyph;
@@ -460,58 +542,35 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task PinCharacterAsync(CharacterGridItemModel character)
     {
-        if (PinnedCharacters.Contains(character))
+        if (character.IsPinned)
         {
             character.IsPinned = false;
-            PinnedCharacters.Remove(character);
 
-            if (!ShowOnlyCharactersWithMods)
-            {
-                ResetContent();
-            }
-            else
-            {
-                var charactersWithModss =
-                    _skinManagerService.CharacterModLists.Where(x => x.Mods.Any())
-                        .Select(x => new CharacterGridItemModel(x.Character));
-                ShowOnlyCharacters(charactersWithModss, true);
-            }
-
+            ResetContent();
 
             var settingss = await ReadCharacterSettings();
 
-            character.IsPinned = false;
-            var pinedCharacterss = PinnedCharacters.Select(ch => ch.Character.Id).ToArray();
+            var pinedCharacterss = _backendCharacters.Where(ch => ch.IsPinned).Select(ch => ch.Character.Id).ToArray();
             settingss.PinedCharacters = pinedCharacterss;
-
             await SaveCharacterSettings(settingss);
             return;
         }
 
+
         character.IsPinned = true;
-        PinnedCharacters.Add(character);
 
-        if (!ShowOnlyCharactersWithMods)
-        {
-            ResetContent();
-        }
-
-        else
-        {
-            var charactersWithMods =
-                _skinManagerService.CharacterModLists.Where(x => x.Mods.Any())
-                    .Select(x => new CharacterGridItemModel(x.Character));
-            ShowOnlyCharacters(charactersWithMods);
-        }
-
+        ResetContent();
 
         var settings = await ReadCharacterSettings();
 
-        var pinedCharacters = PinnedCharacters.Select(ch => ch.Character.Id)
-            .Union(settings.PinedCharacters.ToList()).ToArray();
+        var pinedCharacters = _backendCharacters
+            .Where(ch => ch.IsPinned)
+            .Select(ch => ch.Character.Id)
+            .ToArray();
+
         settings.PinedCharacters = pinedCharacters;
 
-        await SaveCharacterSettings(settings);
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 
 
@@ -624,7 +683,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                     CharacterId = modList.Character.Id,
                     AttentionType = AttentionType.Added,
                     ModFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name,
-                    Message = "Mod added from character overview",
+                    Message = "Mod added from character overview"
                 };
                 await _modNotificationManager.AddModNotification(notfiy);
 
@@ -679,15 +738,162 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private CharacterGridItemModel? FindCharacterById(int id)
     {
-        if (PinnedCharacters.Any(x => x.Character.Id == id))
-            return PinnedCharacters.First(x => x.Character.Id == id);
-
-        if (HiddenCharacters.Any(x => x.Character.Id == id))
-            return HiddenCharacters.First(x => x.Character.Id == id);
-
-        if (Characters.Any(x => x.Character.Id == id))
-            return Characters.First(x => x.Character.Id == id);
-
-        return null;
+        return _backendCharacters.FirstOrDefault(x => x.Character.Id == id);
     }
+
+
+    [RelayCommand]
+    private async Task SortBy(IEnumerable<SortingMethodType> methodTypes)
+    {
+        var sortingMethodType = methodTypes.First();
+
+        _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_genshinService.OtherCharacterId),
+            _lastCharacters, isDescending: SortByDescending);
+        ResetContent();
+
+        var settings = await ReadCharacterSettings();
+        settings.SortingMethod = sortingMethodType;
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
+
+    [RelayCommand]
+    private async Task InvertSorting()
+    {
+        _sortingMethod.IsDescending = SortByDescending;
+        ResetContent();
+
+        var settings = await ReadCharacterSettings();
+        settings.SortByDescending = SortByDescending;
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+}
+
+public sealed class GridFilter
+{
+    private readonly Func<CharacterGridItemModel, bool> _filter;
+
+    public GridFilter(Func<CharacterGridItemModel, bool> filter)
+    {
+        _filter = filter;
+    }
+
+    public bool Filter(CharacterGridItemModel character)
+    {
+        return _filter(character);
+    }
+
+    public IEnumerable<CharacterGridItemModel> Filter(IEnumerable<CharacterGridItemModel> characters)
+    {
+        return characters.Where(Filter);
+    }
+}
+
+public enum FilterType
+{
+    NotSet,
+    Element,
+    WeaponType,
+    Search,
+    HasMods
+}
+
+public sealed class SortingMethod
+{
+    public SortingMethodType SortingMethodType { get; }
+    public bool IsDescending { get; set; }
+
+    private readonly CharacterGridItemModel[] _lastCharacters;
+    private readonly CharacterGridItemModel? _firstCharacter;
+
+    public SortingMethod(SortingMethodType sortingMethodType, CharacterGridItemModel? firstCharacter = null,
+        ICollection<CharacterGridItemModel>? lastCharacters = null, bool isDescending = false)
+    {
+        SortingMethodType = sortingMethodType;
+        IsDescending = isDescending;
+        _lastCharacters = lastCharacters?.ToArray() ?? Array.Empty<CharacterGridItemModel>();
+        _firstCharacter = firstCharacter;
+    }
+
+    private static IEnumerable<CharacterGridItemModel> Sort<T, T1, T2>(IEnumerable<CharacterGridItemModel> characters,
+        Func<CharacterGridItemModel, T> sortFirstBy, Func<CharacterGridItemModel, T1>? sortSecondBy = null,
+        Func<CharacterGridItemModel, T2>? sortThirdBy = null, bool isDescending = false)
+    {
+        var charactersList = isDescending
+            ? characters.OrderByDescending(sortFirstBy)
+            : characters.OrderBy(sortFirstBy);
+
+        if (sortSecondBy is not null)
+        {
+            charactersList = isDescending
+                ? charactersList.ThenByDescending(sortSecondBy)
+                : charactersList.ThenBy(sortSecondBy);
+        }
+
+        if (sortThirdBy is not null)
+        {
+            charactersList = isDescending
+                ? charactersList.ThenByDescending(sortThirdBy)
+                : charactersList.ThenBy(sortThirdBy);
+        }
+
+        return charactersList;
+    }
+
+    public IEnumerable<CharacterGridItemModel> Sort(IEnumerable<CharacterGridItemModel> characters)
+    {
+        IEnumerable<CharacterGridItemModel> sortedCharacters = null!;
+        switch (SortingMethodType)
+        {
+            case SortingMethodType.Alphabetical:
+                sortedCharacters = Sort<string, string, string>(characters, x => x.Character.DisplayName,
+                    isDescending: IsDescending);
+                break;
+            case SortingMethodType.ReleaseDate:
+                sortedCharacters = Sort<DateTime, string, string>(characters, x => x.Character.ReleaseDate,
+                    x => x.Character.DisplayName, isDescending: IsDescending);
+                break;
+            case SortingMethodType.Rarity:
+                sortedCharacters = Sort<int, DateTime, string>(characters, x => x.Character.Rarity,
+                    x => x.Character.ReleaseDate, x => x.Character.DisplayName, isDescending: IsDescending);
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(SortingMethodType));
+        }
+
+        var returnCharactersList = sortedCharacters.ToList();
+
+        var modifiableCharacters = new List<CharacterGridItemModel>(returnCharactersList);
+
+        var index = 0;
+        foreach (var pinnedCharacter in modifiableCharacters.Where(x => x.IsPinned))
+        {
+            returnCharactersList.Remove(pinnedCharacter);
+            returnCharactersList.Insert(index, pinnedCharacter);
+            index++;
+        }
+
+        foreach (var characterGridItemModel in modifiableCharacters.Intersect(_lastCharacters))
+        {
+            if (characterGridItemModel.IsPinned) continue;
+            returnCharactersList.Remove(characterGridItemModel);
+            returnCharactersList.Add(characterGridItemModel);
+        }
+
+        if (_firstCharacter is not null)
+        {
+            returnCharactersList.Remove(_firstCharacter);
+            returnCharactersList.Insert(0, _firstCharacter);
+        }
+
+        return returnCharactersList;
+    }
+}
+
+public enum SortingMethodType
+{
+    Alphabetical,
+    ReleaseDate,
+    Rarity
 }

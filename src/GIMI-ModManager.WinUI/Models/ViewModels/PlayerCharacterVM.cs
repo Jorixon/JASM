@@ -11,7 +11,7 @@ public class PlayerCharacterVM
     public DateTime ReleaseDate { get; set; } = DateTime.MinValue;
     public string? ImageUri { get; set; }
     public int Rarity { get; set; } = -1;
-    public string Element { get; set; } = string.Empty;
+    public Elements Element { get; set; } 
     public string Weapon { get; set; } = string.Empty;
     public string[] Region { get; set; } = Array.Empty<string>();
 

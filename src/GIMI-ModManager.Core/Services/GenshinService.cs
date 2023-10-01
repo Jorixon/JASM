@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System.Reflection;
 using FuzzySharp;
 using GIMI_ModManager.Core.Entities.Genshin;
 using Newtonsoft.Json;
@@ -67,9 +66,14 @@ public class GenshinService : IGenshinService
         foreach (var skin in character.InGameSkins) skin.Character = character;
     }
 
-    public IEnumerable<GenshinCharacter> GetCharacters()
+    public List<GenshinCharacter> GetCharacters()
     {
-        return _characters;
+        return new List<GenshinCharacter>(_characters);
+    }
+
+    public List<Elements> GetElements()
+    {
+        return Enum.GetValues<Elements>().ToList();
     }
 
     public GenshinCharacter? GetCharacter(string keywords,
@@ -171,7 +175,7 @@ public class GenshinService : IGenshinService
             Rarity = -1,
             Keys = new[] { "others", "unknown" },
             ImageUri = "Character_Others.png",
-            Element = string.Empty,
+            Element = Elements.None,
             Weapon = string.Empty
         };
         SetImageUriForCharacter(assetsUriPath, character);
@@ -234,7 +238,8 @@ public class GenshinService : IGenshinService
 public interface IGenshinService
 {
     public Task InitializeAsync(string jsonFile);
-    public IEnumerable<GenshinCharacter> GetCharacters();
+    public List<GenshinCharacter> GetCharacters();
+    public List<Elements> GetElements();
 
     public GenshinCharacter? GetCharacter(string keywords,
         IEnumerable<GenshinCharacter>? restrictToGenshinCharacters = null, int fuzzRatio = 70);
@@ -249,45 +254,4 @@ public interface IGenshinService
 
     public bool IsMultiModCharacter(GenshinCharacter character);
     public bool IsMultiModCharacter(int characterId);
-}
-
-internal static class GenshinCharacters
-{
-    internal static IEnumerable<GenshinCharacter> AllCharacters()
-    {
-        return typeof(GenshinCharacters).GetFields(BindingFlags.Static | BindingFlags.NonPublic)
-            .Where(f => f.FieldType == typeof(GenshinCharacter))
-            .Select(f => (GenshinCharacter)f.GetValue(null)!);
-    }
-
-
-    internal static readonly GenshinCharacter Amber = new()
-    {
-        DisplayName = "Amber",
-        ReleaseDate = new DateTime(2020, 9, 28),
-        Rarity = 4,
-        Element = "Pyro",
-        Weapon = "Bow",
-        Region = new[] { "Mondstadt" }
-    };
-
-    internal static readonly GenshinCharacter Barbara = new()
-    {
-        DisplayName = "Barbara",
-        ReleaseDate = new DateTime(2020, 9, 28),
-        Rarity = 4,
-        Element = "Hydro",
-        Weapon = "Catalyst",
-        Region = new[] { "Mondstadt" }
-    };
-
-    internal static readonly GenshinCharacter Deluc = new()
-    {
-        DisplayName = "Deluc",
-        ReleaseDate = new DateTime(2020, 9, 28),
-        Rarity = 5,
-        Element = "Pyro",
-        Weapon = "Claymore",
-        Region = new[] { "Mondstadt" }
-    };
 }

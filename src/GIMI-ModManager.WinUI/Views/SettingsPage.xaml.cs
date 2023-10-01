@@ -21,4 +21,11 @@ public sealed partial class SettingsPage : Page
 
     private void ModsFolder_OnPathChangedEvent(object? sender, FolderSelector.StringEventArgs e)
         => ViewModel.PathToModsFolderPicker.Validate(e.Value);
+
+    private async void LanguageSelectorComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count == 0) return;
+        var item = (string)e.AddedItems[0];
+        await ViewModel.SelectLanguageCommand.ExecuteAsync(item).ConfigureAwait(false);
+    }
 }

@@ -83,10 +83,10 @@ public sealed class SkinManagerService : ISkinManagerService
                     if (x.Mod.FullPath.Equals(modDirectory.FullName, StringComparison.CurrentCultureIgnoreCase)
                         &&
                         Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath,
-                            characterModList.GetFolderNameWithDisabledPrefix(modDirectory.Name)))
+                            ModFolderHelpers.GetFolderNameWithDisabledPrefix(modDirectory.Name)))
                         &&
                         Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath,
-                            characterModList.GetFolderNameWithoutDisabledPrefix(modDirectory.Name)))
+                            ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(modDirectory.Name)))
                        )
                     {
                         var newName = modDirectory.Name;
@@ -114,7 +114,7 @@ public sealed class SkinManagerService : ISkinManagerService
                         break;
                     }
 
-                    var disabledName = characterModList.GetFolderNameWithDisabledPrefix(modDirectory.Name);
+                    var disabledName = ModFolderHelpers.GetFolderNameWithDisabledPrefix(modDirectory.Name);
                     if (x.Mod.FullPath == Path.Combine(characterModList.AbsModsFolderPath, disabledName))
                     {
                         mod = x;

@@ -1,6 +1,7 @@
 using Windows.ApplicationModel.DataTransfer;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -120,5 +121,21 @@ public sealed partial class CharactersPage : Page
     {
         await ViewModel.ModDroppedOnAutoDetect(await e.DataView.GetStorageItemsAsync());
         DragAndDropArea.Visibility = Visibility.Collapsed;
+    }
+
+    private void BitmapImage_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
+    {
+        Log.Error("Failed to load dock panel element icon. Reason: {e}", e.ErrorMessage);
+    }
+
+    private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ViewModel.DockPanelVM.ElementSelectionChanged(e.AddedItems.OfType<ElementIcon>(),
+            e.RemovedItems.OfType<ElementIcon>());
+    }
+
+    private void SortingComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ViewModel.SortByCommand.Execute(e.AddedItems.OfType<SortingMethodType>());
     }
 }

@@ -208,6 +208,7 @@
                         VerticalAlignment="Top"
                         FontFamily="{StaticResource GenshinFont}"
                         FontSize="28"
+                        IsTextSelectionEnabled="True"
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.Below="itemHero"
                         Text="{x:Bind ViewModel.ShownCharacter.DisplayName}"
@@ -235,6 +236,7 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             FontFamily="{StaticResource GenshinFont}"
+                            IsTextSelectionEnabled="True"
                             Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay}"
                             TextWrapping="WrapWholeWords" />
                         <Button
