@@ -31,13 +31,11 @@ public partial class OverviewDockPanelVM : ObservableRecipient
         }
     }
 
-    private string GetElementIconPath(Elements element)
-    {
-        return Path.Combine(App.ROOT_DIR, "Assets", "Images", "Elements", $"Element_{element}.svg");
-    }
+    private string GetElementIconPath(Elements element) =>
+        Path.Combine(App.ROOT_DIR, "Assets", "Images", "Elements", $"Element_{element}.svg");
 
     [RelayCommand]
-    private void ElementSelected(ElementIcon element)
+    private void ElementSelected(ElementIcon? element)
     {
         if (element is null) return;
 

@@ -66,9 +66,9 @@ public class GenshinService : IGenshinService
         foreach (var skin in character.InGameSkins) skin.Character = character;
     }
 
-    public IEnumerable<GenshinCharacter> GetCharacters()
+    public List<GenshinCharacter> GetCharacters()
     {
-        return _characters;
+        return new List<GenshinCharacter>(_characters);
     }
 
     public List<Elements> GetElements()
@@ -238,7 +238,7 @@ public class GenshinService : IGenshinService
 public interface IGenshinService
 {
     public Task InitializeAsync(string jsonFile);
-    public IEnumerable<GenshinCharacter> GetCharacters();
+    public List<GenshinCharacter> GetCharacters();
     public List<Elements> GetElements();
 
     public GenshinCharacter? GetCharacter(string keywords,

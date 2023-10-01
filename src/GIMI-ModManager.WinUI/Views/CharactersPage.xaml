@@ -129,6 +129,8 @@
                 Orientation="Horizontal">-->
 
             <ItemsView
+                Padding="0,0,0,4"
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 IsItemInvokedEnabled="True"
                 ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=OneWay}"
                 SelectionChanged="ItemsView_OnSelectionChanged"
