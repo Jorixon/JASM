@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -6,8 +7,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 
 namespace JASM.AutoUpdater;
@@ -16,72 +21,126 @@ public partial class MainPageVM : ObservableRecipient
 {
     private readonly string WorkDir = Path.Combine(Path.GetTempPath(), "JASM_Auto_Updater");
     private string _zipPath = string.Empty;
+    private DirectoryInfo _extractedJasmFolder = null!;
+    private DirectoryInfo _installedJasmFolder = null!;
+    private string _newJasmExePath = string.Empty;
 
     private readonly string _7zPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Assets\7z\", "7z.exe");
 
     [ObservableProperty] private bool _inStartupView = true;
 
     [ObservableProperty] private bool _updateProcessStarted = false;
+    [ObservableProperty] private string _latestVersion = "-----";
 
-    public ObservableCollection<string> Log { get; } = new();
+    public ObservableCollection<LogEntry> ProgressLog { get; } = new();
 
     public UpdateProgress UpdateProgress { get; } = new();
 
-    public Version? InstalledVersion { get; set; } = new(0, 0, 0, 0);
+    public Version InstalledVersion { get; }
 
-    public CancellationTokenSource CancellationTokenSource { get; } = new();
-
+    [ObservableProperty] private bool _isLoading = false;
+    [ObservableProperty] private bool _finishedSuccessfully = false;
 
     [ObservableProperty] private bool _stopped;
     [ObservableProperty] private string? _stopReason;
 
-    public MainPageVM()
+    public MainPageVM(string installedJasmVersion)
     {
+        InstalledVersion = Version.TryParse(installedJasmVersion, out var version) ? version : new Version(0, 0, 0, 0);
     }
 
-    [RelayCommand]
-    private async Task StartUpdate()
+    [RelayCommand(IncludeCancelCommand = true)]
+    private async Task StartUpdateAsync(CancellationToken cancellationToken)
     {
+        UpdateProgress.Reset();
+        IsLoading = true;
         InStartupView = false;
         UpdateProcessStarted = true;
+        Stopped = false;
+        StopReason = null;
+
+        Log(InstalledVersion.Equals(new Version(0, 0, 0, 0))
+            ? "Could not determine installed JASM version..."
+            : $"Installed JASM version: {InstalledVersion}");
 
 
-        var release = await IsNewerVersionAvailable();
-        UpdateProgress.NextStage();
-        if (Stopped || release is null)
-            return;
+        try
+        {
+            var release = await IsNewerVersionAvailable(cancellationToken);
+            UpdateProgress.NextStage();
+            if (Stopped || release is null)
+                return;
 
+            await Task.Delay(1000, cancellationToken);
+            await DownloadLatestVersion(release, cancellationToken);
+            UpdateProgress.NextStage();
 
-        await DownloadLatestVersion(release);
-        UpdateProgress.NextStage();
+            if (Stopped)
+            {
+                CleanUp();
+                return;
+            }
+
+            await Task.Delay(1000, cancellationToken);
+            await UnzipLatestVersion(cancellationToken);
+            UpdateProgress.NextStage();
+
+            if (Stopped)
+            {
+                CleanUp();
+                return;
+            }
+
+            await Task.Delay(1000, cancellationToken);
+            await InstallLatestVersion();
+            if (Stopped)
+            {
+                CleanUp();
+                return;
+            }
+
+            UpdateProgress.NextStage();
+        }
+        catch (TaskCanceledException e)
+        {
+            Stop("User cancelled");
+        }
+        catch (OperationCanceledException e)
+        {
+            Stop("User cancelled");
+        }
+        catch (Exception e)
+        {
+            Log("An error occurred!", e.Message);
+            Stop(e.Message);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
 
         if (Stopped)
         {
             CleanUp();
             return;
         }
-
-        await UnzipLatestVersion();
-        UpdateProgress.NextStage();
-
-        if (Stopped)
-        {
-            CleanUp();
-            return;
-        }
-
-        await InstallLatestVersion();
-        UpdateProgress.NextStage();
 
         CleanUp();
+        Finish();
     }
 
 
-    private async Task<GitHubRelease?> IsNewerVersionAvailable()
+    private void Finish()
     {
-        var newestVersionFound = await GetLatestVersionAsync(CancellationTokenSource.Token);
+        IsLoading = false;
+        FinishedSuccessfully = true;
+    }
 
-        Log.Add($"Newest version found: {newestVersionFound?.tag_name}");
+    private async Task<GitHubRelease?> IsNewerVersionAvailable(CancellationToken cancellationToken)
+    {
+        var newestVersionFound = await GetLatestVersionAsync(cancellationToken);
+
+        Log($"Newest version found: {newestVersionFound?.tag_name}");
 
         var release = new GitHubRelease()
         {
@@ -107,6 +166,8 @@ public partial class MainPageVM : ObservableRecipient
         release.DownloadUrl = new Uri(getJasmAsset.browser_download_url!);
         release.FileName = getJasmAsset.name ?? "JASM.zip";
 
+        LatestVersion = release.Version.ToString();
+
         return release;
     }
 
@@ -116,44 +177,43 @@ public partial class MainPageVM : ObservableRecipient
         StopReason = stopReason;
     }
 
-    private async Task DownloadLatestVersion(GitHubRelease gitHubRelease)
+    private async Task DownloadLatestVersion(GitHubRelease gitHubRelease, CancellationToken cancellationToken)
     {
-        //if (Directory.Exists(WorkDir))
-        //{
-        //    Directory.Delete(WorkDir, true);
-        //}
+        if (Directory.Exists(WorkDir))
+        {
+            Directory.Delete(WorkDir, true);
+        }
 
         Directory.CreateDirectory(WorkDir);
 
 
         _zipPath = Path.Combine(WorkDir, gitHubRelease.FileName);
-        //if (File.Exists(_zipPath))
-        //{
-        //    File.Delete(_zipPath);
-        //}
+        if (File.Exists(_zipPath))
+        {
+            File.Delete(_zipPath);
+        }
 
-        //File.Create(_zipPath).Close();
-        //return;
+        var httpClient = CreateHttpClient();
+        httpClient.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
 
-        //var httpClient = CreateHttpClient();
-        //httpClient.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
+        Log("Downloading latest version...");
+        var result = await httpClient.GetAsync(gitHubRelease.DownloadUrl, HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
 
-        //var result = await httpClient.GetAsync(gitHubRelease.DownloadUrl, HttpCompletionOption.ResponseHeadersRead,
-        //    CancellationTokenSource.Token);
+        if (!result.IsSuccessStatusCode)
+        {
+            Stop($"Failed to download latest version. Status Code: {result.StatusCode}, Reason: {result.ReasonPhrase}");
+            return;
+        }
 
-        //if (!result.IsSuccessStatusCode)
-        //{
-        //    Stop($"Failed to download latest version. Status Code: {result.StatusCode}, Reason: {result.ReasonPhrase}");
-        //    return;
-        //}
+        await using var stream = await result.Content.ReadAsStreamAsync(cancellationToken);
 
-        //await using var stream = await result.Content.ReadAsStreamAsync();
-
-        //await using var fileStream = File.Create(_zipPath);
-        //await stream.CopyToAsync(fileStream, CancellationTokenSource.Token);
+        await using var fileStream = File.Create(_zipPath);
+        await stream.CopyToAsync(fileStream, cancellationToken);
+        Log($"Latest version downloaded from {gitHubRelease.DownloadUrl}");
     }
 
-    private async Task UnzipLatestVersion()
+    private async Task UnzipLatestVersion(CancellationToken cancellationToken)
     {
         var process = new Process
         {
@@ -169,8 +229,8 @@ public partial class MainPageVM : ObservableRecipient
         };
 
         process.Start();
-        Log.Add("Extracting downloaded zip file...");
-        await process.WaitForExitAsync(CancellationTokenSource.Token);
+        Log("Extracting downloaded zip file...");
+        await process.WaitForExitAsync(cancellationToken);
 
         if (process.ExitCode != 0)
         {
@@ -179,41 +239,114 @@ public partial class MainPageVM : ObservableRecipient
         }
 
 
-        var jasmFolder = new DirectoryInfo(WorkDir).EnumerateDirectories().FirstOrDefault(folder =>
-            folder.Name.StartsWith("JASM", StringComparison.CurrentCultureIgnoreCase));
+        _extractedJasmFolder = new DirectoryInfo(WorkDir).EnumerateDirectories().FirstOrDefault(folder =>
+            folder.Name.StartsWith("JASM", StringComparison.CurrentCultureIgnoreCase))!;
 
-        if (jasmFolder is null)
+        if (_extractedJasmFolder is null)
         {
             Stop("Failed to find JASM folder in extracted zip file");
             return;
         }
 
-        Log.Add($"JASM Application folder extracted successfully. Path: {jasmFolder.FullName}");
+        Log($"JASM Application folder extracted successfully. Path: {_extractedJasmFolder.FullName}");
     }
 
     private async Task InstallLatestVersion()
     {
-        var installedJasmFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory)).Parent;
-        if (installedJasmFolder is null)
+        _installedJasmFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory)).Parent!;
+        if (_installedJasmFolder is null)
         {
             Stop("Failed to find installed JASM folder");
             return;
         }
 
-        // Show warning message box before deleting files
+        _newJasmExePath = Path.Combine(_installedJasmFolder.FullName, "JASM - Just Another Skin Manager.exe");
 
+        var containsJasmExe = false;
+        var warningFiles = new List<string>();
 
-        foreach (var FileSystemInfo in installedJasmFolder.EnumerateFileSystemInfos())
+        foreach (var fileSystemInfo in _installedJasmFolder.EnumerateFileSystemInfos())
         {
+            if (fileSystemInfo.Name.Equals("JASM - Just Another Skin Manager.exe",
+                    StringComparison.CurrentCultureIgnoreCase))
+            {
+                containsJasmExe = true;
+            }
+
+            if (fileSystemInfo.Name.Equals("3DMigoto Loader.exe", StringComparison.CurrentCultureIgnoreCase))
+            {
+                warningFiles.Add(fileSystemInfo.Name);
+            }
+
+            if (fileSystemInfo.Name.Equals("3dmigoto", StringComparison.CurrentCultureIgnoreCase))
+            {
+                warningFiles.Add(fileSystemInfo.Name);
+            }
+
+            if (fileSystemInfo.Name.Equals("Mods", StringComparison.CurrentCultureIgnoreCase))
+            {
+                warningFiles.Add("Mods");
+            }
         }
+
+        if (!containsJasmExe)
+        {
+            Stop(
+                $"Failed to find 'JASM - Just Another Skin Manager.exe' in installed JASM folder. Path: {_installedJasmFolder}");
+            return;
+        }
+
+        var result = await ShowDeleteWarning(warningFiles);
+
+        if (result is ContentDialogResult.Secondary or ContentDialogResult.None)
+        {
+            Stop("User cancelled");
+            return;
+        }
+
+        var autoUpdaterFolder = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+
+        Log("Deleting old files...", $"Path: {_installedJasmFolder.FullName}");
+
+        foreach (var fileSystemInfo in _installedJasmFolder.EnumerateFileSystemInfos())
+        {
+            if (fileSystemInfo.Name.StartsWith(autoUpdaterFolder.Name,
+                    StringComparison.CurrentCultureIgnoreCase))
+            {
+                continue;
+            }
+
+            if (fileSystemInfo is DirectoryInfo directoryInfo)
+                directoryInfo.Delete(true);
+            else
+                fileSystemInfo.Delete();
+        }
+
+        Log("Copying new files...", $"Path: {_installedJasmFolder.FullName}");
+
+        await Task.Run(() => { CopyFilesRecursively(_extractedJasmFolder, _installedJasmFolder); });
+
+        Log("JASM updated successfully");
+    }
+
+    // https://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
+    private static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+    {
+        foreach (var dir in source.GetDirectories())
+            CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+        foreach (var file in source.GetFiles())
+            file.CopyTo(Path.Combine(target.FullName, file.Name));
     }
 
     private void CleanUp()
     {
-        //if (Directory.Exists(WorkDir))
-        //{
-        //    Directory.Delete(WorkDir, true);
-        //}
+        Log("Cleaning up work dir...", WorkDir);
+        if (Directory.Exists(WorkDir))
+        {
+            Directory.Delete(WorkDir, true);
+        }
+
+        Log("Clean up finished");
     }
 
     // Copied from GIMI-ModManager.WinUI/Services/UpdateChecker.cs
@@ -272,12 +405,93 @@ public partial class MainPageVM : ObservableRecipient
         public Uri DownloadUrl = null!;
         public string FileName = null!;
     }
+
+    private void Log(string logMessage, string? footer = null)
+    {
+        var logEntry = new LogEntry
+        {
+            Message = logMessage,
+            Footer = footer,
+            TimeStamp = DateTime.Now
+        };
+        ProgressLog.Insert(0, logEntry);
+    }
+
+    [RelayCommand]
+    private async Task StartJasm()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = _newJasmExePath,
+            UseShellExecute = true
+        });
+        await Task.Delay(500);
+        Application.Current.Exit();
+    }
+
+
+    private async Task<ContentDialogResult> ShowDeleteWarning(ICollection<string> warningFiles)
+    {
+        var content = new ContentDialog
+        {
+            Title = "Warning",
+            PrimaryButtonText = "Continue",
+            DefaultButton = ContentDialogButton.Primary,
+            SecondaryButtonText = "Cancel",
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        var stackPanel = new StackPanel();
+
+        stackPanel.Children.Add(new TextBlock
+        {
+            Text =
+                "All files/folders in the installed JASM folder will be deleted permanently!\n" +
+                "This excludes the update folder itself. This action cannot be undone.\n" +
+                $"JASM Directory: {_installedJasmFolder.FullName}",
+            TextWrapping = TextWrapping.WrapWholeWords,
+            IsTextSelectionEnabled = true,
+            Margin = new Thickness(0, 0, 0, 10)
+        });
+
+        if (warningFiles.Any())
+            stackPanel.Children.Add(new TextBlock
+            {
+                Text = "These files/folders do not belong to JASM and will be deleted as well:\n" +
+                       string.Join("\n", warningFiles),
+                IsTextSelectionEnabled = true,
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+
+        stackPanel.Children.Add(new Button()
+        {
+            Content = "Open installed JASM folder...",
+            Margin = new Thickness(0, 8, 0, 8),
+            Command = new AsyncRelayCommand(async () =>
+            {
+                await Launcher.LaunchFolderAsync(
+                    await StorageFolder.GetFolderFromPathAsync(_installedJasmFolder.FullName));
+            })
+        });
+
+        content.Content = stackPanel;
+
+        return await content.ShowAsync();
+    }
 }
 
 internal class ApiAssets
 {
     public string? name;
     public string? browser_download_url;
+}
+
+public class LogEntry
+{
+    public string Message { get; set; } = string.Empty;
+    public string? Footer { get; set; }
+    public DateTime TimeStamp { get; set; } = DateTime.Now;
 }
 
 public partial class UpdateProgress : ObservableObject
@@ -289,6 +503,14 @@ public partial class UpdateProgress : ObservableObject
     [ObservableProperty] private bool _extractingLatestUpdate = false;
 
     [ObservableProperty] private bool _installingLatestUpdate = false;
+
+    public void Reset()
+    {
+        CheckingForLatestUpdate = false;
+        DownloadingLatestUpdate = false;
+        ExtractingLatestUpdate = false;
+        InstallingLatestUpdate = false;
+    }
 
     public void NextStage()
     {

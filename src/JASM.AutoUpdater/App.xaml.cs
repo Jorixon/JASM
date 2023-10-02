@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using System.Linq;
+using Microsoft.UI.Xaml;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -34,8 +36,10 @@ public partial class App : Application
         MainWindow.IsResizable = false;
         MainWindow.Title = "JASM Auto Updater";
 
-        MainWindow.Content = new MainPage();
+        var arguments = Environment.GetCommandLineArgs();
+
+        MainWindow.Content = new MainPage(arguments.Skip(1).FirstOrDefault() ?? string.Empty);
     }
 
-    internal MainWindow MainWindow;
+    internal static MainWindow MainWindow;
 }

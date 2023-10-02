@@ -4,10 +4,12 @@ namespace JASM.AutoUpdater;
 
 public sealed partial class MainPage : Page
 {
-    public MainPageVM ViewModel { get; } = new();
+    public MainPageVM ViewModel { get; }
 
-    public MainPage()
+    public MainPage(string currentJasmVersion)
     {
         InitializeComponent();
+
+        ViewModel = new MainPageVM(currentJasmVersion);
     }
 }
