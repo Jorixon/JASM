@@ -407,7 +407,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                     modList.Character);
                 if (subSkin is null) continue;
 
-                if (!subSkinsFound.Contains(subSkin))
+                var modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
+                var mod = NewModModel.FromMod(characterSkinEntry);
+                mod.WithModSettings(modSettings);
+
+                if (subSkinsFound.All(foundSubSkin => foundSubSkin.Name != mod.CharacterSkinOverride))
                 {
                     subSkinsFound.Add(subSkin);
                     continue;
@@ -423,7 +427,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
 
-        foreach (var characterGridItemModel in Characters.Where(x =>
+        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
                      charactersWithMultipleActiveSkins.Contains(x.Character.Id)))
         {
             if (_genshinService.IsMultiModCharacter(characterGridItemModel.Character))
@@ -439,10 +443,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
         }
 
-        var lastCharacters = new List<CharacterGridItemModel>();
+        var lastCharacters = new List<CharacterGridItemModel>
+        {
+            FindCharacterById(_genshinService.GlidersCharacterId)!,
+            FindCharacterById(_genshinService.WeaponsCharacterId)!
+        };
 
-        lastCharacters.Add(FindCharacterById(_genshinService.GlidersCharacterId)!);
-        lastCharacters.Add(FindCharacterById(_genshinService.WeaponsCharacterId)!);
         _lastCharacters = lastCharacters.ToArray();
 
         _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
@@ -815,24 +821,27 @@ public sealed class SortingMethod
         _firstCharacter = firstCharacter;
     }
 
-    private static IEnumerable<CharacterGridItemModel> Sort<T, T1, T2>(IEnumerable<CharacterGridItemModel> characters,
-        Func<CharacterGridItemModel, T> sortFirstBy, Func<CharacterGridItemModel, T1>? sortSecondBy = null,
-        Func<CharacterGridItemModel, T2>? sortThirdBy = null, bool isDescending = false)
+    private static IEnumerable<CharacterGridItemModel> Sort<T, T1, T2>(
+        IEnumerable<CharacterGridItemModel> characters,
+        Func<CharacterGridItemModel, T> sortFirstBy, bool firstByDescending = false,
+        Func<CharacterGridItemModel, T1>? sortSecondBy = null, bool secondByDescending = false,
+        Func<CharacterGridItemModel, T2>? sortThirdBy = null, bool thirdByDescending = false
+    )
     {
-        var charactersList = isDescending
+        var charactersList = firstByDescending
             ? characters.OrderByDescending(sortFirstBy)
             : characters.OrderBy(sortFirstBy);
 
         if (sortSecondBy is not null)
         {
-            charactersList = isDescending
+            charactersList = secondByDescending
                 ? charactersList.ThenByDescending(sortSecondBy)
                 : charactersList.ThenBy(sortSecondBy);
         }
 
         if (sortThirdBy is not null)
         {
-            charactersList = isDescending
+            charactersList = thirdByDescending
                 ? charactersList.ThenByDescending(sortThirdBy)
                 : charactersList.ThenBy(sortThirdBy);
         }
@@ -846,16 +855,17 @@ public sealed class SortingMethod
         switch (SortingMethodType)
         {
             case SortingMethodType.Alphabetical:
-                sortedCharacters = Sort<string, string, string>(characters, x => x.Character.DisplayName,
-                    isDescending: IsDescending);
+                sortedCharacters = Sort<string, string, string>(characters, x => x.Character.DisplayName, IsDescending);
                 break;
             case SortingMethodType.ReleaseDate:
                 sortedCharacters = Sort<DateTime, string, string>(characters, x => x.Character.ReleaseDate,
-                    x => x.Character.DisplayName, isDescending: IsDescending);
+                    !IsDescending,
+                    sortSecondBy: x => x.Character.DisplayName);
                 break;
             case SortingMethodType.Rarity:
-                sortedCharacters = Sort<int, DateTime, string>(characters, x => x.Character.Rarity,
-                    x => x.Character.ReleaseDate, x => x.Character.DisplayName, isDescending: IsDescending);
+                sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
+                    sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
+                    sortThirdBy: x => x.Character.DisplayName);
 
                 break;
             default:

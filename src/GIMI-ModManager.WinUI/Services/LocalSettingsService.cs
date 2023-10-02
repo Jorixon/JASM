@@ -86,7 +86,7 @@ public class LocalSettingsService : ILocalSettingsService
         return setting ?? new T();
     }
 
-    public async Task SaveSettingAsync<T>(string key, T value)
+    public async Task SaveSettingAsync<T>(string key, T value) where T : notnull
     {
         if (RuntimeHelper.IsMSIX)
         {
