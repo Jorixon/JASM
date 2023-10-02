@@ -1158,6 +1158,29 @@
     ]
   },
   {
+    "Id": 77,
+    "DisplayName": "Neuvillette",
+    "Keys": [
+      "neuvillette"
+    ],
+    "ReleaseDate": "2023-09-27T00:00:00",
+    "ImageUri": "Character_Neuvillette_Thumb.webp",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Weapon": "Catalyst",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Neuvillette",
+        "SkinSuffix": ""
+      }
+    ]
+  },
+  {
     "Id": 41,
     "DisplayName": "Nilou",
     "Keys": [

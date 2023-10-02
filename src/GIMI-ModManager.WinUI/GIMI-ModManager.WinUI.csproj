@@ -103,6 +103,7 @@
 		<Content Remove="Assets\Images\Character_Mona_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Nahida_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Navia_Thumb.webp" />
+		<Content Remove="Assets\Images\Character_Neuvillette_Thumb.webp" />
 		<Content Remove="Assets\Images\Character_Nilou_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Ningguang_Thumb.png" />
 		<Content Remove="Assets\Images\Character_Noelle_Thumb.png" />
@@ -364,6 +365,9 @@
 		</None>
 		<None Update="Assets\Images\Character_Navia_Thumb.webp">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Images\Character_Neuvillette_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Images\Character_Nilou_Thumb.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
