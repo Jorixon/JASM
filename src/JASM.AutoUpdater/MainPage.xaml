@@ -43,7 +43,7 @@
                 Margin="0,8"
                 IsTextSelectionEnabled="True"
                 Style="{ThemeResource BodyStrongTextBlockStyle}"
-                Text="If you have your mods folder or other personal files in the same folder as JASM, move them out or they will be deleted."
+                Text="If you have your mods folder or other personal files inside the JASM folder, move them out or they will be deleted."
                 TextWrapping="WrapWholeWords" />
             <Button
                 Margin="0,16,0,0"
@@ -84,11 +84,25 @@
                         Text="{x:Bind ViewModel.LatestVersion, Mode=OneWay}" />
                 </StackPanel>
 
-                <ProgressRing
-                    Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                    IsIndeterminate="True" />
+                <StackPanel Grid.Column="1">
+
+                    <HyperlinkButton
+                        Margin="0,16,0,16"
+                        HorizontalAlignment="Right"
+                        NavigateUri="{x:Bind ViewModel.DefaultBrowserUri, Mode=OneWay}">
+                        <HyperlinkButton.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0,0,4,0" Text="Latest Version" />
+                                <FontIcon Glyph="&#xE8A7;" />
+                            </StackPanel>
+                        </HyperlinkButton.Content>
+                    </HyperlinkButton>
+
+                    <ProgressRing
+                        HorizontalAlignment="Right"
+                        IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                        IsIndeterminate="True" />
+                </StackPanel>
             </Grid>
 
             <controls:Segmented

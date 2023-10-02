@@ -31,6 +31,7 @@ public partial class MainPageVM : ObservableRecipient
 
     [ObservableProperty] private bool _updateProcessStarted = false;
     [ObservableProperty] private string _latestVersion = "-----";
+    [ObservableProperty] private Uri _defaultBrowserUri = new("https://github.com/Jorixon/JASM/releases");
 
     public ObservableCollection<LogEntry> ProgressLog { get; } = new();
 
@@ -164,9 +165,12 @@ public partial class MainPageVM : ObservableRecipient
         }
 
         release.DownloadUrl = new Uri(getJasmAsset.browser_download_url!);
+        release.BrowserUrl = new Uri(newestVersionFound?.html_url ?? "https://github.com/Jorixon/JASM/releases");
         release.FileName = getJasmAsset.name ?? "JASM.zip";
 
         LatestVersion = release.Version.ToString();
+
+        DefaultBrowserUri = release.BrowserUrl;
 
         return release;
     }
@@ -387,6 +391,7 @@ public partial class MainPageVM : ObservableRecipient
 
     private class ApiGitHubRelease
     {
+        public string? html_url;
         public string? target_commitish;
         public string? browser_download_url;
         public string? tag_name;
@@ -402,6 +407,7 @@ public partial class MainPageVM : ObservableRecipient
         public bool PreRelease;
         public DateTime PublishedAt = DateTime.MinValue;
 
+        public Uri BrowserUrl = null!;
         public Uri DownloadUrl = null!;
         public string FileName = null!;
     }
