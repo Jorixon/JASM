@@ -195,6 +195,7 @@ public class ActivationService : IActivationService
                 _logger.Information("Shutdown override disabled.");
             });
             args.Handled = true;
+            return;
         }
 
         _logger.Debug("JASM shutting down...");
