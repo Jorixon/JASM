@@ -26,16 +26,18 @@ public class ActivationService : IActivationService
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
     private readonly UpdateChecker _updateChecker;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly AutoUpdaterService _autoUpdaterService;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
+
 
     public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
         IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService,
         ILocalSettingsService localSettingsService,
         IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
-        IWindowManagerService windowManagerService)
+        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -47,6 +49,7 @@ public class ActivationService : IActivationService
         _threeDMigtoProcessManager = threeDMigtoProcessManager;
         _updateChecker = updateChecker;
         _windowManagerService = windowManagerService;
+        _autoUpdaterService = autoUpdaterService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -109,7 +112,6 @@ public class ActivationService : IActivationService
         await SetScreenSize();
         await _genshinService.InitializeAsync(jsonPath).ConfigureAwait(false);
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
-        _elevatorService.Initialize();
     }
 
 
@@ -121,6 +123,7 @@ public class ActivationService : IActivationService
         await _genshinProcessManager.TryInitialize();
         await _threeDMigtoProcessManager.TryInitialize();
         await _updateChecker.InitializeAsync();
+        await Task.Run(() => _autoUpdaterService.UpdateAutoUpdater()).ConfigureAwait(false);
     }
 
     private async Task SetScreenSize()
@@ -181,6 +184,19 @@ public class ActivationService : IActivationService
 
     private void OnApplicationExit()
     {
+        if (App.OverrideShutdown)
+        {
+            _logger.Information("Shutdown override enabled, skipping shutdown...");
+            _logger.Information("Shutdown override will be disabled in at most 1 second.");
+            Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                App.OverrideShutdown = false;
+                _logger.Information("Shutdown override disabled.");
+            });
+            return;
+        }
+
         _logger.Debug("JASM shutting down...");
         _updateChecker.Dispose();
         var tmpDir = new DirectoryInfo(App.TMP_DIR);
@@ -251,7 +267,8 @@ public class ActivationService : IActivationService
 
     private async Task SetLanguage()
     {
-        var selectedLanguage = (await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key)).Language?.ToLower().Trim();
+        var selectedLanguage = (await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key))
+            .Language?.ToLower().Trim();
         if (selectedLanguage == null)
         {
             return;
@@ -261,7 +278,5 @@ public class ActivationService : IActivationService
 
         if (supportedLanguages.Contains(selectedLanguage))
             await App.Localizer.SetLanguage(selectedLanguage);
-
-
     }
 }

@@ -132,7 +132,7 @@
   <data name="Startup3.Text" xml:space="preserve">
     <value>在使用与您的文件交互的应用程序之前，备份您的文件/模组总是一个好主意。</value>
   </data>
-  <data name="Startup/Tooltip1.Text1" xml:space="preserve">
+  <data name="Startup/Tooltip1.Text" xml:space="preserve">
     <value>启用此选项将提示应用程序将现有的模组按其各自角色分配的文件夹进行排序。任何无法合理匹配的模组将放入“其他”文件夹。</value>
   </data>
   <data name="Startup/Tooltip2.Text" xml:space="preserve">

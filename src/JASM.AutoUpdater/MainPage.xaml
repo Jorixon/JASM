@@ -147,6 +147,7 @@
             <Button
                 Grid.Row="2"
                 HorizontalAlignment="Center"
+                Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
                 Command="{x:Bind ViewModel.StartJasmCommand}"
                 Content="Start JASM..."
                 Visibility="{x:Bind ViewModel.FinishedSuccessfully, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
