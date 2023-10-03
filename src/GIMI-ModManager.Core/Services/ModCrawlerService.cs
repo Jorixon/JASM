@@ -25,7 +25,7 @@ public class ModCrawlerService
 
         foreach (var file in RecursiveGetFiles(folder))
         {
-            var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file.Name, skin));
+            var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 
             _logger.Debug("Detected subSkin {subSkin} for folder {folder}", subSkin.Name, folder.FullName);
@@ -46,7 +46,7 @@ public class ModCrawlerService
 
         foreach (var file in RecursiveGetFiles(folder))
         {
-            var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file.Name, skin));
+            var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 
             _logger.Debug("Detected subSkin {subSkin} for folder {folder}", subSkin.Name, folder.FullName);
@@ -57,10 +57,15 @@ public class ModCrawlerService
         return null;
     }
 
+    private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
 
-    private static bool IsOfSkinType(string name, ISubSkin skin)
+    private static bool IsOfSkinType(FileInfo file, ISubSkin skin)
     {
-        return name.Trim().StartsWith(skin.Name, StringComparison.CurrentCultureIgnoreCase);
+        var fileExtensionMatch = ModExtensions.Any(extension =>
+            file.Extension.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
+
+
+        return fileExtensionMatch && file.Name.Trim().StartsWith(skin.Name, StringComparison.CurrentCultureIgnoreCase);
     }
 
 

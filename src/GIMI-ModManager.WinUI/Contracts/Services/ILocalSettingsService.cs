@@ -7,7 +7,7 @@ public interface ILocalSettingsService
 
     Task<T> ReadOrCreateSettingAsync<T>(string key) where T : new();
 
-    Task SaveSettingAsync<T>(string key, T value);
+    Task SaveSettingAsync<T>(string key, T value) where T : notnull;
 
     T? ReadSetting<T>(string key);
 }

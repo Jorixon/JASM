@@ -46,6 +46,8 @@ public partial class App : Application
 
     public static UIElement? AppTitlebar { get; set; }
 
+    public static bool OverrideShutdown { get; set; }
+
     public App()
     {
         InitializeComponent();
@@ -88,6 +90,7 @@ public partial class App : Application
                 services.AddSingleton<ThreeDMigtoProcessManager>();
 
                 services.AddSingleton<UpdateChecker>();
+                services.AddSingleton<AutoUpdaterService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();

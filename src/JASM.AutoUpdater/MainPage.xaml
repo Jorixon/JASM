@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="JASM.AutoUpdater.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:JASM.AutoUpdater.Helpers"
+    xmlns:local="using:JASM.AutoUpdater"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <helpers:BoolToVisibleConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+
+
+
+        <StackPanel VerticalAlignment="Center" Visibility="{x:Bind ViewModel.InStartupView, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock
+                Margin="16"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Style="{ThemeResource TitleTextBlockStyle}"
+                Text="JASM Auto Updater" />
+            <TextBlock
+                VerticalAlignment="Center"
+                IsTextSelectionEnabled="True"
+                Text="The Auto updater will delete JASM program files and then download the latest version from GitHub."
+                TextWrapping="WrapWholeWords" />
+            <TextBlock
+                VerticalAlignment="Center"
+                IsTextSelectionEnabled="True"
+                Text="This means that all files in the JASM folder will be deleted. JASM stores all personal settings in AppSettings or in the mods themselves."
+                TextWrapping="WrapWholeWords" />
+            <TextBlock
+                Margin="0,8"
+                IsTextSelectionEnabled="True"
+                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                Text="If you have your mods folder or other personal files inside the JASM folder, move them out or they will be deleted."
+                TextWrapping="WrapWholeWords" />
+            <Button
+                Margin="0,16,0,0"
+                HorizontalAlignment="Center"
+                Command="{x:Bind ViewModel.StartUpdateCommand}"
+                Content="Start Update Process" />
+        </StackPanel>
+
+
+
+        <Grid VerticalAlignment="Top" Visibility="{x:Bind ViewModel.UpdateProcessStarted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Margin="0,16,8,16"
+                        HorizontalAlignment="Left"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="Updating to Version" />
+
+                    <TextBlock
+                        Margin="0,16,0,16"
+                        HorizontalAlignment="Left"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="{x:Bind ViewModel.LatestVersion, Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+
+                    <HyperlinkButton
+                        Margin="0,16,0,16"
+                        HorizontalAlignment="Right"
+                        NavigateUri="{x:Bind ViewModel.DefaultBrowserUri, Mode=OneWay}">
+                        <HyperlinkButton.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0,0,4,0" Text="Latest Version" />
+                                <FontIcon Glyph="&#xE8A7;" />
+                            </StackPanel>
+                        </HyperlinkButton.Content>
+                    </HyperlinkButton>
+
+                    <ProgressRing
+                        HorizontalAlignment="Right"
+                        IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                        IsIndeterminate="True" />
+                </StackPanel>
+            </Grid>
+
+            <controls:Segmented
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                IsItemClickEnabled="False"
+                SelectionMode="Multiple">
+                <controls:SegmentedItem
+                    Content="Checking for Latest Version"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.CheckingForLatestUpdate, Mode=OneWay}" />
+                <controls:SegmentedItem
+                    Content="Downloading Latest Version"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.DownloadingLatestUpdate, Mode=OneWay}" />
+                <controls:SegmentedItem
+                    Content="Unzipping Download"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.ExtractingLatestUpdate, Mode=OneWay}" />
+                <controls:SegmentedItem
+                    Content="Installing JASM"
+                    IsHitTestVisible="False"
+                    IsSelected="{x:Bind ViewModel.UpdateProgress.InstallingLatestUpdate, Mode=OneWay}" />
+            </controls:Segmented>
+
+
+            <Button
+                Grid.Row="2"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Command="{x:Bind ViewModel.StartUpdateCancelCommand}"
+                Content="Cancel" />
+
+            <Button
+                Grid.Row="2"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Left"
+                Command="{x:Bind ViewModel.StartUpdateCommand}"
+                Content="Retry" />
+
+            <Button
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                Command="{x:Bind ViewModel.StartJasmCommand}"
+                Content="Start JASM..."
+                Visibility="{x:Bind ViewModel.FinishedSuccessfully, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+
+            <InfoBar
+                Grid.Row="3"
+                IsClosable="False"
+                IsOpen="{x:Bind ViewModel.Stopped, Mode=OneWay}"
+                Message="{x:Bind ViewModel.StopReason, Mode=OneWay}"
+                Severity="Error"
+                Visibility="{x:Bind ViewModel.Stopped, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <ListView
+                Grid.Row="4"
+                Margin="0,8,0,0"
+                ItemsSource="{x:Bind ViewModel.ProgressLog, Mode=OneWay}"
+                SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:LogEntry">
+                        <Grid
+                            Padding="2"
+                            BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                            BorderThickness="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind Message, Mode=OneWay}"
+                                TextWrapping="WrapWholeWords" />
+
+                            <TextBlock
+                                Grid.Row="1"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind Footer, Mode=OneWay}"
+                                TextWrapping="WrapWholeWords" />
+
+                            <TextBlock
+                                Grid.Row="2"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Right"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind TimeStamp, Mode=OneWay}" />
+
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+        </Grid>
+
+    </Grid>
+</Page>

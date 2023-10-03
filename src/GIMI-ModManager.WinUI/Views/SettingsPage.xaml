@@ -242,6 +242,7 @@
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                         Content="Just Another Skin Manager GameBanana"
                         NavigateUri="https://gamebanana.com/tools/14574" />
+
                     <StackPanel Orientation="Horizontal" Visibility="{x:Bind ViewModel.ShowNewVersionAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}">
                         <TextBlock VerticalAlignment="Center" Text="New Update Available on GitHub:" />
                         <TextBlock
@@ -250,13 +251,38 @@
                             Text="{x:Bind ViewModel.LatestVersion, Mode=OneWay}" />
                     </StackPanel>
 
-                    <Button
-                        Margin="0,16,0,16"
-                        VerticalAlignment="Center"
-                        Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
-                        Command="{x:Bind ViewModel.IgnoreNewVersionCommand}"
-                        Content="Ignore Current Update?"
-                        Visibility="{x:Bind ViewModel.ShowNewVersionAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                    <StackPanel Margin="0,16,0,16" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,20,0"
+                            VerticalAlignment="Center"
+                            Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                            Visibility="{x:Bind ViewModel.ShowNewVersionAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}">
+                            <Button.Flyout>
+                                <Flyout ShouldConstrainToRootBounds="False">
+                                    <StackPanel>
+                                        <TextBlock Text="JASM will exit and the update will start. Do you want to continue?" TextWrapping="WrapWholeWords" />
+                                        <Button Command="{x:Bind ViewModel.UpdateJasmCommand}" Content="Yes, Update JASM 😎" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Update JASM to " />
+                                    <TextBlock
+                                        Margin="4,0"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind ViewModel.LatestVersion, Mode=OneWay}" />
+                                    <FontIcon Glyph="&#xE896;" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+
+                        <Button
+                            VerticalAlignment="Center"
+                            Command="{x:Bind ViewModel.IgnoreNewVersionCommand}"
+                            Content="Ignore Current Update?"
+                            Visibility="{x:Bind ViewModel.ShowNewVersionAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

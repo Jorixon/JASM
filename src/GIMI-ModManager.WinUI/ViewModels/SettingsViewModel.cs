@@ -1,11 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ErrorOr;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Genshin;
@@ -13,14 +15,13 @@ using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
-using System.Globalization;
-using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -33,6 +34,7 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGenshinService _genshinService;
+    private readonly AutoUpdaterService _autoUpdaterService;
 
 
     private readonly NotificationManager _notificationManager;
@@ -68,12 +70,14 @@ public partial class SettingsViewModel : ObservableRecipient
 
     private ModManagerOptions? _modManagerOptions = null!;
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService,
+    public SettingsViewModel(
+        IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService,
         ElevatorService elevatorService, ILogger logger, NotificationManager notificationManager,
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        IGenshinService genshinService)
+        IGenshinService genshinService, AutoUpdaterService autoUpdaterService
+    )
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -84,6 +88,7 @@ public partial class SettingsViewModel : ObservableRecipient
         _skinManagerService = skinManagerService;
         _updateChecker = updateChecker;
         _genshinService = genshinService;
+        _autoUpdaterService = autoUpdaterService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -130,7 +135,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
 
         var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-         cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
+        cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
 
 
         var supportedCultures = App.Localizer.GetAvailableLanguages().ToArray();
@@ -144,10 +149,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
             if (culture.Name.ToLower() == App.Localizer.GetCurrentLanguage())
                 SelectedLanguage = culture.NativeName;
-
         }
-
-
     }
 
 
@@ -545,6 +547,28 @@ public partial class SettingsViewModel : ObservableRecipient
             var appSettings = await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key);
             appSettings.Language = langCode;
             await _localSettingsService.SaveSettingAsync(AppSettings.Key, appSettings);
+        }
+    }
+
+    [RelayCommand]
+    private void UpdateJasm()
+    {
+        var errors = Array.Empty<Error>();
+        try
+        {
+            errors = _autoUpdaterService.StartSelfUpdateProcess();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error starting update process");
+            _notificationManager.ShowNotification("Error starting update process", e.Message, TimeSpan.FromSeconds(10));
+        }
+
+        if (errors is not null && errors.Any())
+        {
+            var errorMessages = errors.Select(e => e.Description).ToArray();
+            _notificationManager.ShowNotification("Could not start update process", string.Join('\n', errorMessages),
+                TimeSpan.FromSeconds(10));
         }
     }
 }
