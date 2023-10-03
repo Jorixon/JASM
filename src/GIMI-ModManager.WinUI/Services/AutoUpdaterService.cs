@@ -11,7 +11,7 @@ public class AutoUpdaterService
     private readonly UpdateChecker _updateChecker;
 
     public const string AutoUpdaterFolder = "JASM - Auto Updater";
-    public const string NewAutoUpdaterFolder = "JASM - Auto Updater_new";
+    public const string NewAutoUpdaterFolder = "JASM - Auto Updater_New";
     public const string AutoUpdaterExe = "JASM - Auto Updater.exe";
 
     private readonly DirectoryInfo _oldAutoUpdaterFolder = new(Path.Combine(App.ROOT_DIR, AutoUpdaterFolder));

@@ -39,6 +39,8 @@ public partial class App : Application
         var arguments = Environment.GetCommandLineArgs();
 
         MainWindow.Content = new MainPage(arguments.Skip(1).FirstOrDefault() ?? string.Empty);
+        MainWindow.BringToFront();
+
     }
 
     internal static MainWindow MainWindow;
