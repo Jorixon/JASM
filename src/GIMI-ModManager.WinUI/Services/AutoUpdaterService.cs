@@ -71,6 +71,10 @@ public class AutoUpdaterService
             _newAutoUpdaterFolder.MoveTo(_oldAutoUpdaterFolder.FullName);
             _logger.Information("Auto Updater updated successfully.");
         }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to update Auto Updater.");
+        }
         finally
         {
             App.OverrideShutdown = false;
@@ -83,7 +87,7 @@ public class AutoUpdaterService
         if (HasStartedSelfUpdateProcess)
         {
             _logger.Warning("Self update process already started.");
-            return new[] { Error.Conflict() };
+            return new[] { Error.Conflict(description:"Self update process already started.") };
         }
 
         HasStartedSelfUpdateProcess = true;
@@ -105,7 +109,7 @@ public class AutoUpdaterService
         {
             _logger.Error("Current auto updater folder does not exist. Could not find the update folder: {Folder}",
                 _currentAutoUpdaterFolder.FullName);
-            return new[] { Error.NotFound() };
+            return new[] { Error.NotFound(description: $"Current auto updater folder does not exist. Could not find the update folder: {_currentAutoUpdaterFolder.FullName}") };
         }
 
         if (!ContainsAutoUpdaterExe(_currentAutoUpdaterFolder))
@@ -114,7 +118,7 @@ public class AutoUpdaterService
                 "Current auto updater folder does not contain the auto updater exe. Could not find {Exe} in {Folder}",
                 AutoUpdaterExe, _currentAutoUpdaterFolder.FullName);
 
-            return new[] { Error.NotFound() };
+            return new[] { Error.NotFound(description: $"Current auto updater folder does not contain the auto updater exe. Could not find {AutoUpdaterExe} in {_currentAutoUpdaterFolder.FullName}") };
         }
 
         var isAutoUpdaterRunning = Process.GetProcessesByName(AutoUpdaterExe).Any();
@@ -122,7 +126,7 @@ public class AutoUpdaterService
         if (isAutoUpdaterRunning)
         {
             _logger.Error("Auto updater is already running.");
-            return new[] { Error.Conflict() };
+            return new[] { Error.Conflict(description: "Auto updater is already running.") };
         }
 
         try
@@ -139,7 +143,7 @@ public class AutoUpdaterService
             if (process is null || process.HasExited)
             {
                 _logger.Error("Failed to start Auto Updater.");
-                return new[] { Error.Unexpected() };
+                return new[] { Error.Unexpected(description:"Failed to start Auto Updater.") };
             }
         }
         catch (Exception e)

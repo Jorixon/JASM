@@ -76,7 +76,7 @@ public class ActivationService : IActivationService
         App.MainWindow.Activate();
 
         // Set MainWindow Cleanup on Close.
-        App.MainWindow.Closed += (_, _) => OnApplicationExit();
+        App.MainWindow.Closed +=  OnApplicationExit;
 
         // Execute tasks after activation.
         await StartupAsync();
@@ -182,7 +182,7 @@ public class ActivationService : IActivationService
     }
 
 
-    private void OnApplicationExit()
+    private void OnApplicationExit(object sender, WindowEventArgs args)
     {
         if (App.OverrideShutdown)
         {
@@ -194,7 +194,7 @@ public class ActivationService : IActivationService
                 App.OverrideShutdown = false;
                 _logger.Information("Shutdown override disabled.");
             });
-            return;
+            args.Handled = true;
         }
 
         _logger.Debug("JASM shutting down...");

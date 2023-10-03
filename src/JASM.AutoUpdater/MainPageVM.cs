@@ -152,19 +152,20 @@ public partial class MainPageVM : ObservableRecipient
 
         if (release.Version <= InstalledVersion)
         {
-            Stop("Installed version is newer than or equal to the newest version");
+            Stop("Installed version is newer than or equal to the newest version found on GitHub");
             return null;
         }
 
         var getJasmAsset = newestVersionFound?.assets?.FirstOrDefault(a => a.name?.StartsWith("JASM_") ?? false);
 
-        if (getJasmAsset == null && getJasmAsset?.browser_download_url is null)
+        if (getJasmAsset?.browser_download_url is null)
         {
-            Stop("No JASM asset found");
+            Stop("Could not find JASM archive in the newest release on GitHub. This may be due to the developer having to manually upload the zip which can take a few minutes. " +
+                 "If the problem persists, then you may have to update JASM manually");
             return null;
         }
 
-        release.DownloadUrl = new Uri(getJasmAsset.browser_download_url!);
+        release.DownloadUrl = new Uri(getJasmAsset.browser_download_url);
         release.BrowserUrl = new Uri(newestVersionFound?.html_url ?? "https://github.com/Jorixon/JASM/releases");
         release.FileName = getJasmAsset.name ?? "JASM.zip";
 
@@ -260,7 +261,7 @@ public partial class MainPageVM : ObservableRecipient
         _installedJasmFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory)).Parent!;
         if (_installedJasmFolder is null)
         {
-            Stop("Failed to find installed JASM folder");
+            Stop("Failed to find installed JASM folder in path");
             return;
         }
 
