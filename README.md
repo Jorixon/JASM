@@ -72,9 +72,12 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 - Mod specific settings are stored within the mod folder themselves and are prefixed with ```.JASM_```. When exporting mods, these files can be ignored.
 
 ### Contributing
-If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively  learning.
+If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively  learning. 
 
-**Just be aware that the code is not super clean...**
+The code has progressively gotten more spaghettified over time ;_;
+
+**So be aware that the code is not super clean...**
+
 
 ### Building from source
 - I suggest following the [Install tools for the Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/set-up-your-development-environment?tabs=cs-vs-community%2Ccpp-vs-community%2Cvs-2022-17-1-a%2Cvs-2022-17-1-b) tutorial.
