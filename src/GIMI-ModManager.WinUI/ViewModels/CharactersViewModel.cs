@@ -4,6 +4,7 @@ using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -405,7 +406,16 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
                 var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)?.Name;
 
-                var modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
+                var modSettings = new SkinModSettings();
+                try
+                {
+                    modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Error reading mod settings for {Mod}", characterSkinEntry.Mod.FullPath);
+                }
+
                 var mod = NewModModel.FromMod(characterSkinEntry);
                 mod.WithModSettings(modSettings);
 
