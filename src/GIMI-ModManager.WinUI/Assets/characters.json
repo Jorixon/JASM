@@ -250,7 +250,7 @@
     "Keys": [
       "charlotte"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2024-01-01T00:00:00",
     "ImageUri": "Character_Charlotte_Thumb.webp",
     "Rarity": 0,
     "Element": "Cryo",
@@ -296,7 +296,7 @@
     "Keys": [
       "clorinde"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2024-01-01T00:00:00",
     "ImageUri": "Character_Clorinde_Thumb.webp",
     "Rarity": 0,
     "Element": "Electro",
@@ -564,7 +564,7 @@
       "furina",
       "focalors"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2024-01-01T00:00:00",
     "ImageUri": "Character_Furina_Thumb.webp",
     "Rarity": 0,
     "Element": "Hydro",
@@ -1140,7 +1140,7 @@
     "Keys": [
       "navia"
     ],
-    "ReleaseDate": "0001-01-01T00:00:00",
+    "ReleaseDate": "2024-01-01T00:00:00",
     "ImageUri": "Character_Navia_Thumb.webp",
     "Rarity": 0,
     "Element": "Geo",
