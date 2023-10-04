@@ -398,20 +398,26 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 continue;
 
             var addWarning = false;
-            var subSkinsFound = new List<ISubSkin>();
+            var subSkinsFound = new List<string>();
             foreach (var characterSkinEntry in modList.Mods)
             {
                 if (!characterSkinEntry.IsEnabled) continue;
 
-                var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath,
-                    modList.Character);
-                if (subSkin is null) continue;
+                var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)?.Name;
 
                 var modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
                 var mod = NewModModel.FromMod(characterSkinEntry);
                 mod.WithModSettings(modSettings);
 
-                if (subSkinsFound.All(foundSubSkin => foundSubSkin.Name != mod.CharacterSkinOverride))
+                if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
+                    subSkin = mod.CharacterSkinOverride;
+
+                if (subSkin is null)
+                    continue;
+
+
+                if (subSkinsFound.All(foundSubSkin =>
+                        !foundSubSkin.Equals(mod.CharacterSkinOverride, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     subSkinsFound.Add(subSkin);
                     continue;
