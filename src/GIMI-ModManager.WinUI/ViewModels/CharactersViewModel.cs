@@ -427,7 +427,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
                 if (subSkinsFound.All(foundSubSkin =>
-                        !foundSubSkin.Equals(mod.CharacterSkinOverride, StringComparison.CurrentCultureIgnoreCase)))
+                        !foundSubSkin.Equals(subSkin, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     subSkinsFound.Add(subSkin);
                     continue;
