@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.4.3](https://github.com/Jorixon/JASM/compare/v1.4.2...v1.4.3) (2023-10-04)
+
+
+### Bug Fixes
+
+* Multiple mod's active warning shown even if character skin was overridden for the mod ([e52b307](https://github.com/Jorixon/JASM/commit/e52b307bb3963780584bb1621535efe2232aea7f))
+
+
+### Tweaks
+
+* Added more filtering options to character overview ([fe8dd68](https://github.com/Jorixon/JASM/commit/fe8dd68570265e50053108b0e75edd7dbb04aed1))
+* Minor QOL improvements to ModGrid sorting ([#52](https://github.com/Jorixon/JASM/issues/52)) ([fe8dd68](https://github.com/Jorixon/JASM/commit/fe8dd68570265e50053108b0e75edd7dbb04aed1))
+
+
+### Miscellaneous
+
+* Added JASM auto updater ([#55](https://github.com/Jorixon/JASM/issues/55)) ([e52b307](https://github.com/Jorixon/JASM/commit/e52b307bb3963780584bb1621535efe2232aea7f))
+* Added Neuvillette ([c42c7f4](https://github.com/Jorixon/JASM/commit/c42c7f416d9d81731974066e46dab3755d5206bf))
+* Added some simplified Chinese translations to Startup page and Settings page. This is mostly a proof of concept and was translated trough chatGPT. Language can be changed on the settings page. ([fe8dd68](https://github.com/Jorixon/JASM/commit/fe8dd68570265e50053108b0e75edd7dbb04aed1))
+
+
+### Code Refactoring
+
+* Major refactoring of code related to Character Overview sorting and filtering. ([fe8dd68](https://github.com/Jorixon/JASM/commit/fe8dd68570265e50053108b0e75edd7dbb04aed1))
+
 ## [1.4.2](https://github.com/Jorixon/JASM/compare/v1.4.1...v1.4.2) (2023-09-30)
 
 
