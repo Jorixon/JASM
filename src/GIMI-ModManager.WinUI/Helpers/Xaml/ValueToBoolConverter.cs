@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Data;
 
-namespace GIMI_ModManager.WinUI.Helpers;
+namespace GIMI_ModManager.WinUI.Helpers.Xaml;
 
 public class ValueToBoolConverter : IValueConverter
 {

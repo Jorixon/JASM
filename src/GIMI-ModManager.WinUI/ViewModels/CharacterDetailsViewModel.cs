@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Text.Json;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
@@ -10,6 +9,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -19,6 +19,7 @@ using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
@@ -36,6 +37,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ModDragAndDropService _modDragAndDropService;
     private readonly ModCrawlerService _modCrawlerService;
     private readonly ModNotificationManager _modNotificationManager;
+    private readonly ModSettingsService _modSettingsService;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -60,7 +62,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         INavigationService navigationService, ISkinManagerService skinManagerService,
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
         ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
-        ModNotificationManager modNotificationManager)
+        ModNotificationManager modNotificationManager, ModSettingsService modSettingsService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -71,6 +73,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _modDragAndDropService = modDragAndDropService;
         _modCrawlerService = modCrawlerService;
         _modNotificationManager = modNotificationManager;
+        _modSettingsService = modSettingsService;
 
         _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
         {
@@ -95,7 +98,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModListVM = new ModListVM(skinManagerService, modNotificationManager);
         ModListVM.OnModsSelected += OnModsSelected;
 
-        ModPaneVM = new ModPaneVM(skinManagerService, notificationService);
+        ModPaneVM = new ModPaneVM();
     }
 
     private async void OnModsSelected(object? sender, ModListVM.ModSelectedEventArgs args)
@@ -246,9 +249,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (lastSelectedSkin is not null) await SwitchCharacterSkin(lastSelectedSkin);
     }
 
-    // This function is called from the NewModModel _toggleMod delegate.
+    // This function is called from the ModModel _toggleMod delegate.
     // This is a hacky way to get the toggle button to work.
-    private void ToggleMod(NewModModel thisMod)
+    private void ToggleMod(ModModel thisMod)
     {
         var modList = _skinManagerService.GetCharacterModList(thisMod.Character);
         if (thisMod.IsEnabled)
@@ -334,13 +337,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         await _refreshMods();
         var selectedMods = ModListVM.Mods.Where(mod => selectedModPaths.Any(oldModPath =>
             ModFolderHelpers.FolderNameEquals(mod.FolderName, oldModPath))).ToArray();
-        ModListVM.SelectionChanged(selectedMods, new List<NewModModel>());
+        ModListVM.SelectionChanged(selectedMods, new List<ModModel>());
     }
 
     private async Task _refreshMods()
     {
         var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter));
-        var modList = new List<NewModModel>();
+        var modList = new List<ModModel>();
 
         var mods = _genshinService.IsMultiModCharacter(ShownCharacter) || !MultipleInGameSkins
             ? _modList.Mods
@@ -348,7 +351,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         foreach (var skinEntry in mods)
         {
-            var newModModel = NewModModel.FromMod(skinEntry);
+            var newModModel = ModModel.FromMod(skinEntry);
             newModModel.WithToggleModDelegate(ToggleMod);
 
             var modSettings = await LoadModSettings(skinEntry);
@@ -364,7 +367,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             if (inMemoryModNotification != null)
                 newModModel.ModNotifications.Add(inMemoryModNotification);
 
-            //newModModel.ModNotifications.Add(new ModNotification()
+            //modModel.ModNotifications.Add(new ModNotification()
             //{
             //    CharacterId = ShownCharacter.Id,
             //    ShowOnOverview = false,
@@ -398,15 +401,20 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     }
 
     [RelayCommand]
-    private async Task SwitchCharacterSkin(SelectCharacterTemplate characterTemplate)
+    private async Task SwitchCharacterSkin(SelectCharacterTemplate? characterTemplate)
     {
-        if (characterTemplate?.DisplayName is not null && characterTemplate.DisplayName.Equals(
+        if (characterTemplate is null)
+            return;
+
+        if (characterTemplate.DisplayName.Equals(
                 SelectedInGameSkin.DisplayName,
                 StringComparison.CurrentCultureIgnoreCase))
             return;
 
         var characterSkin = ShownCharacter.InGameSkins.FirstOrDefault(skin =>
             skin.DisplayName.Equals(characterTemplate.DisplayName, StringComparison.CurrentCultureIgnoreCase));
+
+
         if (characterSkin is null)
         {
             _logger.Error("Could not find character skin {SkinName} for character {CharacterName}",
@@ -417,9 +425,12 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         SelectedInGameSkin = SkinVM.FromSkin(characterSkin);
         MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
+
+
         foreach (var selectableInGameSkin in SelectableInGameSkins)
             selectableInGameSkin.IsSelected = selectableInGameSkin.DisplayName.Equals(characterTemplate.DisplayName,
                 StringComparison.CurrentCultureIgnoreCase);
+
         _lastSelectedSkin[ShownCharacter] = SelectedInGameSkin.DisplayName;
         await RefreshMods().ConfigureAwait(false);
     }
@@ -453,22 +464,21 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         return filteredMods;
     }
 
-    private async Task<SkinModSettings?> LoadModSettings(CharacterSkinEntry characterSkinEntry)
+    private async Task<ModSettings?> LoadModSettings(CharacterSkinEntry characterSkinEntry)
     {
-        try
-        {
-            var modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
-            return modSettings;
-        }
-        catch (JsonException e)
-        {
-            _logger.Error(e, "Error while reading mod settings for {ModName}", characterSkinEntry.Mod.Name);
-            _notificationService.ShowNotification("Error while reading mod settings.",
-                $"An error occurred while reading the mod settings for {characterSkinEntry.Mod.Name}, See logs for details.\n{e.Message}",
-                TimeSpan.FromSeconds(10));
-        }
+        var result = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Mod.Id);
 
-        return null;
+
+        ModSettings? modSettings = null;
+
+        modSettings = result.Match<ModSettings?>(
+            modSettings => modSettings,
+            notFound => null,
+            modNotFound => null,
+            error => null);
+
+
+        return modSettings;
     }
 
     [RelayCommand]
@@ -528,19 +538,19 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         await RefreshMods().ConfigureAwait(false);
     }
 
-    public void ChangeModDetails(NewModModel newModModel)
+    public void ChangeModDetails(ModModel modModel)
     {
-        var oldMod = _modList.Mods.FirstOrDefault(mod => mod.Id == newModModel.Id);
+        var oldMod = _modList.Mods.FirstOrDefault(mod => mod.Id == modModel.Id);
         if (oldMod == null)
         {
-            _logger.Warning("Could not find mod with id {ModId} to change details.", newModModel.Id);
+            _logger.Warning("Could not find mod with id {ModId} to change details.", modModel.Id);
             return;
         }
 
-        var oldModModel = NewModModel.FromMod(oldMod);
+        var oldModModel = ModModel.FromMod(oldMod);
 
 
-        if (oldModModel.Name != newModModel.Name)
+        if (oldModModel.Name != modModel.Name)
             NotImplemented.Show("Setting custom mod names are not persisted between sessions",
                 TimeSpan.FromSeconds(10));
     }
@@ -555,9 +565,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     }
 
 
-    private IEnumerable<NewModModel> GetNewModModels()
+    private IEnumerable<ModModel> GetNewModModels()
     {
-        return _modList.Mods.Select(mod => NewModModel.FromMod(mod).WithToggleModDelegate(ToggleMod));
+        return _modList.Mods.Select(mod => ModModel.FromMod(mod).WithToggleModDelegate(ToggleMod));
     }
 
 

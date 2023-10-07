@@ -25,12 +25,16 @@
 
 
 	<ItemGroup>
+		<Compile Remove="Mappers\**" />
 		<Compile Remove="Views\Components\**" />
 		<Compile Remove="Views\SubPages\**" />
+		<EmbeddedResource Remove="Mappers\**" />
 		<EmbeddedResource Remove="Views\Components\**" />
 		<EmbeddedResource Remove="Views\SubPages\**" />
+		<None Remove="Mappers\**" />
 		<None Remove="Views\Components\**" />
 		<None Remove="Views\SubPages\**" />
+		<Page Remove="Mappers\**" />
 		<Page Remove="Views\Components\**" />
 		<Page Remove="Views\SubPages\**" />
 	</ItemGroup>
@@ -660,5 +664,9 @@
 
 	<ItemGroup>
 	  <PRIResource Remove="Strings\en-us\Resources.resw" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PRIResource Remove="Mappers\**" />
 	</ItemGroup>
 </Project>

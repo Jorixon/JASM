@@ -1,11 +1,11 @@
-﻿using GIMI_ModManager.WinUI.Models.Options;
+﻿using GIMI_ModManager.WinUI.Models.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace GIMI_ModManager.WinUI.Services;
+namespace GIMI_ModManager.WinUI.Services.AppManagment;
 
 public class WindowManagerService : IWindowManagerService
 {
@@ -50,7 +50,7 @@ public class WindowManagerService : IWindowManagerService
         windowToResize.Height = height;
     }
 
-    public void ResizeWindow(WindowEx window, ScreenSize newSize)
+    public void ResizeWindow(WindowEx window, ScreenSizeSettings newSize)
     {
         ResizeWindow(window, newSize.Width, newSize.Height);
     }
@@ -134,7 +134,7 @@ public interface IWindowManagerService
     public WindowEx MainWindow { get; }
     void ShowWindow(WindowEx window);
     void ResizeWindow(WindowEx window, int width, int height);
-    void ResizeWindow(WindowEx window, ScreenSize newSize);
+    void ResizeWindow(WindowEx window, ScreenSizeSettings newSize);
     void ResizeWindowPercent(WindowEx window, int widthPercent, int heightPercent);
     void CloseWindow(WindowEx window);
     WindowEx CreateWindow(UIElement windowContent, bool activate = true);

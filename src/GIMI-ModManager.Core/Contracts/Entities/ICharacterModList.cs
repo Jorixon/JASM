@@ -42,7 +42,6 @@ public interface ICharacterModList
 
     public bool IsModEnabled(IMod mod);
 
-    public void SetCustomModName(Guid modId, string newName);
 
     public bool IsMultipleModsActive(bool perSkin = false);
 

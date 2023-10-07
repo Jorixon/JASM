@@ -12,9 +12,9 @@ public partial class ModListVM : ObservableRecipient
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly ModNotificationManager _modNotificationManager;
-    public readonly ObservableCollection<NewModModel> BackendMods = new();
+    public readonly ObservableCollection<ModModel> BackendMods = new();
 
-    public ObservableCollection<NewModModel> SelectedMods { get; } = new();
+    public ObservableCollection<ModModel> SelectedMods { get; } = new();
     [ObservableProperty] private InfoBarSeverity _severity = InfoBarSeverity.Warning;
 
     [ObservableProperty] private bool _isInfoBarOpen;
@@ -23,7 +23,7 @@ public partial class ModListVM : ObservableRecipient
 
     [ObservableProperty] private int _selectedModsCount;
 
-    public ObservableCollection<NewModModel> Mods { get; } = new();
+    public ObservableCollection<ModModel> Mods { get; } = new();
 
     public bool DisableInfoBar { get; set; } = false;
 
@@ -40,11 +40,11 @@ public partial class ModListVM : ObservableRecipient
     {
         if (e.NewItems is not null)
         {
-            foreach (NewModModel item in e.NewItems)
+            foreach (ModModel item in e.NewItems)
             {
                 item.PropertyChanged += (o, args) =>
                 {
-                    if (args.PropertyName != nameof(NewModModel.IsEnabled)) return;
+                    if (args.PropertyName != nameof(ModModel.IsEnabled)) return;
 
                     if (Mods.Count(x => x.IsEnabled) > 1)
                     {
@@ -59,7 +59,7 @@ public partial class ModListVM : ObservableRecipient
         }
     }
 
-    public void SetBackendMods(IEnumerable<NewModModel> mods)
+    public void SetBackendMods(IEnumerable<ModModel> mods)
     {
         BackendMods.Clear();
         foreach (var mod in mods)
@@ -68,7 +68,7 @@ public partial class ModListVM : ObservableRecipient
         }
     }
 
-    public void ReplaceMods(IEnumerable<NewModModel> mods)
+    public void ReplaceMods(IEnumerable<ModModel> mods)
     {
         Mods.Clear();
         foreach (var mod in mods)
@@ -99,7 +99,7 @@ public partial class ModListVM : ObservableRecipient
         {
             isEnabledComparer.IsDescending = sortMethod.IsDescending;
 
-            void AddMods(IEnumerable<NewModModel> mods)
+            void AddMods(IEnumerable<ModModel> mods)
             {
                 foreach (var mod in mods)
                 {
@@ -109,21 +109,21 @@ public partial class ModListVM : ObservableRecipient
 
             switch (sortMethod.PropertyName)
             {
-                case nameof(NewModModel.IsEnabled):
+                case nameof(ModModel.IsEnabled):
                     AddMods(sortMethod.IsDescending
                         ? BackendMods.OrderByDescending(modModel => modModel, isEnabledComparer)
                         : BackendMods.OrderBy(modModel => modModel, isEnabledComparer));
 
                     break;
 
-                case nameof(NewModModel.Name):
+                case nameof(ModModel.Name):
                     AddMods(sortMethod.IsDescending
                         ? BackendMods.OrderByDescending(modModel => modModel.Name)
                         : BackendMods.OrderBy(modModel => modModel.Name));
 
                     break;
 
-                case nameof(NewModModel.FolderName):
+                case nameof(ModModel.FolderName):
                     AddMods(sortMethod.IsDescending
                         ? BackendMods.OrderByDescending(modModel => modModel.FolderName)
                         : BackendMods.OrderBy(modModel => modModel.FolderName));
@@ -150,7 +150,7 @@ public partial class ModListVM : ObservableRecipient
             ResetInfoBar();
     }
 
-    public void SelectionChanged(ICollection<NewModModel> selectedMods, ICollection<NewModModel> removedMods)
+    public void SelectionChanged(ICollection<ModModel> selectedMods, ICollection<ModModel> removedMods)
     {
         if (selectedMods.Any())
         {
@@ -178,12 +178,12 @@ public partial class ModListVM : ObservableRecipient
 
     public class ModSelectedEventArgs : EventArgs
     {
-        public ModSelectedEventArgs(IEnumerable<NewModModel> mods)
+        public ModSelectedEventArgs(IEnumerable<ModModel> mods)
         {
             Mods = mods.ToArray();
         }
 
-        public ICollection<NewModModel> Mods { get; }
+        public ICollection<ModModel> Mods { get; }
     }
 
 
@@ -203,12 +203,12 @@ public partial class ModListVM : ObservableRecipient
     }
 }
 
-public sealed class ModEnabledComparer : IComparer<NewModModel>
+public sealed class ModEnabledComparer : IComparer<ModModel>
 {
     public bool IsDescending;
 
 
-    public int Compare(NewModModel? x, NewModModel? y)
+    public int Compare(ModModel? x, ModModel? y)
     {
         if (x is null || y is null) return 0;
         if (x.IsEnabled == y.IsEnabled)

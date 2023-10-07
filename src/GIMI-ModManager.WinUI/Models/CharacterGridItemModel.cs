@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.Entities.Genshin;
-using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Services.Notifications;
 
 namespace GIMI_ModManager.WinUI.Models;
 

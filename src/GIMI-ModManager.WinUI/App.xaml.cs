@@ -5,8 +5,11 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
@@ -97,6 +100,8 @@ public partial class App : Application
                 services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();
+                services.AddSingleton<ModSettingsService>();
+                services.AddSingleton<KeySwapService>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();

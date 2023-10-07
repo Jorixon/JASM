@@ -1,4 +1,4 @@
-﻿namespace GIMI_ModManager.WinUI.Services;
+﻿namespace GIMI_ModManager.WinUI.Services.Notifications;
 
 // This is a static class to easily  launch a not implemented notification from different places in the app.
 internal static class NotImplemented

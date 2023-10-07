@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Entities.Mods.Contract;
 
 namespace GIMI_ModManager.WinUI.Models;
 
@@ -11,43 +11,30 @@ public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModK
     [ObservableProperty] private string? _forwardHotkey;
     [ObservableProperty] private string? _backwardHotkey;
     [ObservableProperty] private string? _type;
-    [ObservableProperty] private string[]? _swapVar;
     [ObservableProperty] private string _variationsCount = "Unknown";
 
-    public static SkinModKeySwapModel FromKeySwapSettings(SkinModKeySwap skinSwapSetting)
+    public static SkinModKeySwapModel FromKeySwapSettings(KeySwapSection skinSwapSetting)
     {
         return new SkinModKeySwapModel
         {
-            SectionKey = skinSwapSetting.SectionKey,
-            ForwardHotkey = skinSwapSetting.ForwardHotkey,
-            BackwardHotkey = skinSwapSetting.BackwardHotkey,
+            SectionKey = skinSwapSetting.SectionName,
+            ForwardHotkey = skinSwapSetting.ForwardKey,
+            BackwardHotkey = skinSwapSetting.BackwardKey,
             Type = skinSwapSetting.Type,
-            SwapVar = skinSwapSetting.SwapVar,
-            VariationsCount = skinSwapSetting.SwapVar?.Length.ToString() ?? "Unknown"
+            VariationsCount = skinSwapSetting.Variants?.ToString() ?? "Unknown"
         };
     }
 
-    public static SkinModKeySwapModel[] FromKeySwapSettings(SkinModKeySwap[] skinSwapSettings)
+    public static SkinModKeySwapModel[] FromKeySwapSettings(KeySwapSection[] skinSwapSettings)
         => skinSwapSettings.Select(FromKeySwapSettings).ToArray();
 
-    public SkinModKeySwap ToKeySwapSettings()
-    {
-        return new()
-        {
-            SectionKey = SectionKey,
-            ForwardHotkey = ForwardHotkey,
-            BackwardHotkey = BackwardHotkey,
-            Type = Type,
-            SwapVar = SwapVar
-        };
-    }
 
     public bool Equals(SkinModKeySwapModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return Condition == other.Condition && ForwardHotkey == other.ForwardHotkey &&
-               BackwardHotkey == other.BackwardHotkey && Type == other.Type && Equals(SwapVar, other.SwapVar);
+               BackwardHotkey == other.BackwardHotkey && Type == other.Type;
     }
 
     public override bool Equals(object? obj)
@@ -57,6 +44,6 @@ public partial class SkinModKeySwapModel : ObservableObject, IEquatable<SkinModK
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Condition, ForwardHotkey, BackwardHotkey, Type, SwapVar);
+        return HashCode.Combine(Condition, ForwardHotkey, BackwardHotkey, Type);
     }
 }

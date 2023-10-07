@@ -6,18 +6,16 @@
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:entities="using:GIMI_ModManager.Core.Entities"
-    xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
-    xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:subVms="using:GIMI_ModManager.WinUI.ViewModels.SubVms"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <helpers:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
-        <helpers:BoolInverterConverter x:Name="BoolInverterConverter" />
-        <helpers:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
+        <xaml:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
+        <xaml:BoolInverterConverter x:Name="BoolInverterConverter" />
+        <xaml:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
     </Page.Resources>
     <!--
         DragEnter="Page_OnDragEnter"
@@ -93,7 +91,8 @@
                     ItemsSource="{x:Bind ViewModel.SortingMethods, Mode=OneWay}"
                     PlaceholderText="Sort Characters..."
                     SelectedItem="{x:Bind ViewModel.SelectedSortingMethod, Mode=TwoWay}"
-                    SelectionChanged="SortingComboBox_OnSelectionChanged" />
+                    SelectionChanged="SortingComboBox_OnSelectionChanged"
+                    SelectionChangedTrigger="Committed" />
 
                 <ToggleButton
                     Margin="0,0,16,0"

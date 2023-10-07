@@ -1,14 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
-using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
 
 namespace GIMI_ModManager.WinUI.Models;
 
-public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
+public partial class ModModel : ObservableObject, IEquatable<ModModel>
 {
     public Guid Id { get; private init; }
     public GenshinCharacter Character { get; private init; }
@@ -32,83 +34,72 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     public ObservableCollection<SkinModKeySwapModel> SkinModKeySwaps { get; set; } = new();
 
 
-    private Action<NewModModel>? _toggleMod = null;
+    private Action<ModModel>? _toggleMod = null;
 
 
     /// <summary>
     /// Needed for certain ui components.
     /// </summary>
-    public NewModModel()
+    public ModModel()
     {
         Id = Guid.Empty;
         Character = null!;
     }
 
 
-    public static NewModModel FromMod(CharacterSkinEntry modEntry)
+    public static ModModel FromMod(CharacterSkinEntry modEntry)
     {
-        var name = modEntry.Mod.Name;
+        return FromMod(modEntry.Mod, modEntry.ModList.Character, modEntry.IsEnabled);
+    }
+
+    public static ModModel FromMod(ISkinMod skinMod, GenshinCharacter character, bool isEnabled)
+    {
+        var name = skinMod.Name;
         if (!string.IsNullOrWhiteSpace(name))
-            name = modEntry.Mod.Name.Replace(
+            name = skinMod.Name.Replace(
                 name.StartsWith(CharacterModList.DISABLED_PREFIX) ? "DISABLED_" : "DISABLED", "");
 
-        var modModel = new NewModModel
+        var modModel = new ModModel
         {
-            Id = modEntry.Id,
-            Character = modEntry.ModList.Character,
-            Name = string.IsNullOrWhiteSpace(name) ? modEntry.Mod.CustomName : name,
-            FolderName = modEntry.Mod.Name,
-            IsEnabled = modEntry.IsEnabled
+            Id = skinMod.Id,
+            Character = character,
+            Name = name,
+            FolderName = skinMod.Name,
+            IsEnabled = isEnabled
         };
 
-        if (modEntry.Mod.CachedSkinModSettings is { } settings)
+        if (skinMod.Settings.GetSettings().TryPickT0(out var settings, out _))
             modModel.WithModSettings(settings);
 
-
-        if (modEntry.Mod.CachedKeySwaps is { } keySwaps)
+        if (skinMod.KeySwaps is not null && skinMod.KeySwaps.GetKeySwaps().TryPickT0(out var keySwaps, out _))
             modModel.SetKeySwaps(keySwaps);
+
 
         return modModel;
     }
 
-    public NewModModel WithModSettings(SkinModSettings settings)
+    public ModModel WithModSettings(ModSettings settings)
     {
         if (!string.IsNullOrWhiteSpace(settings.CustomName))
             Name = settings.CustomName;
 
-        ModUrl = settings.ModUrl ?? string.Empty;
+        ModUrl = settings.ModUrl?.ToString() ?? string.Empty;
         ModVersion = settings.Version ?? string.Empty;
-        ImagePath = string.IsNullOrWhiteSpace(settings.ImagePath)
-            ? PlaceholderImagePath
-            : new Uri(settings.ImagePath, UriKind.Absolute);
+        ImagePath = settings.ImagePath ?? PlaceholderImagePath;
         Author = settings.Author ?? string.Empty;
         CharacterSkinOverride = settings.CharacterSkinOverride ?? string.Empty;
         return this;
     }
 
-    public SkinModSettings ToModSettings()
-    {
-        return new SkinModSettings
-        {
-            CustomName = Name,
-            Author = Author,
-            Version = ModVersion,
-            ModUrl = ModUrl,
-            ImagePath = ImagePath.Equals(PlaceholderImagePath) ? string.Empty : ImagePath.ToString(),
-            CharacterSkinOverride = string.IsNullOrWhiteSpace(CharacterSkinOverride)
-                ? null
-                : CharacterSkinOverride
-        };
-    }
 
-    public void SetKeySwaps(IEnumerable<SkinModKeySwap> keySwaps)
+    public void SetKeySwaps(IEnumerable<KeySwapSection> keySwaps)
     {
         SkinModKeySwaps.Clear();
         foreach (var keySwapModel in keySwaps)
             SkinModKeySwaps.Add(SkinModKeySwapModel.FromKeySwapSettings(keySwapModel));
     }
 
-    public NewModModel WithToggleModDelegate(Action<NewModModel> toggleMod)
+    public ModModel WithToggleModDelegate(Action<ModModel> toggleMod)
     {
         _toggleMod = toggleMod;
         return this;
@@ -116,7 +107,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
 
     public override string ToString()
     {
-        return "NewModModel: " + Name + " (" + Id + ")";
+        return "ModModel: " + Name + " (" + Id + ")";
     }
 
 
@@ -131,16 +122,16 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
             }
             catch (Exception e)
             {
-                App.GetService<NotificationManager>().ShowNotification($"An error occured " +
+                App.GetService<NotificationManager>().ShowNotification($"An error occurred " +
                                                                        (IsEnabled ? "disabling" : "enabling") +
                                                                        $" the mod: {Name}",
-                    e.ToString(), TimeSpan.MaxValue);
+                    e.ToString(), null);
             }
 
         return Task.CompletedTask;
     }
 
-    public bool Equals(NewModModel? other)
+    public bool Equals(ModModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -152,7 +143,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((NewModModel)obj);
+        return Equals((ModModel)obj);
     }
 
     public override int GetHashCode()
@@ -161,7 +152,7 @@ public partial class NewModModel : ObservableObject, IEquatable<NewModModel>
     }
 
 
-    public bool SettingsEquals(NewModModel? other)
+    public bool SettingsEquals(ModModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

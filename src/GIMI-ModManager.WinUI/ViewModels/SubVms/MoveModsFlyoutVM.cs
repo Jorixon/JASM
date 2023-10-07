@@ -8,6 +8,8 @@ using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
 
@@ -18,6 +20,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGenshinService _genshinService;
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<MoveModsFlyoutVM>();
+    private readonly ModSettingsService _modSettingsService = App.GetService<ModSettingsService>();
 
     private GenshinCharacter _shownCharacter = null!;
 
@@ -45,7 +48,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     public event EventHandler? CloseFlyoutEvent;
     public ObservableCollection<GenshinCharacter> SuggestedCharacters { get; init; } = new();
-    private List<NewModModel> SelectedMods { get; init; } = new();
+    private List<ModModel> SelectedMods { get; init; } = new();
 
     public ObservableCollection<SelectCharacterTemplate> SelectableCharacterSkins { get; init; } = new();
 
@@ -84,7 +87,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
 
     [RelayCommand]
-    private void SetSelectedMods(IEnumerable<NewModModel> modModel)
+    private void SetSelectedMods(IEnumerable<ModModel> modModel)
     {
         SelectedMods.Clear();
         SelectedMods.AddRange(modModel);
@@ -261,25 +264,9 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
         foreach (var modModel in SelectedMods)
         {
-            var skinMod = _skinManagerService.GetCharacterModList(_shownCharacter).Mods
-                .First(mod => mod.Id == modModel.Id).Mod;
+            await _modSettingsService.SetCharacterSkinOverride(modModel.Id, characterSkinToSet.Name);
 
-            var skinModSettings = modModel.WithModSettings(await skinMod.ReadSkinModSettings());
-
-            skinModSettings.CharacterSkinOverride = characterSkinToSet.Name;
-
-            try
-            {
-                await skinMod.SaveSkinModSettings(skinModSettings.ToModSettings());
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e, "Error saving skin mod settings");
-                var notificationManager = App.GetService<NotificationManager>();
-                notificationManager.ShowNotification("Error Saving Skin Mod Settings",
-                    $"Error saving skin mod settings for {skinMod.Name}\n{e.Message}",
-                    TimeSpan.FromSeconds(10));
-            }
+            // TODO: Error Handling
         }
 
         ModCharactersSkinOverriden?.Invoke(this, EventArgs.Empty);

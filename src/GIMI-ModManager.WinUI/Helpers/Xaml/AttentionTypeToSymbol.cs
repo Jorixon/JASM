@@ -1,7 +1,7 @@
-﻿using GIMI_ModManager.WinUI.Models.Options;
+﻿using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Xaml.Data;
 
-namespace GIMI_ModManager.WinUI.Helpers;
+namespace GIMI_ModManager.WinUI.Helpers.Xaml;
 
 public class AttentionTypeToSymbolConverter : IValueConverter
 {
@@ -14,14 +14,14 @@ public class AttentionTypeToSymbolConverter : IValueConverter
 
         if (value is not null && value.GetType().IsEnum)
         {
-            return GetSymbol((AttentionType) value);
+            return GetSymbol((AttentionType)value);
         }
 
         if (parameter is string enumString)
         {
             if (Enum.TryParse(typeof(AttentionType), enumString, out var result))
             {
-                return GetSymbol((AttentionType) result);
+                return GetSymbol((AttentionType)result);
             }
         }
 

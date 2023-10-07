@@ -6,6 +6,9 @@ using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
+using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -76,7 +79,7 @@ public class ActivationService : IActivationService
         App.MainWindow.Activate();
 
         // Set MainWindow Cleanup on Close.
-        App.MainWindow.Closed +=  OnApplicationExit;
+        App.MainWindow.Closed += OnApplicationExit;
 
         // Execute tasks after activation.
         await StartupAsync();
@@ -128,7 +131,7 @@ public class ActivationService : IActivationService
 
     private async Task SetScreenSize()
     {
-        var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSize>(ScreenSize.Key);
+        var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
         if (screenSize != null)
         {
             _logger.Debug($"Window size loaded: {screenSize.Width}x{screenSize.Height}");
@@ -140,9 +143,10 @@ public class ActivationService : IActivationService
     private async Task InitCharacterOverviewSettings()
     {
         var characterOverviewSettings =
-            await _localSettingsService.ReadSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key);
+            await _localSettingsService.ReadSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key);
         if (characterOverviewSettings == null)
-            await _localSettingsService.SaveSettingAsync(CharacterOverviewOptions.Key, new CharacterOverviewOptions());
+            await _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.Key,
+                new CharacterOverviewSettings());
     }
 
     private Size _previousScreenSize = new(0, 0);
@@ -177,7 +181,8 @@ public class ActivationService : IActivationService
         var isFullScreen = false; // TODO: Implement fullscreen
         _logger.Debug($"Window size saved: {width}x{height}\t\nIsFullscreen: {isFullScreen}");
         Task.Run(async () => await App.GetService<ILocalSettingsService>()
-            .SaveSettingAsync(ScreenSize.Key, new ScreenSize(width, height) { IsFullScreen = isFullScreen }));
+            .SaveSettingAsync(ScreenSizeSettings.Key,
+                new ScreenSizeSettings(width, height) { IsFullScreen = isFullScreen }));
         _timer?.Stop();
     }
 

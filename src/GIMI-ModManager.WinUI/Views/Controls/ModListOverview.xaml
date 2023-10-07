@@ -8,7 +8,7 @@
     xmlns:local="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
-    d:DataContext="{d:DesignInstance Type=models:NewModModel}"
+    d:DataContext="{d:DesignInstance Type=models:ModModel}"
     mc:Ignorable="d">
 
     <Grid>

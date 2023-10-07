@@ -3,7 +3,7 @@ using ErrorOr;
 using Microsoft.UI.Xaml;
 using Serilog;
 
-namespace GIMI_ModManager.WinUI.Services;
+namespace GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 
 public class AutoUpdaterService
 {
@@ -87,7 +87,7 @@ public class AutoUpdaterService
         if (HasStartedSelfUpdateProcess)
         {
             _logger.Warning("Self update process already started.");
-            return new[] { Error.Conflict(description:"Self update process already started.") };
+            return new[] { Error.Conflict(description: "Self update process already started.") };
         }
 
         HasStartedSelfUpdateProcess = true;
@@ -109,7 +109,12 @@ public class AutoUpdaterService
         {
             _logger.Error("Current auto updater folder does not exist. Could not find the update folder: {Folder}",
                 _currentAutoUpdaterFolder.FullName);
-            return new[] { Error.NotFound(description: $"Current auto updater folder does not exist. Could not find the update folder: {_currentAutoUpdaterFolder.FullName}") };
+            return new[]
+            {
+                Error.NotFound(
+                    description:
+                    $"Current auto updater folder does not exist. Could not find the update folder: {_currentAutoUpdaterFolder.FullName}")
+            };
         }
 
         if (!ContainsAutoUpdaterExe(_currentAutoUpdaterFolder))
@@ -118,7 +123,12 @@ public class AutoUpdaterService
                 "Current auto updater folder does not contain the auto updater exe. Could not find {Exe} in {Folder}",
                 AutoUpdaterExe, _currentAutoUpdaterFolder.FullName);
 
-            return new[] { Error.NotFound(description: $"Current auto updater folder does not contain the auto updater exe. Could not find {AutoUpdaterExe} in {_currentAutoUpdaterFolder.FullName}") };
+            return new[]
+            {
+                Error.NotFound(
+                    description:
+                    $"Current auto updater folder does not contain the auto updater exe. Could not find {AutoUpdaterExe} in {_currentAutoUpdaterFolder.FullName}")
+            };
         }
 
         var isAutoUpdaterRunning = Process.GetProcessesByName(AutoUpdaterExe).Any();
@@ -143,7 +153,7 @@ public class AutoUpdaterService
             if (process is null || process.HasExited)
             {
                 _logger.Error("Failed to start Auto Updater.");
-                return new[] { Error.Unexpected(description:"Failed to start Auto Updater.") };
+                return new[] { Error.Unexpected(description: "Failed to start Auto Updater.") };
             }
         }
         catch (Exception e)

@@ -6,21 +6,19 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:entities="using:GIMI_ModManager.Core.Entities"
     xmlns:genshin="using:GIMI_ModManager.Core.Entities.Genshin"
-    xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
-    xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
-    xmlns:options="using:GIMI_ModManager.WinUI.Models.Options"
+    xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     x:Name="CharacterDetailsRoot"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <helpers:BoolInverterConverter x:Name="BoolInverter" />
-        <helpers:ValueToBoolConverter x:Name="ValueToBoolConverter" />
-        <helpers:StringToUri x:Name="StringToUri" />
-        <helpers:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
+        <xaml:BoolInverterConverter x:Name="BoolInverter" />
+        <xaml:ValueToBoolConverter x:Name="ValueToBoolConverter" />
+        <xaml:StringToUri x:Name="StringToUri" />
+        <xaml:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
         <Storyboard x:Name="PulsingIcon">
             <DoubleAnimation
                 AutoReverse="True"
@@ -367,7 +365,7 @@
                                         Tag="IsEnabled">
 
                                         <controls:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate x:DataType="models:NewModModel">
+                                            <DataTemplate x:DataType="models:ModModel">
                                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <CheckBox
                                                         Command="{x:Bind ToggleModCommand}"
@@ -386,7 +384,7 @@
                                         IsReadOnly="True"
                                         Tag="NotificationColumn">
                                         <controls:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate x:DataType="models:NewModModel">
+                                            <DataTemplate x:DataType="models:ModModel">
 
                                                 <StackPanel
                                                     HorizontalAlignment="Center"
@@ -394,7 +392,7 @@
                                                     Orientation="Horizontal">
                                                     <ItemsRepeater ItemsSource="{x:Bind ModNotifications, Mode=OneWay}">
                                                         <ItemsRepeater.ItemTemplate>
-                                                            <DataTemplate x:DataType="options:ModNotification">
+                                                            <DataTemplate x:DataType="notifications:ModNotification">
                                                                 <Grid Margin="4,0" VerticalAlignment="Center">
                                                                     <FontIcon
                                                                         VerticalAlignment="Bottom"
@@ -417,7 +415,7 @@
                                         IsReadOnly="True"
                                         Tag="Name">
                                         <controls:DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate x:DataType="models:NewModModel">
+                                            <DataTemplate x:DataType="models:ModModel">
                                                 <Grid Margin="8,0">
                                                     <TextBlock
                                                         HorizontalAlignment="Stretch"

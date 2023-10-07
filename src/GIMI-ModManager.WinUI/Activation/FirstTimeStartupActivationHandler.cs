@@ -1,6 +1,6 @@
 ﻿using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 
@@ -40,7 +40,8 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
         var modManagerOptions =
             await _localSettingsService.ReadSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
-        await _skinManagerService.Initialize(modManagerOptions!.ModsFolderPath!, null, modManagerOptions.GimiRootFolderPath);
+        await _skinManagerService.Initialize(modManagerOptions!.ModsFolderPath!, null,
+            modManagerOptions.GimiRootFolderPath);
         _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, args.Arguments, true);
     }
 }

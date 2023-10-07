@@ -3,9 +3,9 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
-using GIMI_ModManager.WinUI.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.Services;
 

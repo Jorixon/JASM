@@ -1,15 +1,15 @@
 ﻿using Windows.Foundation;
 using Newtonsoft.Json;
 
-namespace GIMI_ModManager.WinUI.Models.Options;
+namespace GIMI_ModManager.WinUI.Models.Settings;
 
-public class ScreenSize
+public class ScreenSizeSettings
 {
-    public ScreenSize()
+    public ScreenSizeSettings()
     {
     }
 
-    public ScreenSize(double width, double height)
+    public ScreenSizeSettings(double width, double height)
     {
         Width = Convert.ToInt32(width);
         Height = Convert.ToInt32(height);
@@ -22,5 +22,5 @@ public class ScreenSize
     public bool IsFullScreen { get; set; }
     [JsonIgnore] public double WidthAsDouble => Convert.ToDouble(Width);
     [JsonIgnore] public double HeightAsDouble => Convert.ToDouble(Height);
-    [JsonIgnore] public Size Size => new Size(WidthAsDouble, HeightAsDouble);
+    [JsonIgnore] public Size Size => new(WidthAsDouble, HeightAsDouble);
 }

@@ -4,7 +4,7 @@ using GIMI_ModManager.WinUI.Models.Options;
 using Newtonsoft.Json;
 using Serilog;
 
-namespace GIMI_ModManager.WinUI.Services;
+namespace GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 
 public sealed class UpdateChecker : IDisposable
 {
@@ -143,7 +143,7 @@ public sealed class UpdateChecker : IDisposable
 
         var text = await result.Content.ReadAsStringAsync(cancellationToken);
         var gitHubReleases =
-            (JsonConvert.DeserializeObject<GitHubRelease[]>(text)) ?? Array.Empty<GitHubRelease>();
+            JsonConvert.DeserializeObject<GitHubRelease[]>(text) ?? Array.Empty<GitHubRelease>();
 
         var latestReleases = gitHubReleases.Where(r => !r.prerelease);
         var latestVersion = latestReleases.Select(r => new Version(r.tag_name?.Trim('v') ?? "")).Max();

@@ -4,15 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:GIMI_ModManager.WinUI.Helpers"
     xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     xmlns:xaml="using:Microsoft.UI.Xaml"
+    xmlns:xaml1="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     mc:Ignorable="d">
     <Page.Resources>
-        <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
-        <helpers:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+        <xaml1:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <xaml1:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
     </Page.Resources>
     <Grid>
 

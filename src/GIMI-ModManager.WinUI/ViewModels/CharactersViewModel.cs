@@ -4,14 +4,14 @@ using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
-using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Serilog;
@@ -28,6 +28,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ModDragAndDropService _modDragAndDropService;
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ModCrawlerService _modCrawlerService;
+    private readonly ModSettingsService _modSettingsService;
 
     public readonly GenshinProcessManager GenshinProcessManager;
 
@@ -60,12 +61,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
 
+    private bool isNavigating = true;
+
     public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
-        ModCrawlerService modCrawlerService)
+        ModCrawlerService modCrawlerService, ModSettingsService modSettingsService)
     {
         _genshinService = genshinService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -79,6 +82,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modDragAndDropService = modDragAndDropService;
         _modNotificationManager = modNotificationManager;
         _modCrawlerService = modCrawlerService;
+        _modSettingsService = modSettingsService;
 
         ElevatorService.PropertyChanged += (sender, args) =>
         {
@@ -228,6 +232,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ResetContent()
     {
+        if (isNavigating) return;
+
         var filteredCharacters = FilterCharacters(_backendCharacters);
         var sortedCharacters = _sortingMethod.Sort(filteredCharacters).ToList();
 
@@ -406,18 +412,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
                 var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)?.Name;
 
-                var modSettings = new SkinModSettings();
-                try
-                {
-                    modSettings = await characterSkinEntry.Mod.ReadSkinModSettings();
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e, "Error reading mod settings for {Mod}", characterSkinEntry.Mod.FullPath);
-                }
+                var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
 
-                var mod = NewModModel.FromMod(characterSkinEntry);
-                mod.WithModSettings(modSettings);
+
+                var mod = ModModel.FromMod(characterSkinEntry);
+
+
+                if (modSettingsResult.IsT0)
+                    mod.WithModSettings(modSettingsResult.AsT0);
 
                 if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
                     subSkin = mod.CharacterSkinOverride;
@@ -473,7 +475,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         // ShowOnlyModsCharacters
         var settings =
             await _localSettingsService
-                .ReadOrCreateSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key);
+                .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key);
         if (settings.ShowOnlyCharactersWithMods)
         {
             ShowOnlyCharactersWithMods = true;
@@ -487,6 +489,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters, SortByDescending);
         SelectedSortingMethod = settings.SortingMethod;
 
+        isNavigating = false;
         ResetContent();
     }
 
@@ -602,15 +605,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         NotImplemented.Show("Hiding characters is not implemented yet");
     }
 
-    private async Task<CharacterOverviewOptions> ReadCharacterSettings()
+    private async Task<CharacterOverviewSettings> ReadCharacterSettings()
     {
-        return await _localSettingsService.ReadSettingAsync<CharacterOverviewOptions>(CharacterOverviewOptions.Key) ??
-               new CharacterOverviewOptions();
+        return await _localSettingsService.ReadSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key) ??
+               new CharacterOverviewSettings();
     }
 
-    private async Task SaveCharacterSettings(CharacterOverviewOptions settings)
+    private async Task SaveCharacterSettings(CharacterOverviewSettings settings)
     {
-        await _localSettingsService.SaveSettingAsync(CharacterOverviewOptions.Key, settings);
+        await _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.Key, settings);
     }
 
 
@@ -767,6 +770,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task SortBy(IEnumerable<SortingMethodType> methodTypes)
     {
+        if (isNavigating) return;
         var sortingMethodType = methodTypes.First();
 
         _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_genshinService.OtherCharacterId),
