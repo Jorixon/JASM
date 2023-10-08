@@ -365,7 +365,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 break;
             }
 
-            if (addWarning)
+            if (addWarning || subSkinsFound.Count > 1 && modList.Character.InGameSkins.Count == 1)
                 charactersWithMultipleActiveSkins.Add(modList.Character.Id);
         }
 
