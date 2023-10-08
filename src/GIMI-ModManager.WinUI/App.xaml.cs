@@ -16,6 +16,7 @@ using GIMI_ModManager.WinUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Serilog;
 using Serilog.Templates;
 using WinUI3Localizer;
@@ -50,6 +51,7 @@ public partial class App : Application
     public static UIElement? AppTitlebar { get; set; }
 
     public static bool OverrideShutdown { get; set; }
+    public static bool UnhandledExceptionHandled { get; set; }
 
     public App()
     {
@@ -131,6 +133,21 @@ public partial class App : Application
     {
         Log.Fatal(e.Exception, "Unhandled exception");
         await Log.CloseAndFlushAsync();
+
+        if (UnhandledExceptionHandled)
+            return;
+        // show error dialog
+        var window = new ErrorWindow(e.Exception)
+        {
+            IsAlwaysOnTop = true,
+            Title = "JASM - Unhandled Exception",
+            SystemBackdrop = new MicaBackdrop()
+        };
+        window.Activate();
+        window.CenterOnScreen();
+        MainWindow.Hide();
+        e.Handled = true;
+        UnhandledExceptionHandled = true;
     }
 
 

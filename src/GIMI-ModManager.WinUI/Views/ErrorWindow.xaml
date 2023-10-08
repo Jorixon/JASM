@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<winUiEx:WindowEx
+    x:Class="GIMI_ModManager.WinUI.Views.ErrorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winUiEx="using:WinUIEx"
+    mc:Ignorable="d">
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid
+            Margin="0,20"
+            Padding="4"
+            Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
+            CornerRadius="10">
+
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+
+                <FontIcon
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                    Glyph="&#xEA39;" />
+
+                <TextBlock
+                    Margin="8,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource TitleTextBlockStyle}"
+                    Text="An error has occurred: " />
+
+            </StackPanel>
+
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                IsTextSelectionEnabled="True"
+                Style="{ThemeResource SubtitleTextBlockStyle}"
+                Text="{x:Bind ViewModel.ExceptionMessage, Mode=OneWay}"
+                TextWrapping="Wrap" />
+
+            <StackPanel
+                Grid.Column="2"
+                Margin="16,0"
+                Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="Please report this on" />
+                <controls:LinkButton
+                    HorizontalAlignment="Right"
+                    Link="{x:Bind ViewModel.JASM_GITHUB}"
+                    Text="GitHub"
+                    TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="OR" />
+                <controls:LinkButton
+                    Link="{x:Bind ViewModel.JASM_GAMEBANANA}"
+                    Text="GameBanana"
+                    TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
+            </StackPanel>
+
+        </Grid>
+        <ScrollViewer Grid.Row="1">
+
+
+            <StackPanel Padding="16,0">
+                <TextBlock
+                    Margin="0,0,0,8"
+                    FontSize="18"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="An unhanded exception has occurred. The application ran into a problem that it didn't know how to handle. If you want to help us fix this issue, please send us the following information:" />
+
+                <TextBlock
+                    Margin="0,4"
+                    IsTextSelectionEnabled="True"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="1. What were you doing when this happened?" />
+                <TextBlock
+                    Margin="0,4"
+                    IsTextSelectionEnabled="True"
+                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    Text="2. Provide this stack trace with your report:" />
+
+                <StackPanel
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="10">
+                    <TextBlock
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind ViewModel.ExceptionStackTrace, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <StackPanel Margin="0,8" Visibility="{x:Bind ViewModel.HasInnerException, Mode=OneWay}">
+
+                    <TextBlock
+                        Margin="4,0"
+                        Style="{ThemeResource SubtitleTextBlockStyle}"
+                        Text="An inner exception is also included. Please include this as well." />
+                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind ViewModel.InnerExceptionMessage, Mode=OneWay}" />
+
+                    <TextBlock
+                        Margin="0,4"
+                        IsTextSelectionEnabled="True"
+                        Style="{ThemeResource BodyStrongTextBlockStyle}"
+                        Text="3. Also provide this inner exception stack trace with your report:" />
+
+                    <StackPanel
+                        Padding="12"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="10">
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Text="{x:Bind ViewModel.InnerExceptionStackTrace, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+
+
+
+
+        </ScrollViewer>
+
+    </Grid>
+</winUiEx:WindowEx>

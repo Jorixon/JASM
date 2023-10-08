@@ -164,9 +164,11 @@
 		<None Remove="Views\CharactersPage.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
+		<None Remove="Views\Controls\LinkButton.xaml" />
 		<None Remove="Views\Controls\ModListOverview.xaml" />
 		<None Remove="Views\Controls\SelectCharacterFromGrid.xaml" />
 		<None Remove="Views\DebugPage.xaml" />
+		<None Remove="Views\ErrorWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
 	</ItemGroup>
 
@@ -511,6 +513,12 @@
 		<None Update="Assets\Images\Elements\Element_Pyro.svg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\Controls\LinkButton.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\ErrorWindow.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Styles\FontTypes.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

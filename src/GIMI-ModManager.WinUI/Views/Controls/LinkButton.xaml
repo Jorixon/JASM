@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GIMI_ModManager.WinUI.Views.Controls.LinkButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <HyperlinkButton VerticalAlignment="Center" NavigateUri="{x:Bind Link, Mode=OneWay}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,8,0"
+                    Style="{x:Bind TextStyle, Mode=OneWay}"
+                    Text="{x:Bind Text, Mode=OneWay}" />
+                <FontIcon FontSize="12" Glyph="&#xE8A7;" />
+            </StackPanel>
+        </HyperlinkButton>
+    </Grid>
+</UserControl>
