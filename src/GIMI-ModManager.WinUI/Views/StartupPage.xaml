@@ -3,10 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
 
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
@@ -101,6 +103,12 @@
                         Content="Reorganize Mods?"
                         IsChecked="{x:Bind ViewModel.ReorganizeModsOnStartup, Mode=TwoWay}" />
 
+                    <CheckBox
+                        Margin="4,0,12,0"
+                        Content="Also Disable All Mods"
+                        IsChecked="{x:Bind ViewModel.DisableMods, Mode=TwoWay}"
+                        IsEnabled="{x:Bind ViewModel.ReorganizeModsOnStartup, Mode=OneWay}" />
+
                     <Button Background="Transparent" CornerRadius="8">
                         <Button.Flyout>
                             <Flyout>
@@ -137,6 +145,8 @@
                     </Button>
 
                 </StackPanel>
+
+
 
 
             </StackPanel>

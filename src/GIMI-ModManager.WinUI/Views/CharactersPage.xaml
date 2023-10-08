@@ -156,6 +156,7 @@
                 <GridView
                     Padding="0,0,0,4"
                     Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                    CornerRadius="8"
                     IsItemClickEnabled="True"
                     IsMultiSelectCheckBoxEnabled="False"
                     ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=TwoWay}"

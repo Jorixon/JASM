@@ -62,7 +62,9 @@ internal static class ModsHelpers
             return false;
 
         var fsPath = path.LocalPath;
-        return mod.FullPath.Contains(fsPath, StringComparison.OrdinalIgnoreCase);
+
+
+        return fsPath.StartsWith(mod.FullPath, StringComparison.OrdinalIgnoreCase);
     }
 
 

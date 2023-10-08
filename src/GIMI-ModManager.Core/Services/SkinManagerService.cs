@@ -56,9 +56,15 @@ public sealed class SkinManagerService : ISkinManagerService
 
             foreach (var modFolder in characterModFolder.EnumerateDirectories())
             {
-                // TODO: This can crash if mod is invalid
-                var mod = await SkinMod.CreateModAsync(modFolder.FullName);
-                characterModList.TrackMod(mod);
+                try
+                {
+                    var mod = await SkinMod.CreateModAsync(modFolder.FullName);
+                    characterModList.TrackMod(mod);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to initialize mod '{ModFolder}'", modFolder.FullName);
+                }
             }
         }
     }
@@ -85,7 +91,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 foreach (var x in characterModList.Mods)
                 {
-                    if (x.Mod.FullPath.Equals(modDirectory.FullName, StringComparison.CurrentCultureIgnoreCase)
+                    if (x.Mod.FullPath.AbsPathCompare(modDirectory.FullName)
                         &&
                         Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath,
                             ModFolderHelpers.GetFolderNameWithDisabledPrefix(modDirectory.Name)))
@@ -111,7 +117,7 @@ public sealed class SkinManagerService : ISkinManagerService
                         break;
                     }
 
-                    if (x.Mod.FullPath == modDirectory.FullName)
+                    if (x.Mod.FullPath.AbsPathCompare(modDirectory.FullName))
                     {
                         mod = x;
                         mod.Mod.ClearCache();
@@ -120,7 +126,7 @@ public sealed class SkinManagerService : ISkinManagerService
                     }
 
                     var disabledName = ModFolderHelpers.GetFolderNameWithDisabledPrefix(modDirectory.Name);
-                    if (x.Mod.FullPath == Path.Combine(characterModList.AbsModsFolderPath, disabledName))
+                    if (x.Mod.FullPath.AbsPathCompare(Path.Combine(characterModList.AbsModsFolderPath, disabledName)))
                     {
                         mod = x;
                         mod.Mod.ClearCache();
@@ -470,7 +476,8 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public async Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null)
+    public async Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null,
+        bool disableMods = false)
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
@@ -502,8 +509,12 @@ public sealed class SkinManagerService : ISkinManagerService
             if (character is not null)
                 continue;
 
-            // Is a mod folder, determine which character it belongs
-            var closestMatchCharacter = _genshinService.GetCharacter(folder.Name);
+
+            var closestMatchCharacter =
+                _modCrawlerService.GetFirstSubSkinRecursive(folder.FullName)?.Character as GenshinCharacter ??
+                _genshinService.GetCharacter(folder.Name);
+
+
             switch (closestMatchCharacter)
             {
                 case null when characterFolderToReorganize is null:
@@ -522,6 +533,26 @@ public sealed class SkinManagerService : ISkinManagerService
             try
             {
                 using var disableWatcher = modList.DisableWatcher();
+
+                var renameAttempts = 0;
+                while (modList.FolderAlreadyExists(mod.Name))
+                {
+                    var oldName = mod.Name;
+                    mod.Rename(DuplicateModAffixHelper.AppendNumberAffix(mod.Name));
+                    _logger.Information(
+                        "Mod '{ModName}' already exists in '{CharacterFolder}', renaming to {NewModName}",
+                        oldName, closestMatchCharacter.DisplayName, mod.Name);
+                    renameAttempts++;
+                    if (renameAttempts <= 10) continue;
+                    _logger.Error(
+                        "Failed to rename mod '{ModName}' to '{NewModName}' after 10 attempts, skipping mod",
+                        mod.Name, mod.Name);
+                    break;
+                }
+
+                if (renameAttempts > 10) continue;
+
+
                 mod.MoveTo(GetCharacterModList(closestMatchCharacter).AbsModsFolderPath);
                 _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder", mod.Name,
                     closestMatchCharacter.DisplayName);
@@ -535,6 +566,17 @@ public sealed class SkinManagerService : ISkinManagerService
             }
 
             modList.TrackMod(mod);
+            if (disableMods && modList.IsModEnabled(mod))
+            {
+                try
+                {
+                    modList.DisableMod(mod.Id);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to disable mod '{ModName}'", mod.Name);
+                }
+            }
         }
 
         return movedMods;

@@ -298,6 +298,8 @@ public partial class SettingsViewModel : ObservableRecipient
                     _skinManagerService.ReorganizeModsAsync(
                         genshinService.GetCharacter(genshinService.OtherCharacterId))); // Others folder
 
+                await _skinManagerService.RefreshModsAsync();
+
                 if (movedModsCount == -1)
                     _notificationManager.ShowNotification("Mods reorganization failed.",
                         "See logs for more details.", TimeSpan.FromSeconds(5));

@@ -54,7 +54,6 @@ public class SkinMod : Mod, ISkinMod
             skinMod.KeySwaps = new SkinModKeySwapManager(skinMod, merged);
 
 
-        // TODO: Error handling
         skinMod.Id = await skinMod.Settings.InitializeAsync();
 
         if (!forceGenerateId) return skinMod;

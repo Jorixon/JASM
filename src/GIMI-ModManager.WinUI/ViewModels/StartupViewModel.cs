@@ -22,7 +22,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
-    [ObservableProperty] private bool _reorganizeModsOnStartup = false;
+    [ObservableProperty] private bool _reorganizeModsOnStartup;
+    [ObservableProperty] private bool _disableMods;
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService)
@@ -65,7 +66,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
         if (ReorganizeModsOnStartup)
         {
-            await Task.Run(() => _skinManagerService.ReorganizeModsAsync());
+            await Task.Run(() => _skinManagerService.ReorganizeModsAsync(disableMods: DisableMods));
         }
 
 

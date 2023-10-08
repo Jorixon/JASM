@@ -264,9 +264,18 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
         foreach (var modModel in SelectedMods)
         {
-            await _modSettingsService.SetCharacterSkinOverride(modModel.Id, characterSkinToSet.Name);
+            var result = await _modSettingsService.SetCharacterSkinOverride(modModel.Id, characterSkinToSet.Name);
 
-            // TODO: Error Handling
+            if (result.IsT0) continue;
+
+
+            var error = result.IsT1 ? result.AsT1.ToString() : result.AsT2.ToString();
+            _logger.Error("Failed to override character skin for mod {modName}", modModel.Name);
+            App.GetService<NotificationManager>().ShowNotification(
+                $"Failed to override character skin for mod {modModel.Name}",
+                $"An Error Occurred. Reason: {error}",
+                TimeSpan.FromSeconds(5));
+            continue;
         }
 
         ModCharactersSkinOverriden?.Invoke(this, EventArgs.Empty);

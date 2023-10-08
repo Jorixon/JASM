@@ -21,8 +21,10 @@ public interface ISkinManagerService : IDisposable
     /// 
     /// </summary>
     /// <param name="characterFolderToReorganize">If null, reorganize all mods outside of characters mod folders</param>
+    /// <param name="disableMods">If true will also disable the mods</param>
     /// <returns>Mods moved</returns>
-    public Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null);
+    public Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null,
+        bool disableMods = false);
 
     /// <summary>
     /// This looks for mods in characters mod folder that are not tracked by the mod manager and adds them to the mod manager.

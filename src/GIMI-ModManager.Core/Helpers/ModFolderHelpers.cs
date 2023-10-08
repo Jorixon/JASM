@@ -39,6 +39,13 @@ public static class ModFolderHelpers
         return DISABLED_PREFIX + folderName;
     }
 
+    /// <summary>
+    /// Compares two folder names, ignoring case and the disabled prefix.
+    /// </summary>
+    /// <param name="folderName1"></param>
+    /// <param name="folderName2"></param>
+    /// <param name="absolutePaths">Specify if folderNames are absolute paths</param>
+    /// <returns></returns>
     public static bool FolderNameEquals(string folderName1, string folderName2, bool absolutePaths = false)
     {
         if (absolutePaths)
@@ -51,7 +58,12 @@ public static class ModFolderHelpers
             StringComparison.CurrentCultureIgnoreCase);
     }
 
-
+    /// <summary>
+    /// Checks if the folder name has the disabled prefix.
+    /// </summary>
+    /// <param name="folderName"></param>
+    /// <param name="absolutePath">Specify if folderName is absolute path or just the folder name</param>
+    /// <returns></returns>
     public static bool FolderHasDisabledPrefix(string folderName, bool absolutePath = false)
     {
         if (absolutePath)
