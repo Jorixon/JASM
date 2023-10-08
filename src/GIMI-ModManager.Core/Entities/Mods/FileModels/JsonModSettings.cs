@@ -4,7 +4,7 @@ namespace GIMI_ModManager.Core.Entities.Mods.FileModels;
 
 internal class JsonModSettings
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? CustomName { get; set; }

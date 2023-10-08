@@ -529,7 +529,17 @@ public sealed class SkinManagerService : ISkinManagerService
 
 
             var modList = GetCharacterModList(closestMatchCharacter);
-            var mod = await SkinMod.CreateModAsync(folder);
+            ISkinMod? mod = null;
+            try
+            {
+                mod = await SkinMod.CreateModAsync(folder);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to initialize mod folder '{ModFolder}'", folder.FullName);
+                continue;
+            }
+
             try
             {
                 using var disableWatcher = modList.DisableWatcher();

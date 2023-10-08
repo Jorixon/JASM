@@ -35,10 +35,12 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<SkinVM> InGameSkins = new();
 
     [RelayCommand]
-    private async Task TestCrawlerAsync()
+    private Task TestCrawlerAsync()
     {
         foreach (var subSkin in _modCrawlerService.GetSubSkinsRecursive(Path))
             InGameSkins.Add(SkinVM.FromSkin(subSkin));
+
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

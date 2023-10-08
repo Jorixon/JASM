@@ -31,17 +31,17 @@ public class SkinMod : Mod, ISkinMod
     }
 
 
-    public static Task<ISkinMod> CreateModAsync(string fullPath, bool forceGenerateId = false)
+    public static Task<ISkinMod> CreateModAsync(string fullPath, bool forceGenerateNewId = false)
     {
         if (!Path.IsPathFullyQualified(fullPath))
             throw new ArgumentException("Path must be absolute.", nameof(fullPath));
 
         var modDirectory = new DirectoryInfo(fullPath);
 
-        return CreateModAsync(modDirectory, forceGenerateId);
+        return CreateModAsync(modDirectory, forceGenerateNewId);
     }
 
-    public static async Task<ISkinMod> CreateModAsync(DirectoryInfo modFolder, bool forceGenerateId = false)
+    public static async Task<ISkinMod> CreateModAsync(DirectoryInfo modFolder, bool forceGenerateNewId = false)
     {
         if (!modFolder.Exists)
             throw new DirectoryNotFoundException($"Directory not found at path: {modFolder.FullName}");
@@ -56,7 +56,7 @@ public class SkinMod : Mod, ISkinMod
 
         skinMod.Id = await skinMod.Settings.InitializeAsync();
 
-        if (!forceGenerateId) return skinMod;
+        if (!forceGenerateNewId) return skinMod;
 
 
         var settings = await skinMod.Settings.ReadSettingsAsync().ConfigureAwait(false);

@@ -1,7 +1,6 @@
 ﻿using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using Serilog;
@@ -139,7 +138,7 @@ public class ModDragAndDropService
                 recursiveCopy.Invoke(sourceFolder,
                     await StorageFolder.GetFolderFromPathAsync(destFolderPath));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Directory.Delete(destFolderPath);
                 throw;
@@ -153,13 +152,21 @@ public class ModDragAndDropService
     }
 
     // ReSharper disable once InconsistentNaming
-    private static void RecursiveCopy7z(StorageFolder sourceFolder, StorageFolder destinationFolder)
+    private void RecursiveCopy7z(StorageFolder sourceFolder, StorageFolder destinationFolder)
     {
         var tmpFolder = Path.GetTempPath();
         var parentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFolder.Path)!);
         parentDir.MoveTo(Path.Combine(tmpFolder, "JASM_TMP", Guid.NewGuid().ToString("N")));
-        var mod = new Mod(parentDir.GetDirectories().First()!);
-        mod.MoveTo(destinationFolder.Path);
+
+        var modDir = parentDir.EnumerateDirectories().FirstOrDefault();
+
+        if (modDir is null)
+        {
+            throw new DirectoryNotFoundException("No valid mod folder found in archive. Loose files are ignored");
+        }
+
+        RecursiveCopy(StorageFolder.GetFolderFromPathAsync(modDir.FullName).GetAwaiter().GetResult(),
+            destinationFolder);
     }
 
     private void RecursiveCopy(StorageFolder sourceFolder, StorageFolder destinationFolder)
