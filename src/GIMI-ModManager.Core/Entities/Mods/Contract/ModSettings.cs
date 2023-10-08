@@ -54,7 +54,7 @@ public record ModSettings
     {
         return new ModSettings
         {
-            Id = settings.Id,
+            Id = ModsHelpers.StringToGuid(settings.Id),
             CustomName = settings.CustomName,
             Author = settings.Author,
             Version = settings.Version,
@@ -68,12 +68,12 @@ public record ModSettings
     {
         return new JsonModSettings
         {
-            Id = Id,
+            Id = Id.ToString(),
             CustomName = CustomName,
             Author = Author,
             Version = Version,
             ModUrl = ModUrl?.ToString(),
-            ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod, ImagePath?.ToString()),
+            ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod, ImagePath?.LocalPath),
             CharacterSkinOverride = CharacterSkinOverride
         };
     }

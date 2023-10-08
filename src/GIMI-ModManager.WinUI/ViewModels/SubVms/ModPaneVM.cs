@@ -84,6 +84,7 @@ public partial class ModPaneVM : ObservableRecipient
 
         if (!readKeySwapResult.TryPickT0(out var keySwaps, out _))
         {
+            IsReadOnlyMode = false;
             return;
         }
 

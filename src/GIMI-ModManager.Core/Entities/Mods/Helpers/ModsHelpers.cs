@@ -21,11 +21,16 @@ internal static class ModsHelpers
             ? uriResult
             : null;
 
+        // This is technically the only path that should be used.
         if (modUri is not null && uri is not null)
         {
             var relativeUri = modUri.MakeRelativeUri(uri);
 
-            var relativePath = relativeUri.ToString().Replace($"{mod.Name}/", "");
+            var modName = modUri.Segments.LastOrDefault();
+            if (string.IsNullOrWhiteSpace(modName))
+                modName = mod.Name;
+
+            var relativePath = relativeUri.ToString().Replace($"{modName}/", "");
 
             return relativePath;
         }
@@ -74,5 +79,13 @@ internal static class ModsHelpers
             return null;
 
         return Uri.IsWellFormedUriString(url, UriKind.Absolute) ? new Uri(url) : null;
+    }
+
+    public static Guid StringToGuid(string? guid)
+    {
+        if (string.IsNullOrWhiteSpace(guid))
+            return Guid.NewGuid();
+
+        return Guid.TryParse(guid, out var result) ? result : Guid.NewGuid();
     }
 }
