@@ -13,7 +13,9 @@ public class SkinMod : Mod, ISkinMod
 
     public SkinModSettingsManager Settings { get; private set; } = null!;
     public SkinModKeySwapManager? KeySwaps { get; private set; }
-    public bool HasMergedInI { get; private set; }
+
+
+    public bool HasMergedInI => KeySwaps is not null;
 
 
     public void ClearCache()
@@ -29,17 +31,17 @@ public class SkinMod : Mod, ISkinMod
     }
 
 
-    public static Task<ISkinMod> CreateModAsync(string fullPath)
+    public static Task<ISkinMod> CreateModAsync(string fullPath, bool forceGenerateId = false)
     {
         if (!Path.IsPathFullyQualified(fullPath))
             throw new ArgumentException("Path must be absolute.", nameof(fullPath));
 
         var modDirectory = new DirectoryInfo(fullPath);
 
-        return CreateModAsync(modDirectory);
+        return CreateModAsync(modDirectory, forceGenerateId);
     }
 
-    public static async Task<ISkinMod> CreateModAsync(DirectoryInfo modFolder)
+    public static async Task<ISkinMod> CreateModAsync(DirectoryInfo modFolder, bool forceGenerateId = false)
     {
         if (!modFolder.Exists)
             throw new DirectoryNotFoundException($"Directory not found at path: {modFolder.FullName}");
@@ -51,8 +53,16 @@ public class SkinMod : Mod, ISkinMod
         if (HasMergedInIFile(modFolder) is { } merged)
             skinMod.KeySwaps = new SkinModKeySwapManager(skinMod, merged);
 
+
         // TODO: Error handling
         skinMod.Id = await skinMod.Settings.InitializeAsync();
+
+        if (!forceGenerateId) return skinMod;
+
+
+        var settings = await skinMod.Settings.ReadSettingsAsync().ConfigureAwait(false);
+        settings.Id = Guid.NewGuid();
+        await skinMod.Settings.SaveSettingsAsync(settings).ConfigureAwait(false);
 
 
         return skinMod;
@@ -74,6 +84,12 @@ public class SkinMod : Mod, ISkinMod
         _modIniPath = Path.Combine(FullPath, ModIniName);
     }
 
+    public bool ContainsOnlyJasmFiles()
+    {
+        return _modDirectory.EnumerateFiles()
+            .All(file => file.Name.StartsWith(".JASM_", StringComparison.CurrentCultureIgnoreCase));
+    }
+
     private static string? HasMergedInIFile(DirectoryInfo modDirectory)
     {
         return modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
@@ -81,16 +97,43 @@ public class SkinMod : Mod, ISkinMod
             ?.FullName;
     }
 
+    public static bool operator ==(SkinMod? left, SkinMod? right)
+    {
+        if (ReferenceEquals(left, right)) return true;
+        if (ReferenceEquals(left, null)) return false;
+        if (ReferenceEquals(right, null)) return false;
+        return left.Id.Equals(right.Id);
+    }
+
+    public static bool operator !=(SkinMod? left, SkinMod? right)
+    {
+        return !(left == right);
+    }
+
     public bool Equals(ISkinMod? x, ISkinMod? y)
     {
         if (ReferenceEquals(x, y)) return true;
         if (ReferenceEquals(x, null)) return false;
         if (ReferenceEquals(y, null)) return false;
-        return string.Equals(x.FullPath, y.FullPath, StringComparison.CurrentCultureIgnoreCase);
+        return x.Id.Equals(y.Id);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals(this, (SkinMod)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
+        return Id.GetHashCode();
     }
 
     public int GetHashCode(ISkinMod obj)
     {
-        return StringComparer.CurrentCultureIgnoreCase.GetHashCode(obj.FullPath);
+        return obj.Id.GetHashCode();
     }
 }

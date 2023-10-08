@@ -40,7 +40,7 @@ public class ModSettingsService
 
         var modSettings = new ModSettings(
             id: modModel.Id,
-            customName: EmptyStringToNull(mod.Name),
+            customName: EmptyStringToNull(modModel.Name),
             author: EmptyStringToNull(modModel.Author),
             version: EmptyStringToNull(modModel.ModVersion),
             modUrl: modUrl,

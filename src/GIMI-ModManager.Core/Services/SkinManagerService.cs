@@ -79,7 +79,6 @@ public sealed class SkinManagerService : ISkinManagerService
 
             var orphanedMods = new List<CharacterSkinEntry>(characterModList.Mods);
 
-
             foreach (var modDirectory in modsDirectory.EnumerateDirectories())
             {
                 CharacterSkinEntry? mod = null;
@@ -135,6 +134,11 @@ public sealed class SkinManagerService : ISkinManagerService
                 try
                 {
                     var newMod = await SkinMod.CreateModAsync(modDirectory.FullName);
+
+                    if (GetModById(newMod.Id) is not null)
+                    {
+                        newMod = await SkinMod.CreateModAsync(modDirectory.FullName, true);
+                    }
 
                     characterModList.TrackMod(newMod);
                     newModsFound.Add(newMod);

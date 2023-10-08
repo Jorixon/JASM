@@ -238,7 +238,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             _notificationService.ShowNotification("Error while loading modes.",
                 $"An error occurred while loading the mods for this character.\n{e.Message}",
                 TimeSpan.FromSeconds(10));
-            _navigationService.GoBack();
+            ErrorNavigateBack();
         }
 
         var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(selectCharacterTemplate =>

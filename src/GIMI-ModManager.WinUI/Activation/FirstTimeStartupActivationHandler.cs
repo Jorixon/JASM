@@ -31,8 +31,12 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
             .Run(async () => await _localSettingsService.ReadSettingAsync<ModManagerOptions>(ModManagerOptions.Section))
             .GetAwaiter().GetResult();
 
-        return !string.IsNullOrEmpty(options?.GimiRootFolderPath) &&
-               !string.IsNullOrEmpty(options?.ModsFolderPath);
+        var gimiRootFolder = new DirectoryInfo(options?.GimiRootFolderPath ?? string.Empty);
+
+        var modsFolder = new DirectoryInfo(options?.ModsFolderPath ?? string.Empty);
+
+
+        return gimiRootFolder.Exists && modsFolder.Exists;
     }
 
     protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)

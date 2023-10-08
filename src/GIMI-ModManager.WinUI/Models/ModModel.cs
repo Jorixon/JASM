@@ -5,6 +5,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 
@@ -56,8 +57,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
     {
         var name = skinMod.Name;
         if (!string.IsNullOrWhiteSpace(name))
-            name = skinMod.Name.Replace(
-                name.StartsWith(CharacterModList.DISABLED_PREFIX) ? "DISABLED_" : "DISABLED", "");
+            name = ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(name);
 
         var modModel = new ModModel
         {

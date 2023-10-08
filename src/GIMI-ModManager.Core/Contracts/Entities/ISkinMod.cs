@@ -9,4 +9,6 @@ public interface ISkinMod : IMod, IEqualityComparer<ISkinMod>
     public void ClearCache();
     public SkinModSettingsManager Settings { get; }
     public SkinModKeySwapManager? KeySwaps { get; }
+
+    public bool ContainsOnlyJasmFiles();
 }

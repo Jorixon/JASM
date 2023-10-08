@@ -28,7 +28,7 @@ public interface ICharacterModList
     /// Remove a mod from the mod list. Stops tracking the mod.
     /// </summary>
     /// <param name="mod"></param>
-    internal void UnTrackMod(IMod mod);
+    internal void UnTrackMod(ISkinMod mod);
 
     /// <summary>
     /// Enable a mod. This enables the mod.
@@ -40,7 +40,7 @@ public interface ICharacterModList
     /// </summary>
     public void DisableMod(Guid modId);
 
-    public bool IsModEnabled(IMod mod);
+    public bool IsModEnabled(ISkinMod mod);
 
 
     public bool IsMultipleModsActive(bool perSkin = false);
@@ -65,9 +65,7 @@ public interface ICharacterModList
     public bool FolderAlreadyExists(string folderName);
 
     /// <summary>
-    /// Permanently deletes a mod from the mod list. This deletes entire mod from the mod folder.
+    /// Deletes a mod from the mod list. This deletes entire mod from the mod folder.
     /// </summary>
-    public void DeleteMod(Guid modId, bool moveToRecycleBin = true);
-
     public void DeleteModBySkinEntryId(Guid skinEntryId, bool moveToRecycleBin = true);
 }

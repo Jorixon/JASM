@@ -4,33 +4,43 @@ namespace GIMI_ModManager.Core.Entities.Mods.Helpers;
 
 internal static class ModsHelpers
 {
-    public static string? UriPathToModRelativePath(string modPath, string? uriPath)
+    public static string? UriPathToModRelativePath(ISkinMod mod, string? uriPath)
     {
         if (string.IsNullOrWhiteSpace(uriPath))
             return null;
 
-        if (Uri.IsWellFormedUriString(modPath, UriKind.Absolute) &&
-            Uri.IsWellFormedUriString(uriPath, UriKind.Absolute))
+        var modPath = mod.FullPath;
+
+        var modUri = Uri.TryCreate(modPath, UriKind.Absolute, out var result) &&
+                     result.Scheme == Uri.UriSchemeFile
+            ? result
+            : null;
+
+        var uri = Uri.TryCreate(uriPath, UriKind.Absolute, out var uriResult) &&
+                  uriResult.Scheme == Uri.UriSchemeFile
+            ? uriResult
+            : null;
+
+        if (modUri is not null && uri is not null)
         {
-            var modUri = new Uri(modPath);
-
-            var uri = new Uri(uriPath);
-
             var relativeUri = modUri.MakeRelativeUri(uri);
-            return relativeUri.ToString();
+
+            var relativePath = relativeUri.ToString().Replace($"{mod.Name}/", "");
+
+            return relativePath;
         }
 
 
         if (Uri.IsWellFormedUriString(uriPath, UriKind.Absolute))
         {
             var filename = Path.GetFileName(uriPath);
-            return string.IsNullOrWhiteSpace(filename) ? string.Empty : filename;
+            return string.IsNullOrWhiteSpace(filename) ? null : filename;
         }
 
         var absPath = Path.GetFileName(uriPath);
 
         var file = Path.GetFileName(absPath);
-        return string.IsNullOrWhiteSpace(file) ? string.Empty : file;
+        return string.IsNullOrWhiteSpace(file) ? null : file;
     }
 
     public static Uri? RelativeModPathToAbsPath(string modPath, string? relativeModPath)

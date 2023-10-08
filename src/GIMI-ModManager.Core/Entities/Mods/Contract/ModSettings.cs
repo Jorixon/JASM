@@ -72,8 +72,8 @@ public record ModSettings
             CustomName = CustomName,
             Author = Author,
             Version = Version,
-            ModUrl = ModUrl?.LocalPath,
-            ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod.FullPath, ImagePath?.ToString()),
+            ModUrl = ModUrl?.ToString(),
+            ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod, ImagePath?.ToString()),
             CharacterSkinOverride = CharacterSkinOverride
         };
     }

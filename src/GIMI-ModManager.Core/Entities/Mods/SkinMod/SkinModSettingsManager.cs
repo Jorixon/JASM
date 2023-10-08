@@ -52,7 +52,7 @@ public class SkinModSettingsManager
             return modSettings.Id;
         }
 
-        var settings = new JsonModSettings() { Id = new Guid() };
+        var settings = new JsonModSettings() { Id = Guid.NewGuid() };
         var json = JsonSerializer.Serialize(settings, _serializerOptions);
 
         await File.WriteAllTextAsync(_settingsFilePath, json).ConfigureAwait(false);

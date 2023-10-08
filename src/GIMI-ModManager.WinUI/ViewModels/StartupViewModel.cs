@@ -92,10 +92,19 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private async Task BrowseModsFolderAsync()
         => await PathToModsFolderPicker.BrowseFolderPathAsync(App.MainWindow);
 
-    public void OnNavigatedTo(object parameter)
+    public async void OnNavigatedTo(object parameter)
     {
-        _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 40, 60);
+        _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 40, 50);
         _windowManagerService.MainWindow.CenterOnScreen();
+
+        var settings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
+
+        if (!string.IsNullOrWhiteSpace(settings.GimiRootFolderPath))
+            PathToGIMIFolderPicker.Path = settings.GimiRootFolderPath;
+
+        if (!string.IsNullOrWhiteSpace(settings.ModsFolderPath))
+            PathToModsFolderPicker.Path = settings.ModsFolderPath;
     }
 
     public void OnNavigatedFrom()

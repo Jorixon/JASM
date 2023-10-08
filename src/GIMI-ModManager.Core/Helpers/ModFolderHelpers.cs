@@ -50,4 +50,14 @@ public static class ModFolderHelpers
         return GetFolderNameWithoutDisabledPrefix(folderName1).Equals(GetFolderNameWithoutDisabledPrefix(folderName2),
             StringComparison.CurrentCultureIgnoreCase);
     }
+
+
+    public static bool FolderHasDisabledPrefix(string folderName, bool absolutePath = false)
+    {
+        if (absolutePath)
+            folderName = new DirectoryInfo(folderName).Name;
+
+        return folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase) ||
+               folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase);
+    }
 }

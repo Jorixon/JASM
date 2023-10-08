@@ -138,6 +138,5 @@ public interface IWindowManagerService
     void ResizeWindowPercent(WindowEx window, int widthPercent, int heightPercent);
     void CloseWindow(WindowEx window);
     WindowEx CreateWindow(UIElement windowContent, bool activate = true);
-
     Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null);
 }
