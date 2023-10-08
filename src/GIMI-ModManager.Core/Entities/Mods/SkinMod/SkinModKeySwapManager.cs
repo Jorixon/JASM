@@ -80,10 +80,7 @@ public class SkinModKeySwapManager
                 keySwapLines.Add(line);
         }
 
-        if (keySwaps.Count != 0)
-            _keySwaps = new List<KeySwapSection>(keySwaps.Count);
-        else
-            return;
+        _keySwaps = new List<KeySwapSection>(keySwaps.Count);
 
         foreach (var keySwap in keySwaps)
         {
