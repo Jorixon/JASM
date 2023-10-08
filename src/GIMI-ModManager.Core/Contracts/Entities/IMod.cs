@@ -1,6 +1,4 @@
-﻿using GIMI_ModManager.Core.Entities;
-
-namespace GIMI_ModManager.Core.Contracts.Entities;
+﻿namespace GIMI_ModManager.Core.Contracts.Entities;
 
 /// <summary>
 /// The Idea behind this interface was that mods might not be folders but could also be archives or some other format
@@ -23,17 +21,6 @@ public interface IMod : IEqualityComparer<IMod>
     public string OnlyPath { get; }
 
     /// <summary>
-    /// Custom name of the mod.
-    /// </summary>
-    public string CustomName { get; }
-
-    /// <summary>
-    /// Set the custom name of the mod.
-    /// </summary>
-    /// <param name="customName"></param>
-    public void SetCustomName(string customName);
-
-    /// <summary>
     /// Move the mod to the specified folder. This does not change the folder name.
     /// If the drive is different, the mod will be copied and then deleted.
     /// </summary>
@@ -42,6 +29,7 @@ public interface IMod : IEqualityComparer<IMod>
     /// This needs to be an absolute path to the folder you want to move the mod to.
     /// </param>
     public void MoveTo(string absPath);
+
     /// <summary>
     /// Copies the mod to the specified folder. This does not change the folder name.
     /// </summary>
@@ -60,12 +48,12 @@ public interface IMod : IEqualityComparer<IMod>
     public bool Exists();
 
     public bool IsEmpty();
+
     /// <summary>
     /// This uses the contents of the mods to compare them
     /// </summary>
     /// <returns></returns>
     public bool DeepEquals(IMod? x, IMod? y);
-    
-    public byte[] GetContentsHash();
 
+    public byte[] GetContentsHash();
 }

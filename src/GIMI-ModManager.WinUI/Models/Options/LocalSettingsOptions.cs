@@ -1,4 +1,4 @@
-﻿namespace GIMI_ModManager.WinUI.Models;
+﻿namespace GIMI_ModManager.WinUI.Models.Options;
 
 public class LocalSettingsOptions
 {

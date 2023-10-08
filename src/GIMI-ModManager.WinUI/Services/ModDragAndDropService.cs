@@ -1,36 +1,40 @@
 ﻿using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using Serilog;
+using static GIMI_ModManager.WinUI.Services.ModDragAndDropService.DragAndDropFinishedArgs;
 
 namespace GIMI_ModManager.WinUI.Services;
 
 public class ModDragAndDropService
 {
     private readonly ILogger _logger;
+    private readonly ISkinManagerService _skinManagerService;
 
     private readonly NotificationManager _notificationManager;
 
     public event EventHandler<DragAndDropFinishedArgs>? DragAndDropFinished;
 
-    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager)
+    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager,
+        ISkinManagerService skinManagerService)
     {
         _notificationManager = notificationManager;
+        _skinManagerService = skinManagerService;
         _logger = logger.ForContext<ModDragAndDropService>();
     }
 
     // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
     // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
     // This code is a mess, but it works.
-    public async Task<IReadOnlyList<DragAndDropFinishedArgs.ExtractPaths>> AddStorageItemFoldersAsync(
+    public async Task<IReadOnlyList<ExtractPaths>> AddStorageItemFoldersAsync(
         ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
     {
         if (storageItems is null || !storageItems.Any())
         {
             _logger.Warning("Drag and drop files called with null/0 storage items.");
-            return Array.Empty<DragAndDropFinishedArgs.ExtractPaths>();
+            return Array.Empty<ExtractPaths>();
         }
 
 
@@ -39,10 +43,11 @@ public class ModDragAndDropService
             _notificationManager.ShowNotification(
                 "Drag and drop called with more than one storage item, this is currently not supported", "",
                 TimeSpan.FromSeconds(5));
-            return Array.Empty<DragAndDropFinishedArgs.ExtractPaths>();
+            return Array.Empty<ExtractPaths>();
         }
 
-        var extractResults = new List<DragAndDropFinishedArgs.ExtractPaths>();
+        var extractResults = new List<ExtractPaths>();
+        using var disableWatcher = modList.DisableWatcher();
 
         // Warning mess below
         foreach (var storageItem in storageItems)
@@ -76,7 +81,7 @@ public class ModDragAndDropService
                             $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
                             TimeSpan.FromSeconds(7)));
 
-                extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path,
+                extractResults.Add(new ExtractPaths(storageItem.Path,
                     extractResult.ExtractedMod.FullPath));
                 continue;
             }
@@ -133,13 +138,13 @@ public class ModDragAndDropService
                 recursiveCopy.Invoke(sourceFolder,
                     await StorageFolder.GetFolderFromPathAsync(destFolderPath));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Directory.Delete(destFolderPath);
                 throw;
             }
 
-            extractResults.Add(new DragAndDropFinishedArgs.ExtractPaths(storageItem.Path, destFolderPath));
+            extractResults.Add(new ExtractPaths(storageItem.Path, destFolderPath));
         }
 
         DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(extractResults));
@@ -147,13 +152,21 @@ public class ModDragAndDropService
     }
 
     // ReSharper disable once InconsistentNaming
-    private static void RecursiveCopy7z(StorageFolder sourceFolder, StorageFolder destinationFolder)
+    private void RecursiveCopy7z(StorageFolder sourceFolder, StorageFolder destinationFolder)
     {
         var tmpFolder = Path.GetTempPath();
         var parentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFolder.Path)!);
         parentDir.MoveTo(Path.Combine(tmpFolder, "JASM_TMP", Guid.NewGuid().ToString("N")));
-        var mod = new Mod(parentDir.GetDirectories().First()!);
-        mod.MoveTo(destinationFolder.Path);
+
+        var modDir = parentDir.EnumerateDirectories().FirstOrDefault();
+
+        if (modDir is null)
+        {
+            throw new DirectoryNotFoundException("No valid mod folder found in archive. Loose files are ignored");
+        }
+
+        RecursiveCopy(StorageFolder.GetFolderFromPathAsync(modDir.FullName).GetAwaiter().GetResult(),
+            destinationFolder);
     }
 
     private void RecursiveCopy(StorageFolder sourceFolder, StorageFolder destinationFolder)

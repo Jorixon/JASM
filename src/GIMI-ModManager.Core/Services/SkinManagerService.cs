@@ -2,7 +2,10 @@
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.Helpers;
+using OneOf;
+using OneOf.Types;
 using Serilog;
 using static GIMI_ModManager.Core.Contracts.Services.RefreshResult;
 
@@ -12,6 +15,7 @@ public sealed class SkinManagerService : ISkinManagerService
 {
     private readonly IGenshinService _genshinService;
     private readonly ILogger _logger;
+    private readonly ModCrawlerService _modCrawlerService;
 
     private DirectoryInfo _unloadedModsFolder = null!;
     private DirectoryInfo _activeModsFolder = null!;
@@ -21,9 +25,10 @@ public sealed class SkinManagerService : ISkinManagerService
     private readonly List<ICharacterModList> _characterModLists = new();
     public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
 
-    public SkinManagerService(IGenshinService genshinService, ILogger logger)
+    public SkinManagerService(IGenshinService genshinService, ILogger logger, ModCrawlerService modCrawlerService)
     {
         _genshinService = genshinService;
+        _modCrawlerService = modCrawlerService;
         _logger = logger.ForContext<SkinManagerService>();
     }
 
@@ -32,7 +37,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public bool UnloadingModsEnabled { get; private set; }
 
-    public Task ScanForModsAsync()
+    public async Task ScanForModsAsync()
     {
         _activeModsFolder.Refresh();
 
@@ -51,12 +56,17 @@ public sealed class SkinManagerService : ISkinManagerService
 
             foreach (var modFolder in characterModFolder.EnumerateDirectories())
             {
-                var mod = new SkinMod(modFolder, modFolder.Name);
-                characterModList.TrackMod(mod);
+                try
+                {
+                    var mod = await SkinMod.CreateModAsync(modFolder.FullName);
+                    characterModList.TrackMod(mod);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to initialize mod '{ModFolder}'", modFolder.FullName);
+                }
             }
         }
-
-        return Task.CompletedTask;
     }
 
     public async Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null)
@@ -64,6 +74,7 @@ public sealed class SkinManagerService : ISkinManagerService
         var modsUntracked = new List<string>();
         var newModsFound = new List<ISkinMod>();
         var duplicateModsFound = new List<DuplicateMods>();
+        var errors = new List<string>();
 
         foreach (var characterModList in _characterModLists)
         {
@@ -80,7 +91,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 foreach (var x in characterModList.Mods)
                 {
-                    if (x.Mod.FullPath.Equals(modDirectory.FullName, StringComparison.CurrentCultureIgnoreCase)
+                    if (x.Mod.FullPath.AbsPathCompare(modDirectory.FullName)
                         &&
                         Directory.Exists(Path.Combine(characterModList.AbsModsFolderPath,
                             ModFolderHelpers.GetFolderNameWithDisabledPrefix(modDirectory.Name)))
@@ -106,7 +117,7 @@ public sealed class SkinManagerService : ISkinManagerService
                         break;
                     }
 
-                    if (x.Mod.FullPath == modDirectory.FullName)
+                    if (x.Mod.FullPath.AbsPathCompare(modDirectory.FullName))
                     {
                         mod = x;
                         mod.Mod.ClearCache();
@@ -115,7 +126,7 @@ public sealed class SkinManagerService : ISkinManagerService
                     }
 
                     var disabledName = ModFolderHelpers.GetFolderNameWithDisabledPrefix(modDirectory.Name);
-                    if (x.Mod.FullPath == Path.Combine(characterModList.AbsModsFolderPath, disabledName))
+                    if (x.Mod.FullPath.AbsPathCompare(Path.Combine(characterModList.AbsModsFolderPath, disabledName)))
                     {
                         mod = x;
                         mod.Mod.ClearCache();
@@ -126,11 +137,26 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 if (mod is not null) continue;
 
-                var newMod = new SkinMod(modDirectory, modDirectory.Name);
-                characterModList.TrackMod(newMod);
-                newModsFound.Add(newMod);
-                _logger.Debug("Found new mod '{ModName}' in '{CharacterFolder}'", newMod.Name,
-                    characterModList.Character.DisplayName);
+                try
+                {
+                    var newMod = await SkinMod.CreateModAsync(modDirectory.FullName);
+
+                    if (GetModById(newMod.Id) is not null)
+                    {
+                        newMod = await SkinMod.CreateModAsync(modDirectory.FullName, true);
+                    }
+
+                    characterModList.TrackMod(newMod);
+                    newModsFound.Add(newMod);
+                    _logger.Debug("Found new mod '{ModName}' in '{CharacterFolder}'", newMod.Name,
+                        characterModList.Character.DisplayName);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to create mod from folder '{ModFolder}'", modDirectory.FullName);
+                    errors.Add(
+                        $"Failed to track new mod folder: '{modDirectory.FullName}' | For character {characterModList.Character.DisplayName}");
+                }
             }
 
             orphanedMods.ForEach(x =>
@@ -142,11 +168,12 @@ public sealed class SkinManagerService : ISkinManagerService
             });
         }
 
-        return new RefreshResult(modsUntracked, newModsFound, duplicateModsFound);
+        return new RefreshResult(modsUntracked, newModsFound, duplicateModsFound, errors: errors);
     }
 
 
-    public async Task TransferMods(ICharacterModList source, ICharacterModList destination,
+    public async Task<OneOf<Success, Error<string>[]>> TransferMods(ICharacterModList source,
+        ICharacterModList destination,
         IEnumerable<Guid> modsEntryIds)
     {
         var mods = source.Mods.Where(x => modsEntryIds.Contains(x.Id)).Select(x => x.Mod).ToList();
@@ -168,20 +195,36 @@ public sealed class SkinManagerService : ISkinManagerService
         using var sourceDisabled = source.DisableWatcher();
         using var destinationDisabled = destination.DisableWatcher();
 
+        var errors = new List<Error<string>>();
         foreach (var mod in mods)
         {
             source.UnTrackMod(mod);
             mod.MoveTo(destination.AbsModsFolderPath);
             destination.TrackMod(mod);
 
-            // Remove overrides, i.e. skinOverride
-            var skinModSettings = (await mod.ReadSkinModSettings()).DeepClone();
-            skinModSettings.CharacterSkinOverride = null;
-            await mod.SaveSkinModSettings(skinModSettings);
+            try
+            {
+                var skinSettings = await mod.Settings.ReadSettingsAsync();
+                skinSettings.CharacterSkinOverride = null;
+                await mod.Settings.SaveSettingsAsync(skinSettings);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to clear skin override for mod '{ModName}'", mod.Name);
+                errors.Add(new Error<string>(
+                    $"Failed to clear skin override for mod '{mod.Name}'. Reason: {e.Message}"));
+            }
         }
+
+        return errors.Any() ? errors.ToArray() : new Success();
     }
 
     public event EventHandler<ExportProgress>? ModExportProgress;
+
+    public ISkinMod? GetModById(Guid id)
+    {
+        return _characterModLists.SelectMany(x => x.Mods).FirstOrDefault(x => x.Id == id)?.Mod;
+    }
 
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
         bool removeLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false,
@@ -433,7 +476,8 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public int ReorganizeMods(GenshinCharacter? characterFolderToReorganize = null)
+    public async Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null,
+        bool disableMods = false)
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
@@ -465,8 +509,12 @@ public sealed class SkinManagerService : ISkinManagerService
             if (character is not null)
                 continue;
 
-            // Is a mod folder, determine which character it belongs to
-            var closestMatchCharacter = _genshinService.GetCharacter(folder.Name);
+
+            var closestMatchCharacter =
+                _modCrawlerService.GetFirstSubSkinRecursive(folder.FullName)?.Character as GenshinCharacter ??
+                _genshinService.GetCharacter(folder.Name);
+
+
             switch (closestMatchCharacter)
             {
                 case null when characterFolderToReorganize is null:
@@ -481,10 +529,40 @@ public sealed class SkinManagerService : ISkinManagerService
 
 
             var modList = GetCharacterModList(closestMatchCharacter);
-            var mod = new SkinMod(folder, folder.Name);
+            ISkinMod? mod = null;
+            try
+            {
+                mod = await SkinMod.CreateModAsync(folder);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to initialize mod folder '{ModFolder}'", folder.FullName);
+                continue;
+            }
+
             try
             {
                 using var disableWatcher = modList.DisableWatcher();
+
+                var renameAttempts = 0;
+                while (modList.FolderAlreadyExists(mod.Name))
+                {
+                    var oldName = mod.Name;
+                    mod.Rename(DuplicateModAffixHelper.AppendNumberAffix(mod.Name));
+                    _logger.Information(
+                        "Mod '{ModName}' already exists in '{CharacterFolder}', renaming to {NewModName}",
+                        oldName, closestMatchCharacter.DisplayName, mod.Name);
+                    renameAttempts++;
+                    if (renameAttempts <= 10) continue;
+                    _logger.Error(
+                        "Failed to rename mod '{ModName}' to '{NewModName}' after 10 attempts, skipping mod",
+                        mod.Name, mod.Name);
+                    break;
+                }
+
+                if (renameAttempts > 10) continue;
+
+
                 mod.MoveTo(GetCharacterModList(closestMatchCharacter).AbsModsFolderPath);
                 _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder", mod.Name,
                     closestMatchCharacter.DisplayName);
@@ -498,6 +576,17 @@ public sealed class SkinManagerService : ISkinManagerService
             }
 
             modList.TrackMod(mod);
+            if (disableMods && modList.IsModEnabled(mod))
+            {
+                try
+                {
+                    modList.DisableMod(mod.Id);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to disable mod '{ModName}'", mod.Name);
+                }
+            }
         }
 
         return movedMods;

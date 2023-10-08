@@ -1500,7 +1500,8 @@
     "Id": 53,
     "DisplayName": "Tartaglia",
     "Keys": [
-      "tartaglia"
+      "tartaglia",
+      "childe"
     ],
     "ReleaseDate": "2020-11-11T00:00:00",
     "ImageUri": "Character_Tartaglia_Thumb.png",

@@ -7,7 +7,11 @@ public static partial class DuplicateModAffixHelper
     [GeneratedRegex(@"__\d+$", RegexOptions.IgnoreCase)]
     private static partial Regex DuplicateModAffix();
 
-
+    /// <summary>
+    /// Tries to append a number to the end of the string, if it already has a number, it increments it.
+    /// </summary>
+    /// <param name="name">Some string with or without a number at the end</param>
+    /// <returns>New string with a number or incremented number</returns>
     public static string AppendNumberAffix(string name)
     {
         ArgumentNullException.ThrowIfNull(name);

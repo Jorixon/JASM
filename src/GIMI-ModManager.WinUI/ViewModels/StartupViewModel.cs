@@ -1,17 +1,14 @@
-﻿using System.Text;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GIMI_ModManager.WinUI.Contracts.Services;
-using Windows.Storage.Pickers;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.WinUI.Models;
-using GIMI_ModManager.WinUI.Services;
-using Serilog;
-using FluentValidation;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
-using GIMI_ModManager.WinUI.Validators;
+using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
-using PathPicker = GIMI_ModManager.WinUI.ViewModels.SubVms.PathPicker;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -25,7 +22,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
-    [ObservableProperty] private bool _reorganizeModsOnStartup = false;
+    [ObservableProperty] private bool _reorganizeModsOnStartup;
+    [ObservableProperty] private bool _disableMods;
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService)
@@ -63,11 +61,12 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             modManagerOptions);
         _logger.Information("Saved startup settings: {@ModManagerOptions}", modManagerOptions);
 
-        await _skinManagerService.Initialize(modManagerOptions.ModsFolderPath!, null, modManagerOptions.GimiRootFolderPath);
+        await _skinManagerService.Initialize(modManagerOptions.ModsFolderPath!, null,
+            modManagerOptions.GimiRootFolderPath);
 
         if (ReorganizeModsOnStartup)
         {
-            await Task.Run(() => _skinManagerService.ReorganizeMods());
+            await Task.Run(() => _skinManagerService.ReorganizeModsAsync(disableMods: DisableMods));
         }
 
 
@@ -94,10 +93,19 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private async Task BrowseModsFolderAsync()
         => await PathToModsFolderPicker.BrowseFolderPathAsync(App.MainWindow);
 
-    public void OnNavigatedTo(object parameter)
+    public async void OnNavigatedTo(object parameter)
     {
-        _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 40, 60);
+        _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 40, 50);
         _windowManagerService.MainWindow.CenterOnScreen();
+
+        var settings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
+
+        if (!string.IsNullOrWhiteSpace(settings.GimiRootFolderPath))
+            PathToGIMIFolderPicker.Path = settings.GimiRootFolderPath;
+
+        if (!string.IsNullOrWhiteSpace(settings.ModsFolderPath))
+            PathToModsFolderPicker.Path = settings.ModsFolderPath;
     }
 
     public void OnNavigatedFrom()

@@ -1,6 +1,6 @@
 ﻿using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.Notifications;
@@ -151,8 +151,6 @@ public class ModNotificationManager
         });
         return true;
     }
-
-
 
 
     public class ModNotificationEvent : EventArgs

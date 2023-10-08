@@ -5,14 +5,18 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Serilog;
 using Serilog.Templates;
 using WinUI3Localizer;
@@ -47,6 +51,7 @@ public partial class App : Application
     public static UIElement? AppTitlebar { get; set; }
 
     public static bool OverrideShutdown { get; set; }
+    public static bool UnhandledExceptionHandled { get; set; }
 
     public App()
     {
@@ -97,6 +102,8 @@ public partial class App : Application
                 services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();
+                services.AddSingleton<ModSettingsService>();
+                services.AddSingleton<KeySwapService>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
@@ -126,6 +133,21 @@ public partial class App : Application
     {
         Log.Fatal(e.Exception, "Unhandled exception");
         await Log.CloseAndFlushAsync();
+
+        if (UnhandledExceptionHandled)
+            return;
+        // show error dialog
+        var window = new ErrorWindow(e.Exception)
+        {
+            IsAlwaysOnTop = true,
+            Title = "JASM - Unhandled Exception",
+            SystemBackdrop = new MicaBackdrop()
+        };
+        window.Activate();
+        window.CenterOnScreen();
+        MainWindow.Hide();
+        e.Handled = true;
+        UnhandledExceptionHandled = true;
     }
 
 

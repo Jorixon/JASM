@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -10,65 +9,67 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
 public partial class ModPaneVM : ObservableRecipient
 {
-    private readonly ISkinManagerService _skinManagerService;
-    private readonly NotificationManager _notificationManager;
+    private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
+    private readonly NotificationManager _notificationManager = App.GetService<NotificationManager>();
     private readonly ILogger _logger = Log.ForContext<ModPaneVM>();
+
+    private readonly KeySwapService _keySwapService = App.GetService<KeySwapService>();
+    private readonly ModSettingsService _modSettingsService = App.GetService<ModSettingsService>();
+
     private ISkinMod _selectedSkinMod = null!;
-    private ICharacterModList _modList = null!;
 
-    private NewModModel _backendModModel = null!;
+    private ModModel _backendModModel = null!;
 
-    [ObservableProperty] private NewModModel _selectedModModel = null!;
+    [ObservableProperty] private ModModel _selectedModModel = null!;
     [ObservableProperty] private bool _isReadOnlyMode = true;
 
     [ObservableProperty] private bool _isEditingModName = false;
 
 
-    public ModPaneVM(ISkinManagerService skinManagerService, NotificationManager notificationManager)
-    {
-        _skinManagerService = skinManagerService;
-        _notificationManager = notificationManager;
-    }
-
-    public async Task LoadMod(NewModModel modModel, CancellationToken cancellationToken = default)
+    public async Task LoadMod(ModModel modModel, CancellationToken cancellationToken = default)
     {
         if (modModel.Id == SelectedModModel?.Id) return;
         UnloadMod();
-        var skinEntry = _skinManagerService.GetCharacterModList(modModel.Character).Mods
-            .First(x => x.Id == modModel.Id);
-        _selectedSkinMod = skinEntry.Mod;
 
-        _backendModModel = NewModModel.FromMod(skinEntry);
+        var mod = _skinManagerService.GetModById(modModel.Id);
+        if (mod == null)
+        {
+            UnloadMod();
+            return;
+        }
+
+        _selectedSkinMod = mod;
+
+        _backendModModel = ModModel.FromMod(mod, modModel.Character, modModel.IsEnabled);
         SelectedModModel = modModel;
         SelectedModModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
-
         await ReloadModSettings(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ReloadModSettings(CancellationToken cancellationToken = default)
     {
         if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
-        try
-        {
-            var skinModSettings =
-                await _selectedSkinMod.ReadSkinModSettings(true, cancellationToken: cancellationToken);
 
-            _backendModModel.WithModSettings(skinModSettings);
-            SelectedModModel.WithModSettings(skinModSettings);
-        }
-        catch (JsonException e)
+
+        var readSettingsResult = await _modSettingsService.GetSettingsAsync(_backendModModel.Id);
+
+
+        if (!readSettingsResult.TryPickT0(out var modSettings, out _))
         {
-            _logger.Error(e, "Error while reading mod settings for {ModName}", _backendModModel.FolderName);
-            _notificationManager.ShowNotification("Error while reading mod settings.",
-                $"An error occurred while reading the mod settings for {_backendModModel.FolderName}, See logs for details.\n{e.Message}",
-                TimeSpan.FromSeconds(10));
+            UnloadMod();
+            return;
         }
+
+        SelectedModModel.WithModSettings(modSettings);
+        _backendModModel.WithModSettings(modSettings);
+
 
         Debug.Assert(_backendModModel.Equals(SelectedModModel));
 
@@ -79,9 +80,18 @@ public partial class ModPaneVM : ObservableRecipient
             return;
         }
 
-        var keySwaps = await _selectedSkinMod.ReadKeySwapConfiguration(cancellationToken: cancellationToken);
-        _backendModModel.SetKeySwaps(keySwaps);
+        var readKeySwapResult = await _keySwapService.GetKeySwapsAsync(_backendModModel.Id);
+
+        if (!readKeySwapResult.TryPickT0(out var keySwaps, out _))
+        {
+            IsReadOnlyMode = false;
+            return;
+        }
+
         SelectedModModel.SetKeySwaps(keySwaps);
+        _backendModModel.SetKeySwaps(keySwaps);
+
+
         foreach (var skinModKeySwapModel in SelectedModModel.SkinModKeySwaps)
             skinModKeySwapModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
 
@@ -100,8 +110,7 @@ public partial class ModPaneVM : ObservableRecipient
         _selectedSkinMod = null!;
         _backendModModel = null!;
         IsEditingModName = false;
-        SelectedModModel = new NewModModel();
-        _modList = null!;
+        SelectedModModel = new ModModel();
         SettingsPropertiesChanged();
     }
 
@@ -221,7 +230,7 @@ public partial class ModPaneVM : ObservableRecipient
 
         await Task.Run(async () =>
         {
-            var stream = await accessStreamReference.OpenReadAsync();
+            using var stream = await accessStreamReference.OpenReadAsync();
             await using var fileStream = File.Create(tmpFile);
             await stream.AsStreamForRead().CopyToAsync(fileStream);
         });
@@ -253,46 +262,46 @@ public partial class ModPaneVM : ObservableRecipient
     {
         IsReadOnlyMode = true;
         var errored = false;
-        await Task.Run(async () =>
+
+
+        var saveResult = await _modSettingsService.SaveSettingsAsync(SelectedModModel);
+
+        if (saveResult.TryPickT2(out var error, out var notFoundOrSuccess))
         {
-            var skinModSettings = SelectedModModel.ToModSettings();
+            errored = true;
+        }
+        else if (notFoundOrSuccess.TryPickT1(out var modNotFound, out _))
+        {
+            _notificationManager.ShowNotification("Error saving mod settings",
+                $"Could not find mod with id {modNotFound.ModId}",
+                TimeSpan.FromSeconds(5));
+        }
 
-            try
-            {
-                await _selectedSkinMod.SaveSkinModSettings(skinModSettings, cancellationToken);
-            }
-            catch (Exception e)
-            {
-                errored = true;
-                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+
+        if (_selectedSkinMod.HasMergedInI || SelectedModModel.SkinModKeySwaps.Any())
+        {
+            var saveKeySwapResult = await _keySwapService.SaveKeySwapsAsync(SelectedModModel);
+
+            saveKeySwapResult.Switch(
+                success => { },
+                missingIni =>
                 {
+                    errored = true;
+                    _notificationManager.ShowNotification("Error saving keyswap",
+                        $"Could not find ini file for mod {SelectedModModel.Name}",
+                        TimeSpan.FromSeconds(5));
+                },
+                modNotFound =>
+                {
+                    errored = true;
                     _notificationManager.ShowNotification("Error saving mod settings",
-                        "An error occurred while saving the mod settings. Please check the log for more details.",
-                        TimeSpan.FromSeconds(10));
-                    App.GetService<ILogger>().Error(e, "Error saving mod settings");
-                });
-            }
+                        $"Could not find mod with id {modNotFound.ModId}",
+                        TimeSpan.FromSeconds(5));
+                },
+                _ => { }
+            );
+        }
 
-
-            if (!_selectedSkinMod.HasMergedInI || !SelectedModModel.SkinModKeySwaps.Any()) return;
-
-            var keySwaps = SelectedModModel.SkinModKeySwaps.Select(x => x.ToKeySwapSettings()).ToList();
-            try
-            {
-                await _selectedSkinMod.SaveKeySwapConfiguration(keySwaps, cancellationToken);
-            }
-            catch (Exception e)
-            {
-                errored = true;
-                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-                {
-                    _notificationManager.ShowNotification("Error saving key swap configuration",
-                        "An error occured while saving the key swap configuration. Please check the log for more details.",
-                        TimeSpan.FromSeconds(10));
-                    App.GetService<ILogger>().Error(e, "Error saving key swap configuration");
-                });
-            }
-        }, cancellationToken);
 
         IsReadOnlyMode = false;
 
@@ -312,6 +321,6 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand]
     private void ClearImage()
     {
-        SelectedModModel.ImagePath = NewModModel.PlaceholderImagePath;
+        SelectedModModel.ImagePath = ModModel.PlaceholderImagePath;
     }
 }

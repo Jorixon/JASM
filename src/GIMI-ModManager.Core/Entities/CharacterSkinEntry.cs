@@ -4,16 +4,17 @@ namespace GIMI_ModManager.Core.Entities;
 
 public class CharacterSkinEntry : IEqualityComparer<CharacterSkinEntry>
 {
-    internal CharacterSkinEntry(ISkinMod mod, CharacterModList modList, bool isEnabled)
+    internal CharacterSkinEntry(ISkinMod mod, ICharacterModList modList, bool isEnabled)
     {
+        Id = mod.Id;
         Mod = mod;
         ModList = modList;
         IsEnabled = isEnabled;
     }
 
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; }
     public ISkinMod Mod { get; }
-    public CharacterModList ModList { get; }
+    public ICharacterModList ModList { get; }
     public bool IsEnabled { get; internal set; }
 
     public bool Equals(CharacterSkinEntry? x, CharacterSkinEntry? y)

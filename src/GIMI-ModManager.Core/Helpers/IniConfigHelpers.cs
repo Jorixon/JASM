@@ -1,29 +1,29 @@
-﻿using GIMI_ModManager.Core.Entities;
+﻿using GIMI_ModManager.Core.Entities.Mods.FileModels;
 
 namespace GIMI_ModManager.Core.Helpers;
 
 // This class just holds code that i don't know where to put yet.
 public static class IniConfigHelpers
 {
-    public static SkinModKeySwap? ParseKeySwap(ICollection<string> fileLines, string sectionLine)
+    public static IniKeySwapSection? ParseKeySwap(ICollection<string> fileLines, string sectionLine)
     {
-        var skinModKeySwap = new SkinModKeySwap
+        var skinModKeySwap = new IniKeySwapSection
         {
             SectionKey = sectionLine.Trim()
         };
 
         foreach (var line in fileLines)
         {
-            if (IsIniKey(line, SkinModKeySwap.ForwardIniKey))
+            if (IsIniKey(line, IniKeySwapSection.ForwardIniKey))
                 skinModKeySwap.ForwardHotkey = GetIniValue(line);
 
-            else if (IsIniKey(line, SkinModKeySwap.BackwardIniKey))
+            else if (IsIniKey(line, IniKeySwapSection.BackwardIniKey))
                 skinModKeySwap.BackwardHotkey = GetIniValue(line);
 
-            else if (IsIniKey(line, SkinModKeySwap.TypeIniKey))
+            else if (IsIniKey(line, IniKeySwapSection.TypeIniKey))
                 skinModKeySwap.Type = GetIniValue(line);
 
-            else if (IsIniKey(line, SkinModKeySwap.SwapVarIniKey))
+            else if (IsIniKey(line, IniKeySwapSection.SwapVarIniKey))
                 skinModKeySwap.SwapVar = GetIniValue(line)?.Split(',');
 
             else if (IsSection(line))

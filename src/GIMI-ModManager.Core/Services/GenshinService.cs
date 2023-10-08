@@ -111,7 +111,7 @@ public class GenshinService : IGenshinService
         IEnumerable<GenshinCharacter> characters, int minScore = 100)
     {
         var searchResult = new Dictionary<GenshinCharacter, int>();
-        searchQuery = searchQuery.ToLower();
+        searchQuery = searchQuery.ToLower().Trim();
 
         foreach (var character in characters)
         {
@@ -127,6 +127,9 @@ public class GenshinService : IGenshinService
             // A character can have multiple keys, so we take the best one. The keys are only used to help with searching
             var bestKeyMatch = character.Keys.Max(key => Fuzz.Ratio(key, searchQuery));
             result += bestKeyMatch;
+
+            if (character.Keys.Any(key => key.Equals(searchQuery, StringComparison.CurrentCultureIgnoreCase)))
+                result += 100;
 
 
             var splitNames = loweredDisplayName.Split();

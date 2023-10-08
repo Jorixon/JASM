@@ -38,18 +38,18 @@ public sealed partial class CharacterDetailsPage : Page
 
         ViewModel.ModListVM.SelectedMods.CollectionChanged += (sender, args) =>
         {
-            foreach (var newSelectedMods in args?.NewItems?.OfType<NewModModel>() ?? new List<NewModModel>(0))
+            foreach (var newSelectedMods in args?.NewItems?.OfType<ModModel>() ?? new List<ModModel>(0))
             {
-                var equalItemInGrid = ModListGrid.ItemsSource.OfType<NewModModel>()
+                var equalItemInGrid = ModListGrid.ItemsSource.OfType<ModModel>()
                     .FirstOrDefault(x => x.Id == newSelectedMods.Id);
 
-                if (!ModListGrid.SelectedItems.OfType<NewModModel>().Contains(equalItemInGrid))
+                if (!ModListGrid.SelectedItems.OfType<ModModel>().Contains(equalItemInGrid))
                     ModListGrid.SelectedItems.Add(equalItemInGrid);
             }
 
-            foreach (var removedSelectedMods in args?.OldItems?.OfType<NewModModel>() ?? new List<NewModModel>(0))
+            foreach (var removedSelectedMods in args?.OldItems?.OfType<ModModel>() ?? new List<ModModel>(0))
             {
-                var equalItemInGrid = ModListGrid.ItemsSource.OfType<NewModModel>()
+                var equalItemInGrid = ModListGrid.ItemsSource.OfType<ModModel>()
                     .FirstOrDefault(x => x.Id == removedSelectedMods.Id);
 
                 if (ModListGrid.SelectedItems.Contains(equalItemInGrid))
@@ -59,7 +59,7 @@ public sealed partial class CharacterDetailsPage : Page
 
         ModListGrid.Loaded += (sender, args) =>
         {
-            var modEntry = ModListGrid.ItemsSource.OfType<NewModModel>()?.FirstOrDefault(mod => mod.IsEnabled);
+            var modEntry = ModListGrid.ItemsSource.OfType<ModModel>()?.FirstOrDefault(mod => mod.IsEnabled);
             ModListGrid.SelectedItem = modEntry;
             // set focus to the first item
             ModListGrid.Focus(FocusState.Programmatic);
@@ -277,7 +277,7 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
     {
-        var modModel = (NewModModel)e.Row.DataContext;
+        var modModel = (ModModel)e.Row.DataContext;
         ViewModel.ChangeModDetails(modModel);
     }
 
@@ -285,7 +285,7 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (e.Key == VirtualKey.Space)
         {
-            await ViewModel.ModList_KeyHandler(ModListGrid.SelectedItems.OfType<NewModModel>().Select(mod => mod.Id),
+            await ViewModel.ModList_KeyHandler(ModListGrid.SelectedItems.OfType<ModModel>().Select(mod => mod.Id),
                 e.Key);
             e.Handled = true;
         }
@@ -293,7 +293,7 @@ public sealed partial class CharacterDetailsPage : Page
         if (e.Key == VirtualKey.Delete)
         {
             e.Handled = true;
-            ViewModel.MoveModsFlyoutVM.SetSelectedModsCommand.Execute(ModListGrid.SelectedItems.OfType<NewModModel>()
+            ViewModel.MoveModsFlyoutVM.SetSelectedModsCommand.Execute(ModListGrid.SelectedItems.OfType<ModModel>()
                 .ToArray());
             await ViewModel.MoveModsFlyoutVM.DeleteModsCommand.ExecuteAsync(null);
             ViewModel.MoveModsFlyoutVM.ResetStateCommand.Execute(null);
@@ -302,8 +302,8 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void ModListGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel.ModListVM.SelectionChanged(e.AddedItems.OfType<NewModModel>().ToArray(),
-            e.RemovedItems.OfType<NewModModel>().ToArray());
+        ViewModel.ModListVM.SelectionChanged(e.AddedItems.OfType<ModModel>().ToArray(),
+            e.RemovedItems.OfType<ModModel>().ToArray());
     }
 
 
@@ -399,7 +399,7 @@ public sealed partial class CharacterDetailsPage : Page
     private void ModNameCell_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (ViewModel.ModPaneVM.IsReadOnlyMode ||
-            ViewModel.ModPaneVM.SelectedModModel.SettingsEquals(new NewModModel()))
+            ViewModel.ModPaneVM.SelectedModModel.SettingsEquals(new ModModel()))
             return;
 
         ViewModel.ModPaneVM.IsEditingModName = true;

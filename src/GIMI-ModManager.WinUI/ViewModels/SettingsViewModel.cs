@@ -14,9 +14,10 @@ using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
-using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
@@ -291,11 +292,13 @@ public partial class SettingsViewModel : ObservableRecipient
             try
             {
                 var movedModsCount = await Task.Run(() =>
-                    _skinManagerService.ReorganizeMods()); // Mods folder
+                    _skinManagerService.ReorganizeModsAsync()); // Mods folder
 
                 movedModsCount += await Task.Run(() =>
-                    _skinManagerService.ReorganizeMods(
+                    _skinManagerService.ReorganizeModsAsync(
                         genshinService.GetCharacter(genshinService.OtherCharacterId))); // Others folder
+
+                await _skinManagerService.RefreshModsAsync();
 
                 if (movedModsCount == -1)
                     _notificationManager.ShowNotification("Mods reorganization failed.",

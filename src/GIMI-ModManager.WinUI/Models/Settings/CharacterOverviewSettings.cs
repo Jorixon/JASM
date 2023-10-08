@@ -1,9 +1,9 @@
 ﻿using GIMI_ModManager.WinUI.ViewModels;
 using Newtonsoft.Json;
 
-namespace GIMI_ModManager.WinUI.Models.Options;
+namespace GIMI_ModManager.WinUI.Models.Settings;
 
-public class CharacterOverviewOptions
+public class CharacterOverviewSettings
 {
     [JsonIgnore] public const string Key = "CharacterOverviewOptions";
 

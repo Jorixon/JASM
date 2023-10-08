@@ -1,6 +1,8 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Services;
+using OneOf;
+using OneOf.Types;
 
 namespace GIMI_ModManager.Core.Contracts.Services;
 
@@ -19,15 +21,18 @@ public interface ISkinManagerService : IDisposable
     /// 
     /// </summary>
     /// <param name="characterFolderToReorganize">If null, reorganize all mods outside of characters mod folders</param>
+    /// <param name="disableMods">If true will also disable the mods</param>
     /// <returns>Mods moved</returns>
-    public int ReorganizeMods(GenshinCharacter? characterFolderToReorganize = null);
+    public Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null,
+        bool disableMods = false);
 
     /// <summary>
     /// This looks for mods in characters mod folder that are not tracked by the mod manager and adds them to the mod manager.
     /// </summary>
     public Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
 
-    public Task TransferMods(ICharacterModList source, ICharacterModList destination, IEnumerable<Guid> modsEntryIds);
+    public Task<OneOf<Success, Error<string>[]>> TransferMods(ICharacterModList source, ICharacterModList destination,
+        IEnumerable<Guid> modsEntryIds);
 
     public Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId);
 
@@ -46,6 +51,8 @@ public interface ISkinManagerService : IDisposable
         SetModStatus setModStatus = SetModStatus.KeepCurrent);
 
     public event EventHandler<ExportProgress>? ModExportProgress;
+
+    public ISkinMod? GetModById(Guid id);
 }
 
 public enum SetModStatus
@@ -58,15 +65,18 @@ public enum SetModStatus
 public readonly struct RefreshResult
 {
     public RefreshResult(IReadOnlyCollection<string> modsUntracked, IReadOnlyCollection<ISkinMod> modsTracked,
-        IReadOnlyCollection<DuplicateMods> modsDuplicate)
+        IReadOnlyCollection<DuplicateMods> modsDuplicate, IReadOnlyCollection<string> errors)
     {
         ModsUntracked = modsUntracked;
         ModsTracked = modsTracked;
         ModsDuplicate = modsDuplicate;
+        Errors = errors;
     }
 
     public IReadOnlyCollection<string> ModsUntracked { get; }
     public IReadOnlyCollection<ISkinMod> ModsTracked { get; }
+
+    public IReadOnlyCollection<string> Errors { get; }
 
     public IReadOnlyCollection<DuplicateMods> ModsDuplicate { get; }
 

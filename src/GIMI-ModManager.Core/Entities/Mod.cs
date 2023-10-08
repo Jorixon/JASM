@@ -14,12 +14,10 @@ public class Mod : IMod
     public string FullPath => _modDirectory.FullName;
     public string Name => _modDirectory.Name;
     public string OnlyPath => _modDirectory.Parent!.FullName;
-    public string CustomName { get; private set; }
 
-    public Mod(DirectoryInfo modDirectory, string customName = "")
+    public Mod(DirectoryInfo modDirectory)
     {
         _modDirectory = modDirectory;
-        CustomName = customName;
     }
 
     public bool Exists()
@@ -32,10 +30,6 @@ public class Mod : IMod
         return !_modDirectory.EnumerateFiles().Any();
     }
 
-    public void SetCustomName(string customName)
-    {
-        CustomName = customName;
-    }
 
     public void MoveTo(string absPath)
     {
@@ -63,7 +57,7 @@ public class Mod : IMod
 
         var newModDirectory = new DirectoryInfo(Path.Combine(absPath, Name));
         RecursiveCopyTo(_modDirectory, newModDirectory);
-        return new Mod(newModDirectory, CustomName);
+        return new Mod(newModDirectory);
     }
 
     public void Rename(string newName)
@@ -146,6 +140,6 @@ public class Mod : IMod
 
     public override string ToString()
     {
-        return $"FolderName: {Name} | CustomName: {CustomName} | FullPath: {FullPath}";
+        return $"FolderName: {Name} | FullPath: {FullPath}";
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace GIMI_ModManager.WinUI.Helpers;
+namespace GIMI_ModManager.WinUI.Helpers.Xaml;
 
 internal class BoolToVisibleConverter : IValueConverter
 {

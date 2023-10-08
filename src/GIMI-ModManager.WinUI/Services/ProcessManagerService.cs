@@ -20,7 +20,6 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     private protected string _prcoessPath = null!;
     private protected string _workingDirectory = string.Empty;
 
-    private bool _exitHandlerRegistered;
     private protected bool _isGenshinClass;
 
     public string ProcessName { get; protected set; } = string.Empty;
@@ -169,17 +168,6 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
             ProcessStatus = ProcessStatus.NotRunning;
             _logger.Information("{ProcessName} exited with exit code: {ExitCode}", ProcessName, _process.ExitCode);
         };
-
-        if (_exitHandlerRegistered) return;
-
-
-        //App.MainWindow.Closed += MainWindowExitHandler;
-        //_exitHandlerRegistered = true;
-    }
-
-    private void MainWindowExitHandler(object sender, WindowEventArgs args)
-    {
-        StopProcess();
     }
 
 
