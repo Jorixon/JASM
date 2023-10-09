@@ -115,7 +115,7 @@ public partial class ModPaneVM : ObservableRecipient
     }
 
     private string[] _supportedImageExtensions =
-        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg" };
+        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg", ".webp" };
 
     [RelayCommand]
     private async Task SetImageUriAsync()

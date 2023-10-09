@@ -28,7 +28,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
         Character = character;
         AbsModsFolderPath = absPath;
         _watcher = new FileSystemWatcher(AbsModsFolderPath);
-        _watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.CreationTime | NotifyFilters.FileName;
+        _watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.CreationTime;
         _watcher.Renamed += OnModRenamed;
         _watcher.Created += OnModCreated;
         _watcher.Deleted += OnModDeleted;
