@@ -2,6 +2,7 @@
 using System.Globalization;
 using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -100,6 +101,7 @@ public partial class App : Application
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
                 services.AddSingleton<IGenshinService, GenshinService>();
+                services.AddSingleton<IGameService, GameService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();
                 services.AddSingleton<ModSettingsService>();

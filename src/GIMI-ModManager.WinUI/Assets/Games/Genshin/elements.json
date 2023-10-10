@@ -1,0 +1,37 @@
+[
+	{
+		"Id": 0,
+		"InternalName": "Pyro",
+		"DisplayName": "Pyro"
+	},
+	{
+		"Id": 1,
+		"InternalName": "Hydro",
+		"DisplayName": "Hydro"
+	},
+	{
+		"Id": 2,
+		"InternalName": "Anemo",
+		"DisplayName": "Anemo"
+	},
+	{
+		"Id": 3,
+		"InternalName": "Electro",
+		"DisplayName": "Electro"
+	},
+	{
+		"Id": 4,
+		"InternalName": "Dendro",
+		"DisplayName": "Dendro"
+	},
+	{
+		"Id": 5,
+		"InternalName": "Cryo",
+		"DisplayName": "Cryo"
+	},
+	{
+		"Id": 6,
+		"InternalName": "Geo",
+		"DisplayName": "Geo"
+	}
+]

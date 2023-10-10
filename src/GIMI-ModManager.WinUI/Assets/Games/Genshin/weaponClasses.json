@@ -1,0 +1,12 @@
+[
+  {
+    "Id": 0,
+    "InternalName": "Sword",
+    "DisplayName": "Sword"
+  },
+  {
+    "Id": 1,
+    "InternalName": "Bow",
+    "DisplayName": "Bow"
+  }
+]

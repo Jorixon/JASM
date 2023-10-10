@@ -1,6 +1,7 @@
 ﻿using System.Security.Principal;
 using Windows.Foundation;
 using CommunityToolkit.WinUI;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -24,6 +25,7 @@ public class ActivationService : IActivationService
     private readonly ILogger _logger = Log.ForContext<ActivationService>();
     private readonly ILocalSettingsService _localSettingsService;
     private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
     private readonly ElevatorService _elevatorService;
     private readonly GenshinProcessManager _genshinProcessManager;
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
@@ -40,7 +42,7 @@ public class ActivationService : IActivationService
         ILocalSettingsService localSettingsService,
         IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
-        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService)
+        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -53,6 +55,7 @@ public class ActivationService : IActivationService
         _updateChecker = updateChecker;
         _windowManagerService = windowManagerService;
         _autoUpdaterService = autoUpdaterService;
+        _gameService = gameService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -114,6 +117,8 @@ public class ActivationService : IActivationService
         await SetLanguage();
         await SetScreenSize();
         await _genshinService.InitializeAsync(jsonPath).ConfigureAwait(false);
+        await _gameService.InitializeAsync($"{AppDomain.CurrentDomain.BaseDirectory}/Assets/Games/Genshin",
+            _localSettingsService.ApplicationDataFolder).ConfigureAwait(false);
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
     }
 

@@ -40,6 +40,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Remove="Assets\characters.json" />
+		<Content Remove="Assets\Games\Genshin\characters.json" />
+		<Content Remove="Assets\Games\Genshin\elements.json" />
+		<Content Remove="Assets\Games\Genshin\game.json" />
+		<Content Remove="Assets\Games\Genshin\regions.json" />
+		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
 		<Content Remove="Assets\Images\AltCharacterSkins\BarbaraSummertime_Thumb.webp" />
 		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_AmberCN_Thumb.webp" />
 		<Content Remove="Assets\Images\AltCharacterSkins\Character_Skin_AyakaSpringbloom_Thumb.webp" />
@@ -208,6 +213,18 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\characters.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\elements.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\game.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\regions.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\weaponClasses.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Images\AltCharacterSkins\BarbaraSummertime_Thumb.webp">
@@ -662,6 +679,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Assets\7z\" />
+	  <Folder Include="Assets\Games\Genshin\custom\" />
+	  <Folder Include="Assets\Games\Genshin\Languages\zh-cn\" />
+	  <Folder Include="Assets\Games\Genshin\Images\" />
+	  <Folder Include="Assets\Games\Honkai\" />
 	</ItemGroup>
 
 	<ItemGroup>

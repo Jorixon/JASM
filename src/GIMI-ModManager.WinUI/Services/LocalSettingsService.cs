@@ -3,9 +3,9 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Models.Options;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using GIMI_ModManager.WinUI.Models.Options;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -32,6 +32,8 @@ public class LocalSettingsService : ILocalSettingsService
             ? "Stored in ApplicationData"
             : Path.Combine(_applicationDataFolder, _localsettingsFile);
 
+    public string ApplicationDataFolder => _applicationDataFolder;
+
     public LocalSettingsService(IFileService fileService, IOptions<LocalSettingsOptions> options)
     {
         _fileService = fileService;
@@ -54,7 +56,7 @@ public class LocalSettingsService : ILocalSettingsService
         if (!_isInitialized)
         {
             _settings = await Task.Run(() =>
-                            _fileService.Read<IDictionary<string, object>>(_applicationDataFolder,
+                            _fileService.Read<Dictionary<string, object>>(_applicationDataFolder,
                                 _localsettingsFile)) ??
                         new Dictionary<string, object>();
 

@@ -6,17 +6,17 @@ namespace GIMI_ModManager.Core.Services;
 
 public class FileService : IFileService
 {
-    private readonly object _fileLock = new object();
+    private readonly object _fileLock = new();
 
-    public T Read<T>(string folderPath, string fileName)
+    public T Read<T>(string folderPath, string fileName) where T : new()
     {
         var path = Path.Combine(folderPath, fileName);
-        if (!File.Exists(path)) return default;
+        if (!File.Exists(path)) return new T();
 
         lock (_fileLock)
         {
             var json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConvert.DeserializeObject<T>(json) ?? new T();
         }
     }
 
@@ -30,7 +30,7 @@ public class FileService : IFileService
 
         var fileContent = serializeContent
             ? JsonConvert.SerializeObject(content, Formatting.Indented)
-            : content.ToString();
+            : content?.ToString();
 
         lock (_fileLock)
         {
@@ -40,7 +40,7 @@ public class FileService : IFileService
 
     public void Delete(string folderPath, string fileName)
     {
-        if (fileName == null || !File.Exists(Path.Combine(folderPath, fileName))) return;
+        if (!File.Exists(Path.Combine(folderPath, fileName))) return;
 
         lock (_fileLock)
         {
