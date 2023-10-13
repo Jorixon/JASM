@@ -41,6 +41,7 @@
 	<ItemGroup>
 		<Content Remove="Assets\characters.json" />
 		<Content Remove="Assets\Games\Genshin\characters.json" />
+		<Content Remove="Assets\Games\Genshin\custom\npc.json" />
 		<Content Remove="Assets\Games\Genshin\elements.json" />
 		<Content Remove="Assets\Games\Genshin\game.json" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_AmberCN_Thumb.webp" />
@@ -324,6 +325,9 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\characters.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\custom\npc.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\elements.json">
@@ -1114,7 +1118,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Assets\7z\" />
-	  <Folder Include="Assets\Games\Genshin\custom\" />
+	  <Folder Include="Assets\Games\Genshin\Images\custom\" />
 	  <Folder Include="Assets\Games\Genshin\Languages\zh-cn\" />
 	  <Folder Include="Assets\Games\Honkai\" />
 	</ItemGroup>

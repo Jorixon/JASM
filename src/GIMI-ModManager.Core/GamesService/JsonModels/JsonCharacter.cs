@@ -1,4 +1,6 @@
-﻿namespace GIMI_ModManager.Core.GamesService.JsonModels;
+﻿using Newtonsoft.Json;
+
+namespace GIMI_ModManager.Core.GamesService.JsonModels;
 
 internal class JsonCharacter : JsonBaseNameable
 {
@@ -7,11 +9,12 @@ internal class JsonCharacter : JsonBaseNameable
     public string? ReleaseDate { get; set; }
     public string? Image { get; set; }
     public int? Rarity { get; set; }
-    public string? RarityName { get; set; }
     public string? Element { get; set; } = string.Empty;
 
     public string? Class { get; set; } = string.Empty;
 
     public string[]? Region { get; set; } = Array.Empty<string>();
-    public JsonCharacterSkin[] InGameSkins { get; set; } = Array.Empty<JsonCharacterSkin>();
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public JsonCharacterSkin[]? InGameSkins { get; set; }
 }

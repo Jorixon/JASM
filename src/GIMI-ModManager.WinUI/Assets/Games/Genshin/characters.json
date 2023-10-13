@@ -1,8 +1,6 @@
 [
   {
     "Id": 0,
-    "InternalName": "Albedo",
-    "DisplayName": "Albedo",
     "Keys": [
       "albedo"
     ],
@@ -16,17 +14,18 @@
     ],
     "InGameSkins": [
       {
-        "DefaultSkin": true,
-        "DisplayName": "Default",
-        "Name": "Albedo",
-        "SkinSuffix": ""
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
       }
-    ]
+    ],
+    "InternalName": "Albedo",
+    "DisplayName": "Albedo"
   },
   {
     "Id": 1,
-    "InternalName": "Alhaitham",
-    "DisplayName": "Alhaitham",
     "Keys": [
       "alhaitham"
     ],
@@ -40,17 +39,18 @@
     ],
     "InGameSkins": [
       {
-        "DefaultSkin": true,
-        "DisplayName": "Default",
-        "Name": "Alhaitham",
-        "SkinSuffix": ""
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
       }
-    ]
+    ],
+    "InternalName": "Alhaitham",
+    "DisplayName": "Alhaitham"
   },
   {
     "Id": 2,
-    "InternalName": "Aloy",
-    "DisplayName": "Aloy",
     "Keys": [
       "aloy"
     ],
@@ -64,17 +64,18 @@
     ],
     "InGameSkins": [
       {
-        "DefaultSkin": true,
-        "DisplayName": "Default",
-        "Name": "Aloy",
-        "SkinSuffix": ""
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
       }
-    ]
+    ],
+    "InternalName": "Aloy",
+    "DisplayName": "Aloy"
   },
   {
     "Id": 3,
-    "InternalName": "Amber",
-    "DisplayName": "Amber",
     "Keys": [
       "amber"
     ],
@@ -88,18 +89,1990 @@
     ],
     "InGameSkins": [
       {
-        "DefaultSkin": true,
-        "DisplayName": "Default",
-        "Name": "Amber",
-        "SkinSuffix": ""
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
       },
       {
-        "DefaultSkin": false,
-        "DisplayName": "AmberCN",
-        "Name": "AmberCN",
-        "SkinSuffix": "CN",
-        "Image": "Character_Skin_AmberCN_Thumb.webp"
+        "Image": "Character_Skin_AmberCN_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "AmberCN",
+        "DisplayName": "AmberCN"
       }
-    ]
+    ],
+    "InternalName": "Amber",
+    "DisplayName": "Amber"
+  },
+  {
+    "Id": 4,
+    "Keys": [
+      "arataki",
+      "itto"
+    ],
+    "ReleaseDate": "2021-11-24T00:00:00",
+    "Image": "Character_Arataki_Itto_Thumb.png",
+    "Rarity": 5,
+    "Element": "Geo",
+    "Class": "Claymore",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Arataki Itto",
+    "DisplayName": "Arataki Itto"
+  },
+  {
+    "Id": 5,
+    "Keys": [
+      "baizhu"
+    ],
+    "ReleaseDate": "2023-04-12T00:00:00",
+    "Image": "Character_Baizhu_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Catalyst",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Baizhu",
+    "DisplayName": "Baizhu"
+  },
+  {
+    "Id": 6,
+    "Keys": [
+      "barbara"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Barbara_Thumb.png",
+    "Rarity": 4,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_BarbaraSummertime_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Summertime Sparkle",
+        "DisplayName": "Summertime Sparkle"
+      }
+    ],
+    "InternalName": "Barbara",
+    "DisplayName": "Barbara"
+  },
+  {
+    "Id": 7,
+    "Keys": [
+      "beidou"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Beidou_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Claymore",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Beidou",
+    "DisplayName": "Beidou"
+  },
+  {
+    "Id": 8,
+    "Keys": [
+      "bennett"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Bennett_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Sword",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Bennett",
+    "DisplayName": "Bennett"
+  },
+  {
+    "Id": 9,
+    "Keys": [
+      "candace"
+    ],
+    "ReleaseDate": "2022-09-28T00:00:00",
+    "Image": "Character_Candace_Thumb.png",
+    "Rarity": 4,
+    "Element": "Hydro",
+    "Class": "Polearm",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Candace",
+    "DisplayName": "Candace"
+  },
+  {
+    "Id": 73,
+    "Keys": [
+      "charlotte"
+    ],
+    "ReleaseDate": "2024-01-01T00:00:00",
+    "Image": "Character_Charlotte_Thumb.webp",
+    "Rarity": 0,
+    "Element": "Cryo",
+    "Class": "",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Charlotte",
+    "DisplayName": "Charlotte"
+  },
+  {
+    "Id": 10,
+    "Keys": [
+      "chongyun"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Chongyun_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Claymore",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Chongyun",
+    "DisplayName": "Chongyun"
+  },
+  {
+    "Id": 72,
+    "Keys": [
+      "clorinde"
+    ],
+    "ReleaseDate": "2024-01-01T00:00:00",
+    "Image": "Character_Clorinde_Thumb.webp",
+    "Rarity": 0,
+    "Element": "Electro",
+    "Class": "",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Clorinde",
+    "DisplayName": "Clorinde"
+  },
+  {
+    "Id": 11,
+    "Keys": [
+      "collei"
+    ],
+    "ReleaseDate": "2022-08-24T00:00:00",
+    "Image": "Character_Collei_Thumb.png",
+    "Rarity": 4,
+    "Element": "Dendro",
+    "Class": "Bow",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Collei",
+    "DisplayName": "Collei"
+  },
+  {
+    "Id": 12,
+    "Keys": [
+      "cyno"
+    ],
+    "ReleaseDate": "2022-09-28T00:00:00",
+    "Image": "Character_Cyno_Thumb.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Polearm",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Cyno",
+    "DisplayName": "Cyno"
+  },
+  {
+    "Id": 13,
+    "Keys": [
+      "dehya"
+    ],
+    "ReleaseDate": "2023-03-01T00:00:00",
+    "Image": "Character_Dehya_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Claymore",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Dehya",
+    "DisplayName": "Dehya"
+  },
+  {
+    "Id": 14,
+    "Keys": [
+      "diluc"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Diluc_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Claymore",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_DilucFlamme_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Red Dead of Night",
+        "DisplayName": "Red Dead of Night"
+      }
+    ],
+    "InternalName": "Diluc",
+    "DisplayName": "Diluc"
+  },
+  {
+    "Id": 15,
+    "Keys": [
+      "diona"
+    ],
+    "ReleaseDate": "2020-11-11T00:00:00",
+    "Image": "Character_Diona_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Bow",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Diona",
+    "DisplayName": "Diona"
+  },
+  {
+    "Id": 16,
+    "Keys": [
+      "dori"
+    ],
+    "ReleaseDate": "2022-08-24T00:00:00",
+    "Image": "Character_Dori_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Claymore",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Dori",
+    "DisplayName": "Dori"
+  },
+  {
+    "Id": 17,
+    "Keys": [
+      "eula"
+    ],
+    "ReleaseDate": "2021-01-28T00:00:00",
+    "Image": "Character_Eula_Thumb.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Claymore",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Eula",
+    "DisplayName": "Eula"
+  },
+  {
+    "Id": 18,
+    "Keys": [
+      "faruzan"
+    ],
+    "ReleaseDate": "2022-12-07T00:00:00",
+    "Image": "Character_Faruzan_Thumb.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Bow",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Faruzan",
+    "DisplayName": "Faruzan"
+  },
+  {
+    "Id": 19,
+    "Keys": [
+      "fischl"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Fischl_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Bow",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_FischlHighness_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Ein Immernachtstraum",
+        "DisplayName": "Ein Immernachtstraum"
+      }
+    ],
+    "InternalName": "Fischl",
+    "DisplayName": "Fischl"
+  },
+  {
+    "Id": 76,
+    "Keys": [
+      "freminet"
+    ],
+    "ReleaseDate": "2023-09-05T00:00:00",
+    "Image": "Character_Freminet_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Claymore",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Freminet",
+    "DisplayName": "Freminet"
+  },
+  {
+    "Id": 71,
+    "Keys": [
+      "furina",
+      "focalors"
+    ],
+    "ReleaseDate": "2024-01-01T00:00:00",
+    "Image": "Character_Furina_Thumb.webp",
+    "Rarity": 0,
+    "Element": "Hydro",
+    "Class": "",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Furina",
+    "DisplayName": "Furina"
+  },
+  {
+    "Id": 20,
+    "Keys": [
+      "ganyu"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "Character_Ganyu_Thumb.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Bow",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Ganyu",
+    "DisplayName": "Ganyu"
+  },
+  {
+    "Id": 21,
+    "Keys": [
+      "gorou"
+    ],
+    "ReleaseDate": "2021-11-24T00:00:00",
+    "Image": "Character_Gorou_Thumb.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Bow",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Gorou",
+    "DisplayName": "Gorou"
+  },
+  {
+    "Id": 22,
+    "Keys": [
+      "hu",
+      "tao"
+    ],
+    "ReleaseDate": "2021-02-03T00:00:00",
+    "Image": "Character_Hu_Tao_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Hu Tao",
+    "DisplayName": "Hu Tao"
+  },
+  {
+    "Id": 23,
+    "Keys": [
+      "jean"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Jean_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Sword",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_JeanCN_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "JeanCN",
+        "DisplayName": "JeanCN"
+      },
+      {
+        "Image": "Character_Skin_JeanSea_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Sea Breeze Dandelion",
+        "DisplayName": "Sea Breeze Dandelion"
+      }
+    ],
+    "InternalName": "Jean",
+    "DisplayName": "Jean"
+  },
+  {
+    "Id": 24,
+    "Keys": [
+      "kaedehara",
+      "kazuha"
+    ],
+    "ReleaseDate": "2021-06-09T00:00:00",
+    "Image": "Character_Kaedehara_Kazuha_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Sword",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Kaedehara Kazuha",
+    "DisplayName": "Kaedehara Kazuha"
+  },
+  {
+    "Id": 25,
+    "Keys": [
+      "kaeya"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Kaeya_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Sword",
+    "Region": [
+      "MondstadtKhaenri'ah"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_KaeyaSailwind_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Sailwind Shadow",
+        "DisplayName": "Sailwind Shadow"
+      }
+    ],
+    "InternalName": "Kaeya",
+    "DisplayName": "Kaeya"
+  },
+  {
+    "Id": 26,
+    "Keys": [
+      "kamisato",
+      "ayaka"
+    ],
+    "ReleaseDate": "2021-07-21T00:00:00",
+    "Image": "Character_Kamisato_Ayaka_Thumb.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Sword",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_AyakaSpringbloom_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Springbloom Missive",
+        "DisplayName": "Springbloom Missive"
+      }
+    ],
+    "InternalName": "Kamisato Ayaka",
+    "DisplayName": "Kamisato Ayaka"
+  },
+  {
+    "Id": 27,
+    "Keys": [
+      "kamisato",
+      "ayato"
+    ],
+    "ReleaseDate": "2022-03-30T00:00:00",
+    "Image": "Character_Kamisato_Ayato_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Sword",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Kamisato Ayato",
+    "DisplayName": "Kamisato Ayato"
+  },
+  {
+    "Id": 28,
+    "Keys": [
+      "kaveh"
+    ],
+    "ReleaseDate": "2023-04-12T00:00:00",
+    "Image": "Character_Kaveh_Thumb.png",
+    "Rarity": 4,
+    "Element": "Dendro",
+    "Class": "Claymore",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Kaveh",
+    "DisplayName": "Kaveh"
+  },
+  {
+    "Id": 29,
+    "Keys": [
+      "keqing"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Keqing_Thumb.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Sword",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_KeqingOpulent_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Opulent Splendor",
+        "DisplayName": "Opulent Splendor"
+      }
+    ],
+    "InternalName": "Keqing",
+    "DisplayName": "Keqing"
+  },
+  {
+    "Id": 30,
+    "Keys": [
+      "kirara"
+    ],
+    "ReleaseDate": "2023-06-24T00:00:00",
+    "Image": "Character_Kirara_Thumb.png",
+    "Rarity": 4,
+    "Element": "Dendro",
+    "Class": "Sword",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Kirara",
+    "DisplayName": "Kirara"
+  },
+  {
+    "Id": 31,
+    "Keys": [
+      "klee"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Klee_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Catalyst",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_KleeBlossoming_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Blossoming Starlight",
+        "DisplayName": "Blossoming Starlight"
+      }
+    ],
+    "InternalName": "Klee",
+    "DisplayName": "Klee"
+  },
+  {
+    "Id": 32,
+    "Keys": [
+      "kujou",
+      "sara"
+    ],
+    "ReleaseDate": "2021-09-01T00:00:00",
+    "Image": "Character_Kujou_Sara_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Bow",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Kujou Sara",
+    "DisplayName": "Kujou Sara"
+  },
+  {
+    "Id": 33,
+    "Keys": [
+      "kuki",
+      "shinobu"
+    ],
+    "ReleaseDate": "2022-03-31T00:00:00",
+    "Image": "Character_Kuki_Shinobu_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Sword",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Kuki Shinobu",
+    "DisplayName": "Kuki Shinobu"
+  },
+  {
+    "Id": 34,
+    "Keys": [
+      "layla"
+    ],
+    "ReleaseDate": "2022-11-02T00:00:00",
+    "Image": "Character_Layla_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Sword",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Layla",
+    "DisplayName": "Layla"
+  },
+  {
+    "Id": 35,
+    "Keys": [
+      "lisa"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Lisa_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Catalyst",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_LisaSobriquet_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "A Sobriquet Under Shade",
+        "DisplayName": "A Sobriquet Under Shade"
+      },
+      {
+        "Image": "",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Student",
+        "DisplayName": "Student"
+      }
+    ],
+    "InternalName": "Lisa",
+    "DisplayName": "Lisa"
+  },
+  {
+    "Id": 36,
+    "Keys": [
+      "lynette"
+    ],
+    "ReleaseDate": "2023-08-16T00:00:00",
+    "Image": "Character_Lynette_Thumb.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Sword",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Lynette",
+    "DisplayName": "Lynette"
+  },
+  {
+    "Id": 37,
+    "Keys": [
+      "lyney"
+    ],
+    "ReleaseDate": "2023-08-16T00:00:00",
+    "Image": "Character_Lyney_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Bow",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Lyney",
+    "DisplayName": "Lyney"
+  },
+  {
+    "Id": 38,
+    "Keys": [
+      "mika"
+    ],
+    "ReleaseDate": "2023-03-01T00:00:00",
+    "Image": "Character_Mika_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Polearm",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Mika",
+    "DisplayName": "Mika"
+  },
+  {
+    "Id": 39,
+    "Keys": [
+      "mona"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Mona_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_MonaCN_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "MonaCN",
+        "DisplayName": "MonaCN"
+      }
+    ],
+    "InternalName": "Mona",
+    "DisplayName": "Mona"
+  },
+  {
+    "Id": 40,
+    "Keys": [
+      "nahida",
+      "buer"
+    ],
+    "ReleaseDate": "2022-11-02T00:00:00",
+    "Image": "Character_Nahida_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Catalyst",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Nahida",
+    "DisplayName": "Nahida"
+  },
+  {
+    "Id": 70,
+    "Keys": [
+      "navia"
+    ],
+    "ReleaseDate": "2024-01-01T00:00:00",
+    "Image": "Character_Navia_Thumb.webp",
+    "Rarity": 0,
+    "Element": "Geo",
+    "Class": "",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Navia",
+    "DisplayName": "Navia"
+  },
+  {
+    "Id": 77,
+    "Keys": [
+      "neuvillette"
+    ],
+    "ReleaseDate": "2023-09-27T00:00:00",
+    "Image": "Character_Neuvillette_Thumb.webp",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Neuvillette",
+    "DisplayName": "Neuvillette"
+  },
+  {
+    "Id": 41,
+    "Keys": [
+      "nilou"
+    ],
+    "ReleaseDate": "2022-09-28T00:00:00",
+    "Image": "Character_Nilou_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Sword",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Nilou",
+    "DisplayName": "Nilou"
+  },
+  {
+    "Id": 42,
+    "Keys": [
+      "ningguang"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Ningguang_Thumb.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Catalyst",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_NingguangOrchid_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Orchid's Evening Gown",
+        "DisplayName": "Orchid's Evening Gown"
+      }
+    ],
+    "InternalName": "Ningguang",
+    "DisplayName": "Ningguang"
+  },
+  {
+    "Id": 43,
+    "Keys": [
+      "noelle"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Noelle_Thumb.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Claymore",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Noelle",
+    "DisplayName": "Noelle"
+  },
+  {
+    "Id": 69,
+    "Keys": [
+      "paimon",
+      "emergency",
+      "food"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Paimon_Thumb.png",
+    "Rarity": 0,
+    "Element": "None",
+    "Class": "",
+    "Region": [],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Paimon",
+    "DisplayName": "Paimon"
+  },
+  {
+    "Id": 44,
+    "Keys": [
+      "qiqi"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Qiqi_Thumb.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Sword",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Qiqi",
+    "DisplayName": "Qiqi"
+  },
+  {
+    "Id": 45,
+    "Keys": [
+      "raiden",
+      "shogun"
+    ],
+    "ReleaseDate": "2021-09-01T00:00:00",
+    "Image": "Character_Raiden_Shogun_Thumb.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Polearm",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Raiden Shogun",
+    "DisplayName": "Raiden Shogun"
+  },
+  {
+    "Id": 46,
+    "Keys": [
+      "razor"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Razor_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Claymore",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Razor",
+    "DisplayName": "Razor"
+  },
+  {
+    "Id": 47,
+    "Keys": [
+      "rosaria"
+    ],
+    "ReleaseDate": "2021-03-17T00:00:00",
+    "Image": "Character_Rosaria_Thumb.png",
+    "Rarity": 4,
+    "Element": "Cryo",
+    "Class": "Polearm",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      },
+      {
+        "Image": "Character_Skin_RosariaCN_Thumb.webp",
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "RosariaCN",
+        "DisplayName": "RosariaCN"
+      }
+    ],
+    "InternalName": "Rosaria",
+    "DisplayName": "Rosaria"
+  },
+  {
+    "Id": 48,
+    "Keys": [
+      "sangonomiya",
+      "kokomi"
+    ],
+    "ReleaseDate": "2021-09-01T00:00:00",
+    "Image": "Character_Sangonomiya_Kokomi_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Sangonomiya Kokomi",
+    "DisplayName": "Sangonomiya Kokomi"
+  },
+  {
+    "Id": 49,
+    "Keys": [
+      "sayu"
+    ],
+    "ReleaseDate": "2021-07-21T00:00:00",
+    "Image": "Character_Sayu_Thumb.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Claymore",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Sayu",
+    "DisplayName": "Sayu"
+  },
+  {
+    "Id": 50,
+    "Keys": [
+      "shenhe"
+    ],
+    "ReleaseDate": "2022-01-05T00:00:00",
+    "Image": "Character_Shenhe_Thumb.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Shenhe",
+    "DisplayName": "Shenhe"
+  },
+  {
+    "Id": 51,
+    "Keys": [
+      "shikanoin",
+      "heizou"
+    ],
+    "ReleaseDate": "2022-07-13T00:00:00",
+    "Image": "Character_Shikanoin_Heizou_Thumb.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Shikanoin Heizou",
+    "DisplayName": "Shikanoin Heizou"
+  },
+  {
+    "Id": 52,
+    "Keys": [
+      "sucrose"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Sucrose_Thumb.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Sucrose",
+    "DisplayName": "Sucrose"
+  },
+  {
+    "Id": 53,
+    "Keys": [
+      "tartaglia",
+      "childe"
+    ],
+    "ReleaseDate": "2020-11-11T00:00:00",
+    "Image": "Character_Tartaglia_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Bow",
+    "Region": [
+      "Snezhnaya"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Tartaglia",
+    "DisplayName": "Tartaglia"
+  },
+  {
+    "Id": 54,
+    "Keys": [
+      "thoma"
+    ],
+    "ReleaseDate": "2021-10-13T00:00:00",
+    "Image": "Character_Thoma_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Polearm",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Thoma",
+    "DisplayName": "Thoma"
+  },
+  {
+    "Id": 55,
+    "Keys": [
+      "tighnari"
+    ],
+    "ReleaseDate": "2022-08-24T00:00:00",
+    "Image": "Character_Tighnari_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Bow",
+    "Region": [
+      "Sumeru"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Tighnari",
+    "DisplayName": "Tighnari"
+  },
+  {
+    "Id": 57,
+    "Keys": [
+      "traveler",
+      "(female)",
+      "lumine"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Traveler_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Sword",
+    "Region": [
+      "Outlander"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Traveler (Female)",
+    "DisplayName": "Traveler (Female)"
+  },
+  {
+    "Id": 56,
+    "Keys": [
+      "traveler",
+      "(male)",
+      "aether"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Traveler_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Sword",
+    "Region": [
+      "Outlander"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Traveler (Male)",
+    "DisplayName": "Traveler (Male)"
+  },
+  {
+    "Id": 58,
+    "Keys": [
+      "venti"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Venti_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Bow",
+    "Region": [
+      "Mondstadt"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Venti",
+    "DisplayName": "Venti"
+  },
+  {
+    "Id": 59,
+    "Keys": [
+      "wanderer"
+    ],
+    "ReleaseDate": "2022-12-07T00:00:00",
+    "Image": "Character_Wanderer_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Sumeru",
+      "Snezhnaya",
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Wanderer",
+    "DisplayName": "Wanderer"
+  },
+  {
+    "Id": 60,
+    "Keys": [
+      "xiangling"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Xiangling_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Xiangling",
+    "DisplayName": "Xiangling"
+  },
+  {
+    "Id": 61,
+    "Keys": [
+      "xiao"
+    ],
+    "ReleaseDate": "2021-02-03T00:00:00",
+    "Image": "Character_Xiao_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Xiao",
+    "DisplayName": "Xiao"
+  },
+  {
+    "Id": 62,
+    "Keys": [
+      "xingqiu"
+    ],
+    "ReleaseDate": "2020-09-28T00:00:00",
+    "Image": "Character_Xingqiu_Thumb.png",
+    "Rarity": 4,
+    "Element": "Hydro",
+    "Class": "Sword",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Xingqiu",
+    "DisplayName": "Xingqiu"
+  },
+  {
+    "Id": 63,
+    "Keys": [
+      "xinyan"
+    ],
+    "ReleaseDate": "2020-11-11T00:00:00",
+    "Image": "Character_Xinyan_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Claymore",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Xinyan",
+    "DisplayName": "Xinyan"
+  },
+  {
+    "Id": 64,
+    "Keys": [
+      "yae",
+      "miko"
+    ],
+    "ReleaseDate": "2022-02-16T00:00:00",
+    "Image": "Character_Yae_Miko_Thumb.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Catalyst",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Yae Miko",
+    "DisplayName": "Yae Miko"
+  },
+  {
+    "Id": 65,
+    "Keys": [
+      "yanfei"
+    ],
+    "ReleaseDate": "2021-04-28T00:00:00",
+    "Image": "Character_Yanfei_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Catalyst",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Yanfei",
+    "DisplayName": "Yanfei"
+  },
+  {
+    "Id": 66,
+    "Keys": [
+      "yaoyao"
+    ],
+    "ReleaseDate": "2023-01-18T00:00:00",
+    "Image": "Character_Yaoyao_Thumb.png",
+    "Rarity": 4,
+    "Element": "Dendro",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Yaoyao",
+    "DisplayName": "Yaoyao"
+  },
+  {
+    "Id": 67,
+    "Keys": [
+      "yelan"
+    ],
+    "ReleaseDate": "2022-03-31T00:00:00",
+    "Image": "Character_Yelan_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Bow",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Yelan",
+    "DisplayName": "Yelan"
+  },
+  {
+    "Id": 68,
+    "Keys": [
+      "yoimiya"
+    ],
+    "ReleaseDate": "2021-07-21T00:00:00",
+    "Image": "Character_Yoimiya_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Bow",
+    "Region": [
+      "Inazuma"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Yoimiya",
+    "DisplayName": "Yoimiya"
+  },
+  {
+    "Id": 74,
+    "Keys": [
+      "yun",
+      "jin"
+    ],
+    "ReleaseDate": "2022-01-05T00:00:00",
+    "Image": "Character_Yun_Jin_Thumb.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Yun Jin",
+    "DisplayName": "Yun Jin"
+  },
+  {
+    "Id": 75,
+    "Keys": [
+      "zhongli"
+    ],
+    "ReleaseDate": "2020-11-11T00:00:00",
+    "Image": "Character_Zhongli_Thumb.png",
+    "Rarity": 5,
+    "Element": "Geo",
+    "Class": "Polearm",
+    "Region": [
+      "Liyue"
+    ],
+    "InGameSkins": [
+      {
+        "Image": null,
+        "ReleaseDate": null,
+        "Rarity": -1,
+        "InternalName": "Default",
+        "DisplayName": "Default"
+      }
+    ],
+    "InternalName": "Zhongli",
+    "DisplayName": "Zhongli"
   }
 ]

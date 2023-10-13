@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using FuzzySharp;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.GamesService.Models;
@@ -92,15 +93,75 @@ public class GameService : IGameService
         throw new NotImplementedException();
     }
 
-    public ICharacter? GetCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null)
+    public ICharacter? GetCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
+        int minScore = 100)
     {
-        throw new NotImplementedException();
+        var searchResult = GetCharacters(keywords, restrictToCharacters, minScore);
+
+        return searchResult.Any(kv => kv.Value >= minScore) ? searchResult.MaxBy(x => x.Value).Key : null;
     }
 
-    public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
-        IEnumerable<ICharacter>? restrictToCharacters = null)
+    public ICharacter? GetCharacterByName(string internalName)
     {
-        throw new NotImplementedException();
+        return _characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
+    }
+
+
+    public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
+        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100)
+    {
+        var searchResult = new Dictionary<ICharacter, int>();
+        searchQuery = searchQuery.ToLower().Trim();
+
+        foreach (var character in restrictToCharacters ?? GetCharacters())
+        {
+            var loweredDisplayName = character.DisplayName.ToLower();
+
+            var result = 0;
+
+            // If the search query contains the display name, we give it a lot of points
+            var sameChars = loweredDisplayName.Split().Count(searchQuery.Contains);
+            result += sameChars * 50;
+
+
+            // A character can have multiple keys, so we take the best one. The keys are only used to help with searching
+            var bestKeyMatch = character.Keys.Max(key => Fuzz.Ratio(key, searchQuery));
+            result += bestKeyMatch;
+
+            if (character.Keys.Any(key => key.Equals(searchQuery, StringComparison.CurrentCultureIgnoreCase)))
+                result += 100;
+
+
+            var splitNames = loweredDisplayName.Split();
+            var sameStartChars = 0;
+            var bestResultOfNames = 0;
+            // This loop will give points for each name that starts with the same chars as the search query
+            foreach (var name in splitNames)
+            {
+                sameStartChars = 0;
+                foreach (var @char in searchQuery)
+                {
+                    if (name.ElementAtOrDefault(sameStartChars) == default(char)) continue;
+
+                    if (name[sameStartChars] != @char) continue;
+
+                    sameStartChars++;
+                    if (sameStartChars > bestResultOfNames)
+                        bestResultOfNames = sameStartChars;
+                }
+            }
+
+            result += sameStartChars * 5; // Give more points for same start chars
+
+            result += loweredDisplayName.Split()
+                .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name
+
+            if (result < minScore) continue;
+
+            searchResult.Add(character, result);
+        }
+
+        return searchResult;
     }
 
     public List<IGameElement> GetElements() => Elements.AllElements.ToList();
@@ -109,11 +170,20 @@ public class GameService : IGameService
 
     public List<IRegion> GetRegions() => Regions.AllRegions.ToList();
 
-    public List<ICharacter> GetCharacters() => _characters.ToList();
+    public List<ICharacter> GetCharacters()
+    {
+        var characters = _characters.ToList();
+        characters.Insert(0, getOthersCharacter());
+        characters.Add(getGlidersCharacter());
+        characters.Add(getWeaponsCharacter());
+        return characters;
+    }
 
     public bool IsMultiMod(INameable modNameable)
     {
-        throw new NotImplementedException();
+        var multiMod = new List<string> { "Gliders", "Weapons", "Others" };
+
+        return multiMod.Any(modNameable.InternalNameEquals);
     }
 
     private async Task InitializeRegionsAsync()
@@ -213,6 +283,68 @@ public class GameService : IGameService
         return JsonSerializer.Deserialize<IEnumerable<T>>(await File.ReadAllTextAsync(objFilePath),
             _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
     }
+
+    private const int _otherCharacterId = -1234;
+    public int OtherCharacterId => _otherCharacterId;
+
+    private Character getOthersCharacter()
+    {
+        var character = new Character
+        {
+            Id = _otherCharacterId,
+            InternalName = "Others",
+            DisplayName = "Others",
+            ReleaseDate = DateTime.MinValue,
+            Rarity = -1,
+            Keys = new[] { "others", "unknown" },
+            ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters", "Character_Others.png")),
+            Element = Elements.AllElements.First(),
+            Class = Classes.AllClasses.First()
+        };
+        return character;
+    }
+
+    private const int _glidersCharacterId = -1235;
+    public int GlidersCharacterId => _glidersCharacterId;
+
+    private Character getGlidersCharacter()
+    {
+        var character = new Character
+        {
+            Id = _glidersCharacterId,
+            InternalName = "Gliders",
+            DisplayName = "Gliders",
+            ReleaseDate = DateTime.MinValue,
+            Rarity = -1,
+            Keys = new[] { "gliders", "glider", "wings" },
+            ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
+                "Character_Gliders_Thumb.webp")),
+            Element = Elements.AllElements.First(),
+            Class = Classes.AllClasses.First()
+        };
+        return character;
+    }
+
+    private const int _weaponsCharacterId = -1236;
+    public int WeaponsCharacterId => _weaponsCharacterId;
+
+    private Character getWeaponsCharacter()
+    {
+        var character = new Character
+        {
+            Id = _weaponsCharacterId,
+            InternalName = "Weapons",
+            DisplayName = "Weapons",
+            ReleaseDate = DateTime.MinValue,
+            Rarity = -1,
+            Keys = new[] { "weapon", "claymore", "sword", "polearm", "catalyst", "bow" },
+            ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
+                "Character_Weapons_Thumb.webp")),
+            Element = Elements.AllElements.First(),
+            Class = Classes.AllClasses.First()
+        };
+        return character;
+    }
 }
 
 public class Regions
@@ -268,6 +400,11 @@ internal class Classes : BaseMapper<Class>
 
     public Classes(string name) : base(name)
     {
+        Values.Add(new Class()
+        {
+            DisplayName = "None",
+            InternalName = "None"
+        });
     }
 }
 
@@ -277,6 +414,11 @@ internal class Elements : BaseMapper<Element>
 
     public Elements(string name) : base(name)
     {
+        Values.Add(new Element()
+        {
+            DisplayName = "None",
+            InternalName = "None"
+        });
     }
 }
 

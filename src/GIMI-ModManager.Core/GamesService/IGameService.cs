@@ -21,10 +21,12 @@ public interface IGameService
         DateTime? releaseDate = null);
 
     public ICharacter? GetCharacter(string keywords,
-        IEnumerable<ICharacter>? restrictToCharacters = null);
+        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
+
+    public ICharacter? GetCharacterByName(string internalName);
 
     public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
-        IEnumerable<ICharacter>? restrictToCharacters = null);
+        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
 
     public List<IGameElement> GetElements();
 
@@ -35,6 +37,9 @@ public interface IGameService
     public List<ICharacter> GetCharacters();
 
     public bool IsMultiMod(INameable modNameable);
+    public string OtherCharacterInternalName { get; }
+    public string GlidersCharacterInternalName { get; }
+    public string WeaponsCharacterInternalName { get; }
 }
 
 /// <summary>
@@ -61,10 +66,11 @@ public interface ICharacterSkin : IModdableObject, IRarity, IImageSupport, IName
 /// <summary>
 /// In game playable character
 /// </summary>
-public interface ICharacter : IRarity, IImageSupport, INameable
+public interface ICharacter : IRarity, IImageSupport, INameable, IModdableObject
 {
     public IGameClass Class { get; }
     public IGameElement Element { get; }
+    public ICollection<string> Keys { get; }
 
     public DateTime ReleaseDate { get; }
     public ICollection<IRegion> Regions { get; }
@@ -73,19 +79,22 @@ public interface ICharacter : IRarity, IImageSupport, INameable
 
 public interface INpc : IImageSupport, INameable
 {
+    public IModdableObject? ModdableObject { get; }
 }
 
-public interface IUi : IModdableObject, INameable
+public interface IUi : INameable
 {
+    public IModdableObject? ModdableObject { get; }
 }
 
 public interface IGliders : INameable
 {
+    public IModdableObject? ModdableObject { get; }
 }
 
 public interface IWeapon : IRarity, INameable
 {
-    public int WeaponType { get; }
+    public IModdableObject? ModdableObject { get; }
 }
 
 // Genshin => weapon

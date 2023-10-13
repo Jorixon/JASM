@@ -1,5 +1,5 @@
-﻿using GenshinGenerator;
-using GIMI_ModManager.Core.Entities.Genshin;
+﻿using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService.JsonModels;
 using Newtonsoft.Json;
 
 const string JsonPath = "..\\..\\..\\..\\characters.json";
@@ -11,44 +11,48 @@ CheckDisplayNameIsUnique(characters);
 CheckIdsAreUnique(characters);
 
 
-var characterToAdd = new GenshinCharacter[]
+var newFormat = new List<JsonCharacter>();
+foreach (var genshinCharacter in characters)
 {
-};
-var currentMaxId = characters.Max(ch => ch.Id);
-var nextId = characters.Max(ch => ch.Id) + 1;
+    var characterJson = new JsonCharacter()
+    {
+        Id = genshinCharacter.Id,
+        DisplayName = genshinCharacter.DisplayName,
+        InternalName = genshinCharacter.DisplayName,
+        Rarity = genshinCharacter.Rarity,
+        ReleaseDate = genshinCharacter.ReleaseDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+        Keys = genshinCharacter.Keys.ToArray(),
+        Image = genshinCharacter.ImageUri,
+        Element = genshinCharacter.Element.ToString(),
+        Class = genshinCharacter.Weapon.ToString(),
+        Region = genshinCharacter.Region.Select(r => r.ToString()).ToArray()
+    };
 
-foreach (var character in characterToAdd)
-{
-    character.Id = nextId;
-    if (string.IsNullOrEmpty(character.ImageUri))
-        character.ImageUri = ImageUri(character.DisplayName);
+    var skins = new List<JsonCharacterSkin>();
 
-    if (characters.Contains(character) || characters.Any(ch => ch.DisplayName == character.DisplayName) ||
-        characters.Any(ch =>
-            string.Equals(ch.DisplayName, character.DisplayName, StringComparison.CurrentCultureIgnoreCase)))
-        throw new InvalidOperationException("Duplicate Characters");
+    foreach (var skin in genshinCharacter.InGameSkins)
+    {
+        if (skin.DefaultSkin)
+            continue;
 
-    // Check for duplicate keys
-    if (characters.Any(ch => ch.Keys.Any(k => character.Keys.Contains(k))))
-        throw new InvalidOperationException("Duplicate Keys");
+        var skinJson = new JsonCharacterSkin()
+        {
+            DisplayName = skin.DisplayName,
+            InternalName = skin.DisplayName,
+            Image = skin.ImageUri
+        };
 
-    nextId++;
-    if (character.Id > currentMaxId)
-        currentMaxId = character.Id;
-    else
-        throw new InvalidOperationException("Id is not unique");
+        skins.Add(skinJson);
+    }
+
+    characterJson.InGameSkins = skins.ToArray();
+
+
+    newFormat.Add(characterJson);
 }
 
-characters.AddRange(characterToAdd);
-CheckDisplayNameIsUnique(characters);
-CheckIdsAreUnique(characters);
 
-characters.ForEach(SkinPrefixFinder.SetDefaultSkins);
-characters.ForEach(SkinPrefixFinder.SetAdditionalSkins);
-CheckInGameSkinsAreValid(characters);
-
-
-var newJson = JsonConvert.SerializeObject(characters.OrderBy(ch => ch.DisplayName), Formatting.Indented);
+var newJson = JsonConvert.SerializeObject(newFormat.OrderBy(ch => ch.DisplayName), Formatting.Indented);
 
 File.WriteAllText(JsonNewPath, newJson);
 

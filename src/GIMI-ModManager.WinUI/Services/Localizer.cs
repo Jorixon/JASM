@@ -42,20 +42,7 @@ public class Localizer : ILanguageLocalizer
 
         _logger.Information("Current culture: {ci}", ci);
 
-        await SetLanguage(ci);
-
-
-        if (ci != "en-us")
-            if (_localizer.GetAvailableLanguages().Contains(ci))
-            {
-                await _localizer.SetLanguage(ci);
-                CurrentLanguage = new Language(ci);
-                _logger.Debug("Set language to {ci}", ci);
-            }
-            else
-            {
-                _logger.Debug("Language {ci} is not available", ci);
-            }
+        await SetLanguage(ci).ConfigureAwait(false);
     }
 
     private async Task SetLanguage(string languageCode)

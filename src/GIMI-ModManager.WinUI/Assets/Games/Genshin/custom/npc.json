@@ -1,0 +1,11 @@
+{
+  "InternalName": "Npcs",
+  "DisplayName": "Npcs",
+  "Mods": [
+    {
+      "InternalName": "Others",
+      "DisplayName": "Others",
+      "IsMultiMod":  true
+    }
+  ]
+}

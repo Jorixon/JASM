@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
-using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -14,7 +14,7 @@ namespace GIMI_ModManager.WinUI.Models;
 public partial class ModModel : ObservableObject, IEquatable<ModModel>
 {
     public Guid Id { get; private init; }
-    public GenshinCharacter Character { get; private init; }
+    public ICharacter Character { get; private init; }
     [ObservableProperty] private bool _isEnabled;
     [ObservableProperty] private string _folderName = string.Empty;
 
@@ -53,7 +53,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
         return FromMod(modEntry.Mod, modEntry.ModList.Character, modEntry.IsEnabled);
     }
 
-    public static ModModel FromMod(ISkinMod skinMod, GenshinCharacter character, bool isEnabled)
+    public static ModModel FromMod(ISkinMod skinMod, ICharacter character, bool isEnabled)
     {
         var name = skinMod.Name;
         if (!string.IsNullOrWhiteSpace(name))

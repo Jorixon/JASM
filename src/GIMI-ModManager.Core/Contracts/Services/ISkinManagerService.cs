@@ -1,5 +1,5 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
 using OneOf;
 using OneOf.Types;
@@ -12,7 +12,7 @@ public interface ISkinManagerService : IDisposable
     public string ActiveModsFolderPath { get; }
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     public Task ScanForModsAsync();
-    public ICharacterModList GetCharacterModList(GenshinCharacter character);
+    public ICharacterModList GetCharacterModList(string internalName);
 
     public Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
         string? threeMigotoRootfolder = null);
@@ -23,13 +23,13 @@ public interface ISkinManagerService : IDisposable
     /// <param name="characterFolderToReorganize">If null, reorganize all mods outside of characters mod folders</param>
     /// <param name="disableMods">If true will also disable the mods</param>
     /// <returns>Mods moved</returns>
-    public Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null,
+    public Task<int> ReorganizeModsAsync(ICharacter? characterFolderToReorganize = null,
         bool disableMods = false);
 
     /// <summary>
     /// This looks for mods in characters mod folder that are not tracked by the mod manager and adds them to the mod manager.
     /// </summary>
-    public Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null);
+    public Task<RefreshResult> RefreshModsAsync(ICharacter? refreshForCharacter = null);
 
     public Task<OneOf<Success, Error<string>[]>> TransferMods(ICharacterModList source, ICharacterModList destination,
         IEnumerable<Guid> modsEntryIds);

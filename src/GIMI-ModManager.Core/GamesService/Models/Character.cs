@@ -8,7 +8,7 @@ namespace GIMI_ModManager.Core.GamesService.Models;
 [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
 public class Character : ICharacter
 {
-    public int Id { get; internal set; }
+    //public int Id { get; internal set; }
     public string? Category { get; internal set; }
     public string InternalName { get; set; } = null!;
     public string ModFilesName { get; internal set; } = null!;
@@ -17,6 +17,7 @@ public class Character : ICharacter
     public Uri? ImageUri { get; set; }
     public IGameClass Class { get; internal set; } = null!;
     public IGameElement Element { get; internal set; } = null!;
+    public ICollection<string> Keys { get; internal set; } = null!;
     public DateTime ReleaseDate { get; internal set; }
     public ICollection<IRegion> Regions { get; internal set; } = null!;
     public ICollection<ICharacterSkin> AdditionalSkins { get; internal set; } = new List<ICharacterSkin>();
@@ -29,10 +30,10 @@ public class Character : ICharacter
 
         var character = new Character
         {
-            Id = jsonCharacter.Id,
             InternalName = internalName,
             ModFilesName = "",
             DisplayName = jsonCharacter.DisplayName ?? internalName,
+            Keys = jsonCharacter.Keys ?? Array.Empty<string>(),
             Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var date) ? date : DateTime.MaxValue,
             AdditionalSkins = new List<ICharacterSkin>()
@@ -110,10 +111,13 @@ internal sealed class CharacterBuilder
             throw new InvalidOperationException("Class already set");
 
         _character.Class = gameClasses.FirstOrDefault(gameClass =>
-            gameClass.InternalName.Equals(_jsonCharacter.Class,
-                StringComparison.OrdinalIgnoreCase))!;
-        if (_character.Class is null)
-            throw new InvalidOperationException("Class not found");
+                               gameClass.InternalName.Equals(_jsonCharacter.Class,
+                                   StringComparison.OrdinalIgnoreCase))
+                           ?? new Class()
+                           {
+                               InternalName = "",
+                               DisplayName = ""
+                           };
 
         _classSet = true;
         return this;
@@ -125,11 +129,14 @@ internal sealed class CharacterBuilder
             throw new InvalidOperationException("Element already set");
 
         _character.Element = elements.FirstOrDefault(element =>
-            element.InternalName.Equals(_jsonCharacter.Element,
-                StringComparison.OrdinalIgnoreCase))!;
+                                 element.InternalName.Equals(_jsonCharacter.Element,
+                                     StringComparison.OrdinalIgnoreCase))
+                             ?? new Element()
+                             {
+                                 InternalName = "",
+                                 DisplayName = ""
+                             };
 
-        if (_character.Element is null)
-            throw new InvalidOperationException("Element not found");
 
         _elementSet = true;
         return this;

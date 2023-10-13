@@ -1,8 +1,8 @@
 ﻿#nullable enable
 using System.Diagnostics;
 using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
 
@@ -18,11 +18,11 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     public const string ALT_DISABLED_PREFIX = ModFolderHelpers.ALT_DISABLED_PREFIX;
     public string DisabledPrefix => DISABLED_PREFIX;
     private readonly FileSystemWatcher _watcher;
-    public GenshinCharacter Character { get; }
+    public ICharacter Character { get; }
 
     private readonly object _modsLock = new();
 
-    internal CharacterModList(GenshinCharacter character, string absPath, ILogger? logger = null)
+    internal CharacterModList(ICharacter character, string absPath, ILogger? logger = null)
     {
         _logger = logger?.ForContext<CharacterModList>();
         Character = character;

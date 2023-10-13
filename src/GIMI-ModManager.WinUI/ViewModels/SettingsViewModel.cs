@@ -500,7 +500,7 @@ public partial class SettingsViewModel : ObservableRecipient
         var charactersToExport =
             model.CharacterModsToBackup.Where(modList => modList.IsChecked).Select(ch => ch.Character);
         var modsList = new List<ICharacterModList>();
-        foreach (var character in charactersToExport) modsList.Add(_skinManagerService.GetCharacterModList(character));
+        foreach (var character in charactersToExport) modsList.Add(_skinManagerService.GetCharacterModList(character.));
 
         try
         {

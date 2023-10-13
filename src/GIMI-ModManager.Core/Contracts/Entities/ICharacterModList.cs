@@ -1,5 +1,5 @@
 ﻿using GIMI_ModManager.Core.Entities;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
 
 namespace GIMI_ModManager.Core.Contracts.Entities;
 
@@ -16,7 +16,7 @@ public interface ICharacterModList
     /// <summary>
     /// The character this mod list is for.
     /// </summary>
-    public GenshinCharacter Character { get; }
+    public ICharacter Character { get; }
 
     /// <summary>
     /// Add a mod to the mod list. Starts tracking the mod.

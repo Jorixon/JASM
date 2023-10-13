@@ -1,55 +1,53 @@
-﻿using GIMI_ModManager.Core.Entities.Genshin;
+﻿using GIMI_ModManager.Core.GamesService;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
 
 public class ModCrawlerService
 {
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
     private readonly ILogger _logger;
 
-    public ModCrawlerService(ILogger logger, IGenshinService genshinService)
+    public ModCrawlerService(ILogger logger, IGameService gameService)
     {
-        _genshinService = genshinService;
+        _gameService = gameService;
         _logger = logger.ForContext<ModCrawlerService>();
     }
 
-    public IEnumerable<ISubSkin> GetSubSkinsRecursive(string absPath)
+    public IEnumerable<ICharacterSkin> GetSubSkinsRecursive(string absPath)
     {
         var folder = new DirectoryInfo(absPath);
         if (!folder.Exists) throw new DirectoryNotFoundException($"Could not find folder {folder.FullName}");
 
 
-        var subSkins = _genshinService.GetCharacters().SelectMany(character => character.InGameSkins)
-            .OrderBy(skin => skin.DefaultSkin).ToArray();
+        var subSkins = _gameService.GetCharacters().SelectMany(character => character.AdditionalSkins).ToArray();
 
         foreach (var file in RecursiveGetFiles(folder))
         {
             var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 
-            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.Name, folder.FullName);
+            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.DisplayName, folder.FullName);
 
             yield return subSkin;
         }
     }
 
-    public ISubSkin? GetFirstSubSkinRecursive(string absPath, IGenshinCharacter? checkForCharacter = null)
+    public ICharacterSkin? GetFirstSubSkinRecursive(string absPath, ICharacter? checkForCharacter = null)
     {
         var folder = new DirectoryInfo(absPath);
         if (!folder.Exists) throw new DirectoryNotFoundException($"Could not find folder {folder.FullName}");
 
-        var subSkins = checkForCharacter?.InGameSkins.OrderBy(skin => skin.DefaultSkin).ToArray() ?? _genshinService
+        var subSkins = checkForCharacter?.AdditionalSkins.ToArray() ?? _gameService
             .GetCharacters()
-            .SelectMany(character => character.InGameSkins)
-            .OrderBy(skin => skin.DefaultSkin).ToArray();
+            .SelectMany(character => character.AdditionalSkins).ToArray();
 
         foreach (var file in RecursiveGetFiles(folder))
         {
             var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 
-            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.Name, folder.FullName);
+            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.DisplayName, folder.FullName);
 
             return subSkin;
         }
@@ -59,13 +57,14 @@ public class ModCrawlerService
 
     private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
 
-    private static bool IsOfSkinType(FileInfo file, ISubSkin skin)
+    private static bool IsOfSkinType(FileInfo file, IModdableObject skin)
     {
         var fileExtensionMatch = ModExtensions.Any(extension =>
             file.Extension.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
 
 
-        return fileExtensionMatch && file.Name.Trim().StartsWith(skin.Name, StringComparison.CurrentCultureIgnoreCase);
+        return fileExtensionMatch &&
+               file.Name.Trim().StartsWith(skin.ModFilesName, StringComparison.CurrentCultureIgnoreCase);
     }
 
 

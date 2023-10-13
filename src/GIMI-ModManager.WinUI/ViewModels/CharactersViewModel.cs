@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
@@ -20,7 +21,7 @@ namespace GIMI_ModManager.WinUI.ViewModels;
 
 public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
     private readonly ILogger _logger;
     private readonly INavigationService _navigationService;
     private readonly ISkinManagerService _skinManagerService;
@@ -63,14 +64,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private bool isNavigating = true;
 
-    public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
+    public CharactersViewModel(IGameService gameService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
         ModCrawlerService modCrawlerService, ModSettingsService modSettingsService)
     {
-        _genshinService = genshinService;
+        _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
         _navigationService = navigationService;
         _skinManagerService = skinManagerService;
@@ -123,7 +124,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _genshinService.GetCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
+        var suitableItems = _gameService.GetCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
             .Take(5)
             .Select(x => new CharacterGridItemModel(x.Key))
             .ToList();
@@ -246,22 +247,22 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        var characters = _genshinService.GetCharacters().OrderBy(g => g.DisplayName).ToList();
-        var others = characters.FirstOrDefault(ch => ch.Id == _genshinService.OtherCharacterId);
+        var characters = _gameService.GetCharacters().OrderBy(g => g.DisplayName).ToList();
+        var others = characters.FirstOrDefault(ch => ch.Id == _gameService.OtherCharacterId);
         if (others is not null) // Add to front
         {
             characters.Remove(others);
             characters.Insert(0, others);
         }
 
-        var gliders = characters.FirstOrDefault(ch => ch.Id == _genshinService.GlidersCharacterId);
+        var gliders = characters.FirstOrDefault(ch => ch.Id == _gameService.GlidersCharacterId);
         if (gliders is not null) // Add to end
         {
             characters.Remove(gliders);
             characters.Add(gliders);
         }
 
-        var weapons = characters.FirstOrDefault(ch => ch.Id == _genshinService.WeaponsCharacterId);
+        var weapons = characters.FirstOrDefault(ch => ch.Id == _gameService.WeaponsCharacterId);
         if (weapons is not null) // Add to end
         {
             characters.Remove(weapons);
@@ -326,7 +327,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var charactersWithMultipleActiveSkins = new List<int>();
         foreach (var modList in charactersWithMultipleMods)
         {
-            if (_genshinService.IsMultiModCharacter(modList.Character))
+            if (_gameService.IsMultiModCharacter(modList.Character))
                 continue;
 
             var addWarning = false;
@@ -373,7 +374,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         foreach (var characterGridItemModel in _backendCharacters.Where(x =>
                      charactersWithMultipleActiveSkins.Contains(x.Character.Id)))
         {
-            if (_genshinService.IsMultiModCharacter(characterGridItemModel.Character))
+            if (_gameService.IsMultiModCharacter(characterGridItemModel.Character))
                 continue;
 
             characterGridItemModel.Warning = true;
@@ -388,14 +389,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         var lastCharacters = new List<CharacterGridItemModel>
         {
-            FindCharacterById(_genshinService.GlidersCharacterId)!,
-            FindCharacterById(_genshinService.WeaponsCharacterId)!
+            FindCharacterById(_gameService.GlidersCharacterId)!,
+            FindCharacterById(_gameService.WeaponsCharacterId)!
         };
 
         _lastCharacters = lastCharacters.ToArray();
 
         _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
-            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters);
+            FindCharacterById(_gameService.OtherCharacterId), _lastCharacters);
 
         // ShowOnlyModsCharacters
         var settings =
@@ -411,7 +412,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         SortByDescending = settings.SortByDescending;
 
         _sortingMethod = new SortingMethod(settings.SortingMethod,
-            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters, SortByDescending);
+            FindCharacterById(_gameService.OtherCharacterId), _lastCharacters, SortByDescending);
         SelectedSortingMethod = settings.SortingMethod;
 
         isNavigating = false;
@@ -662,12 +663,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
     {
         var modNameToCharacter = new Dictionary<IStorageItem, GenshinCharacter>();
-        var othersCharacter = _genshinService.GetCharacters().First(x => x.Id == _genshinService.OtherCharacterId);
+        var othersCharacter = _gameService.GetCharacters().First(x => x.Id == _gameService.OtherCharacterId);
 
         foreach (var storageItem in storageItems)
         {
             var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
-            var result = _genshinService.GetCharacters(modName, minScore: 100);
+            var result = _gameService.GetCharacters(modName, minScore: 100);
 
             var character = result.FirstOrDefault().Key;
             if (character is not null)
@@ -698,7 +699,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (isNavigating) return;
         var sortingMethodType = methodTypes.First();
 
-        _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_genshinService.OtherCharacterId),
+        _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_gameService.OtherCharacterId),
             _lastCharacters, isDescending: SortByDescending);
         ResetContent();
 
