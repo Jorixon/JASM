@@ -1,6 +1,7 @@
 ﻿using System.Security.Principal;
 using Windows.Foundation;
 using CommunityToolkit.WinUI;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
@@ -26,6 +27,7 @@ public class ActivationService : IActivationService
     private readonly ILocalSettingsService _localSettingsService;
     private readonly IGenshinService _genshinService;
     private readonly IGameService _gameService;
+    private readonly ILanguageLocalizer _languageLocalizer;
     private readonly ElevatorService _elevatorService;
     private readonly GenshinProcessManager _genshinProcessManager;
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
@@ -42,7 +44,8 @@ public class ActivationService : IActivationService
         ILocalSettingsService localSettingsService,
         IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
-        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService)
+        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
+        ILanguageLocalizer languageLocalizer)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -56,6 +59,7 @@ public class ActivationService : IActivationService
         _windowManagerService = windowManagerService;
         _autoUpdaterService = autoUpdaterService;
         _gameService = gameService;
+        _languageLocalizer = languageLocalizer;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -285,9 +289,11 @@ public class ActivationService : IActivationService
             return;
         }
 
-        var supportedLanguages = App.Localizer.GetAvailableLanguages().ToArray();
+        var supportedLanguages = _languageLocalizer.AvailableLanguages;
+        var language = supportedLanguages.FirstOrDefault(lang =>
+            lang.LanguageCode.Equals(selectedLanguage, StringComparison.CurrentCultureIgnoreCase));
 
-        if (supportedLanguages.Contains(selectedLanguage))
-            await App.Localizer.SetLanguage(selectedLanguage);
+        if (language != null)
+            await _languageLocalizer.SetLanguageAsync(language);
     }
 }

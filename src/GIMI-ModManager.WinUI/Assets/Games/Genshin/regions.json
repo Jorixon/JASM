@@ -8,5 +8,15 @@
     "Id": 1,
     "InternalName": "Liyue",
     "DisplayName": "Liyue"
+  },
+  {
+    "Id": 2,
+    "InternalName": "Inazuma",
+    "DisplayName": "Inazuma"
+  },
+  {
+    "Id": 3,
+    "InternalName": "Sumeru",
+    "DisplayName": "Sumeru"
   }
 ]

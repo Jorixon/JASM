@@ -1,4 +1,5 @@
 {
   "GameName": "Genshin Impact",
-  "GameShortName": "Genshin"
+  "GameShortName": "Genshin",
+  "RarityName" :  "Quality"
 }

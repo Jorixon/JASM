@@ -106,6 +106,7 @@ public partial class App : Application
                 services.AddSingleton<ModCrawlerService>();
                 services.AddSingleton<ModSettingsService>();
                 services.AddSingleton<KeySwapService>();
+                services.AddSingleton<ILanguageLocalizer, Services.Localizer>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
@@ -155,10 +156,11 @@ public partial class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        await InitializeLocalizer();
+        //await InitializeLocalizer();
+        await GetService<ILanguageLocalizer>().InitializeAsync();
         NotImplemented.NotificationManager = GetService<NotificationManager>();
         base.OnLaunched(args);
-        await GetService<IActivationService>().ActivateAsync(args);
+        await GetService<IActivationService>().ActivateAsync(args).ConfigureAwait(false);
     }
 
     private async Task InitializeLocalizer()
@@ -171,6 +173,7 @@ public partial class App : Application
             .AddStringResourcesFolderForLanguageDictionaries(StringsFolderPath)
             .SetOptions(options => { options.DefaultLanguage = "en-us"; })
             .Build();
+
 
         var ci = CultureInfo.CurrentUICulture.Name.ToLower();
 

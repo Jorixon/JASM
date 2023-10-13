@@ -35,6 +35,7 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGenshinService _genshinService;
+    private readonly ILanguageLocalizer _localizer;
     private readonly AutoUpdaterService _autoUpdaterService;
 
 
@@ -77,8 +78,7 @@ public partial class SettingsViewModel : ObservableRecipient
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        IGenshinService genshinService, AutoUpdaterService autoUpdaterService
-    )
+        IGenshinService genshinService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -90,6 +90,7 @@ public partial class SettingsViewModel : ObservableRecipient
         _updateChecker = updateChecker;
         _genshinService = genshinService;
         _autoUpdaterService = autoUpdaterService;
+        _localizer = localizer;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -139,7 +140,7 @@ public partial class SettingsViewModel : ObservableRecipient
         cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
 
 
-        var supportedCultures = App.Localizer.GetAvailableLanguages().ToArray();
+        var supportedCultures = _localizer.AvailableLanguages.Select(l => l.LanguageCode).ToArray();
 
         foreach (var culture in cultures)
         {
@@ -148,7 +149,7 @@ public partial class SettingsViewModel : ObservableRecipient
             Languages.Add(culture.NativeName);
             _nameToLangCode.Add(culture.NativeName, culture.Name.ToLower());
 
-            if (culture.Name.ToLower() == App.Localizer.GetCurrentLanguage())
+            if (_localizer.CurrentLanguage.Equals(culture))
                 SelectedLanguage = culture.NativeName;
         }
     }
@@ -542,10 +543,10 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         if (_nameToLangCode.TryGetValue(selectedLanguageName, out var langCode))
         {
-            if (langCode == App.Localizer.GetCurrentLanguage())
+            if (langCode == _localizer.CurrentLanguage.LanguageCode)
                 return;
 
-            await App.Localizer.SetLanguage(langCode);
+            await _localizer.SetLanguageAsync(langCode);
 
             var appSettings = await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key);
             appSettings.Language = langCode;

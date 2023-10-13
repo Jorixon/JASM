@@ -1,12 +1,17 @@
 ﻿using System.Text.Json;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService.JsonModels;
+using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
+using JsonElement = GIMI_ModManager.Core.GamesService.JsonModels.JsonElement;
 
 namespace GIMI_ModManager.Core.GamesService;
 
 public class GameService : IGameService
 {
     private readonly ILogger _logger;
+    private readonly ILanguageLocalizer _localizer;
 
     private DirectoryInfo _assetsDirectory = null!;
     private DirectoryInfo _localSettingsDirectory = null!;
@@ -14,11 +19,15 @@ public class GameService : IGameService
     public string GameName { get; private set; } = null!;
     public string GameShortName { get; private set; } = null!;
 
-    public Elements Elements { get; private set; } = null!;
+    private readonly List<ICharacter> _characters = new();
 
-    public Classes Classes { get; private set; } = null!;
+    private readonly List<ICharacter> _disabledCharacters = new();
 
-    public Regions Regions { get; private set; } = null!;
+    internal Elements Elements { get; private set; } = null!;
+
+    internal Classes Classes { get; private set; } = null!;
+
+    internal Regions Regions { get; private set; } = null!;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -28,13 +37,15 @@ public class GameService : IGameService
         WriteIndented = true
     };
 
-    public GameService(ILogger logger)
+    public GameService(ILogger logger, ILanguageLocalizer localizer)
     {
         _logger = logger;
+        _localizer = localizer;
     }
 
 
-    public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory)
+    public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
+        ICollection<string>? disabledCharacters = null)
     {
         _assetsDirectory = new DirectoryInfo(assetsDirectory);
         if (!_assetsDirectory.Exists)
@@ -46,11 +57,63 @@ public class GameService : IGameService
 
         await InitializeRegionsAsync();
 
-        InitializeElements();
+        await InitializeElementsAsync();
 
-        InitializeClasses();
+        await InitializeClassesAsync();
 
-        InitializeCharacters();
+        await InitializeCharactersAsync(disabledCharacters ?? Array.Empty<string>()).ConfigureAwait(false);
+    }
+
+    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DisableCharacterAsync(ICharacter character)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task EnableCharacterAsync(ICharacter character)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
+        Uri? imageUri = null,
+        IGameClass? gameClass = null, IGameElement? gameElement = null, ICollection<IRegion>? regions = null,
+        ICollection<ICharacterSkin>? additionalSkins = null, DateTime? releaseDate = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ICharacter? GetCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
+        IEnumerable<ICharacter>? restrictToCharacters = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<IGameElement> GetElements() => Elements.AllElements.ToList();
+
+    public List<IGameClass> GetClasses() => Classes.AllClasses.ToList();
+
+    public List<IRegion> GetRegions() => Regions.AllRegions.ToList();
+
+    public List<ICharacter> GetCharacters() => _characters.ToList();
+
+    public bool IsMultiMod(INameable modNameable)
+    {
+        throw new NotImplementedException();
     }
 
     private async Task InitializeRegionsAsync()
@@ -62,7 +125,7 @@ public class GameService : IGameService
             throw new FileNotFoundException($"{regionFileName} File not found at path: {regionsFilePath}");
 
         var regions =
-            JsonSerializer.Deserialize<IEnumerable<JsonRegions>>(await File.ReadAllTextAsync(regionsFilePath),
+            JsonSerializer.Deserialize<IEnumerable<JsonRegion>>(await File.ReadAllTextAsync(regionsFilePath),
                 _jsonSerializerOptions) ?? throw new InvalidOperationException("Regions file is empty");
 
         Regions = Regions.InitializeRegions(regions);
@@ -73,18 +136,63 @@ public class GameService : IGameService
         throw new NotImplementedException();
     }
 
-    private void InitializeCharacters()
+    private async Task InitializeCharactersAsync(ICollection<string> disabledCharacters)
     {
+        const string characterFileName = "characters.json";
+        var imageFolderName = Path.Combine(_assetsDirectory.FullName + "Images", "Characters");
+
+        var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName);
+
+        foreach (var jsonCharacter in jsonCharacters)
+        {
+            if (LanguageOverrideAvailable())
+                throw new NotImplementedException();
+
+
+            var character = Character
+                .FromJson(jsonCharacter)
+                .SetRegion(Regions.AllRegions)
+                .SetElement(Elements.AllElements)
+                .SetClass(Classes.AllClasses)
+                .SetCharacterOverride(null)
+                .CreateCharacter(imageFolder: imageFolderName);
+
+            if (disabledCharacters.Any(x => character.InternalName.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                _disabledCharacters.Add(character);
+            else
+                _characters.Add(character);
+        }
+    }
+
+    private async Task InitializeClassesAsync()
+    {
+        const string classFileName = "weaponClasses.json";
+
+        var classes = await SerializeAsync<JsonClasses>(classFileName);
+
+        Classes = new Classes("Classes");
+
+        Classes.Initialize(classes, _assetsDirectory.FullName);
+
+        if (!LanguageOverrideAvailable())
+            return;
+
         throw new NotImplementedException();
     }
 
-    private void InitializeClasses()
+    private async Task InitializeElementsAsync()
     {
-        throw new NotImplementedException();
-    }
+        const string elementsFileName = "elements.json";
 
-    private void InitializeElements()
-    {
+        var elements = await SerializeAsync<JsonElement>(elementsFileName);
+
+        Elements = new Elements("Elements");
+
+        Elements.Initialize(elements, _assetsDirectory.FullName);
+
+        if (!LanguageOverrideAvailable())
+            return;
+
         throw new NotImplementedException();
     }
 
@@ -94,24 +202,16 @@ public class GameService : IGameService
     }
 
 
-    public List<IGameElement> GetElements()
+    private async Task<IEnumerable<T>> SerializeAsync<T>(string fileName)
     {
-        throw new NotImplementedException();
-    }
+        var objFileName = fileName;
+        var objFilePath = Path.Combine(_assetsDirectory.FullName, objFileName);
 
-    public List<IGameClass> GetClasses()
-    {
-        throw new NotImplementedException();
-    }
+        if (!File.Exists(objFilePath))
+            throw new FileNotFoundException($"{objFileName} File not found at path: {objFilePath}");
 
-    public List<IRegion> GetRegions()
-    {
-        throw new NotImplementedException();
-    }
-
-    public List<ICharacter> GetCharacters()
-    {
-        throw new NotImplementedException();
+        return JsonSerializer.Deserialize<IEnumerable<T>>(await File.ReadAllTextAsync(objFilePath),
+            _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
     }
 }
 
@@ -125,7 +225,7 @@ public class Regions
         _regions = regions;
     }
 
-    internal static Regions InitializeRegions(IEnumerable<JsonRegions> regions)
+    internal static Regions InitializeRegions(IEnumerable<JsonRegion> regions)
     {
         var regionsList = new List<Region>();
         foreach (var region in regions)
@@ -140,7 +240,7 @@ public class Regions
         return new Regions(regionsList);
     }
 
-    internal void InitializeLanguageOverrides(IEnumerable<JsonRegions> regions)
+    internal void InitializeLanguageOverrides(IEnumerable<JsonRegion> regions)
     {
         foreach (var region in regions)
         {
@@ -160,24 +260,94 @@ public class Regions
             regionToOverride.DisplayName = region.DisplayName;
         }
     }
+}
 
-    private class Region : IRegion
+internal class Classes : BaseMapper<Class>
+{
+    public IReadOnlyList<IGameClass> AllClasses => Values;
+
+    public Classes(string name) : base(name)
     {
-        public Region(string internalName, string displayName)
-        {
-            InternalName = internalName;
-            DisplayName = displayName;
-        }
-
-        public string InternalName { get; internal set; }
-        public string DisplayName { get; internal set; }
     }
 }
 
-public class Classes
+internal class Elements : BaseMapper<Element>
 {
+    public IReadOnlyList<IGameElement> AllElements => Values;
+
+    public Elements(string name) : base(name)
+    {
+    }
 }
 
-public class Elements
+internal abstract class BaseMapper<T> where T : class, INameable, new()
 {
+    public string Name { get; }
+    protected readonly List<T> Values;
+
+    protected BaseMapper(string name)
+    {
+        Values = new List<T>();
+        Name = name;
+    }
+
+    internal void Initialize(IEnumerable<JsonBaseNameable> newValues, string assetsDirectory)
+    {
+        foreach (var value in newValues)
+        {
+            if (string.IsNullOrWhiteSpace(value.InternalName) ||
+                string.IsNullOrWhiteSpace(value.DisplayName))
+                throw new InvalidOperationException($"{Name} has invalid data");
+
+            var newValue = new T() { DisplayName = value.DisplayName, InternalName = value.InternalName };
+
+            // check if T is of type IImageSupport
+            if (newValue is IImageSupport imageSupport && value is JsonElement element &&
+                !element.Image.IsNullOrEmpty())
+            {
+                var imageFolder = Path.Combine(assetsDirectory, "Images", Name);
+
+                var imageUri = Uri.TryCreate(Path.Combine(imageFolder, element.Image), UriKind.Absolute,
+                    out var uri)
+                    ? uri
+                    : null;
+
+                if (imageUri is null)
+                    Log.Warning("Image {Image} for {Name} {ElementName} is invalid", element.Image, Name,
+                        newValue.DisplayName);
+
+                if (!File.Exists(imageUri?.LocalPath ?? string.Empty))
+                {
+                    Log.Debug("Image {Image} for {Name} {ElementName} does not exist", element.Image, Name,
+                        newValue.DisplayName);
+                    return;
+                }
+
+                imageSupport.ImageUri = imageUri;
+            }
+
+            Values.Add(newValue);
+        }
+    }
+
+    internal void InitializeLanguageOverrides(IEnumerable<JsonBaseNameable> overrideValues)
+    {
+        foreach (var value in overrideValues)
+        {
+            var regionToOverride = Values.FirstOrDefault(x => x.InternalName == value.InternalName);
+            if (regionToOverride == null)
+            {
+                Log.Debug("Region {Name} not found in regions list", Name);
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(value.DisplayName))
+            {
+                Log.Warning("Region {Name} has invalid display name", Name);
+                continue;
+            }
+
+            regionToOverride.DisplayName = value.DisplayName;
+        }
+    }
 }
