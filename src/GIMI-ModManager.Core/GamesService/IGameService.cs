@@ -1,4 +1,6 @@
-﻿namespace GIMI_ModManager.Core.GamesService;
+﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+
+namespace GIMI_ModManager.Core.GamesService;
 
 public interface IGameService
 {
@@ -54,32 +56,6 @@ public interface IModdableObject
     public string ModFilesName { get; }
 }
 
-public interface ICharacterSkin : IModdableObject, IRarity, IImageSupport, INameable
-{
-    /// <summary>
-    /// Character this skin belongs to
-    /// </summary>
-    public ICharacter Character { get; }
-
-    public bool IsDefault { get; }
-
-    public DateTime? ReleaseDate { get; }
-}
-
-/// <summary>
-/// In game playable character
-/// </summary>
-public interface ICharacter : IRarity, IImageSupport, INameable, IModdableObject, IEquatable<ICharacterSkin>
-{
-    public IGameClass Class { get; }
-    public IGameElement Element { get; }
-    public ICollection<string> Keys { get; }
-
-    public DateTime ReleaseDate { get; }
-    public ICollection<IRegion> Regions { get; }
-    public ICollection<ICharacterSkin> Skins { get; }
-}
-
 public interface INpc : IImageSupport, INameable
 {
     public IModdableObject? ModdableObject { get; }
@@ -129,14 +105,10 @@ public interface IRarity
 /// </summary>
 public interface IImageSupport
 {
+    /// <summary>
+    /// This is null if no image is available
+    /// </summary>
     public Uri? ImageUri { get; internal set; }
-}
-
-public interface ICustomMod : IModdableObject, INameable
-{
-    public IImageSupport? Image { get; }
-    public IRarity? Rarity { get; }
-    public DateTime? ReleaseDate { get; }
 }
 
 public interface INameable

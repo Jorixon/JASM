@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
@@ -17,9 +18,9 @@ public class Character : ICharacter, IEquatable<Character>
     public Uri? ImageUri { get; set; }
     public IGameClass Class { get; internal set; } = null!;
     public IGameElement Element { get; internal set; } = null!;
-    public ICollection<string> Keys { get; internal set; } = null!;
+    public ICollection<string> Keys { get; internal set; } = Array.Empty<string>();
     public DateTime ReleaseDate { get; internal set; }
-    public ICollection<IRegion> Regions { get; internal set; } = null!;
+    public ICollection<IRegion> Regions { get; internal set; } = Array.Empty<IRegion>();
     public ICollection<ICharacterSkin> Skins { get; internal set; } = new List<ICharacterSkin>();
 
     public override string ToString()
@@ -76,6 +77,8 @@ public class Character : ICharacter, IEquatable<Character>
     {
         InternalName = internalName;
         DisplayName = displayName;
+        Class = Models.Class.NoneClass();
+        Element = Models.Element.NoneElement();
     }
 
 
@@ -245,10 +248,10 @@ internal sealed class CharacterBuilder
 
         foreach (var characterSkin in _character.Skins)
         {
-            var jsonCharacterSkin = _jsonCharacter.InGameSkins
-                .FirstOrDefault(skin => skin.InternalName is not null &&
-                                        skin.InternalName.Equals(characterSkin.InternalName,
-                                            StringComparison.OrdinalIgnoreCase));
+            var jsonCharacterSkin = _jsonCharacter?.InGameSkins
+                ?.FirstOrDefault(skin => skin.InternalName is not null &&
+                                         skin.InternalName.Equals(characterSkin.InternalName,
+                                             StringComparison.OrdinalIgnoreCase));
 
             if (jsonCharacterSkin is null)
                 continue;

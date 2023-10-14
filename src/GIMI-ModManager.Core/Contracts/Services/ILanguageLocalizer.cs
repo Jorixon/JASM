@@ -4,6 +4,7 @@ namespace GIMI_ModManager.Core.Contracts.Services;
 
 public interface ILanguageLocalizer
 {
+    public event EventHandler? LanguageChanged;
     public Task InitializeAsync();
     public ILanguage CurrentLanguage { get; }
     public ILanguage FallbackLanguage { get; }

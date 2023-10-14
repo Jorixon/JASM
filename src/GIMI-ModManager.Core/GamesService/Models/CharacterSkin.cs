@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.Core.GamesService.JsonModels;
+﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.JsonModels;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 

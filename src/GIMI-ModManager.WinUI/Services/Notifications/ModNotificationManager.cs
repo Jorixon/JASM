@@ -1,4 +1,4 @@
-﻿using GIMI_ModManager.Core.GamesService;
+﻿using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Settings;
 using Serilog;

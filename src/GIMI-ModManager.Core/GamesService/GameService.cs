@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using FuzzySharp;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
@@ -16,7 +18,7 @@ public class GameService : IGameService
 
     private DirectoryInfo _assetsDirectory = null!;
     private DirectoryInfo _localSettingsDirectory = null!;
-    private DirectoryInfo _languageOverrideDirectory = null!;
+    private DirectoryInfo? _languageOverrideDirectory;
     public string GameName { get; private set; } = null!;
     public string GameShortName { get; private set; } = null!;
 
@@ -65,33 +67,20 @@ public class GameService : IGameService
         await InitializeCharactersAsync(disabledCharacters ?? Array.Empty<string>()).ConfigureAwait(false);
     }
 
-    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
-    {
+    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName) =>
         throw new NotImplementedException();
-    }
 
-    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
-    {
-        throw new NotImplementedException();
-    }
+    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri) => throw new NotImplementedException();
 
-    public Task DisableCharacterAsync(ICharacter character)
-    {
-        throw new NotImplementedException();
-    }
+    public Task DisableCharacterAsync(ICharacter character) => throw new NotImplementedException();
 
-    public Task EnableCharacterAsync(ICharacter character)
-    {
-        throw new NotImplementedException();
-    }
+    public Task EnableCharacterAsync(ICharacter character) => throw new NotImplementedException();
 
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
         Uri? imageUri = null,
         IGameClass? gameClass = null, IGameElement? gameElement = null, ICollection<IRegion>? regions = null,
-        ICollection<ICharacterSkin>? additionalSkins = null, DateTime? releaseDate = null)
-    {
+        ICollection<ICharacterSkin>? additionalSkins = null, DateTime? releaseDate = null) =>
         throw new NotImplementedException();
-    }
 
     public ICharacter? GetCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
         int minScore = 100)
@@ -101,10 +90,8 @@ public class GameService : IGameService
         return searchResult.Any(kv => kv.Value >= minScore) ? searchResult.MaxBy(x => x.Value).Key : null;
     }
 
-    public ICharacter? GetCharacterByName(string internalName)
-    {
-        return _characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
-    }
+    public ICharacter? GetCharacterByName(string internalName) =>
+        _characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
 
 
     public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
@@ -176,10 +163,7 @@ public class GameService : IGameService
         return characters;
     }
 
-    public bool IsMultiMod(INameable modNameable)
-    {
-        return IsMultiMod(modNameable.InternalName);
-    }
+    public bool IsMultiMod(INameable modNameable) => IsMultiMod(modNameable.InternalName);
 
     public bool IsMultiMod(string modInternalName)
     {
@@ -217,10 +201,6 @@ public class GameService : IGameService
 
         foreach (var jsonCharacter in jsonCharacters)
         {
-            if (LanguageOverrideAvailable())
-                throw new NotImplementedException();
-
-
             var character = Character
                 .FromJson(jsonCharacter)
                 .SetRegion(Regions.AllRegions)
@@ -228,6 +208,7 @@ public class GameService : IGameService
                 .SetClass(Classes.AllClasses)
                 .SetCharacterOverride(null)
                 .CreateCharacter(imageFolder: imageFolderName);
+
 
             if (disabledCharacters.Any(x => character.InternalName.Equals(x, StringComparison.OrdinalIgnoreCase)))
                 _disabledCharacters.Add(character);
@@ -238,6 +219,9 @@ public class GameService : IGameService
         _characters.Insert(0, getOthersCharacter());
         _characters.Add(getGlidersCharacter());
         _characters.Add(getWeaponsCharacter());
+
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(characterFileName, _characters);
     }
 
     private async Task InitializeClassesAsync()
@@ -250,10 +234,8 @@ public class GameService : IGameService
 
         Classes.Initialize(classes, _assetsDirectory.FullName);
 
-        if (!LanguageOverrideAvailable())
-            return;
-
-        throw new NotImplementedException();
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(classFileName, Classes.AllClasses);
     }
 
     private async Task InitializeElementsAsync()
@@ -266,15 +248,22 @@ public class GameService : IGameService
 
         Elements.Initialize(elements, _assetsDirectory.FullName);
 
-        if (!LanguageOverrideAvailable())
-            return;
-
-        throw new NotImplementedException();
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(elementsFileName, Elements.AllElements);
     }
 
+    [MemberNotNullWhen(true, nameof(_languageOverrideDirectory))]
     private bool LanguageOverrideAvailable()
     {
-        return false;
+        var currentLanguage = _localizer.CurrentLanguage;
+
+        if (currentLanguage.LanguageCode == "en-us")
+            return false;
+
+        _languageOverrideDirectory =
+            new DirectoryInfo(Path.Combine(_assetsDirectory.FullName, "Languages", currentLanguage.LanguageCode));
+
+        return _languageOverrideDirectory.Exists && _languageOverrideDirectory.GetFiles().Any();
     }
 
 
@@ -368,6 +357,78 @@ public class GameService : IGameService
             Character = character,
             IsDefault = true
         });
+    }
+
+
+    private async Task MapDisplayNames(string fileName, IEnumerable<INameable> nameables)
+    {
+        var filePath = Path.Combine(_languageOverrideDirectory!.FullName, fileName);
+
+        if (!File.Exists(filePath))
+        {
+            _logger.Debug("File {FileName} not found at path: {FilePath}", fileName, filePath);
+            return;
+        }
+
+        var json = JsonSerializer.Deserialize<ICollection<JsonOverride>>(await File.ReadAllTextAsync(filePath),
+            _jsonSerializerOptions);
+
+        if (json is null)
+            return;
+
+        foreach (var nameable in nameables)
+        {
+            var jsonOverride = json.FirstOrDefault(x => x.InternalName == nameable.InternalName);
+            if (jsonOverride is null)
+            {
+                _logger.Debug("Nameable {NameableName} not found in {FilePath}", nameable.InternalName, filePath);
+                continue;
+            }
+
+            if (jsonOverride.DisplayName.IsNullOrEmpty()) continue;
+
+            nameable.DisplayName = jsonOverride.DisplayName;
+
+            if (nameable is IImageSupport imageSupportedValue && !jsonOverride.Image.IsNullOrEmpty())
+                _logger.Warning("Image override is not implemented");
+
+            if (nameable is not ICharacter character) continue;
+
+            character.Skins.ForEach(skin =>
+            {
+                var skinOverride =
+                    jsonOverride?.InGameSkins?.FirstOrDefault(x =>
+                        x.InternalName is not null &&
+                        x.InternalName.Equals(skin.InternalName, StringComparison.OrdinalIgnoreCase));
+
+                if (skinOverride is null)
+                {
+                    _logger.Debug("Skin {SkinName} not found in {FilePath}", skin.InternalName, filePath);
+                    return;
+                }
+
+                if (skinOverride.DisplayName.IsNullOrEmpty()) return;
+
+                skin.DisplayName = skinOverride.DisplayName;
+
+                if (skinOverride.Image.IsNullOrEmpty()) return;
+                _logger.Warning("Image override is not implemented");
+            });
+
+            if (jsonOverride.OverrideKeys is not null && jsonOverride.Keys is not null && jsonOverride.Keys.Any())
+            {
+                if (jsonOverride.OverrideKeys.Value)
+                {
+                    character.Keys.Clear();
+                }
+
+                foreach (var jsonOverrideKey in jsonOverride.Keys)
+                {
+                    if (character.Keys.Contains(jsonOverrideKey)) continue;
+                    character.Keys.Add(jsonOverrideKey);
+                }
+            }
+        }
     }
 }
 

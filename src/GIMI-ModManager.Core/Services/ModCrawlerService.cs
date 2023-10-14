@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
 

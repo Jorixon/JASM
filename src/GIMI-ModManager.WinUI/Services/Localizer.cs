@@ -22,6 +22,8 @@ public class Localizer : ILanguageLocalizer
         _logger = logger;
     }
 
+    public event EventHandler? LanguageChanged;
+
     public async Task InitializeAsync()
     {
         var stringsFolderPath = Path.Combine(App.ROOT_DIR, "Strings");
@@ -48,6 +50,7 @@ public class Localizer : ILanguageLocalizer
     private async Task SetLanguage(string languageCode)
     {
         var ci = CultureInfo.GetCultureInfo(languageCode);
+
         CurrentLanguage = new Language(languageCode);
         FallbackLanguage = new Language("en-us");
 
@@ -61,6 +64,8 @@ public class Localizer : ILanguageLocalizer
             await _localizer.SetLanguage(FallbackLanguage.LanguageCode);
             _logger.Debug("Language {ci} is not available", ci);
         }
+
+        LanguageChanged?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -71,7 +76,7 @@ public class Localizer : ILanguageLocalizer
 
     public Task SetLanguageAsync(string languageCode)
     {
-        return SetLanguage(languageCode);
+        return CurrentLanguage.LanguageCode == languageCode ? Task.CompletedTask : SetLanguage(languageCode);
     }
 
     public string GetLocalizedString(string uid)
