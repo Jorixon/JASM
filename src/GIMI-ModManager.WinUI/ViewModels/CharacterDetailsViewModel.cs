@@ -225,7 +225,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
         var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(selectCharacterTemplate =>
-            selectCharacterTemplate.DisplayName.Equals(
+            selectCharacterTemplate.InternalName.Equals(
                 _lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
                 StringComparison.CurrentCultureIgnoreCase));
 
@@ -443,14 +443,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
             var detectedSkin =
                 _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter.InternalName);
-            if (detectedSkin is null)
-            {
-                // In this case, we don't know what skin the mod is for, so we just add it.
-                filteredMods.Add(mod);
-                continue;
-            }
 
-            if (modSkin == null && detectedSkin.InternalNameEquals(skin.InternalName))
+            if (modSkin == null && detectedSkin is not null && detectedSkin.InternalNameEquals(skin.InternalName))
                 filteredMods.Add(mod);
         }
 

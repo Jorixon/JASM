@@ -30,7 +30,7 @@ public class ModCrawlerService
             var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 
-            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.DisplayName, folder.FullName);
+            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.InternalName, folder.FullName);
 
             yield return subSkin;
         }
@@ -50,6 +50,7 @@ public class ModCrawlerService
                 .SelectMany(character => character.Skins)
             : characters.First(ch => ch.InternalNameEquals(internalName)).Skins;
 
+        // Order by default skin first, so that 
         subSkins = subSkins.OrderBy(skin => skin.IsDefault).ToArray();
 
 
@@ -58,7 +59,7 @@ public class ModCrawlerService
             var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 
-            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.DisplayName, folder.FullName);
+            _logger.Verbose("Detected subSkin {subSkin} for folder {folder}", subSkin.InternalName, folder.FullName);
 
             return subSkin;
         }

@@ -192,7 +192,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
 
         _logger.Information("Transferring {ModsCount} mods from '{SourceCharacter}' to '{DestinationCharacter}'",
-            mods.Count, source.Character.DisplayName, destination.Character.DisplayName);
+            mods.Count, source.Character.InternalName, destination.Character.InternalName);
 
         using var sourceDisabled = source.DisableWatcher();
         using var destinationDisabled = destination.DisableWatcher();
@@ -309,7 +309,7 @@ public sealed class SkinManagerService : ISkinManagerService
                 }
 
                 var characterFolder = new DirectoryInfo(Path.Combine(exportFolder.FullName,
-                    characterModList.Character.DisplayName));
+                    characterModList.Character.InternalName));
 
                 characterToFolder.Add(characterModList.Character, characterFolder);
                 characterFolder.Create();
@@ -340,14 +340,14 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(oldName);
                     _logger.Information("Copied mod '{ModName}' to export character folder '{CharacterFolder}'",
                         mod.Name,
-                        characterSkinEntry.ModList.Character.DisplayName);
+                        characterSkinEntry.ModList.Character.InternalName);
 
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
                 _logger.Information("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
-                    characterSkinEntry.ModList.Character.DisplayName);
+                    characterSkinEntry.ModList.Character.InternalName);
             }
 
             ModExportProgress?.Invoke(this,
@@ -495,7 +495,7 @@ public sealed class SkinManagerService : ISkinManagerService
         if (characterFolderToReorganize is null)
             _logger.Information("Reorganizing mods");
         else
-            _logger.Information("Reorganizing mods for '{Character}'", characterFolder?.DisplayName);
+            _logger.Information("Reorganizing mods for '{Character}'", characterFolder?.InternalName);
 
         _activeModsFolder.Refresh();
         var characters = _gameService.GetCharacters().ToArray();
@@ -516,7 +516,7 @@ public sealed class SkinManagerService : ISkinManagerService
         {
             // Is a character folder continue
             var character = characters.FirstOrDefault(x =>
-                x.DisplayName.Equals(folder.Name, StringComparison.InvariantCultureIgnoreCase));
+                x.InternalName.Equals(folder.Name, StringComparison.OrdinalIgnoreCase));
             if (character is not null)
                 continue;
 
@@ -562,7 +562,7 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(DuplicateModAffixHelper.AppendNumberAffix(mod.Name));
                     _logger.Information(
                         "Mod '{ModName}' already exists in '{CharacterFolder}', renaming to {NewModName}",
-                        oldName, closestMatchCharacter.DisplayName, mod.Name);
+                        oldName, closestMatchCharacter.InternalName, mod.Name);
                     renameAttempts++;
                     if (renameAttempts <= 10) continue;
                     _logger.Error(
@@ -576,13 +576,13 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 mod.MoveTo(GetCharacterModList(closestMatchCharacter.InternalName).AbsModsFolderPath);
                 _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder", mod.Name,
-                    closestMatchCharacter.DisplayName);
+                    closestMatchCharacter.InternalName);
                 movedMods++;
             }
             catch (Exception e)
             {
                 _logger.Error(e, "Failed to move mod '{ModName}' to '{CharacterFolder}'", mod.FullPath,
-                    closestMatchCharacter.DisplayName);
+                    closestMatchCharacter.InternalName);
                 continue;
             }
 

@@ -61,27 +61,27 @@ public class ModNotificationManager
             : modAttentionSettings.ModNotifications.First(x => x.Key == character.InternalName).Value;
     }
 
-    public ModNotification[] GetInMemoryModNotifications(ICharacter? genshinCharacter = null)
+    public ModNotification[] GetInMemoryModNotifications(ICharacter? character = null)
     {
-        return genshinCharacter is null
+        return character is null
             ? _inMemoryModNotifications.ToArray()
-            : _inMemoryModNotifications.Where(x => genshinCharacter.InternalNameEquals(x.CharacterInternalName))
+            : _inMemoryModNotifications.Where(x => character.InternalNameEquals(x.CharacterInternalName))
                 .ToArray();
     }
 
-    public async Task ClearModNotifications(ICharacter? genshinCharacter = null, bool persistent = false)
+    public async Task ClearModNotifications(ICharacter? character = null, bool persistent = false)
     {
         if (!persistent)
         {
-            var removedNotifications = genshinCharacter is null
+            var removedNotifications = character is null
                 ? _inMemoryModNotifications.ToArray()
-                : _inMemoryModNotifications.Where(x => genshinCharacter.InternalNameEquals(x.CharacterInternalName))
+                : _inMemoryModNotifications.Where(x => character.InternalNameEquals(x.CharacterInternalName))
                     .ToArray();
-            if (genshinCharacter is null)
+            if (character is null)
                 _inMemoryModNotifications.Clear();
 
             else
-                _inMemoryModNotifications.RemoveAll(x => genshinCharacter.InternalNameEquals(x.CharacterInternalName));
+                _inMemoryModNotifications.RemoveAll(x => character.InternalNameEquals(x.CharacterInternalName));
 
 
             ModNotificationsCleared?.Invoke(this, removedNotifications.Select(x => new ModNotificationEvent(x, false))
@@ -93,17 +93,17 @@ public class ModNotificationManager
         var modAttentionSettings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModAttentionSettings>(ModAttentionSettings.Key);
 
-        var removedPersistentNotifications = genshinCharacter is null
+        var removedPersistentNotifications = character is null
             ? modAttentionSettings.ModNotifications.Select(x => x.Value).SelectMany(x => x).ToArray()
-            : modAttentionSettings.ModNotifications.First(x => genshinCharacter.InternalNameEquals(x.Key)).Value;
+            : modAttentionSettings.ModNotifications.First(x => character.InternalNameEquals(x.Key)).Value;
 
-        if (genshinCharacter is null)
+        if (character is null)
         {
             modAttentionSettings.ModNotifications.Clear();
         }
         else
         {
-            modAttentionSettings.ModNotifications.Remove(genshinCharacter.InternalName);
+            modAttentionSettings.ModNotifications.Remove(character.InternalName);
         }
 
         await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)

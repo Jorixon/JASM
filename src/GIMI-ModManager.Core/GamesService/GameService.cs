@@ -26,11 +26,11 @@ public class GameService : IGameService
 
     private readonly List<ICharacter> _disabledCharacters = new();
 
-    internal Elements Elements { get; private set; } = null!;
+    internal Elements Elements { get; private set; }
 
-    internal Classes Classes { get; private set; } = null!;
+    internal Classes Classes { get; private set; }
 
-    internal Regions Regions { get; private set; } = null!;
+    internal Regions Regions { get; private set; }
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -44,9 +44,13 @@ public class GameService : IGameService
     {
         _logger = logger;
         _localizer = localizer;
+        _localizer.LanguageChanged += LanguageChangedHandler;
     }
 
+    private bool _initialized;
 
+    [MemberNotNull(nameof(Elements), nameof(Classes), nameof(Regions), nameof(_assetsDirectory),
+        nameof(_localSettingsDirectory))]
     public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null)
     {
@@ -64,7 +68,9 @@ public class GameService : IGameService
 
         await InitializeClassesAsync();
 
-        await InitializeCharactersAsync(disabledCharacters ?? Array.Empty<string>()).ConfigureAwait(false);
+        await InitializeCharactersAsync(disabledCharacters ?? Array.Empty<string>());
+
+        _initialized = true;
     }
 
     public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName) =>
@@ -186,10 +192,8 @@ public class GameService : IGameService
 
         Regions = Regions.InitializeRegions(regions);
 
-        if (!LanguageOverrideAvailable())
-            return;
-
-        throw new NotImplementedException();
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(regionFileName, Regions.AllRegions);
     }
 
     private async Task InitializeCharactersAsync(ICollection<string> disabledCharacters)
@@ -257,11 +261,12 @@ public class GameService : IGameService
     {
         var currentLanguage = _localizer.CurrentLanguage;
 
+        _languageOverrideDirectory =
+            new DirectoryInfo(Path.Combine(_assetsDirectory.FullName, "Languages", currentLanguage.LanguageCode));
+
         if (currentLanguage.LanguageCode == "en-us")
             return false;
 
-        _languageOverrideDirectory =
-            new DirectoryInfo(Path.Combine(_assetsDirectory.FullName, "Languages", currentLanguage.LanguageCode));
 
         return _languageOverrideDirectory.Exists && _languageOverrideDirectory.GetFiles().Any();
     }
@@ -366,7 +371,8 @@ public class GameService : IGameService
 
         if (!File.Exists(filePath))
         {
-            _logger.Debug("File {FileName} not found at path: {FilePath}", fileName, filePath);
+            _logger.Debug("File {FileName} not found at path: {FilePath}, no translation available", fileName,
+                filePath);
             return;
         }
 
@@ -390,7 +396,7 @@ public class GameService : IGameService
             nameable.DisplayName = jsonOverride.DisplayName;
 
             if (nameable is IImageSupport imageSupportedValue && !jsonOverride.Image.IsNullOrEmpty())
-                _logger.Warning("Image override is not implemented");
+                _logger.Debug("Image override is not implemented");
 
             if (nameable is not ICharacter character) continue;
 
@@ -412,7 +418,7 @@ public class GameService : IGameService
                 skin.DisplayName = skinOverride.DisplayName;
 
                 if (skinOverride.Image.IsNullOrEmpty()) return;
-                _logger.Warning("Image override is not implemented");
+                _logger.Debug("Image override is not implemented");
             });
 
             if (jsonOverride.OverrideKeys is not null && jsonOverride.Keys is not null && jsonOverride.Keys.Any())
@@ -429,6 +435,32 @@ public class GameService : IGameService
                 }
             }
         }
+    }
+
+    private async void LanguageChangedHandler(object? sender, EventArgs args)
+    {
+        if (!_initialized)
+            return;
+
+        _logger.Debug("Language changed to {Language}", _localizer.CurrentLanguage.LanguageCode);
+
+        _languageOverrideDirectory =
+            new DirectoryInfo(Path.Combine(_assetsDirectory.FullName, "Languages",
+                _localizer.CurrentLanguage.LanguageCode));
+
+        if (_localizer.CurrentLanguage.LanguageCode == "en-us")
+        {
+            _languageOverrideDirectory = new DirectoryInfo(Path.Combine(_assetsDirectory.FullName));
+        }
+
+
+        await MapDisplayNames("characters.json", _characters);
+
+        await MapDisplayNames("elements.json", Elements.AllElements);
+
+        await MapDisplayNames("weaponClasses.json", Classes.AllClasses);
+
+        await MapDisplayNames("regions.json", Regions.AllRegions);
     }
 }
 

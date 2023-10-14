@@ -1,22 +1,22 @@
 [
   {
-    "Id": 0,
     "InternalName": "Mondstadt",
     "DisplayName": "Mondstadt"
   },
   {
-    "Id": 1,
     "InternalName": "Liyue",
     "DisplayName": "Liyue"
   },
   {
-    "Id": 2,
     "InternalName": "Inazuma",
     "DisplayName": "Inazuma"
   },
   {
-    "Id": 3,
     "InternalName": "Sumeru",
     "DisplayName": "Sumeru"
+  },
+  {
+    "InternalName": "Fontaine",
+    "DisplayName": "Fontaine"
   }
 ]

@@ -117,9 +117,9 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     {
         return SelectedCharacter is not null && SelectedModsCount > 0
                                              && (SelectedCharacterSkin is null ||
-                                                 SelectedCharacterSkin.DisplayName.Equals(
-                                                     _backendSelectedCharacterSkin?.DisplayName,
-                                                     StringComparison.CurrentCultureIgnoreCase));
+                                                 SelectedCharacterSkin.InternalName.Equals(
+                                                     _backendSelectedCharacterSkin?.InternalName,
+                                                     StringComparison.OrdinalIgnoreCase));
     }
 
     [RelayCommand(CanExecute = nameof(CanMoveModsCommandExecute))]
@@ -254,8 +254,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     private bool CanOverrideModCharacterSkin()
     {
         return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0
-               && !SelectedCharacterSkin.DisplayName.Equals(_backendSelectedCharacterSkin?.DisplayName,
-                   StringComparison.CurrentCultureIgnoreCase);
+               && !SelectedCharacterSkin.InternalName.Equals(_backendSelectedCharacterSkin?.InternalName,
+                   StringComparison.OrdinalIgnoreCase);
     }
 
     [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
@@ -321,10 +321,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         var searchResultKeyValue =
             await Task.Run(() =>
                 _gameService.GetCharacters(searchString, minScore: 100).OrderByDescending(kv => kv.Value));
+
+
         var eligibleCharacters =
-            CharacterVM.FromCharacters(searchResultKeyValue.Select(kv => kv.Key)
-                .Where(ch => ch.InternalNameEquals(_shownCharacter))
-                .Take(5));
+            CharacterVM.FromCharacters(searchResultKeyValue.Select(kv => kv.Key).Take(5));
 
 
         foreach (var eligibleCharacter in eligibleCharacters)
@@ -368,7 +368,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         if (characterTemplate == null) return;
 
         var characterSkinToSet = _shownCharacter.Skins.FirstOrDefault(charSkin =>
-            charSkin.DisplayName.Equals(characterTemplate.DisplayName, StringComparison.CurrentCultureIgnoreCase));
+            charSkin.InternalName.Equals(characterTemplate.InternalName, StringComparison.OrdinalIgnoreCase));
 
         if (characterSkinToSet == null)
             return;

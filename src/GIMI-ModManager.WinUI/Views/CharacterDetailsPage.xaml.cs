@@ -4,7 +4,6 @@ using Windows.Storage.Streams;
 using Windows.System;
 using CommunityToolkit.WinUI.UI.Animations;
 using CommunityToolkit.WinUI.UI.Controls;
-using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.ViewModels;
@@ -321,7 +320,7 @@ public sealed partial class CharacterDetailsPage : Page
         AutoSuggestBoxSuggestionChosenEventArgs args)
     {
         //sender.IsEnabled = false;
-        ViewModel.MoveModsFlyoutVM.SearchText = ((GenshinCharacter)args.SelectedItem).DisplayName;
+        ViewModel.MoveModsFlyoutVM.SearchText = ((CharacterVM)args.SelectedItem).DisplayName;
         userScrolling = true;
         //ViewModel.MoveModsFlyoutVM.SelectCharacterCommand.Execute(args.SelectedItem);
     }

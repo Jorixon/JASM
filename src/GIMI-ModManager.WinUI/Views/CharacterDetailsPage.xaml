@@ -6,10 +6,10 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:genshin="using:GIMI_ModManager.Core.Entities.Genshin"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.Models.ViewModels"
     xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     x:Name="CharacterDetailsRoot"
     mc:Ignorable="d">
@@ -87,7 +87,7 @@
                                 Text="{x:Bind ViewModel.MoveModsFlyoutVM.SearchText, Mode=TwoWay}"
                                 TextChanged="MoveModSearch_OnTextChanged">
                                 <AutoSuggestBox.ItemTemplate>
-                                    <DataTemplate x:DataType="genshin:GenshinCharacter">
+                                    <DataTemplate x:DataType="viewModels:CharacterVM">
                                         <TextBlock Text="{x:Bind DisplayName}" />
                                     </DataTemplate>
                                 </AutoSuggestBox.ItemTemplate>

@@ -148,6 +148,8 @@
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Geo.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Hydro.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Pyro.svg" />
+		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\characters.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\elements.json" />
 		<Content Remove="Assets\Games\Genshin\regions.json" />
 		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
 		<Content Remove="Assets\Images\AltCharacterSkins\BarbaraSummertime_Thumb.webp" />
@@ -327,7 +329,13 @@
 		<None Update="Assets\Games\Genshin\characters.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Genshin\npc.json">
+		<None Update="Assets\Games\Genshin\Languages\zh-cn\characters.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Languages\zh-cn\elements.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\npcs.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\elements.json">
@@ -1021,7 +1029,7 @@
 		<Content Update="Assets\Games\Genshin\Images\Start_Game.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Update="Assets\Games\Genshin\npc.json">
+		<Content Update="Assets\Games\Genshin\npcs.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Images\AltCharacterSkins\AmberCN_Thumb.webp">
@@ -1122,8 +1130,8 @@
 	<ItemGroup>
 	  <Folder Include="Assets\7z\" />
 	  <Folder Include="Assets\Games\Genshin\custom\" />
-	  <Folder Include="Assets\Games\Genshin\Images\custom\" />
-	  <Folder Include="Assets\Games\Genshin\Languages\zh-cn\" />
+	  <Folder Include="Assets\Games\Genshin\Images\Npcs\" />
+	  <Folder Include="Assets\Games\Genshin\Template\[LangCode]\" />
 	  <Folder Include="Assets\Games\Honkai\" />
 	</ItemGroup>
 

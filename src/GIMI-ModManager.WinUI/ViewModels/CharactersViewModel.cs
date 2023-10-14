@@ -4,7 +4,6 @@ using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
@@ -250,7 +249,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        var characters = _gameService.GetCharacters().OrderBy(g => g.DisplayName).ToList();
+        var characters = _gameService.GetCharacters().ToList();
         var others = characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.OtherCharacterInternalName));
         if (others is not null) // Add to front
         {
@@ -301,17 +300,17 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         // Add rest of characters
-        foreach (var genshinCharacter in characters)
+        foreach (var character in characters)
         {
-            backendCharacters.Add(new CharacterGridItemModel(genshinCharacter));
+            backendCharacters.Add(new CharacterGridItemModel(character));
         }
 
         _backendCharacters = backendCharacters;
 
         // Add notifcations
-        foreach (var genshinCharacter in _characters)
+        foreach (var character in _characters)
         {
-            var characterGridItemModel = FindCharacterByInternalName(genshinCharacter.InternalName);
+            var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
             if (characterGridItemModel is null) continue;
             var notifications = _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
             foreach (var modNotification in notifications)
@@ -531,7 +530,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
     [RelayCommand]
-    private void HideCharacter(GenshinCharacter character)
+    private void HideCharacter(CharacterGridItemModel character)
     {
         NotImplemented.Show("Hiding characters is not implemented yet");
     }
@@ -622,7 +621,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (modList is null)
         {
             _logger.Warning("No mod list found for character {Character}",
-                characterGridItemModel.Character.DisplayName);
+                characterGridItemModel.Character.InternalName);
             return;
         }
 
@@ -660,7 +659,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         if (!errored)
             NotificationManager.ShowNotification("Mod added",
-                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.DisplayName}",
+                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.InternalName}",
                 TimeSpan.FromSeconds(2));
     }
 
@@ -680,7 +679,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             if (character is not null)
             {
                 _logger.Debug("Mod {ModName} was detected as {Character}", modName,
-                    character.DisplayName);
+                    character.InternalName);
                 modNameToCharacter.Add(storageItem, character);
             }
             else

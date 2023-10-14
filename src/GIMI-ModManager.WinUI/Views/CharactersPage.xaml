@@ -168,7 +168,8 @@
                                 Width="60"
                                 MaxWidth="80"
                                 MaxHeight="40"
-                                IsSelected="{x:Bind IsSelected, Mode=TwoWay}">
+                                IsSelected="{x:Bind IsSelected, Mode=TwoWay}"
+                                ToolTipService.ToolTip="{x:Bind Name}">
                                 <Grid Padding="4,0" HorizontalAlignment="Center">
                                     <Image
                                         VerticalAlignment="Center"

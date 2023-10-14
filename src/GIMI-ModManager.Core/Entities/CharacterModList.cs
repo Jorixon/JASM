@@ -47,7 +47,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     private void OnModDeleted(object sender, FileSystemEventArgs e)
     {
-        _logger?.Information("Mod {ModName} in {characterFolder} folder was deleted", e.Name, Character.DisplayName);
+        _logger?.Information("Mod {ModName} in {characterFolder} folder was deleted", e.Name, Character.InternalName);
         Task.Run(() =>
         {
             if (_mods.Any(mod => mod.Mod.FullPath == e.FullPath))
@@ -67,7 +67,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
     private void OnModCreated(object sender, FileSystemEventArgs e)
     {
-        _logger?.Information("Mod {ModName} was created in {characterFolder} created", e.Name, Character.DisplayName);
+        _logger?.Information("Mod {ModName} was created in {characterFolder} created", e.Name, Character.InternalName);
 
         Task.Run(async () =>
         {
@@ -85,7 +85,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
             if (ModAlreadyAdded(newSkinMod))
                 _logger?.Warning("Created folder {Folder} was already tracked in {characterFolder} mod list", e.Name,
-                    Character.DisplayName);
+                    Character.InternalName);
             else
                 TrackMod(newSkinMod);
             ModsChanged?.Invoke(this, new ModFolderChangedArgs(e.FullPath, ModFolderChangeType.Created));
@@ -133,14 +133,14 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             if (ModAlreadyAdded(mod))
             {
                 _logger?.Warning("Mod {ModName} was already tracked in {CharacterName} modList", mod.Name,
-                    Character.DisplayName);
+                    Character.InternalName);
                 return;
             }
 
             _mods.Add(ModFolderHelpers.FolderHasDisabledPrefix(mod.Name)
                 ? new CharacterSkinEntry(mod, this, false)
                 : new CharacterSkinEntry(mod, this, true));
-            _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
+            _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.Name, Character.InternalName);
             Debug.Assert(_mods.DistinctBy(m => m.Id).Count() == _mods.Count);
         }
     }
@@ -159,7 +159,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
 
             _mods.Remove(_mods.First(m => m.Mod.Equals(mod)));
 
-            _logger?.Debug("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.DisplayName);
+            _logger?.Debug("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.InternalName);
             Debug.Assert(_mods.DistinctBy(m => m.Id).Count() == _mods.Count);
         }
     }
@@ -276,7 +276,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
             UnTrackMod(skinEntry.Mod);
             mod.Delete(moveToRecycleBin);
             _logger?.Information("{Operation} mod {ModName} from {CharacterName} modList",
-                moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.DisplayName);
+                moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.InternalName);
         }
     }
 

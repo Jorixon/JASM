@@ -1,42 +1,35 @@
 [
 	{
-		"Id": 0,
 		"InternalName": "Pyro",
 		"DisplayName": "Pyro",
 		"Image": "Pyro.svg"
 	},
 	{
-		"Id": 1,
 		"InternalName": "Hydro",
 		"DisplayName": "Hydro",
 		"Image": "Hydro.svg"
 	},
 	{
-		"Id": 2,
 		"InternalName": "Anemo",
 		"DisplayName": "Anemo",
 		"Image": "Anemo.svg"
 	},
 	{
-		"Id": 3,
 		"InternalName": "Electro",
 		"DisplayName": "Electro",
 		"Image" :  "Electro.svg"
 	},
 	{
-		"Id": 4,
 		"InternalName": "Dendro",
 		"DisplayName": "Dendro",
 		"Image": "Dendro.svg"
 	},
 	{
-		"Id": 5,
 		"InternalName": "Cryo",
 		"DisplayName": "Cryo",
 		"Image": "Cryo.svg"
 	},
 	{
-		"Id": 6,
 		"InternalName": "Geo",
 		"DisplayName": "Geo",
 		"Image": "Geo.svg"

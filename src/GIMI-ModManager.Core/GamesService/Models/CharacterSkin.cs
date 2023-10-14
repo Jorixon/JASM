@@ -1,8 +1,10 @@
-﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+﻿using System.Diagnostics;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 
+[DebuggerDisplay("{" + nameof(DisplayName) + "}" + " (" + nameof(InternalName) + ")")]
 public class CharacterSkin : ICharacterSkin
 {
     public bool IsDefault { get; internal set; }
@@ -23,7 +25,7 @@ public class CharacterSkin : ICharacterSkin
         var characterSkin = new CharacterSkin
         {
             InternalName = internalName,
-            ModFilesName = jsonSkin.InternalName,
+            ModFilesName = jsonSkin.ModFilesName ?? string.Empty,
             DisplayName = jsonSkin.DisplayName ?? internalName,
             Rarity = jsonSkin.Rarity is >= 0 and <= 5 ? jsonSkin.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonSkin.ReleaseDate, out var date) ? date : DateTime.MaxValue,
