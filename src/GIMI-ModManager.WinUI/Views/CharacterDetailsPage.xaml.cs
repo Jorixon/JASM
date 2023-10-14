@@ -7,6 +7,7 @@ using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI;
@@ -345,7 +346,7 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void MoveModSearch_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        var anyCharacterFound = ViewModel.MoveModsFlyoutVM.SelectCharacter(args.ChosenSuggestion as GenshinCharacter);
+        var anyCharacterFound = ViewModel.MoveModsFlyoutVM.SelectCharacter(args.ChosenSuggestion as CharacterVM);
         if (!anyCharacterFound)
             return;
         sender.IsEnabled = false;

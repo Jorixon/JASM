@@ -56,16 +56,6 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     public void OnNavigatedTo(object parameter)
     {
         var characters = _genshinService.GetCharacters().Take(5);
-        foreach (var character in characters)
-        {
-            var vm = new SelectCharacterTemplate
-            {
-                DisplayName = character.DisplayName,
-                ImagePath = character.ImageUri ?? " ",
-                IsSelected = false
-            };
-            Items.Add(vm);
-        }
     }
 
     public void OnNavigatedFrom()

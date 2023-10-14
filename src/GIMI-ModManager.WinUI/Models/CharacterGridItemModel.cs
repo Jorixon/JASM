@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Services.Notifications;
 
 namespace GIMI_ModManager.WinUI.Models;
 
 public partial class CharacterGridItemModel : ObservableObject, IEquatable<CharacterGridItemModel>,
-    IEquatable<GenshinCharacter>
+    IEquatable<ICharacter>
 {
-    [ObservableProperty] private GenshinCharacter _character;
+    [ObservableProperty] private ICharacter _character;
 
 
     [ObservableProperty] private bool _isPinned;
@@ -17,7 +17,7 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     [ObservableProperty] private bool _notification;
     [ObservableProperty] private AttentionType _notificationType;
 
-    public CharacterGridItemModel(GenshinCharacter character)
+    public CharacterGridItemModel(ICharacter character)
     {
         Character = character;
     }
@@ -29,11 +29,11 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
         return Character.Equals(other.Character);
     }
 
-    public bool Equals(GenshinCharacter? other)
+    public bool Equals(ICharacter? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Character.Id == other.Id;
+        return Character.InternalNameEquals(other.InternalName);
     }
 
     public override bool Equals(object? obj)

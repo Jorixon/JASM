@@ -327,7 +327,7 @@
 		<None Update="Assets\Games\Genshin\characters.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Genshin\custom\npc.json">
+		<None Update="Assets\Games\Genshin\npc.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\elements.json">
@@ -1021,6 +1021,9 @@
 		<Content Update="Assets\Games\Genshin\Images\Start_Game.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Update="Assets\Games\Genshin\npc.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Update="Assets\Images\AltCharacterSkins\AmberCN_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -1118,6 +1121,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Assets\7z\" />
+	  <Folder Include="Assets\Games\Genshin\custom\" />
 	  <Folder Include="Assets\Games\Genshin\Images\custom\" />
 	  <Folder Include="Assets\Games\Genshin\Languages\zh-cn\" />
 	  <Folder Include="Assets\Games\Honkai\" />

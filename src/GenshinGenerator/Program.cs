@@ -20,6 +20,7 @@ foreach (var genshinCharacter in characters)
         DisplayName = genshinCharacter.DisplayName,
         InternalName = genshinCharacter.DisplayName,
         Rarity = genshinCharacter.Rarity,
+        ModFilesName = genshinCharacter.InGameSkins.First(skin => skin.DefaultSkin).Name,
         ReleaseDate = genshinCharacter.ReleaseDate.ToString("yyyy-MM-ddTHH:mm:ss"),
         Keys = genshinCharacter.Keys.ToArray(),
         Image = genshinCharacter.ImageUri,
@@ -37,6 +38,7 @@ foreach (var genshinCharacter in characters)
 
         var skinJson = new JsonCharacterSkin()
         {
+            ModFilesName = skin.Name,
             DisplayName = skin.DisplayName,
             InternalName = skin.DisplayName,
             Image = skin.ImageUri

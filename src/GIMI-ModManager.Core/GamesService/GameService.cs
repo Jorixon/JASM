@@ -173,17 +173,19 @@ public class GameService : IGameService
     public List<ICharacter> GetCharacters()
     {
         var characters = _characters.ToList();
-        characters.Insert(0, getOthersCharacter());
-        characters.Add(getGlidersCharacter());
-        characters.Add(getWeaponsCharacter());
         return characters;
     }
 
     public bool IsMultiMod(INameable modNameable)
     {
+        return IsMultiMod(modNameable.InternalName);
+    }
+
+    public bool IsMultiMod(string modInternalName)
+    {
         var multiMod = new List<string> { "Gliders", "Weapons", "Others" };
 
-        return multiMod.Any(modNameable.InternalNameEquals);
+        return multiMod.Any(name => name.Equals(modInternalName, StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task InitializeRegionsAsync()
@@ -209,7 +211,7 @@ public class GameService : IGameService
     private async Task InitializeCharactersAsync(ICollection<string> disabledCharacters)
     {
         const string characterFileName = "characters.json";
-        var imageFolderName = Path.Combine(_assetsDirectory.FullName + "Images", "Characters");
+        var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Characters");
 
         var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName);
 
@@ -232,6 +234,10 @@ public class GameService : IGameService
             else
                 _characters.Add(character);
         }
+
+        _characters.Insert(0, getOthersCharacter());
+        _characters.Add(getGlidersCharacter());
+        _characters.Add(getWeaponsCharacter());
     }
 
     private async Task InitializeClassesAsync()
@@ -284,66 +290,84 @@ public class GameService : IGameService
             _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
     }
 
-    private const int _otherCharacterId = -1234;
-    public int OtherCharacterId => _otherCharacterId;
+    public string OtherCharacterInternalName => "Others";
 
     private Character getOthersCharacter()
     {
         var character = new Character
         {
-            Id = _otherCharacterId,
-            InternalName = "Others",
-            DisplayName = "Others",
+            //Id = _otherCharacterId,
+            InternalName = OtherCharacterInternalName,
+            DisplayName = OtherCharacterInternalName,
             ReleaseDate = DateTime.MinValue,
             Rarity = -1,
+            Regions = new List<IRegion>(),
             Keys = new[] { "others", "unknown" },
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters", "Character_Others.png")),
             Element = Elements.AllElements.First(),
             Class = Classes.AllClasses.First()
         };
+        AddDefaultSkin(character);
         return character;
     }
 
-    private const int _glidersCharacterId = -1235;
-    public int GlidersCharacterId => _glidersCharacterId;
+    public string GlidersCharacterInternalName => "Gliders";
 
     private Character getGlidersCharacter()
     {
         var character = new Character
         {
-            Id = _glidersCharacterId,
-            InternalName = "Gliders",
-            DisplayName = "Gliders",
+            //Id = _glidersCharacterId,
+            InternalName = GlidersCharacterInternalName,
+            DisplayName = GlidersCharacterInternalName,
             ReleaseDate = DateTime.MinValue,
             Rarity = -1,
+            Regions = new List<IRegion>(),
             Keys = new[] { "gliders", "glider", "wings" },
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
                 "Character_Gliders_Thumb.webp")),
             Element = Elements.AllElements.First(),
             Class = Classes.AllClasses.First()
         };
+        AddDefaultSkin(character);
         return character;
     }
 
-    private const int _weaponsCharacterId = -1236;
-    public int WeaponsCharacterId => _weaponsCharacterId;
+    public string WeaponsCharacterInternalName => "Weapons";
 
     private Character getWeaponsCharacter()
     {
         var character = new Character
         {
-            Id = _weaponsCharacterId,
-            InternalName = "Weapons",
-            DisplayName = "Weapons",
+            //Id = _weaponsCharacterId,
+            InternalName = WeaponsCharacterInternalName,
+            DisplayName = WeaponsCharacterInternalName,
             ReleaseDate = DateTime.MinValue,
             Rarity = -1,
+            Regions = new List<IRegion>(),
             Keys = new[] { "weapon", "claymore", "sword", "polearm", "catalyst", "bow" },
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
                 "Character_Weapons_Thumb.webp")),
             Element = Elements.AllElements.First(),
             Class = Classes.AllClasses.First()
         };
+
+        AddDefaultSkin(character);
         return character;
+    }
+
+    private void AddDefaultSkin(ICharacter character)
+    {
+        character.Skins.Add(new CharacterSkin(character)
+        {
+            InternalName = "Default_" + character.InternalName,
+            ModFilesName = "",
+            DisplayName = "Default",
+            Rarity = character.Rarity,
+            ReleaseDate = character.ReleaseDate,
+            Character = character,
+            IsDefault = true
+        });
     }
 }
 

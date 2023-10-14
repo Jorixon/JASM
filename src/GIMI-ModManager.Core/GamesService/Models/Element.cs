@@ -12,4 +12,15 @@ internal class Element : IGameElement
     public string InternalName { get; set; } = null!;
     public string DisplayName { get; set; } = null!;
     public Uri? ImageUri { get; set; } = null;
+
+
+    public static Element NoneElement()
+    {
+        return new Element
+        {
+            InternalName = "None",
+            DisplayName = "None",
+            ImageUri = null
+        };
+    }
 }

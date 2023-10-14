@@ -69,7 +69,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public async Task<RefreshResult> RefreshModsAsync(ICharacter? refreshForCharacter = null)
+    public async Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null)
     {
         var modsUntracked = new List<string>();
         var newModsFound = new List<ISkinMod>();
@@ -433,6 +433,11 @@ public sealed class SkinManagerService : ISkinManagerService
         return characterModList;
     }
 
+    public ICharacterModList GetCharacterModList(ICharacter character)
+    {
+        return GetCharacterModList(character.InternalName);
+    }
+
 
     public async Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
@@ -477,15 +482,19 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public async Task<int> ReorganizeModsAsync(ICharacter? characterFolderToReorganize = null,
+    public async Task<int> ReorganizeModsAsync(string? characterFolderToReorganize = null,
         bool disableMods = false)
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
+        var characterFolder = characterFolderToReorganize is null
+            ? null
+            : _gameService.GetCharacter(characterFolderToReorganize);
+
         if (characterFolderToReorganize is null)
             _logger.Information("Reorganizing mods");
         else
-            _logger.Information("Reorganizing mods for '{Character}'", characterFolderToReorganize.DisplayName);
+            _logger.Information("Reorganizing mods for '{Character}'", characterFolder?.DisplayName);
 
         _activeModsFolder.Refresh();
         var characters = _gameService.GetCharacters().ToArray();
@@ -498,9 +507,9 @@ public sealed class SkinManagerService : ISkinManagerService
 
         var movedMods = 0;
 
-        var folderToReorganize = characterFolderToReorganize is null
+        var folderToReorganize = characterFolder is null
             ? _activeModsFolder
-            : new DirectoryInfo(GetCharacterModFolderPath(characterFolderToReorganize));
+            : new DirectoryInfo(GetCharacterModFolderPath(characterFolder));
 
         foreach (var folder in folderToReorganize.EnumerateDirectories())
         {
@@ -529,7 +538,7 @@ public sealed class SkinManagerService : ISkinManagerService
             }
 
 
-            var modList = GetCharacterModList(closestMatchCharacter);
+            var modList = GetCharacterModList(closestMatchCharacter.InternalName);
             ISkinMod? mod = null;
             try
             {
@@ -564,7 +573,7 @@ public sealed class SkinManagerService : ISkinManagerService
                 if (renameAttempts > 10) continue;
 
 
-                mod.MoveTo(GetCharacterModList(closestMatchCharacter).AbsModsFolderPath);
+                mod.MoveTo(GetCharacterModList(closestMatchCharacter.InternalName).AbsModsFolderPath);
                 _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder", mod.Name,
                     closestMatchCharacter.DisplayName);
                 movedMods++;

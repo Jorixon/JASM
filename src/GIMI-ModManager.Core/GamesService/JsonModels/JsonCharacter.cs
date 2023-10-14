@@ -15,6 +15,8 @@ internal class JsonCharacter : JsonBaseNameable
 
     public string[]? Region { get; set; } = Array.Empty<string>();
 
+    public string? ModFilesName { get; set; }
+
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public JsonCharacterSkin[]? InGameSkins { get; set; }
 }

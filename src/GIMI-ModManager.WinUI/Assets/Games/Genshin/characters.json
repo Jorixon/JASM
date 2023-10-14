@@ -12,15 +12,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Albedo",
+    "InGameSkins": [],
     "InternalName": "Albedo",
     "DisplayName": "Albedo"
   },
@@ -37,15 +30,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Alhaitham",
+    "InGameSkins": [],
     "InternalName": "Alhaitham",
     "DisplayName": "Alhaitham"
   },
@@ -62,15 +48,8 @@
     "Region": [
       "Crossover"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Aloy",
+    "InGameSkins": [],
     "InternalName": "Aloy",
     "DisplayName": "Aloy"
   },
@@ -87,18 +66,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Amber",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "AmberCN",
         "Image": "Character_Skin_AmberCN_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "AmberCN",
         "DisplayName": "AmberCN"
       }
@@ -120,15 +92,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Itto",
+    "InGameSkins": [],
     "InternalName": "Arataki Itto",
     "DisplayName": "Arataki Itto"
   },
@@ -145,15 +110,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Baizhu",
+    "InGameSkins": [],
     "InternalName": "Baizhu",
     "DisplayName": "Baizhu"
   },
@@ -170,18 +128,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Barbara",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "BarbaraSummertime",
         "Image": "Character_Skin_BarbaraSummertime_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Summertime Sparkle",
         "DisplayName": "Summertime Sparkle"
       }
@@ -202,15 +153,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Beidou",
+    "InGameSkins": [],
     "InternalName": "Beidou",
     "DisplayName": "Beidou"
   },
@@ -227,15 +171,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Bennett",
+    "InGameSkins": [],
     "InternalName": "Bennett",
     "DisplayName": "Bennett"
   },
@@ -252,15 +189,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Candace",
+    "InGameSkins": [],
     "InternalName": "Candace",
     "DisplayName": "Candace"
   },
@@ -277,15 +207,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Charlotte",
+    "InGameSkins": [],
     "InternalName": "Charlotte",
     "DisplayName": "Charlotte"
   },
@@ -302,15 +225,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Chongyun",
+    "InGameSkins": [],
     "InternalName": "Chongyun",
     "DisplayName": "Chongyun"
   },
@@ -327,15 +243,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Clorinde",
+    "InGameSkins": [],
     "InternalName": "Clorinde",
     "DisplayName": "Clorinde"
   },
@@ -352,15 +261,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Collei",
+    "InGameSkins": [],
     "InternalName": "Collei",
     "DisplayName": "Collei"
   },
@@ -377,15 +279,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Cyno",
+    "InGameSkins": [],
     "InternalName": "Cyno",
     "DisplayName": "Cyno"
   },
@@ -402,15 +297,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Dehya",
+    "InGameSkins": [],
     "InternalName": "Dehya",
     "DisplayName": "Dehya"
   },
@@ -427,18 +315,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Diluc",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "DilucFlamme",
         "Image": "Character_Skin_DilucFlamme_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Red Dead of Night",
         "DisplayName": "Red Dead of Night"
       }
@@ -459,15 +340,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Diona",
+    "InGameSkins": [],
     "InternalName": "Diona",
     "DisplayName": "Diona"
   },
@@ -484,15 +358,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Dori",
+    "InGameSkins": [],
     "InternalName": "Dori",
     "DisplayName": "Dori"
   },
@@ -509,15 +376,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Eula",
+    "InGameSkins": [],
     "InternalName": "Eula",
     "DisplayName": "Eula"
   },
@@ -534,15 +394,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Faruzan",
+    "InGameSkins": [],
     "InternalName": "Faruzan",
     "DisplayName": "Faruzan"
   },
@@ -559,18 +412,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Fischl",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "FischlHighness",
         "Image": "Character_Skin_FischlHighness_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Ein Immernachtstraum",
         "DisplayName": "Ein Immernachtstraum"
       }
@@ -591,15 +437,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Freminet",
+    "InGameSkins": [],
     "InternalName": "Freminet",
     "DisplayName": "Freminet"
   },
@@ -617,15 +456,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Furina",
+    "InGameSkins": [],
     "InternalName": "Furina",
     "DisplayName": "Furina"
   },
@@ -642,15 +474,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Ganyu",
+    "InGameSkins": [],
     "InternalName": "Ganyu",
     "DisplayName": "Ganyu"
   },
@@ -667,15 +492,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Gorou",
+    "InGameSkins": [],
     "InternalName": "Gorou",
     "DisplayName": "Gorou"
   },
@@ -693,15 +511,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "HuTao",
+    "InGameSkins": [],
     "InternalName": "Hu Tao",
     "DisplayName": "Hu Tao"
   },
@@ -718,25 +529,17 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Jean",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "JeanCN",
         "Image": "Character_Skin_JeanCN_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "JeanCN",
         "DisplayName": "JeanCN"
       },
       {
+        "ModFilesName": "JeanSea",
         "Image": "Character_Skin_JeanSea_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Sea Breeze Dandelion",
         "DisplayName": "Sea Breeze Dandelion"
       }
@@ -758,15 +561,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Kazuha",
+    "InGameSkins": [],
     "InternalName": "Kaedehara Kazuha",
     "DisplayName": "Kaedehara Kazuha"
   },
@@ -783,18 +579,11 @@
     "Region": [
       "MondstadtKhaenri'ah"
     ],
+    "ModFilesName": "Kaeya",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "KaeyaSailwind",
         "Image": "Character_Skin_KaeyaSailwind_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Sailwind Shadow",
         "DisplayName": "Sailwind Shadow"
       }
@@ -816,18 +605,11 @@
     "Region": [
       "Inazuma"
     ],
+    "ModFilesName": "Ayaka",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "AyakaSpringbloom",
         "Image": "Character_Skin_AyakaSpringbloom_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Springbloom Missive",
         "DisplayName": "Springbloom Missive"
       }
@@ -849,15 +631,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Ayato",
+    "InGameSkins": [],
     "InternalName": "Kamisato Ayato",
     "DisplayName": "Kamisato Ayato"
   },
@@ -874,15 +649,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Kaveh",
+    "InGameSkins": [],
     "InternalName": "Kaveh",
     "DisplayName": "Kaveh"
   },
@@ -899,18 +667,11 @@
     "Region": [
       "Liyue"
     ],
+    "ModFilesName": "Keqing",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "KeqingOpulent",
         "Image": "Character_Skin_KeqingOpulent_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Opulent Splendor",
         "DisplayName": "Opulent Splendor"
       }
@@ -931,15 +692,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Kirara",
+    "InGameSkins": [],
     "InternalName": "Kirara",
     "DisplayName": "Kirara"
   },
@@ -956,18 +710,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Klee",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "KleeBlossoming",
         "Image": "Character_Skin_KleeBlossoming_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Blossoming Starlight",
         "DisplayName": "Blossoming Starlight"
       }
@@ -989,15 +736,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "KujouSara",
+    "InGameSkins": [],
     "InternalName": "Kujou Sara",
     "DisplayName": "Kujou Sara"
   },
@@ -1015,15 +755,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Shinobu",
+    "InGameSkins": [],
     "InternalName": "Kuki Shinobu",
     "DisplayName": "Kuki Shinobu"
   },
@@ -1040,15 +773,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Layla",
+    "InGameSkins": [],
     "InternalName": "Layla",
     "DisplayName": "Layla"
   },
@@ -1065,25 +791,17 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Lisa",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "LisaSobriquet",
         "Image": "Character_Skin_LisaSobriquet_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "A Sobriquet Under Shade",
         "DisplayName": "A Sobriquet Under Shade"
       },
       {
+        "ModFilesName": "LisaStudent",
         "Image": "",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Student",
         "DisplayName": "Student"
       }
@@ -1104,15 +822,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Lynette",
+    "InGameSkins": [],
     "InternalName": "Lynette",
     "DisplayName": "Lynette"
   },
@@ -1129,15 +840,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Lyney",
+    "InGameSkins": [],
     "InternalName": "Lyney",
     "DisplayName": "Lyney"
   },
@@ -1154,15 +858,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Mika",
+    "InGameSkins": [],
     "InternalName": "Mika",
     "DisplayName": "Mika"
   },
@@ -1179,18 +876,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Mona",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "MonaCN",
         "Image": "Character_Skin_MonaCN_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "MonaCN",
         "DisplayName": "MonaCN"
       }
@@ -1212,15 +902,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Nahida",
+    "InGameSkins": [],
     "InternalName": "Nahida",
     "DisplayName": "Nahida"
   },
@@ -1237,15 +920,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Navia",
+    "InGameSkins": [],
     "InternalName": "Navia",
     "DisplayName": "Navia"
   },
@@ -1262,15 +938,8 @@
     "Region": [
       "Fontaine"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Neuvillette",
+    "InGameSkins": [],
     "InternalName": "Neuvillette",
     "DisplayName": "Neuvillette"
   },
@@ -1287,15 +956,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Nilou",
+    "InGameSkins": [],
     "InternalName": "Nilou",
     "DisplayName": "Nilou"
   },
@@ -1312,18 +974,11 @@
     "Region": [
       "Liyue"
     ],
+    "ModFilesName": "Ningguang",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "NingguangOrchid",
         "Image": "Character_Skin_NingguangOrchid_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "Orchid's Evening Gown",
         "DisplayName": "Orchid's Evening Gown"
       }
@@ -1344,15 +999,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Noelle",
+    "InGameSkins": [],
     "InternalName": "Noelle",
     "DisplayName": "Noelle"
   },
@@ -1369,15 +1017,8 @@
     "Element": "None",
     "Class": "",
     "Region": [],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Paimon",
+    "InGameSkins": [],
     "InternalName": "Paimon",
     "DisplayName": "Paimon"
   },
@@ -1394,15 +1035,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Qiqi",
+    "InGameSkins": [],
     "InternalName": "Qiqi",
     "DisplayName": "Qiqi"
   },
@@ -1420,15 +1054,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "RaidenShogun",
+    "InGameSkins": [],
     "InternalName": "Raiden Shogun",
     "DisplayName": "Raiden Shogun"
   },
@@ -1445,15 +1072,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Razor",
+    "InGameSkins": [],
     "InternalName": "Razor",
     "DisplayName": "Razor"
   },
@@ -1470,18 +1090,11 @@
     "Region": [
       "Mondstadt"
     ],
+    "ModFilesName": "Rosaria",
     "InGameSkins": [
       {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      },
-      {
+        "ModFilesName": "RosariaCN",
         "Image": "Character_Skin_RosariaCN_Thumb.webp",
-        "ReleaseDate": null,
-        "Rarity": -1,
         "InternalName": "RosariaCN",
         "DisplayName": "RosariaCN"
       }
@@ -1503,15 +1116,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Kokomi",
+    "InGameSkins": [],
     "InternalName": "Sangonomiya Kokomi",
     "DisplayName": "Sangonomiya Kokomi"
   },
@@ -1528,15 +1134,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Sayu",
+    "InGameSkins": [],
     "InternalName": "Sayu",
     "DisplayName": "Sayu"
   },
@@ -1553,15 +1152,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Shenhe",
+    "InGameSkins": [],
     "InternalName": "Shenhe",
     "DisplayName": "Shenhe"
   },
@@ -1579,15 +1171,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Heizou",
+    "InGameSkins": [],
     "InternalName": "Shikanoin Heizou",
     "DisplayName": "Shikanoin Heizou"
   },
@@ -1604,15 +1189,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Sucrose",
+    "InGameSkins": [],
     "InternalName": "Sucrose",
     "DisplayName": "Sucrose"
   },
@@ -1630,15 +1208,8 @@
     "Region": [
       "Snezhnaya"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Tartaglia",
+    "InGameSkins": [],
     "InternalName": "Tartaglia",
     "DisplayName": "Tartaglia"
   },
@@ -1655,15 +1226,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Thoma",
+    "InGameSkins": [],
     "InternalName": "Thoma",
     "DisplayName": "Thoma"
   },
@@ -1680,15 +1244,8 @@
     "Region": [
       "Sumeru"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Tighnari",
+    "InGameSkins": [],
     "InternalName": "Tighnari",
     "DisplayName": "Tighnari"
   },
@@ -1707,15 +1264,8 @@
     "Region": [
       "Outlander"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "TravelerGirl",
+    "InGameSkins": [],
     "InternalName": "Traveler (Female)",
     "DisplayName": "Traveler (Female)"
   },
@@ -1734,15 +1284,8 @@
     "Region": [
       "Outlander"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "TravelerBoy",
+    "InGameSkins": [],
     "InternalName": "Traveler (Male)",
     "DisplayName": "Traveler (Male)"
   },
@@ -1759,15 +1302,8 @@
     "Region": [
       "Mondstadt"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Venti",
+    "InGameSkins": [],
     "InternalName": "Venti",
     "DisplayName": "Venti"
   },
@@ -1786,15 +1322,8 @@
       "Snezhnaya",
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Wanderer",
+    "InGameSkins": [],
     "InternalName": "Wanderer",
     "DisplayName": "Wanderer"
   },
@@ -1811,15 +1340,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Xiangling",
+    "InGameSkins": [],
     "InternalName": "Xiangling",
     "DisplayName": "Xiangling"
   },
@@ -1836,15 +1358,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Xiao",
+    "InGameSkins": [],
     "InternalName": "Xiao",
     "DisplayName": "Xiao"
   },
@@ -1861,15 +1376,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Xingqiu",
+    "InGameSkins": [],
     "InternalName": "Xingqiu",
     "DisplayName": "Xingqiu"
   },
@@ -1886,15 +1394,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Xinyan",
+    "InGameSkins": [],
     "InternalName": "Xinyan",
     "DisplayName": "Xinyan"
   },
@@ -1912,15 +1413,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Yae",
+    "InGameSkins": [],
     "InternalName": "Yae Miko",
     "DisplayName": "Yae Miko"
   },
@@ -1937,15 +1431,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Yanfei",
+    "InGameSkins": [],
     "InternalName": "Yanfei",
     "DisplayName": "Yanfei"
   },
@@ -1962,15 +1449,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "YaoYao",
+    "InGameSkins": [],
     "InternalName": "Yaoyao",
     "DisplayName": "Yaoyao"
   },
@@ -1987,15 +1467,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Yelan",
+    "InGameSkins": [],
     "InternalName": "Yelan",
     "DisplayName": "Yelan"
   },
@@ -2012,15 +1485,8 @@
     "Region": [
       "Inazuma"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Yoimiya",
+    "InGameSkins": [],
     "InternalName": "Yoimiya",
     "DisplayName": "Yoimiya"
   },
@@ -2038,15 +1504,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "YunJin",
+    "InGameSkins": [],
     "InternalName": "Yun Jin",
     "DisplayName": "Yun Jin"
   },
@@ -2063,15 +1522,8 @@
     "Region": [
       "Liyue"
     ],
-    "InGameSkins": [
-      {
-        "Image": null,
-        "ReleaseDate": null,
-        "Rarity": -1,
-        "InternalName": "Default",
-        "DisplayName": "Default"
-      }
-    ],
+    "ModFilesName": "Zhongli",
+    "InGameSkins": [],
     "InternalName": "Zhongli",
     "DisplayName": "Zhongli"
   }

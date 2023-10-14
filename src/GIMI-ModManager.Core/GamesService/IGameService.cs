@@ -37,6 +37,7 @@ public interface IGameService
     public List<ICharacter> GetCharacters();
 
     public bool IsMultiMod(INameable modNameable);
+    public bool IsMultiMod(string modInternalName);
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }
     public string WeaponsCharacterInternalName { get; }
@@ -60,13 +61,15 @@ public interface ICharacterSkin : IModdableObject, IRarity, IImageSupport, IName
     /// </summary>
     public ICharacter Character { get; }
 
+    public bool IsDefault { get; }
+
     public DateTime? ReleaseDate { get; }
 }
 
 /// <summary>
 /// In game playable character
 /// </summary>
-public interface ICharacter : IRarity, IImageSupport, INameable, IModdableObject
+public interface ICharacter : IRarity, IImageSupport, INameable, IModdableObject, IEquatable<ICharacterSkin>
 {
     public IGameClass Class { get; }
     public IGameElement Element { get; }
@@ -74,7 +77,7 @@ public interface ICharacter : IRarity, IImageSupport, INameable, IModdableObject
 
     public DateTime ReleaseDate { get; }
     public ICollection<IRegion> Regions { get; }
-    public ICollection<ICharacterSkin> AdditionalSkins { get; }
+    public ICollection<ICharacterSkin> Skins { get; }
 }
 
 public interface INpc : IImageSupport, INameable

@@ -195,10 +195,13 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         CornerRadius="10">
-                        <Image
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneWay}" />
+                        <Image HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                            <Image.Source>
+                                <BitmapImage UriSource="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneTime}" />
+                            </Image.Source>
+
+                        </Image>
                     </Grid>
                     <TextBlock
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"

@@ -10,11 +10,12 @@ using CommunityToolkit.Mvvm.Input;
 using ErrorOr;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
@@ -34,7 +35,7 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly INavigationViewService _navigationViewService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
     private readonly ILanguageLocalizer _localizer;
     private readonly AutoUpdaterService _autoUpdaterService;
 
@@ -78,7 +79,7 @@ public partial class SettingsViewModel : ObservableRecipient
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        IGenshinService genshinService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer)
+        IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -88,7 +89,7 @@ public partial class SettingsViewModel : ObservableRecipient
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
         _updateChecker = updateChecker;
-        _genshinService = genshinService;
+        _gameService = gameService;
         _autoUpdaterService = autoUpdaterService;
         _localizer = localizer;
         GenshinProcessManager = genshinProcessManager;
@@ -288,7 +289,6 @@ public partial class SettingsViewModel : ObservableRecipient
         if (result == ContentDialogResult.Primary)
         {
             _navigationViewService.IsEnabled = false;
-            var genshinService = App.GetService<IGenshinService>();
 
             try
             {
@@ -297,7 +297,8 @@ public partial class SettingsViewModel : ObservableRecipient
 
                 movedModsCount += await Task.Run(() =>
                     _skinManagerService.ReorganizeModsAsync(
-                        genshinService.GetCharacter(genshinService.OtherCharacterId))); // Others folder
+                        _gameService.GetCharacterByName(_gameService.OtherCharacterInternalName)!
+                            .InternalName)); // Others folder
 
                 await _skinManagerService.RefreshModsAsync();
 
@@ -479,7 +480,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
         dialog.ContentTemplate = contentDialog.ContentTemplate;
 
-        var model = new ExportModsDialogModel(_genshinService.GetCharacters());
+        var model = new ExportModsDialogModel(CharacterVM.FromCharacters(_gameService.GetCharacters()));
         dialog.DataContext = model;
         var result = await _windowManagerService.ShowDialogAsync(dialog);
 
@@ -500,7 +501,8 @@ public partial class SettingsViewModel : ObservableRecipient
         var charactersToExport =
             model.CharacterModsToBackup.Where(modList => modList.IsChecked).Select(ch => ch.Character);
         var modsList = new List<ICharacterModList>();
-        foreach (var character in charactersToExport) modsList.Add(_skinManagerService.GetCharacterModList(character.));
+        foreach (var character in charactersToExport)
+            modsList.Add(_skinManagerService.GetCharacterModList(character.InternalName));
 
         try
         {
@@ -595,7 +597,7 @@ public partial class ExportModsDialogModel : ObservableObject
 
     [ObservableProperty] private SetModStatus _setModStatus = SetModStatus.KeepCurrent;
 
-    public ExportModsDialogModel(IEnumerable<GenshinCharacter> characters)
+    public ExportModsDialogModel(IEnumerable<CharacterVM> characters)
     {
         SetModStatus = SetModStatus.KeepCurrent;
         foreach (var character in characters) CharacterModsToBackup.Add(new CharacterCheckboxModel(character));
@@ -605,9 +607,9 @@ public partial class ExportModsDialogModel : ObservableObject
 public partial class CharacterCheckboxModel : ObservableObject
 {
     [ObservableProperty] private bool _isChecked = true;
-    [ObservableProperty] private GenshinCharacter _character;
+    [ObservableProperty] private CharacterVM _character;
 
-    public CharacterCheckboxModel(GenshinCharacter character)
+    public CharacterCheckboxModel(CharacterVM character)
     {
         _character = character;
     }

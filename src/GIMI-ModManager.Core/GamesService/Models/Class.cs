@@ -12,4 +12,14 @@ internal class Class : IGameClass
     public string InternalName { get; set; } = null!;
     public string DisplayName { get; set; } = null!;
     public Uri? ImageUri { get; set; } = null;
+
+    public static Class NoneClass()
+    {
+        return new Class
+        {
+            InternalName = "None",
+            DisplayName = "None",
+            ImageUri = null
+        };
+    }
 }

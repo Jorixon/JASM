@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
@@ -20,7 +21,8 @@ public class ModCrawlerService
         if (!folder.Exists) throw new DirectoryNotFoundException($"Could not find folder {folder.FullName}");
 
 
-        var subSkins = _gameService.GetCharacters().SelectMany(character => character.AdditionalSkins).ToArray();
+        var subSkins = _gameService.GetCharacters().SelectMany(character => character.Skins)
+            .OrderBy(skin => skin.IsDefault).ToArray();
 
         foreach (var file in RecursiveGetFiles(folder))
         {
@@ -33,14 +35,22 @@ public class ModCrawlerService
         }
     }
 
-    public ICharacterSkin? GetFirstSubSkinRecursive(string absPath, ICharacter? checkForCharacter = null)
+    public ICharacterSkin? GetFirstSubSkinRecursive(string absPath, string? internalName = null)
     {
         var folder = new DirectoryInfo(absPath);
         if (!folder.Exists) throw new DirectoryNotFoundException($"Could not find folder {folder.FullName}");
 
-        var subSkins = checkForCharacter?.AdditionalSkins.ToArray() ?? _gameService
-            .GetCharacters()
-            .SelectMany(character => character.AdditionalSkins).ToArray();
+
+        var characters = _gameService.GetCharacters();
+
+
+        var subSkins = internalName.IsNullOrEmpty()
+            ? characters
+                .SelectMany(character => character.Skins)
+            : characters.First(ch => ch.InternalNameEquals(internalName)).Skins;
+
+        subSkins = subSkins.OrderBy(skin => skin.IsDefault).ToArray();
+
 
         foreach (var file in RecursiveGetFiles(folder))
         {
@@ -60,11 +70,11 @@ public class ModCrawlerService
     private static bool IsOfSkinType(FileInfo file, IModdableObject skin)
     {
         var fileExtensionMatch = ModExtensions.Any(extension =>
-            file.Extension.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
+            file.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase));
 
 
         return fileExtensionMatch &&
-               file.Name.Trim().StartsWith(skin.ModFilesName, StringComparison.CurrentCultureIgnoreCase);
+               file.Name.Trim().StartsWith(skin.ModFilesName, StringComparison.OrdinalIgnoreCase);
     }
 
 

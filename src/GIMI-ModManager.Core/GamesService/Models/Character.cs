@@ -6,7 +6,7 @@ using Serilog;
 namespace GIMI_ModManager.Core.GamesService.Models;
 
 [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-public class Character : ICharacter
+public class Character : ICharacter, IEquatable<Character>
 {
     //public int Id { get; internal set; }
     public string? Category { get; internal set; }
@@ -20,8 +20,12 @@ public class Character : ICharacter
     public ICollection<string> Keys { get; internal set; } = null!;
     public DateTime ReleaseDate { get; internal set; }
     public ICollection<IRegion> Regions { get; internal set; } = null!;
-    public ICollection<ICharacterSkin> AdditionalSkins { get; internal set; } = new List<ICharacterSkin>();
+    public ICollection<ICharacterSkin> Skins { get; internal set; } = new List<ICharacterSkin>();
 
+    public override string ToString()
+    {
+        return $"{DisplayName} ({InternalName})";
+    }
 
     internal static CharacterBuilder FromJson(JsonCharacter jsonCharacter)
     {
@@ -31,21 +35,47 @@ public class Character : ICharacter
         var character = new Character
         {
             InternalName = internalName,
-            ModFilesName = "",
+            ModFilesName = jsonCharacter.ModFilesName ?? string.Empty,
             DisplayName = jsonCharacter.DisplayName ?? internalName,
             Keys = jsonCharacter.Keys ?? Array.Empty<string>(),
             Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var date) ? date : DateTime.MaxValue,
-            AdditionalSkins = new List<ICharacterSkin>()
+            Skins = new List<ICharacterSkin>()
         };
 
+        // Add default skin
+        character.Skins.Add(new CharacterSkin(character)
+        {
+            InternalName = "Default_" + internalName,
+            ModFilesName = character.ModFilesName,
+            DisplayName = "Default",
+            Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
+            ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var skinDate) ? skinDate : DateTime.MaxValue,
+            Character = character,
+            IsDefault = true
+        });
+
+
+        if (jsonCharacter.InGameSkins == null) return new CharacterBuilder(character, jsonCharacter);
+
+        // Add additional skins
         foreach (var jsonCharacterInGameSkin in jsonCharacter.InGameSkins)
         {
             var skin = CharacterSkin.FromJson(character, jsonCharacterInGameSkin);
-            character.AdditionalSkins.Add(skin);
+            character.Skins.Add(skin);
         }
 
         return new CharacterBuilder(character, jsonCharacter);
+    }
+
+    internal Character()
+    {
+    }
+
+    public Character(string internalName, string displayName)
+    {
+        InternalName = internalName;
+        DisplayName = displayName;
     }
 
 
@@ -54,6 +84,41 @@ public class Character : ICharacter
         public InvalidJsonConfigException(string message) : base(message)
         {
         }
+    }
+
+    public bool Equals(Character? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return string.Equals(InternalName, other.InternalName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public bool Equals(ICharacterSkin? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return string.Equals(InternalName, other.InternalName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is Character other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
+        return StringComparer.OrdinalIgnoreCase.GetHashCode(InternalName);
+    }
+
+    public static bool operator ==(Character? left, Character? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Character? left, Character? right)
+    {
+        return !Equals(left, right);
     }
 }
 
@@ -65,7 +130,6 @@ internal sealed class CharacterBuilder
     private bool _regionSet;
     private bool _classSet;
     private bool _elementSet;
-    private bool _skinsSet;
 
     public CharacterBuilder(Character character, JsonCharacter jsonCharacter)
     {
@@ -113,11 +177,7 @@ internal sealed class CharacterBuilder
         _character.Class = gameClasses.FirstOrDefault(gameClass =>
                                gameClass.InternalName.Equals(_jsonCharacter.Class,
                                    StringComparison.OrdinalIgnoreCase))
-                           ?? new Class()
-                           {
-                               InternalName = "",
-                               DisplayName = ""
-                           };
+                           ?? Class.NoneClass();
 
         _classSet = true;
         return this;
@@ -131,11 +191,7 @@ internal sealed class CharacterBuilder
         _character.Element = elements.FirstOrDefault(element =>
                                  element.InternalName.Equals(_jsonCharacter.Element,
                                      StringComparison.OrdinalIgnoreCase))
-                             ?? new Element()
-                             {
-                                 InternalName = "",
-                                 DisplayName = ""
-                             };
+                             ?? Element.NoneElement();
 
 
         _elementSet = true;
@@ -154,13 +210,6 @@ internal sealed class CharacterBuilder
             _character.ImageUri = Uri.TryCreate(character.Image, UriKind.Absolute, out var uri) ? uri : null;
 
 
-        return this;
-    }
-
-    public CharacterBuilder AddSkin(ICharacterSkin skin)
-    {
-        _character.AdditionalSkins.Add(skin);
-        _skinsSet = true;
         return this;
     }
 
@@ -191,9 +240,10 @@ internal sealed class CharacterBuilder
         if (_jsonCharacter.Image.IsNullOrEmpty()) return _character;
 
 
+        // Set images
         SetImage(imageFolder, _jsonCharacter.Image);
 
-        foreach (var characterSkin in _character.AdditionalSkins)
+        foreach (var characterSkin in _character.Skins)
         {
             var jsonCharacterSkin = _jsonCharacter.InGameSkins
                 .FirstOrDefault(skin => skin.InternalName is not null &&

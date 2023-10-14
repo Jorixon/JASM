@@ -11,4 +11,5 @@ public interface ISkinMod : IMod, IEqualityComparer<ISkinMod>
     public SkinModKeySwapManager? KeySwaps { get; }
 
     public bool ContainsOnlyJasmFiles();
+    public string? GetModIniPath();
 }

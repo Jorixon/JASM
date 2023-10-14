@@ -4,6 +4,7 @@ namespace GIMI_ModManager.Core.GamesService.Models;
 
 public class CharacterSkin : ICharacterSkin
 {
+    public bool IsDefault { get; internal set; }
     public string ModFilesName { get; internal set; } = null!;
     public int Rarity { get; internal set; } = -1;
     public Uri? ImageUri { get; set; } = null;
@@ -13,7 +14,7 @@ public class CharacterSkin : ICharacterSkin
     public DateTime? ReleaseDate { get; internal set; } = null;
 
 
-    internal static CharacterSkin FromJson(ICharacter Character, JsonCharacterSkin jsonSkin)
+    internal static CharacterSkin FromJson(ICharacter character, JsonCharacterSkin jsonSkin)
     {
         var internalName = jsonSkin.InternalName ??
                            throw new Character.InvalidJsonConfigException("InternalName can never be missing or null");
@@ -25,9 +26,18 @@ public class CharacterSkin : ICharacterSkin
             DisplayName = jsonSkin.DisplayName ?? internalName,
             Rarity = jsonSkin.Rarity is >= 0 and <= 5 ? jsonSkin.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonSkin.ReleaseDate, out var date) ? date : DateTime.MaxValue,
-            Character = Character
+            Character = character
         };
 
         return characterSkin;
+    }
+
+    internal CharacterSkin()
+    {
+    }
+
+    public CharacterSkin(ICharacter character)
+    {
+        Character = character;
     }
 }
