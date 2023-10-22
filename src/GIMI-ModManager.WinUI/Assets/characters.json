@@ -1918,5 +1918,28 @@
         "SkinSuffix": ""
       }
     ]
+  },
+  {
+    "Id": 78,
+    "DisplayName": "Wriothesley",
+    "Keys": [
+      "Wriothesley"
+    ],
+    "ReleaseDate": "2023-10-17T00:00:00",
+    "ImageUri": "Character_Wriothesley_Thumb.webp",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Weapon": "Catalyst",
+    "Region": [
+      "Fontaine"
+    ],
+    "InGameSkins": [
+      {
+        "DefaultSkin": true,
+        "DisplayName": "Default",
+        "Name": "Wriothesley",
+        "SkinSuffix": ""
+      }
+    ]
   }
 ]
