@@ -9,18 +9,25 @@ namespace GIMI_ModManager.Core.Entities.Mods.SkinMod;
 public class SkinModKeySwapManager
 {
     private readonly ISkinMod _skinMod;
-    private readonly string _modIniPath;
     private List<KeySwapSection>? _keySwaps;
 
-    public SkinModKeySwapManager(ISkinMod skinMod, string iniPath)
+    public SkinModKeySwapManager(ISkinMod skinMod)
     {
         _skinMod = skinMod;
-        _modIniPath = iniPath;
     }
 
     public void ClearKeySwaps()
     {
-        _keySwaps?.Clear();
+        _keySwaps = null;
+    }
+
+    private string GetIniPath()
+    {
+        var iniPath = _skinMod.GetModIniPath();
+        if (iniPath is null)
+            throw new InvalidOperationException("Mod ini could not be found");
+
+        return iniPath;
     }
 
     public async Task ReadKeySwapConfiguration(CancellationToken cancellationToken = default)
@@ -30,7 +37,7 @@ public class SkinModKeySwapManager
         var keySwapBlockStarted = false;
         var currentLine = -1;
         var sectionLine = string.Empty;
-        await foreach (var line in File.ReadLinesAsync(_modIniPath, cancellationToken))
+        await foreach (var line in File.ReadLinesAsync(GetIniPath(), cancellationToken))
         {
             currentLine++;
             if (line.Trim().StartsWith(";") || string.IsNullOrWhiteSpace(line))
@@ -101,7 +108,7 @@ public class SkinModKeySwapManager
 
         var fileLines = new List<string>();
 
-        await using var fileStream = new FileStream(_modIniPath, FileMode.Open, FileAccess.Read, FileShare.None);
+        await using var fileStream = new FileStream(GetIniPath(), FileMode.Open, FileAccess.Read, FileShare.None);
         using (var reader = new StreamReader(fileStream))
         {
             while (await reader.ReadLineAsync(cancellationToken) is { } line)
@@ -210,7 +217,7 @@ public class SkinModKeySwapManager
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        await using var writeStream = new FileStream(_modIniPath, FileMode.Truncate, FileAccess.Write, FileShare.None);
+        await using var writeStream = new FileStream(GetIniPath(), FileMode.Truncate, FileAccess.Write, FileShare.None);
 
         await using (var writer = new StreamWriter(writeStream))
         {
