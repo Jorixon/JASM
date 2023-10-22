@@ -568,6 +568,9 @@
 		<Content Update="Assets\Images\AltCharacterSkins\AmberCN_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Update="Assets\Images\Character_Wriothesley_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<None Update="Assets\Images\AltCharacterSkins\Character_Skin_AyakaSpringbloom_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
