@@ -62,7 +62,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     {
         if (_shownCharacter is not null)
             throw new InvalidOperationException("Selected character is already set");
-        _shownCharacter = _gameService.GetCharacterByName(selectedCharacter.InternalName)!;
+        _shownCharacter = _gameService.GetCharacterByIdentifier(selectedCharacter.InternalName)!;
         var skinVms = _shownCharacter.Skins.Select(SkinVM.FromSkin);
 
         foreach (var skinVm in skinVms) SelectableCharacterSkins.Add(new SelectCharacterTemplate(skinVm));

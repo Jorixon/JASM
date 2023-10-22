@@ -297,7 +297,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         if (keepCharacterFolderStructure && !zip) // Copy mods organized by character
         {
-            var characterToFolder = new Dictionary<ICharacter, DirectoryInfo>();
+            var characterToFolder = new Dictionary<IModdableObject, DirectoryInfo>();
             var emptyFoldersCount = 0;
 
             foreach (var characterModList in characterModLists)
@@ -434,7 +434,7 @@ public sealed class SkinManagerService : ISkinManagerService
         return characterModList;
     }
 
-    public ICharacterModList GetCharacterModList(ICharacter character)
+    public ICharacterModList GetCharacterModList(IModdableObject character)
     {
         return GetCharacterModList(character.InternalName);
     }
@@ -490,7 +490,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         var characterFolder = characterFolderToReorganize is null
             ? null
-            : _gameService.GetCharacter(characterFolderToReorganize);
+            : _gameService.GetCharacterByIdentifier(characterFolderToReorganize);
 
         if (characterFolderToReorganize is null)
             _logger.Information("Reorganizing mods");
@@ -499,7 +499,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         _activeModsFolder.Refresh();
         var characters = _gameService.GetCharacters().ToArray();
-        var othersCharacter = _gameService.GetCharacterByName("Others");
+        var othersCharacter = _gameService.GetCharacterByIdentifier("Others");
         if (othersCharacter is null)
         {
             _logger.Error("Failed to get 'Others' character");

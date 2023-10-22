@@ -13,7 +13,7 @@ public interface ISkinManagerService : IDisposable
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     public Task ScanForModsAsync();
     public ICharacterModList GetCharacterModList(string internalName);
-    public ICharacterModList GetCharacterModList(ICharacter character);
+    public ICharacterModList GetCharacterModList(IModdableObject character);
 
     public Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
         string? threeMigotoRootfolder = null);

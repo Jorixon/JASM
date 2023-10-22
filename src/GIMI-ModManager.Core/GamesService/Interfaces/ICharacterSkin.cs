@@ -1,6 +1,6 @@
 ﻿namespace GIMI_ModManager.Core.GamesService.Interfaces;
 
-public interface ICharacterSkin : IModdableObject, IRarity, IImageSupport, INameable
+public interface ICharacterSkin : IRarity, IImageSupport, INameable
 {
     /// <summary>
     /// Character this skin belongs to
@@ -13,4 +13,10 @@ public interface ICharacterSkin : IModdableObject, IRarity, IImageSupport, IName
     public bool IsDefault { get; }
 
     public DateTime? ReleaseDate { get; }
+
+    /// <summary>
+    /// Static should not be changed.
+    /// If Empty => no automatic mod detection
+    /// </summary>
+    public string ModFilesName { get; }
 }

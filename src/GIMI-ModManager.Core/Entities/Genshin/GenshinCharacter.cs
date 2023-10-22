@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace GIMI_ModManager.Core.Entities.Genshin;
 
+//[Obsolete("Use ICharacter instead")]
 public record GenshinCharacter : IGenshinCharacter, IEqualityComparer<GenshinCharacter>
 {
     public int Id { get; set; } = -1;

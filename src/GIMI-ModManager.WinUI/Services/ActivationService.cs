@@ -183,7 +183,7 @@ public class ActivationService : IActivationService
     // There has to be a better way to do this. But for now this works.
     // Window does not have the closing event, so I can't save the size on close.
     // Application might exit ungracefully, unsure if this is a problem.
-    private void ScreenSizeSavingTimer_Tick(object sender, object e)
+    private void ScreenSizeSavingTimer_Tick(object? sender, object? e)
     {
         var width = App.MainWindow.Width;
         var height = App.MainWindow.Height;

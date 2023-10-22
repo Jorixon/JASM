@@ -35,6 +35,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public readonly GenshinProcessManager GenshinProcessManager;
 
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+    public readonly string StartGameIcon;
+    public readonly string ShortGameName;
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
@@ -94,6 +96,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         DockPanelVM = new OverviewDockPanelVM();
         DockPanelVM.FilterElementSelected += FilterElementSelected;
         DockPanelVM.Initialize();
+        StartGameIcon = _gameService.GameIcon;
+        ShortGameName = "Start " + _gameService.GameShortName;
     }
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
@@ -332,45 +336,53 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             if (_gameService.IsMultiMod(modList.Character))
                 continue;
 
-            var addWarning = false;
-            var subSkinsFound = new List<string>();
-            foreach (var characterSkinEntry in modList.Mods)
+
+            if (modList.Mods.Count(modEntry => modEntry.IsEnabled) > 2)
             {
-                if (!characterSkinEntry.IsEnabled) continue;
-
-                var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)
-                    ?.ModFilesName;
-
-                var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
-
-
-                var mod = ModModel.FromMod(characterSkinEntry);
-
-
-                if (modSettingsResult.IsT0)
-                    mod.WithModSettings(modSettingsResult.AsT0);
-
-                if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
-                    subSkin = mod.CharacterSkinOverride;
-
-                if (subSkin is null)
-                    continue;
-
-
-                if (subSkinsFound.All(foundSubSkin =>
-                        !foundSubSkin.Equals(subSkin, StringComparison.CurrentCultureIgnoreCase)))
+                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+            }
+            else if (modList.Character is ICharacter character)
+            {
+                var addWarning = false;
+                var subSkinsFound = new List<string>();
+                foreach (var characterSkinEntry in modList.Mods)
                 {
-                    subSkinsFound.Add(subSkin);
-                    continue;
+                    if (!characterSkinEntry.IsEnabled) continue;
+
+                    var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)
+                        ?.ModFilesName;
+
+                    var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
+
+
+                    var mod = ModModel.FromMod(characterSkinEntry);
+
+
+                    if (modSettingsResult.IsT0)
+                        mod.WithModSettings(modSettingsResult.AsT0);
+
+                    if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
+                        subSkin = mod.CharacterSkinOverride;
+
+                    if (subSkin is null)
+                        continue;
+
+
+                    if (subSkinsFound.All(foundSubSkin =>
+                            !foundSubSkin.Equals(subSkin, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        subSkinsFound.Add(subSkin);
+                        continue;
+                    }
+
+
+                    addWarning = true;
+                    break;
                 }
 
-
-                addWarning = true;
-                break;
+                if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
             }
-
-            if (addWarning || subSkinsFound.Count > 1 && modList.Character.Skins.Count == 1)
-                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
         }
 
 

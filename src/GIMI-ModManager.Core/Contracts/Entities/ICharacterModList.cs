@@ -16,7 +16,7 @@ public interface ICharacterModList
     /// <summary>
     /// The character this mod list is for.
     /// </summary>
-    public ICharacter Character { get; }
+    public IModdableObject Character { get; }
 
     /// <summary>
     /// Add a mod to the mod list. Starts tracking the mod.

@@ -18,7 +18,7 @@ public sealed class CharacterModList : ICharacterModList, IDisposable
     public const string ALT_DISABLED_PREFIX = ModFolderHelpers.ALT_DISABLED_PREFIX;
     public string DisabledPrefix => DISABLED_PREFIX;
     private readonly FileSystemWatcher _watcher;
-    public ICharacter Character { get; }
+    public IModdableObject Character { get; }
 
     private readonly object _modsLock = new();
 

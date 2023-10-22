@@ -180,7 +180,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             return;
         }
 
-        var character = _gameService.GetCharacter(characterGridItemModel.Character.InternalName);
+        var character = _gameService.GetCharacterByIdentifier(characterGridItemModel.Character.InternalName);
         if (character is null)
         {
             ErrorNavigateBack();

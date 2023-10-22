@@ -17,20 +17,24 @@ public class GameService : IGameService
     private readonly ILanguageLocalizer _localizer;
 
     private DirectoryInfo _assetsDirectory = null!;
-    private DirectoryInfo _localSettingsDirectory = null!;
     private DirectoryInfo? _languageOverrideDirectory;
-    public string GameName { get; private set; } = null!;
-    public string GameShortName { get; private set; } = null!;
+
+    private GameSettingsManager _gameSettingsManager = null!;
+
+
+    public string GameName { get; private set; } = string.Empty;
+    public string GameShortName { get; private set; } = string.Empty;
+    public string GameIcon { get; private set; } = string.Empty;
 
     private readonly List<ICharacter> _characters = new();
 
     private readonly List<ICharacter> _disabledCharacters = new();
 
-    internal Elements Elements { get; private set; }
+    internal Elements Elements { get; private set; } = null!;
 
-    internal Classes Classes { get; private set; }
+    internal Classes Classes { get; private set; } = null!;
 
-    internal Regions Regions { get; private set; }
+    internal Regions Regions { get; private set; } = null!;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -49,8 +53,6 @@ public class GameService : IGameService
 
     private bool _initialized;
 
-    [MemberNotNull(nameof(Elements), nameof(Classes), nameof(Regions), nameof(_assetsDirectory),
-        nameof(_localSettingsDirectory))]
     public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null)
     {
@@ -58,9 +60,13 @@ public class GameService : IGameService
         if (!_assetsDirectory.Exists)
             throw new DirectoryNotFoundException($"Directory not found at path: {_assetsDirectory.FullName}");
 
-        _localSettingsDirectory = new DirectoryInfo(localSettingsDirectory);
-        if (!_localSettingsDirectory.Exists)
-            throw new DirectoryNotFoundException($"Directory not found at path: {_localSettingsDirectory.FullName}");
+        var settingsDirectory = new DirectoryInfo(localSettingsDirectory);
+        if (!settingsDirectory.Exists)
+            throw new DirectoryNotFoundException($"Directory not found at path: {settingsDirectory.FullName}");
+
+        _gameSettingsManager = new GameSettingsManager(settingsDirectory);
+
+        await InitializeGameInfoAsync();
 
         await InitializeRegionsAsync();
 
@@ -73,8 +79,12 @@ public class GameService : IGameService
         _initialized = true;
     }
 
-    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName) =>
-        throw new NotImplementedException();
+
+    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
+    {
+        character.DisplayName = newDisplayName;
+        return Task.CompletedTask;
+    }
 
     public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri) => throw new NotImplementedException();
 
@@ -96,7 +106,7 @@ public class GameService : IGameService
         return searchResult.Any(kv => kv.Value >= minScore) ? searchResult.MaxBy(x => x.Value).Key : null;
     }
 
-    public ICharacter? GetCharacterByName(string internalName) =>
+    public ICharacter? GetCharacterByIdentifier(string internalName) =>
         _characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
 
 
@@ -169,13 +179,47 @@ public class GameService : IGameService
         return characters;
     }
 
-    public bool IsMultiMod(INameable modNameable) => IsMultiMod(modNameable.InternalName);
+    public List<ICharacter> GetDisabledCharacters()
+    {
+        var characters = _disabledCharacters.ToList();
+        return characters;
+    }
+
+
+    public bool IsMultiMod(IModdableObject modNameable)
+    {
+        var isMultiMod = IsMultiMod(modNameable.InternalName);
+        if (isMultiMod) return true;
+
+        return modNameable.IsMultiMod;
+    }
 
     public bool IsMultiMod(string modInternalName)
     {
         var multiMod = new List<string> { "Gliders", "Weapons", "Others" };
 
         return multiMod.Any(name => name.Equals(modInternalName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private async Task InitializeGameInfoAsync()
+    {
+        const string gameFileName = "game.json";
+        var gameFilePath = Path.Combine(_assetsDirectory.FullName, gameFileName);
+        if (!File.Exists(gameFilePath))
+            throw new FileNotFoundException($"{gameFileName} File not found at path: {gameFilePath}");
+
+        var game = JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath));
+
+        if (game is null)
+            throw new InvalidOperationException($"{gameFilePath} file is empty");
+
+        GameName = game.GameName;
+        GameShortName = game.GameShortName;
+        var iconPath = Path.Combine(_assetsDirectory.FullName, "Images", game.GameIcon);
+        if (File.Exists(iconPath))
+            GameIcon = Path.Combine(_assetsDirectory.FullName, "Images", game.GameIcon);
+        else
+            GameIcon = " ";
     }
 
     private async Task InitializeRegionsAsync()

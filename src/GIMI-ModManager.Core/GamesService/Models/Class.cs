@@ -9,7 +9,7 @@ internal class Class : IGameClass
     {
     }
 
-    public string InternalName { get; set; } = null!;
+    public string InternalName { get; init; } = null!;
     public string DisplayName { get; set; } = null!;
     public Uri? ImageUri { get; set; } = null;
 

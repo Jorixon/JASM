@@ -11,6 +11,6 @@ internal class Region : IRegion
         DisplayName = displayName;
     }
 
-    public string InternalName { get; set; }
+    public string InternalName { get; init; }
     public string DisplayName { get; set; }
 }

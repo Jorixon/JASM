@@ -6,6 +6,7 @@ public interface IGameService
 {
     public string GameName { get; }
     public string GameShortName { get; }
+    public string GameIcon { get; }
 
     public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null);
@@ -25,7 +26,7 @@ public interface IGameService
     public ICharacter? GetCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
 
-    public ICharacter? GetCharacterByName(string internalName);
+    public ICharacter? GetCharacterByIdentifier(string internalName);
 
     public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
@@ -37,28 +38,14 @@ public interface IGameService
     public List<IRegion> GetRegions();
 
     public List<ICharacter> GetCharacters();
+    public List<ICharacter> GetDisabledCharacters();
 
-    public bool IsMultiMod(INameable modNameable);
+
+    public bool IsMultiMod(IModdableObject modNameable);
     public bool IsMultiMod(string modInternalName);
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }
     public string WeaponsCharacterInternalName { get; }
-}
-
-/// <summary>
-/// Has specific name for mod files
-/// </summary>
-public interface IModdableObject
-{
-    /// <summary>
-    /// Static should not be changed
-    /// </summary>
-    public string ModFilesName { get; }
-}
-
-public interface INpc : IImageSupport, INameable
-{
-    public IModdableObject? ModdableObject { get; }
 }
 
 public interface IUi : INameable
@@ -111,6 +98,9 @@ public interface IImageSupport
     public Uri? ImageUri { get; internal set; }
 }
 
+/// <summary>
+/// Base Interface that allows identification by internal name
+/// </summary>
 public interface INameable
 {
     /// <summary>
@@ -119,9 +109,9 @@ public interface INameable
     public string DisplayName { get; internal set; }
 
     /// <summary>
-    /// Static should not be changed. Is used to identify the object
+    /// Should not be changed. Is used to identify the object
     /// </summary>
-    public string InternalName { get; internal set; }
+    public string InternalName { get; internal init; }
 
     public bool InternalNameEquals(string other)
     {

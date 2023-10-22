@@ -277,6 +277,7 @@
 		<None Remove="Assets\ModPanePlaceholder.webp" />
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
+		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
@@ -301,7 +302,7 @@
 		<PackageReference Include="FluentValidation" Version="11.7.1" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
 		<PackageReference Include="OneOf" Version="3.0.263" />
 		<PackageReference Include="Serilog" Version="3.0.1" />
@@ -313,7 +314,7 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
 		<PackageReference Include="WinUI3Localizer" Version="2.0.1" />
-		<PackageReference Include="WinUIEx" Version="2.3.1" />
+		<PackageReference Include="WinUIEx" Version="2.3.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -965,6 +966,9 @@
 		<None Update="Assets\Images\Elements\Element_Pyro.svg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\CharacterManagerPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\Controls\LinkButton.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

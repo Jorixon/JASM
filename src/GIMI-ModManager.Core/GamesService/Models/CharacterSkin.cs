@@ -12,7 +12,7 @@ public class CharacterSkin : ICharacterSkin
     public int Rarity { get; internal set; } = -1;
     public Uri? ImageUri { get; set; } = null;
     public string DisplayName { get; set; } = null!;
-    public string InternalName { get; set; } = null!;
+    public string InternalName { get; init; } = null!;
     public ICharacter Character { get; internal set; } = null!;
     public DateTime? ReleaseDate { get; internal set; } = null;
 

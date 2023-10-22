@@ -297,7 +297,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
                 movedModsCount += await Task.Run(() =>
                     _skinManagerService.ReorganizeModsAsync(
-                        _gameService.GetCharacterByName(_gameService.OtherCharacterInternalName)!
+                        _gameService.GetCharacterByIdentifier(_gameService.OtherCharacterInternalName)!
                             .InternalName)); // Others folder
 
                 await _skinManagerService.RefreshModsAsync();

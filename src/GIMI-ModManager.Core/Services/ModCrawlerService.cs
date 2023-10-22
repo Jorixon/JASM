@@ -69,7 +69,7 @@ public class ModCrawlerService
 
     private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
 
-    private static bool IsOfSkinType(FileInfo file, IModdableObject skin)
+    private static bool IsOfSkinType(FileInfo file, ICharacterSkin skin)
     {
         var fileExtensionMatch = ModExtensions.Any(extension =>
             file.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase));

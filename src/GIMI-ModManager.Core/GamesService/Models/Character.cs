@@ -11,8 +11,9 @@ public class Character : ICharacter, IEquatable<Character>
 {
     //public int Id { get; internal set; }
     public string? Category { get; internal set; }
-    public string InternalName { get; set; } = null!;
+    public string InternalName { get; init; } = null!;
     public string ModFilesName { get; internal set; } = null!;
+    public bool IsMultiMod { get; init; }
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }
     public Uri? ImageUri { get; set; }
@@ -38,6 +39,7 @@ public class Character : ICharacter, IEquatable<Character>
             InternalName = internalName,
             ModFilesName = jsonCharacter.ModFilesName ?? string.Empty,
             DisplayName = jsonCharacter.DisplayName ?? internalName,
+            IsMultiMod = jsonCharacter.IsMultiMod ?? false,
             Keys = jsonCharacter.Keys ?? Array.Empty<string>(),
             Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var date) ? date : DateTime.MaxValue,
@@ -97,6 +99,13 @@ public class Character : ICharacter, IEquatable<Character>
     }
 
     public bool Equals(ICharacterSkin? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return string.Equals(InternalName, other.InternalName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public bool Equals(IModdableObject? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

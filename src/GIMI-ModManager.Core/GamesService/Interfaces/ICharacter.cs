@@ -3,7 +3,7 @@
 /// <summary>
 /// In game playable character
 /// </summary>
-public interface ICharacter : IRarity, IImageSupport, INameable, IModdableObject, IEquatable<ICharacterSkin>
+public interface ICharacter : IRarity, IImageSupport, IModdableObject, IEquatable<ICharacterSkin>
 {
     public IGameClass Class { get; }
     public IGameElement Element { get; }

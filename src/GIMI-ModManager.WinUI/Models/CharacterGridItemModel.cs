@@ -5,7 +5,7 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 namespace GIMI_ModManager.WinUI.Models;
 
 public partial class CharacterGridItemModel : ObservableObject, IEquatable<CharacterGridItemModel>,
-    IEquatable<ICharacter>
+    IEquatable<ICharacter>, IEquatable<IModdableObject>
 {
     [ObservableProperty] private ICharacter _character;
 
@@ -36,23 +36,21 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
         return Character.InternalNameEquals(other.InternalName);
     }
 
+    public bool Equals(IModdableObject? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Character.InternalNameEquals(other.InternalName);
+    }
+
     public override bool Equals(object? obj)
     {
         return ReferenceEquals(this, obj) || obj is CharacterGridItemModel other && Equals(other);
     }
 
-    public override int GetHashCode()
-    {
-        return Character.GetHashCode();
-    }
+    public override int GetHashCode() => Character.GetHashCode();
 
-    public static bool operator ==(CharacterGridItemModel? left, CharacterGridItemModel? right)
-    {
-        return Equals(left, right);
-    }
+    public static bool operator ==(CharacterGridItemModel? left, CharacterGridItemModel? right) => Equals(left, right);
 
-    public static bool operator !=(CharacterGridItemModel? left, CharacterGridItemModel? right)
-    {
-        return !Equals(left, right);
-    }
+    public static bool operator !=(CharacterGridItemModel? left, CharacterGridItemModel? right) => !Equals(left, right);
 }

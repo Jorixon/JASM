@@ -100,7 +100,7 @@ public partial class App : Application
                 services.AddSingleton<ModCrawlerService>();
                 services.AddSingleton<ModSettingsService>();
                 services.AddSingleton<KeySwapService>();
-                services.AddSingleton<ILanguageLocalizer, Services.Localizer>();
+                services.AddSingleton<ILanguageLocalizer, Localizer>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
@@ -117,6 +117,8 @@ public partial class App : Application
                 services.AddTransient<CharacterDetailsPage>();
                 services.AddTransient<DebugViewModel>();
                 services.AddTransient<DebugPage>();
+                services.AddTransient<CharacterManagerViewModel>();
+                services.AddTransient<CharacterManagerPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(
