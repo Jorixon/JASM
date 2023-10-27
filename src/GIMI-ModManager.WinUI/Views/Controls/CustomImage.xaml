@@ -38,10 +38,12 @@
                 </Image.Source>
             </Image>
             <Button
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Command="{x:Bind EditButtonCommand, Mode=OneWay}">
-                <FontIcon Glyph="&#xE70F;" />
+                HorizontalAlignment="{x:Bind ButtonHorizontalAlignment, Mode=OneWay}"
+                VerticalAlignment="{x:Bind ButtonVerticalAlignment, Mode=OneWay}"
+                Background="{ThemeResource SmokeFillColorDefaultBrush}"
+                Command="{x:Bind EditButtonCommand, Mode=OneWay}"
+                ToolTipService.ToolTip="Pick an Image">
+                <FontIcon x:Name="EditButtonFontIcon" Glyph="&#xE70F;" />
             </Button>
         </Grid>
 

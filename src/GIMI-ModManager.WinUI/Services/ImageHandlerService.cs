@@ -10,6 +10,11 @@ public class ImageHandlerService
 
     private readonly DirectoryInfo _tmpFolder = new(Path.Combine(App.TMP_DIR, "Images"));
 
+    public readonly Uri PlaceholderImageUri =
+        new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
+
+    public string PlaceholderImagePath => PlaceholderImageUri.LocalPath;
+
     public async Task<IStorageFile?> PickImageAsync(bool copyToTmpFolder = true)
     {
         var filePicker = new FileOpenPicker();

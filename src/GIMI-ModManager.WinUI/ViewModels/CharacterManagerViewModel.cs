@@ -7,6 +7,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Services;
 using Microsoft.UI.Xaml;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -15,6 +16,7 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
 {
     private readonly IGameService _gameService;
     private readonly ISkinManagerService _skinManagerService;
+    private readonly ImageHandlerService _imageHandlerService;
 
 
     [ObservableProperty] private bool _isCharacterDisabled;
@@ -42,10 +44,12 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
 
     public event EventHandler<SetSelectionArgs>? SetSelection;
 
-    public CharacterManagerViewModel(IGameService gameService, ISkinManagerService skinManagerService)
+    public CharacterManagerViewModel(IGameService gameService, ISkinManagerService skinManagerService,
+        ImageHandlerService imageHandlerService)
     {
         _gameService = gameService;
         _skinManagerService = skinManagerService;
+        _imageHandlerService = imageHandlerService;
     }
 
 
@@ -157,7 +161,8 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         {
             Suggestions.Add(new CharacterSearchResult
             {
-                Name = "No results found"
+                Name = "No results found",
+                ImagePath = _imageHandlerService.PlaceholderImagePath
             });
             return;
         }
@@ -186,11 +191,12 @@ public class CharacterSearchResult
 
     public static CharacterSearchResult FromCharacter(ICharacter character)
     {
+        ArgumentNullException.ThrowIfNull(character.ImageUri);
         return new CharacterSearchResult
         {
             InternalName = character.InternalName,
             Name = character.DisplayName,
-            ImagePath = character.ImageUri?.ToString() ?? " "
+            ImagePath = character.ImageUri.ToString()
         };
     }
 

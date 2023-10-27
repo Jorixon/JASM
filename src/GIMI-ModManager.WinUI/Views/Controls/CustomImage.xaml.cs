@@ -46,4 +46,37 @@ public sealed partial class CustomImage : UserControl
         get { return (ICommand)GetValue(EditButtonCommandProperty); }
         set { SetValue(EditButtonCommandProperty, value); }
     }
+
+    public static readonly DependencyProperty ButtonHorizontalAlignmentProperty = DependencyProperty.Register(
+        nameof(ButtonHorizontalAlignment), typeof(HorizontalAlignment), typeof(CustomImage),
+        new PropertyMetadata(HorizontalAlignment.Right));
+
+    public HorizontalAlignment ButtonHorizontalAlignment
+    {
+        get => (HorizontalAlignment)GetValue(ButtonHorizontalAlignmentProperty);
+        set
+        {
+            SetValue(ButtonHorizontalAlignmentProperty, value);
+
+            switch (value)
+            {
+                case HorizontalAlignment.Left:
+                    EditButtonFontIcon.Glyph = "\uEB7E";
+                    break;
+                case HorizontalAlignment.Right:
+                    EditButtonFontIcon.Glyph = "\uE70F";
+                    break;
+            }
+        }
+    }
+
+    public static readonly DependencyProperty ButtonVerticalAlignmentProperty = DependencyProperty.Register(
+        nameof(ButtonVerticalAlignment), typeof(VerticalAlignment), typeof(CustomImage),
+        new PropertyMetadata(VerticalAlignment.Top));
+
+    public VerticalAlignment ButtonVerticalAlignment
+    {
+        get => (VerticalAlignment)GetValue(ButtonVerticalAlignmentProperty);
+        set => SetValue(ButtonVerticalAlignmentProperty, value);
+    }
 }
