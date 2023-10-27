@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views.CharacterManager"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     x:Name="EditCharacterPageRoot"
     mc:Ignorable="d">
 
@@ -28,7 +29,10 @@
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="Mod Folder Path:" />
-                <controls:LinkButton Link="{x:Bind ViewModel.ModFolderUri}" Text="{x:Bind ViewModel.ModFolderString}" />
+                <controls:LinkButton
+                    Link="{x:Bind ViewModel.ModFolderUri}"
+                    Text="{x:Bind ViewModel.ModFolderString}"
+                    ToolTipService.ToolTip="Open Character's mod folder" />
             </StackPanel>
 
             <Button
@@ -162,24 +166,78 @@
 
 
 
-            <StackPanel
+            <Grid
                 Grid.Column="2"
                 Width="150"
                 HorizontalAlignment="Right">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <Button
+                    Grid.Row="0"
                     Margin="0,16"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ViewModel.RevertChangesCommand}"
-                    Content="Undo"
+                    Content="Undo changes"
                     ToolTipService.ToolTip="Reverts changes not saved" />
                 <Button
+                    Grid.Row="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
                     Background="{ThemeResource AccentFillColorDefaultBrush}"
-                    Command="{x:Bind ViewModel.SaveChangesCommand}"
-                    Content="Save"
-                    ToolTipService.ToolTip="Saves changes to disk" />
-            </StackPanel>
+                    Command="{x:Bind ViewModel.DummySaveCommand}"
+                    Content="Save changes"
+                    ToolTipService.ToolTip="Saves changes to disk">
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <Button Command="{x:Bind ViewModel.SaveChangesCommand}" Content="Save" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+
+                <ListView
+                    Grid.Row="2"
+                    Margin="0,8"
+                    ItemsSource="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}"
+                    SelectionMode="None">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:ValidationErrors">
+                            <StackPanel
+                                Margin="0,4"
+                                Padding="0,4"
+                                Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
+                                CornerRadius="4">
+                                <TextBlock
+                                    IsTextSelectionEnabled="True"
+                                    Text="{x:Bind InputField}"
+                                    TextWrapping="WrapWholeWords" />
+                                <TextBlock
+                                    IsTextSelectionEnabled="True"
+                                    Text="{x:Bind ErrorMessage}"
+                                    TextWrapping="WrapWholeWords" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+
+                <Button
+                    Grid.Row="3"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ShowCharacterModelCommand}">
+                    <Button.Content>
+                        <TextBlock Text="Show Character Data Model..." TextWrapping="WrapWholeWords" />
+                    </Button.Content>
+                </Button>
+
+
+            </Grid>
         </Grid>
 
 

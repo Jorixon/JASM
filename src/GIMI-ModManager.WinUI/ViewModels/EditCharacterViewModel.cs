@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -10,6 +11,7 @@ using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -29,6 +31,8 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [ObservableProperty] private int _modsCount;
 
     [ObservableProperty] private string _keyToAddInput = string.Empty;
+
+    public ObservableCollection<ValidationErrors> ValidationErrors { get; } = new();
 
 
     public EditCharacterViewModel(IGameService gameService, ILogger logger, ISkinManagerService skinManagerService,
@@ -161,7 +165,74 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             $"Disabling character {_character.InternalName} with deleteFolder={deleteFolderCheckBox.IsChecked}");
     }
 
-    private bool CanSaveChanges() => AnyChanges();
+    private bool CanSaveChanges()
+    {
+        ValidationErrors.Clear();
+
+        if (!AnyChanges())
+            return false;
+
+        var errors = new List<ValidationErrors>();
+
+        var characters = _gameService.GetCharacters();
+        if (!characters.Remove(_character))
+        {
+            _logger.Error($"Character {_character.InternalName} not found in game service");
+            return false;
+        }
+
+        CharacterVm.DisplayName = CharacterVm.DisplayName.Trim();
+
+        if (string.IsNullOrWhiteSpace(CharacterVm.DisplayName))
+        {
+            errors.Add(new ValidationErrors
+            {
+                InputField = "Field: DisplayName",
+                ErrorMessage = "Display name cannot be empty"
+            });
+        }
+
+
+        // Check for duplicate display names
+        if (characters.FirstOrDefault(c =>
+                c.DisplayName.Equals(CharacterVm.DisplayName, StringComparison.OrdinalIgnoreCase)) is
+            { } duplicateDisplayNameCharacter)
+        {
+            errors.Add(new ValidationErrors
+            {
+                InputField = "Field: DisplayName",
+                ErrorMessage =
+                    $"Display name already in use by Id: {duplicateDisplayNameCharacter.InternalName} | DisplayName: {duplicateDisplayNameCharacter.DisplayName}"
+            });
+        }
+
+        // Check for duplicate keys
+
+        if (characters.FirstOrDefault(c => c.Keys.Any(key => CharacterVm.Keys.Contains(key))) is
+            { } duplicateKeyCharacter)
+        {
+            errors.Add(new ValidationErrors
+            {
+                InputField = "Field: Keys",
+                ErrorMessage =
+                    $"Key already in use by Id: {duplicateKeyCharacter.InternalName} | DisplayName: {duplicateKeyCharacter.DisplayName}"
+            });
+        }
+
+        if (errors.Count > 0)
+        {
+            errors.ForEach(err => ValidationErrors.Add(err));
+            return false;
+        }
+
+
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSaveChanges))]
+    private void DummySave()
+    {
+    }
 
     [RelayCommand(CanExecute = nameof(CanSaveChanges))]
     private Task SaveChangesAsync()
@@ -200,8 +271,47 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
     private void CheckForChanges(object? sender = null, PropertyChangedEventArgs? propertyChangedEventArgs = null)
     {
+        DummySaveCommand.NotifyCanExecuteChanged();
         DisableCharacterCommand.NotifyCanExecuteChanged();
         SaveChangesCommand.NotifyCanExecuteChanged();
         RevertChangesCommand.NotifyCanExecuteChanged();
     }
+
+
+    [RelayCommand]
+    private async Task ShowCharacterModelAsync()
+    {
+        var json = JsonConvert.SerializeObject(_character, Formatting.Indented);
+
+        var content = new ScrollViewer()
+        {
+            Content = new TextBlock()
+            {
+                Text = json,
+                TextWrapping = TextWrapping.WrapWholeWords,
+                IsTextSelectionEnabled = true,
+                Margin = new Thickness(4)
+            }
+        };
+
+        var characterModelDialog = new ContentDialog
+        {
+            Title = "Character Model",
+            Content = content,
+            CloseButtonText = "Close",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = App.MainWindow.Content.XamlRoot,
+            FullSizeDesired = true
+        };
+
+        await characterModelDialog.ShowAsync();
+    }
 }
+
+public class ValidationErrors
+{
+    public string InputField { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
+}
+
+public record ModModelProperty(string Key, string Value);

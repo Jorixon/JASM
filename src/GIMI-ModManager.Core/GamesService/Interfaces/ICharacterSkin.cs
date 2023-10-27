@@ -1,10 +1,13 @@
-﻿namespace GIMI_ModManager.Core.GamesService.Interfaces;
+﻿using Newtonsoft.Json;
+
+namespace GIMI_ModManager.Core.GamesService.Interfaces;
 
 public interface ICharacterSkin : IRarity, IImageSupport, INameable
 {
     /// <summary>
     /// Character this skin belongs to
     /// </summary>
+    [JsonIgnore]
     public ICharacter Character { get; }
 
     /// <summary>

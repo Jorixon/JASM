@@ -15,7 +15,7 @@
         <xaml:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="0,-24,-44,0">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -41,7 +41,10 @@
             SuggestionChosen="CharacterSearchBox_OnSuggestionChosen"
             TextChanged="CharacterSearchBox_OnTextChanged">
             <AutoSuggestBox.KeyboardAccelerators>
-                <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="CharacterSearchBox_Ctrl_F" />
+                <KeyboardAccelerator
+                    Key="F"
+                    Invoked="CharacterSearchBox_Ctrl_F"
+                    Modifiers="Control" />
             </AutoSuggestBox.KeyboardAccelerators>
 
             <AutoSuggestBox.ItemTemplate>
