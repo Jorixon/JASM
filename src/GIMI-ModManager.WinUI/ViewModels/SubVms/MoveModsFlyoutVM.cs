@@ -118,8 +118,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         return SelectedCharacter is not null && SelectedModsCount > 0
                                              && (SelectedCharacterSkin is null ||
                                                  SelectedCharacterSkin.InternalName.Equals(
-                                                     _backendSelectedCharacterSkin?.InternalName,
-                                                     StringComparison.OrdinalIgnoreCase));
+                                                     _backendSelectedCharacterSkin?.InternalName));
     }
 
     [RelayCommand(CanExecute = nameof(CanMoveModsCommandExecute))]
@@ -254,8 +253,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     private bool CanOverrideModCharacterSkin()
     {
         return SelectedCharacter is null && SelectedCharacterSkin is not null && SelectedModsCount > 0
-               && !SelectedCharacterSkin.InternalName.Equals(_backendSelectedCharacterSkin?.InternalName,
-                   StringComparison.OrdinalIgnoreCase);
+               && !SelectedCharacterSkin.InternalName.Equals(_backendSelectedCharacterSkin?.InternalName);
     }
 
     [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
@@ -368,7 +366,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         if (characterTemplate == null) return;
 
         var characterSkinToSet = _shownCharacter.Skins.FirstOrDefault(charSkin =>
-            charSkin.InternalName.Equals(characterTemplate.InternalName, StringComparison.OrdinalIgnoreCase));
+            charSkin.InternalName.Equals(characterTemplate.InternalName));
 
         if (characterSkinToSet == null)
             return;

@@ -12,7 +12,7 @@ public class CharacterSkin : ICharacterSkin
     public int Rarity { get; internal set; } = -1;
     public Uri? ImageUri { get; set; } = null;
     public string DisplayName { get; set; } = null!;
-    public string InternalName { get; init; } = null!;
+    public InternalName InternalName { get; init; } = null!;
     public ICharacter Character { get; internal set; } = null!;
     public DateTime? ReleaseDate { get; internal set; } = null;
 
@@ -24,7 +24,7 @@ public class CharacterSkin : ICharacterSkin
 
         var characterSkin = new CharacterSkin
         {
-            InternalName = internalName,
+            InternalName = new InternalName(internalName),
             ModFilesName = jsonSkin.ModFilesName ?? string.Empty,
             DisplayName = jsonSkin.DisplayName ?? internalName,
             Rarity = jsonSkin.Rarity is >= 0 and <= 5 ? jsonSkin.Rarity.Value : -1,

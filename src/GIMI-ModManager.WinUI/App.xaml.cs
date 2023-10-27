@@ -12,6 +12,7 @@ using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
+using GIMI_ModManager.WinUI.Views.CharacterManager;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -92,6 +93,8 @@ public partial class App : Application
                 services.AddSingleton<UpdateChecker>();
                 services.AddSingleton<AutoUpdaterService>();
 
+                services.AddSingleton<ImageHandlerService>();
+
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
                 services.AddSingleton<IGenshinService, GenshinService>();
@@ -119,6 +122,8 @@ public partial class App : Application
                 services.AddTransient<DebugPage>();
                 services.AddTransient<CharacterManagerViewModel>();
                 services.AddTransient<CharacterManagerPage>();
+                services.AddTransient<EditCharacterViewModel>();
+                services.AddTransient<EditCharacterPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

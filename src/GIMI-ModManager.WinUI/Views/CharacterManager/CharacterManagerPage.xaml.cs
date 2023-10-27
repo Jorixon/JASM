@@ -1,6 +1,8 @@
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.Views.CharacterManager;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Input;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -12,16 +14,16 @@ public sealed partial class CharacterManagerPage : Page
     {
         ViewModel = App.GetService<CharacterManagerViewModel>();
         InitializeComponent();
+        ViewModel.SetSelection += CharacterSelected;
+        Loaded += (sender, args) => CharacterSearchBox.Focus(FocusState.Programmatic);
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    private void CharacterSelected(object? sender, CharacterManagerViewModel.SetSelectionArgs e)
     {
-        base.OnNavigatedTo(e);
-    }
-
-    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-    {
-        base.OnNavigatingFrom(e);
+        if (e.Character is not null)
+            EditFrame.Navigate(typeof(EditCharacterPage), e.Character.InternalName.Id);
+        else
+            EditFrame.Content = null;
     }
 
     private void CharacterSearchBox_OnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -38,5 +40,10 @@ public sealed partial class CharacterManagerPage : Page
     private void CharacterSearchBox_OnSuggestionChosen(AutoSuggestBox sender,
         AutoSuggestBoxSuggestionChosenEventArgs args)
     {
+    }
+
+    private void CharacterSearchBox_Ctrl_F(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        CharacterSearchBox.Focus(FocusState.Keyboard);
     }
 }

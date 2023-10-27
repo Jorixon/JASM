@@ -17,7 +17,7 @@ public partial class CharacterVM : ObservableObject, IEquatable<CharacterVM>
 
     [ObservableProperty] private ObservableCollection<string> _keys = new();
     public DateTime ReleaseDate { get; set; } = DateTime.MinValue;
-    public Uri ImageUri { get; set; } = PlaceholderImagePath;
+    [ObservableProperty] private Uri _imageUri = PlaceholderImagePath;
     public int Rarity { get; set; } = -1;
     public string Element { get; set; } = string.Empty;
     public string Class { get; set; } = string.Empty;

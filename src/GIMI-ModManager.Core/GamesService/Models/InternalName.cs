@@ -1,40 +1,38 @@
-﻿namespace GIMI_ModManager.Core.GamesService.Models;
+﻿using System.Diagnostics;
+using System.Globalization;
 
-public class InternalName : IInternalName, IEquatable<InternalName>, IEquatable<string>
+namespace GIMI_ModManager.Core.GamesService.Models;
+
+public class InternalName : IEquatable<InternalName>, IEquatable<string>
 {
     public string Id { get; }
 
 
     public InternalName(string id)
     {
-        ArgumentNullException.ThrowIfNull(id, nameof(id));
-        Id = id.Trim().ToLower();
+        ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
+        Id = id.Trim().ToLower(CultureInfo.InvariantCulture);
+        if (Id != id.Trim().ToLower())
+            Debugger.Break();
     }
 
     public bool Equals(InternalName? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return string.Equals(Id, other.Id, StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    public bool Equals(IInternalName? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return string.Equals(Id, other.Id, StringComparison.CurrentCultureIgnoreCase);
+        return string.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase);
     }
 
     public bool Equals(string? other)
     {
         if (ReferenceEquals(null, other)) return false;
-        return string.Equals(Id, other, StringComparison.CurrentCultureIgnoreCase);
+        return string.Equals(Id, other, StringComparison.OrdinalIgnoreCase);
     }
 
     public override bool Equals(object? obj) =>
         ReferenceEquals(this, obj) || obj is InternalName other && Equals(other);
 
-    public override int GetHashCode() => StringComparer.CurrentCultureIgnoreCase.GetHashCode(Id);
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Id);
 
     public static bool operator ==(InternalName? left, InternalName? right) => Equals(left, right);
 
@@ -43,9 +41,4 @@ public class InternalName : IInternalName, IEquatable<InternalName>, IEquatable<
     public override string ToString() => Id;
 
     public static implicit operator string(InternalName internalName) => internalName.Id;
-}
-
-public interface IInternalName : IEquatable<IInternalName>
-{
-    public string Id { get; }
 }

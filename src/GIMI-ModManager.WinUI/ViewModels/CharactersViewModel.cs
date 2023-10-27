@@ -516,7 +516,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             var settingss = await ReadCharacterSettings();
 
-            var pinedCharacterss = _backendCharacters.Where(ch => ch.IsPinned).Select(ch => ch.Character.InternalName)
+            var pinedCharacterss = _backendCharacters.Where(ch => ch.IsPinned)
+                .Select(ch => ch.Character.InternalName.Id)
                 .ToArray();
             settingss.PinedCharacters = pinedCharacterss;
             await SaveCharacterSettings(settingss);
@@ -532,7 +533,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         var pinedCharacters = _backendCharacters
             .Where(ch => ch.IsPinned)
-            .Select(ch => ch.Character.InternalName)
+            .Select(ch => ch.Character.InternalName.Id)
             .ToArray();
 
         settings.PinedCharacters = pinedCharacters;

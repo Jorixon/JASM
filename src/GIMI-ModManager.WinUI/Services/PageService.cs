@@ -2,6 +2,7 @@
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
+using GIMI_ModManager.WinUI.Views.CharacterManager;
 using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -12,7 +13,6 @@ public class PageService : IPageService
 
     public PageService()
     {
-        //Configure<MainViewModel, MainPage>();
         Configure<StartupViewModel, StartupPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<NotificationsViewModel, NotificationsPage>();
@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<CharacterDetailsViewModel, CharacterDetailsPage>();
         Configure<DebugViewModel, DebugPage>();
         Configure<CharacterManagerViewModel, CharacterManagerPage>();
+        Configure<EditCharacterViewModel, EditCharacterPage>();
     }
 
     public Type GetPageType(string key)

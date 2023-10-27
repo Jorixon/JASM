@@ -278,7 +278,9 @@
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
+		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
+		<None Remove="Views\Controls\CustomImage.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
 		<None Remove="Views\Controls\LinkButton.xaml" />
@@ -966,6 +968,12 @@
 		<None Update="Assets\Images\Elements\Element_Pyro.svg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\Controls\CustomImage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\CharacterManager\EditCharacterPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\CharacterManagerPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

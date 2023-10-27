@@ -258,7 +258,7 @@ public class GameService : IGameService
                 .CreateCharacter(imageFolder: imageFolderName);
 
 
-            if (disabledCharacters.Any(x => character.InternalName.Equals(x, StringComparison.OrdinalIgnoreCase)))
+            if (disabledCharacters.Any(x => character.InternalName.Equals(x)))
                 _disabledCharacters.Add(character);
             else
                 _characters.Add(character);
@@ -335,7 +335,7 @@ public class GameService : IGameService
         var character = new Character
         {
             //Id = _otherCharacterId,
-            InternalName = OtherCharacterInternalName,
+            InternalName = new InternalName(OtherCharacterInternalName),
             DisplayName = OtherCharacterInternalName,
             ReleaseDate = DateTime.MinValue,
             Rarity = -1,
@@ -356,7 +356,7 @@ public class GameService : IGameService
         var character = new Character
         {
             //Id = _glidersCharacterId,
-            InternalName = GlidersCharacterInternalName,
+            InternalName = new InternalName(GlidersCharacterInternalName),
             DisplayName = GlidersCharacterInternalName,
             ReleaseDate = DateTime.MinValue,
             Rarity = -1,
@@ -378,7 +378,7 @@ public class GameService : IGameService
         var character = new Character
         {
             //Id = _weaponsCharacterId,
-            InternalName = WeaponsCharacterInternalName,
+            InternalName = new InternalName(WeaponsCharacterInternalName),
             DisplayName = WeaponsCharacterInternalName,
             ReleaseDate = DateTime.MinValue,
             Rarity = -1,
@@ -398,7 +398,7 @@ public class GameService : IGameService
     {
         character.Skins.Add(new CharacterSkin(character)
         {
-            InternalName = "Default_" + character.InternalName,
+            InternalName = new InternalName("Default_" + character.InternalName),
             ModFilesName = "",
             DisplayName = "Default",
             Rarity = character.Rarity,
@@ -564,7 +564,7 @@ internal class Classes : BaseMapper<Class>
         Values.Add(new Class()
         {
             DisplayName = "None",
-            InternalName = "None"
+            InternalName = new InternalName("None")
         });
     }
 }
@@ -578,7 +578,7 @@ internal class Elements : BaseMapper<Element>
         Values.Add(new Element()
         {
             DisplayName = "None",
-            InternalName = "None"
+            InternalName = new InternalName("None")
         });
     }
 }
@@ -602,7 +602,8 @@ internal abstract class BaseMapper<T> where T : class, INameable, new()
                 string.IsNullOrWhiteSpace(value.DisplayName))
                 throw new InvalidOperationException($"{Name} has invalid data");
 
-            var newValue = new T() { DisplayName = value.DisplayName, InternalName = value.InternalName };
+            var newValue = new T()
+                { DisplayName = value.DisplayName, InternalName = new InternalName(value.InternalName) };
 
             // check if T is of type IImageSupport
             if (newValue is IImageSupport imageSupport && value is JsonElement element &&

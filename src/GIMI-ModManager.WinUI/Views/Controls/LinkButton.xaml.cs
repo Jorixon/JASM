@@ -1,3 +1,4 @@
+using Windows.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -39,5 +40,14 @@ public sealed partial class LinkButton : UserControl
     {
         get { return (Style)GetValue(TextStyleProperty); }
         set { SetValue(TextStyleProperty, value); }
+    }
+
+    private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (Link != null && Link.IsFile)
+        {
+            await Launcher.LaunchFolderPathAsync(Link.LocalPath);
+        }
     }
 }

@@ -516,7 +516,7 @@ public sealed class SkinManagerService : ISkinManagerService
         {
             // Is a character folder continue
             var character = characters.FirstOrDefault(x =>
-                x.InternalName.Equals(folder.Name, StringComparison.OrdinalIgnoreCase));
+                x.InternalName.Equals(folder.Name));
             if (character is not null)
                 continue;
 

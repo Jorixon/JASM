@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
 
 namespace GIMI_ModManager.Core.GamesService;
 
@@ -111,11 +112,11 @@ public interface INameable
     /// <summary>
     /// Should not be changed. Is used to identify the object
     /// </summary>
-    public string InternalName { get; internal init; }
+    public InternalName InternalName { get; internal init; }
 
     public bool InternalNameEquals(string other)
     {
-        return InternalName.Equals(other, StringComparison.OrdinalIgnoreCase);
+        return InternalName.Equals(other);
     }
 
     public bool InternalNameEquals(INameable other)

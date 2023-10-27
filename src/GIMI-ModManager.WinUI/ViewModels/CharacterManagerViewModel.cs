@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using Microsoft.UI.Xaml;
@@ -35,8 +36,11 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
 
     private List<ICharacter> _characters = new();
 
+    private static InternalName? _lastSelectedCharacter;
+
     public ObservableCollection<CharacterSearchResult> Suggestions { get; } = new();
 
+    public event EventHandler<SetSelectionArgs>? SetSelection;
 
     public CharacterManagerViewModel(IGameService gameService, ISkinManagerService skinManagerService)
     {
@@ -56,6 +60,9 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         ModsCount = characterModList.Mods.Count;
         SelectedCharacter.Keys.ForEach(key => CharacterKeys.Add(key));
         CharacterSelectionVisibility = Visibility.Visible;
+
+        SetSelection?.Invoke(this, new SetSelectionArgs(character));
+        _lastSelectedCharacter = character.InternalName;
     }
 
     private void ResetCharacter()
@@ -67,6 +74,8 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         CharacterFolderPath = string.Empty;
         ModsCount = 0;
         CharacterKeys.Clear();
+        SetSelection?.Invoke(this, new SetSelectionArgs(null));
+        _lastSelectedCharacter = null;
     }
 
     [RelayCommand]
@@ -119,6 +128,11 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
     public void OnNavigatedTo(object parameter)
     {
         _characters = _gameService.GetCharacters().Concat(_gameService.GetDisabledCharacters()).ToList();
+
+        if (_lastSelectedCharacter is null) return;
+        var character = _characters.FirstOrDefault(c => c.InternalNameEquals(_lastSelectedCharacter));
+        if (character is null) return;
+        SetCharacter(character);
     }
 
     public void OnNavigatedFrom()
@@ -150,6 +164,17 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
 
         foreach (var character in suitableCharacters.Select(kv => kv.Key))
             Suggestions.Add(CharacterSearchResult.FromCharacter(character));
+    }
+
+
+    public class SetSelectionArgs : EventArgs
+    {
+        public INameable? Character { get; }
+
+        public SetSelectionArgs(INameable? character)
+        {
+            Character = character;
+        }
     }
 }
 

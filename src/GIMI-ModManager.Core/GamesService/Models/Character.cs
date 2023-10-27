@@ -11,7 +11,7 @@ public class Character : ICharacter, IEquatable<Character>
 {
     //public int Id { get; internal set; }
     public string? Category { get; internal set; }
-    public string InternalName { get; init; } = null!;
+    public InternalName InternalName { get; init; } = null!;
     public string ModFilesName { get; internal set; } = null!;
     public bool IsMultiMod { get; init; }
     public string DisplayName { get; set; } = null!;
@@ -36,7 +36,7 @@ public class Character : ICharacter, IEquatable<Character>
 
         var character = new Character
         {
-            InternalName = internalName,
+            InternalName = new InternalName(jsonCharacter.InternalName),
             ModFilesName = jsonCharacter.ModFilesName ?? string.Empty,
             DisplayName = jsonCharacter.DisplayName ?? internalName,
             IsMultiMod = jsonCharacter.IsMultiMod ?? false,
@@ -49,7 +49,7 @@ public class Character : ICharacter, IEquatable<Character>
         // Add default skin
         character.Skins.Add(new CharacterSkin(character)
         {
-            InternalName = "Default_" + internalName,
+            InternalName = new InternalName("Default_" + internalName),
             ModFilesName = character.ModFilesName,
             DisplayName = "Default",
             Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
@@ -77,7 +77,7 @@ public class Character : ICharacter, IEquatable<Character>
 
     public Character(string internalName, string displayName)
     {
-        InternalName = internalName;
+        InternalName = new InternalName(internalName);
         DisplayName = displayName;
         Class = Models.Class.NoneClass();
         Element = Models.Element.NoneElement();
@@ -162,7 +162,7 @@ internal sealed class CharacterBuilder
                 throw new InvalidOperationException("Region cannot be null or empty");
 
             var region = regions.FirstOrDefault(region =>
-                region.InternalName.Equals(internalRegionName, StringComparison.OrdinalIgnoreCase));
+                region.InternalName.Equals(internalRegionName));
 
             if (region is not null)
             {
@@ -187,8 +187,7 @@ internal sealed class CharacterBuilder
             throw new InvalidOperationException("Class already set");
 
         _character.Class = gameClasses.FirstOrDefault(gameClass =>
-                               gameClass.InternalName.Equals(_jsonCharacter.Class,
-                                   StringComparison.OrdinalIgnoreCase))
+                               gameClass.InternalName.Equals(_jsonCharacter.Class))
                            ?? Class.NoneClass();
 
         _classSet = true;
@@ -201,8 +200,7 @@ internal sealed class CharacterBuilder
             throw new InvalidOperationException("Element already set");
 
         _character.Element = elements.FirstOrDefault(element =>
-                                 element.InternalName.Equals(_jsonCharacter.Element,
-                                     StringComparison.OrdinalIgnoreCase))
+                                 element.InternalName.Equals(_jsonCharacter.Element))
                              ?? Element.NoneElement();
 
 

@@ -7,10 +7,10 @@ internal class Region : IRegion
 {
     public Region(string internalName, string displayName)
     {
-        InternalName = internalName;
+        InternalName = new InternalName(internalName);
         DisplayName = displayName;
     }
 
-    public string InternalName { get; init; }
+    public InternalName InternalName { get; init; }
     public string DisplayName { get; set; }
 }
