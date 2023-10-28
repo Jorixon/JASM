@@ -23,6 +23,7 @@ public sealed class SkinManagerService : ISkinManagerService
     private DirectoryInfo? _threeMigotoFolder;
 
     private FileSystemWatcher _userIniWatcher = null!;
+
     private readonly List<ICharacterModList> _characterModLists = new();
     public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
 
@@ -226,6 +227,24 @@ public sealed class SkinManagerService : ISkinManagerService
     public ISkinMod? GetModById(Guid id)
     {
         return _characterModLists.SelectMany(x => x.Mods).FirstOrDefault(x => x.Id == id)?.Mod;
+    }
+
+    public Task EnableModListAsync(ICharacter moddableObject)
+    {
+        var modList = new CharacterModList(moddableObject, GetCharacterModFolderPath(moddableObject), logger: _logger);
+
+        _characterModLists.Add(modList);
+
+        return RefreshModsAsync(moddableObject.InternalName);
+    }
+
+    public Task DisableModListAsync(IModdableObject moddableObject)
+    {
+        var modList = GetCharacterModList(moddableObject);
+
+        _characterModLists.Remove(modList);
+        modList.Dispose();
+        return Task.CompletedTask;
     }
 
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
@@ -499,6 +518,9 @@ public sealed class SkinManagerService : ISkinManagerService
 
         _activeModsFolder.Refresh();
         var characters = _gameService.GetCharacters().ToArray();
+
+        var disabledCharacters = _gameService.GetDisabledCharacters();
+
         var othersCharacter = _gameService.GetCharacterByIdentifier("Others");
         if (othersCharacter is null)
         {
@@ -515,7 +537,7 @@ public sealed class SkinManagerService : ISkinManagerService
         foreach (var folder in folderToReorganize.EnumerateDirectories())
         {
             // Is a character folder continue
-            var character = characters.FirstOrDefault(x =>
+            var character = characters.Concat(disabledCharacters).FirstOrDefault(x =>
                 x.InternalName.Equals(folder.Name));
             if (character is not null)
                 continue;

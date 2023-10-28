@@ -27,9 +27,9 @@ public interface IGameService
     public ICharacter? GetCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
 
-    public ICharacter? GetCharacterByIdentifier(string internalName);
+    public ICharacter? GetCharacterByIdentifier(string internalName, bool includeDisabledCharacters = false);
 
-    public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
+    public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
 
     public List<IGameElement> GetElements();

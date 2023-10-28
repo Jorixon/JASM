@@ -130,7 +130,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _gameService.GetCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
+        var suitableItems = _gameService.QueryCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
             .Take(5)
             .Select(x => new CharacterGridItemModel(x.Key))
             .ToList();
@@ -686,7 +686,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         foreach (var storageItem in storageItems)
         {
             var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
-            var result = _gameService.GetCharacters(modName, minScore: 100);
+            var result = _gameService.QueryCharacters(modName, minScore: 100);
 
             var character = result.FirstOrDefault().Key;
             if (character is not null)

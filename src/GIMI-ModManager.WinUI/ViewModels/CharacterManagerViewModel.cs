@@ -93,7 +93,7 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         }
 
 
-        var suitableCharacters = _gameService.GetCharacters(query, minScore: 100).OrderByDescending(kv => kv.Value)
+        var suitableCharacters = _gameService.QueryCharacters(query, minScore: 100).OrderByDescending(kv => kv.Value)
             .ToArray();
 
         if (suitableCharacters.Length == 0)

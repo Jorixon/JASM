@@ -85,11 +85,30 @@ public class GameService : IGameService
         return Task.CompletedTask;
     }
 
-    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri) => throw new NotImplementedException();
+    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
+    {
+        ArgumentNullException.ThrowIfNull(newImageUri, nameof(newImageUri));
 
-    public Task DisableCharacterAsync(ICharacter character) => throw new NotImplementedException();
+        if (!File.Exists(newImageUri.LocalPath))
+            throw new ArgumentException();
 
-    public Task EnableCharacterAsync(ICharacter character) => throw new NotImplementedException();
+        character.ImageUri = newImageUri;
+        return Task.CompletedTask;
+    }
+
+    public Task DisableCharacterAsync(ICharacter character)
+    {
+        _characters.Remove(character);
+        _disabledCharacters.Add(character);
+        return Task.CompletedTask;
+    }
+
+    public Task EnableCharacterAsync(ICharacter character)
+    {
+        _disabledCharacters.Remove(character);
+        _characters.Add(character);
+        return Task.CompletedTask;
+    }
 
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
         Uri? imageUri = null,
@@ -100,16 +119,24 @@ public class GameService : IGameService
     public ICharacter? GetCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
         int minScore = 100)
     {
-        var searchResult = GetCharacters(keywords, restrictToCharacters, minScore);
+        var searchResult = QueryCharacters(keywords, restrictToCharacters, minScore);
 
         return searchResult.Any(kv => kv.Value >= minScore) ? searchResult.MaxBy(x => x.Value).Key : null;
     }
 
-    public ICharacter? GetCharacterByIdentifier(string internalName) =>
-        _characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
+    public ICharacter? GetCharacterByIdentifier(string internalName, bool includeDisabledCharacters = false)
+    {
+        var characters =
+            GetCharacters().AsEnumerable();
+
+        if (includeDisabledCharacters)
+            characters = characters.Concat(GetDisabledCharacters());
+
+        return characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
+    }
 
 
-    public Dictionary<ICharacter, int> GetCharacters(string searchQuery,
+    public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100)
     {
         var searchResult = new Dictionary<ICharacter, int>();

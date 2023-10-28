@@ -6,6 +6,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
@@ -22,26 +23,29 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     private readonly ISkinManagerService _skinManagerService;
     private ICharacter _character = null!;
     private readonly ILogger _logger;
+    private readonly INavigationService _navigationService;
 
     private readonly ImageHandlerService _imageHandlerService;
 
     [ObservableProperty] private CharacterVM _characterVm = null!;
     [ObservableProperty] private Uri _modFolderUri = null!;
-    [ObservableProperty] private string _modFolderString = null!;
+    [ObservableProperty] private string _modFolderString = "";
     [ObservableProperty] private int _modsCount;
-
     [ObservableProperty] private string _keyToAddInput = string.Empty;
+
+    [ObservableProperty] private bool _isCharacterDisabled;
 
     public ObservableCollection<ValidationErrors> ValidationErrors { get; } = new();
 
 
     public EditCharacterViewModel(IGameService gameService, ILogger logger, ISkinManagerService skinManagerService,
-        ImageHandlerService imageHandlerService)
+        ImageHandlerService imageHandlerService, INavigationService navigationService)
     {
         _gameService = gameService;
         _logger = logger;
         _skinManagerService = skinManagerService;
         _imageHandlerService = imageHandlerService;
+        _navigationService = navigationService;
     }
 
 
@@ -58,7 +62,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             internalName = id;
 
 
-        var character = _gameService.GetCharacterByIdentifier(internalName);
+        var character = _gameService.GetCharacterByIdentifier(internalName, true);
 
         if (character is null)
         {
@@ -68,10 +72,23 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
         _character = character;
         CharacterVm = CharacterVM.FromCharacter(_character);
-        var modList = _skinManagerService.GetCharacterModList(_character);
-        ModFolderUri = new Uri(modList.AbsModsFolderPath);
-        ModFolderString = ModFolderUri.LocalPath;
-        ModsCount = modList.Mods.Count;
+
+        if (!_gameService.GetDisabledCharacters().Contains(character))
+        {
+            IsCharacterDisabled = false;
+            var modList = _skinManagerService.GetCharacterModList(_character);
+            ModFolderUri = new Uri(modList.AbsModsFolderPath);
+            ModFolderString = ModFolderUri.LocalPath;
+            ModsCount = modList.Mods.Count;
+        }
+        else
+        {
+            IsCharacterDisabled = true;
+            ModFolderUri = new Uri(_skinManagerService.ActiveModsFolderPath);
+            ModFolderString = ModFolderUri.LocalPath;
+            ModsCount = 0;
+        }
+
 
         CharacterVm.PropertyChanged += CheckForChanges;
     }
@@ -163,6 +180,10 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
         _logger.Information(
             $"Disabling character {_character.InternalName} with deleteFolder={deleteFolderCheckBox.IsChecked}");
+
+        await _gameService.DisableCharacterAsync(_character);
+        await _skinManagerService.DisableModListAsync(_character);
+        ResetState();
     }
 
     private bool CanSaveChanges()
@@ -235,10 +256,21 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     }
 
     [RelayCommand(CanExecute = nameof(CanSaveChanges))]
-    private Task SaveChangesAsync()
+    private async Task SaveChangesAsync()
     {
         _logger.Debug($"Saving changes to character {_character.InternalName}");
-        return Task.CompletedTask;
+
+        if (!AnyChanges())
+            return;
+
+        if (_character.DisplayName != CharacterVm.DisplayName)
+            await _gameService.SetCharacterDisplayNameAsync(_character, CharacterVm.DisplayName);
+
+        if (CharacterVm.ImageUri.LocalPath != _imageHandlerService.PlaceholderImagePath &&
+            _character.ImageUri != CharacterVm.ImageUri)
+            await _gameService.SetCharacterImageAsync(_character, CharacterVm.ImageUri);
+
+        ResetState();
     }
 
     private bool CanRevertChanges() => AnyChanges();
@@ -247,6 +279,11 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     private void RevertChanges()
     {
         _logger.Debug($"Reverting draft changes to character {_character.InternalName}");
+        ResetState();
+    }
+
+    private void ResetState()
+    {
         CharacterVm.PropertyChanged -= CheckForChanges;
         OnNavigatedTo(_character.InternalName.Id);
         CheckForChanges();

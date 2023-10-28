@@ -3,7 +3,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 
 namespace GIMI_ModManager.Core.Contracts.Entities;
 
-public interface ICharacterModList
+public interface ICharacterModList : IDisposable
 {
     public string AbsModsFolderPath { get; }
     public string DisabledPrefix { get; }

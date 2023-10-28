@@ -8,7 +8,7 @@ using Serilog;
 
 namespace GIMI_ModManager.Core.Entities;
 
-public sealed class CharacterModList : ICharacterModList, IDisposable
+public sealed class CharacterModList : ICharacterModList
 {
     private readonly ILogger? _logger;
     public IReadOnlyCollection<CharacterSkinEntry> Mods => new List<CharacterSkinEntry>(_mods).AsReadOnly();

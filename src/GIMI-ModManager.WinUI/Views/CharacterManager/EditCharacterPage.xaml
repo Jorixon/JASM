@@ -30,8 +30,8 @@
             <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="Mod Folder Path:" />
                 <controls:LinkButton
-                    Link="{x:Bind ViewModel.ModFolderUri}"
-                    Text="{x:Bind ViewModel.ModFolderString}"
+                    Link="{x:Bind ViewModel.ModFolderUri, Mode=TwoWay}"
+                    Text="{x:Bind ViewModel.ModFolderString, Mode=TwoWay}"
                     ToolTipService.ToolTip="Open Character's mod folder" />
             </StackPanel>
 
@@ -95,7 +95,7 @@
                     <TextBlock
                         Margin="8,0,0,0"
                         FontSize="20"
-                        Text="{x:Bind ViewModel.ModsCount}" />
+                        Text="{x:Bind ViewModel.ModsCount, Mode=TwoWay}" />
 
                 </StackPanel>
 

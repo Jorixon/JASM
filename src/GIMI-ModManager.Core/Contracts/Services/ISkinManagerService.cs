@@ -54,6 +54,10 @@ public interface ISkinManagerService : IDisposable
     public event EventHandler<ExportProgress>? ModExportProgress;
 
     public ISkinMod? GetModById(Guid id);
+
+    public Task EnableModListAsync(ICharacter moddableObject);
+
+    public Task DisableModListAsync(IModdableObject moddableObject);
 }
 
 public enum SetModStatus

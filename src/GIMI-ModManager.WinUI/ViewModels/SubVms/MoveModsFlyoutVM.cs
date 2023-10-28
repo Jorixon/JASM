@@ -318,7 +318,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SuggestedCharacters.Clear();
         var searchResultKeyValue =
             await Task.Run(() =>
-                _gameService.GetCharacters(searchString, minScore: 100).OrderByDescending(kv => kv.Value));
+                _gameService.QueryCharacters(searchString, minScore: 100).OrderByDescending(kv => kv.Value));
 
 
         var eligibleCharacters =
