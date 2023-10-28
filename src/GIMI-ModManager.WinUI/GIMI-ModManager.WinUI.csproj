@@ -39,7 +39,6 @@
 		<Page Remove="Views\SubPages\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Remove="Assets\characters.json" />
 		<Content Remove="Assets\Games\Genshin\characters.json" />
 		<Content Remove="Assets\Games\Genshin\custom\npc.json" />
 		<Content Remove="Assets\Games\Genshin\elements.json" />
@@ -125,6 +124,8 @@
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Tartaglia_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Thoma_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Tighnari_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Traveler_(Female)_Thumb.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Traveler_(Male)_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Traveler_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Venti_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Wanderer_Thumb.png" />
@@ -224,10 +225,13 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\characters.json">
+		<None Update="Assets\Games\Genshin\characters.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Genshin\characters.json">
+		<None Update="Assets\Games\Genshin\Images\Characters\Character_Traveler_(Female)_Thumb.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Characters\Character_Traveler_(Male)_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Languages\zh-cn\characters.json">

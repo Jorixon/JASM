@@ -100,7 +100,6 @@ public partial class App : Application
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
-                services.AddSingleton<IGenshinService, GenshinService>();
                 services.AddSingleton<IGameService, GameService>();
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();

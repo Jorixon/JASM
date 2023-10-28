@@ -577,7 +577,8 @@
     "Element": "Cryo",
     "Class": "Sword",
     "Region": [
-      "MondstadtKhaenri'ah"
+      "Mondstadt",
+      "Khaenri'ah"
     ],
     "ModFilesName": "Kaeya",
     "InGameSkins": [
@@ -1257,7 +1258,7 @@
       "lumine"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Traveler_Thumb.png",
+    "Image": "Character_Traveler_(Female)_Thumb.webp",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -1267,7 +1268,7 @@
     "ModFilesName": "TravelerGirl",
     "InGameSkins": [],
     "InternalName": "Traveler (Female)",
-    "DisplayName": "Traveler (Female)"
+    "DisplayName": "Lumine"
   },
   {
     "Id": 56,
@@ -1277,7 +1278,7 @@
       "aether"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Traveler_Thumb.png",
+    "Image": "Character_Traveler_(Male)_Thumb.webp",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -1287,7 +1288,7 @@
     "ModFilesName": "TravelerBoy",
     "InGameSkins": [],
     "InternalName": "Traveler (Male)",
-    "DisplayName": "Traveler (Male)"
+    "DisplayName": "Aether"
   },
   {
     "Id": 58,

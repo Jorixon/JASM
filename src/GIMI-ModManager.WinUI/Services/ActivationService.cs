@@ -3,7 +3,6 @@ using Windows.Foundation;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
-using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
@@ -25,7 +24,6 @@ public class ActivationService : IActivationService
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILogger _logger = Log.ForContext<ActivationService>();
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly IGenshinService _genshinService;
     private readonly IGameService _gameService;
     private readonly ILanguageLocalizer _languageLocalizer;
     private readonly ElevatorService _elevatorService;
@@ -43,7 +41,7 @@ public class ActivationService : IActivationService
     public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
         IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService,
         ILocalSettingsService localSettingsService,
-        IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
+        ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
         IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
         ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService)
@@ -52,7 +50,6 @@ public class ActivationService : IActivationService
         _activationHandlers = activationHandlers;
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
-        _genshinService = genshinService;
         _elevatorService = elevatorService;
         _genshinProcessManager = genshinProcessManager;
         _threeDMigtoProcessManager = threeDMigtoProcessManager;
