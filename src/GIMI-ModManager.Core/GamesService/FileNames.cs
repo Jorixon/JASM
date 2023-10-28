@@ -16,3 +16,9 @@ internal static class FileNames
         internal const string GameClass = "paths.json";
     }
 }
+
+public enum SupportedGames
+{
+    Genshin,
+    Honkai
+}

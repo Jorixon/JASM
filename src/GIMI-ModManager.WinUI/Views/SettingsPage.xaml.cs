@@ -28,4 +28,11 @@ public sealed partial class SettingsPage : Page
         var item = (string)e.AddedItems[0];
         await ViewModel.SelectLanguageCommand.ExecuteAsync(item).ConfigureAwait(false);
     }
+
+    private async void GameSelectorComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count == 0) return;
+        var item = (string)e.AddedItems[0];
+        await ViewModel.SelectGameCommand.ExecuteAsync(item).ConfigureAwait(false);
+    }
 }

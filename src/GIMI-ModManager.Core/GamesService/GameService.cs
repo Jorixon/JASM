@@ -61,8 +61,7 @@ public class GameService : IGameService
             throw new DirectoryNotFoundException($"Directory not found at path: {_assetsDirectory.FullName}");
 
         var settingsDirectory = new DirectoryInfo(localSettingsDirectory);
-        if (!settingsDirectory.Exists)
-            throw new DirectoryNotFoundException($"Directory not found at path: {settingsDirectory.FullName}");
+        settingsDirectory.Create();
 
         _gameSettingsManager = new GameSettingsManager(settingsDirectory);
 

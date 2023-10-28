@@ -1,6 +1,5 @@
 ﻿using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views.Controls;
-using Microsoft.Graphics.Display;
 using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.Views;
@@ -21,4 +20,10 @@ public sealed partial class StartupPage : Page
 
     private void ModsFolder_OnPathChangedEvent(object? sender, FolderSelector.StringEventArgs e)
         => ViewModel.PathToModsFolderPicker.Validate(e.Value);
+
+    private async void GameSelector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count == 0) return;
+        await ViewModel.SetGameCommand.ExecuteAsync((string)e.AddedItems[0]!).ConfigureAwait(false);
+    }
 }

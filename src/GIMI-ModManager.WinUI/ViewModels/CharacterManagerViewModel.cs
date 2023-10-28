@@ -107,7 +107,7 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         }
 
         foreach (var character in suitableCharacters.Select(kv => kv.Key))
-            Suggestions.Add(CharacterSearchResult.FromCharacter(character));
+            Suggestions.Add(CharacterSearchResult.FromCharacter(character, _imageHandlerService.PlaceholderImagePath));
     }
 
 
@@ -128,14 +128,13 @@ public class CharacterSearchResult
     public string Name { get; set; } = string.Empty;
     public string ImagePath { get; set; } = string.Empty;
 
-    public static CharacterSearchResult FromCharacter(ICharacter character)
+    public static CharacterSearchResult FromCharacter(ICharacter character, string placeHolderImage)
     {
-        ArgumentNullException.ThrowIfNull(character.ImageUri);
         return new CharacterSearchResult
         {
             InternalName = character.InternalName,
             Name = character.DisplayName,
-            ImagePath = character.ImageUri.ToString()
+            ImagePath = character.ImageUri?.ToString() ?? placeHolderImage
         };
     }
 

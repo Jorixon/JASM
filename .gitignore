@@ -662,5 +662,6 @@ fabric.properties
 ### Custom
 Testing/
 .Publish/
+Testing_honkai/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,csharp,rider

@@ -1,6 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.Options;
@@ -19,19 +22,32 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly ILocalSettingsService _localSettingsService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
+    private readonly IGameService _gameService;
+    private readonly SelectedGameService _selectedGameService;
 
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
+    [ObservableProperty] private string _selectedGame = SelectedGameService.Genshin;
+
+    public ObservableCollection<string> Games { get; } = new()
+    {
+        SelectedGameService.Genshin,
+        SelectedGameService.Honkai
+    };
+
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
-        IWindowManagerService windowManagerService, ISkinManagerService skinManagerService)
+        IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
+        SelectedGameService selectedGameService, IGameService gameService)
     {
         _navigationService = navigationService;
         _localSettingsService = localSettingsService;
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
+        _selectedGameService = selectedGameService;
+        _gameService = gameService;
 
         PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
 
@@ -57,6 +73,13 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             ModsFolderPath = PathToModsFolderPicker.Path,
             UnloadedModsFolderPath = null
         };
+
+        await _selectedGameService.SetSelectedGame(SelectedGame);
+
+        await _gameService.InitializeAsync(
+            Path.Combine(App.ASSET_DIR, "Games", await _selectedGameService.GetSelectedGameAsync()),
+            _localSettingsService.ApplicationDataFolder);
+
         await _localSettingsService.SaveSettingAsync(ModManagerOptions.Section,
             modManagerOptions);
         _logger.Information("Saved startup settings: {@ModManagerOptions}", modManagerOptions);
@@ -101,12 +124,40 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
+        SetPaths(settings);
+
+        SelectedGame = await _selectedGameService.GetSelectedGameAsync();
+    }
+
+    [RelayCommand]
+    private async Task SetGameAsync(string game)
+    {
+        if (game.IsNullOrEmpty())
+            return;
+
+        await _selectedGameService.SetSelectedGame(game);
+        SelectedGame = game;
+
+        var settings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
+
+        SetPaths(settings);
+    }
+
+
+    private void SetPaths(ModManagerOptions settings)
+    {
         if (!string.IsNullOrWhiteSpace(settings.GimiRootFolderPath))
             PathToGIMIFolderPicker.Path = settings.GimiRootFolderPath;
+        else
+            PathToGIMIFolderPicker.Path = "";
 
         if (!string.IsNullOrWhiteSpace(settings.ModsFolderPath))
             PathToModsFolderPicker.Path = settings.ModsFolderPath;
+        else
+            PathToModsFolderPicker.Path = "";
     }
+
 
     public void OnNavigatedFrom()
     {

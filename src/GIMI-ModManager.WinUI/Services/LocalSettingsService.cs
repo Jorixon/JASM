@@ -3,24 +3,22 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
-using GIMI_ModManager.WinUI.Models.Options;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace GIMI_ModManager.WinUI.Services;
 
 public class LocalSettingsService : ILocalSettingsService
 {
-    private const string _defaultApplicationDataFolder = "JASM/ApplicationData";
+    private const string _defaultApplicationDataFolder = "ApplicationData";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
+    private const string _jasm = "JASM";
 
     private readonly IFileService _fileService;
-    private readonly LocalSettingsOptions _options;
 
     private readonly string _localApplicationData =
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-    private readonly string _applicationDataFolder;
+    private string _applicationDataFolder;
     private readonly string _localsettingsFile;
 
     private IDictionary<string, object> _settings;
@@ -34,19 +32,16 @@ public class LocalSettingsService : ILocalSettingsService
 
     public string ApplicationDataFolder => _applicationDataFolder;
 
-    public LocalSettingsService(IFileService fileService, IOptions<LocalSettingsOptions> options)
+    public LocalSettingsService(IFileService fileService)
     {
         _fileService = fileService;
-        _options = options.Value;
 #if DEBUG
-        _applicationDataFolder = Path.Combine(_localApplicationData,
-            _options.ApplicationDataFolder ?? _defaultApplicationDataFolder) + "_Debug";
+        _applicationDataFolder = Path.Combine(_localApplicationData, _jasm, _defaultApplicationDataFolder) + "_Debug";
 
 #else
-        _applicationDataFolder = Path.Combine(_localApplicationData,
-            _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
+        _applicationDataFolder = Path.Combine(_localApplicationData, _jasm, _defaultApplicationDataFolder);
 #endif
-        _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
+        _localsettingsFile = _defaultLocalSettingsFile;
 
         _settings = new Dictionary<string, object>();
     }
@@ -62,6 +57,16 @@ public class LocalSettingsService : ILocalSettingsService
 
             _isInitialized = true;
         }
+    }
+
+    public void SetApplicationDataFolderName(string folderName)
+    {
+        if (string.IsNullOrEmpty(folderName))
+            throw new ArgumentException("Folder name cannot be null or empty", nameof(folderName));
+
+        _applicationDataFolder = Path.Combine(_localApplicationData, _jasm, folderName);
+        _isInitialized = false;
+        _settings = new Dictionary<string, object>();
     }
 
     public async Task<T?> ReadSettingAsync<T>(string key)

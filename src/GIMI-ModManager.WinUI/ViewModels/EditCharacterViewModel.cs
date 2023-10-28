@@ -257,7 +257,8 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         if (CharacterVm.DisplayName != _character.DisplayName)
             return true;
 
-        if (CharacterVm.ImageUri != _character.ImageUri)
+        if (CharacterVm.ImageUri.LocalPath != _imageHandlerService.PlaceholderImagePath &&
+            CharacterVm.ImageUri != _character.ImageUri)
             return true;
 
         if (CharacterVm.Keys.Count != _character.Keys.Count)

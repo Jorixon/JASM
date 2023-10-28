@@ -11,8 +11,10 @@ using ErrorOr;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Models.ViewModels;
@@ -27,7 +29,7 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILogger _logger;
@@ -38,6 +40,7 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly IGameService _gameService;
     private readonly ILanguageLocalizer _localizer;
     private readonly AutoUpdaterService _autoUpdaterService;
+    private readonly SelectedGameService _selectedGameService;
 
 
     private readonly NotificationManager _notificationManager;
@@ -63,6 +66,15 @@ public partial class SettingsViewModel : ObservableRecipient
 
     [ObservableProperty] private ObservableCollection<string> _languages = new();
     [ObservableProperty] private string _selectedLanguage = string.Empty;
+
+    [ObservableProperty] private ObservableCollection<string> _games = new()
+    {
+        SupportedGames.Genshin.ToString(),
+        SupportedGames.Honkai.ToString()
+    };
+
+    [ObservableProperty] private string _selectedGame = string.Empty;
+
     private Dictionary<string, string> _nameToLangCode = new();
 
     public PathPicker PathToGIMIFolderPicker { get; }
@@ -79,7 +91,8 @@ public partial class SettingsViewModel : ObservableRecipient
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer)
+        IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
+        SelectedGameService selectedGameService)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -92,6 +105,7 @@ public partial class SettingsViewModel : ObservableRecipient
         _gameService = gameService;
         _autoUpdaterService = autoUpdaterService;
         _localizer = localizer;
+        _selectedGameService = selectedGameService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -576,6 +590,53 @@ public partial class SettingsViewModel : ObservableRecipient
             _notificationManager.ShowNotification("Could not start update process", string.Join('\n', errorMessages),
                 TimeSpan.FromSeconds(10));
         }
+    }
+
+
+    [RelayCommand]
+    private async Task SelectGameAsync(string? game)
+    {
+        var jasmSelectedGame = await _selectedGameService.GetSelectedGameAsync();
+
+        if (game.IsNullOrEmpty() || game == jasmSelectedGame)
+            return;
+
+        var switchGameDialog = new ContentDialog()
+        {
+            Title = "Switch Game",
+            Content = new TextBlock()
+            {
+                Text =
+                    "Switching games will restart the application. " +
+                    "This is required to ensure that the application is configured correctly for the selected game.\n\n" +
+                    "Do you want to switch games?",
+                TextWrapping = TextWrapping.WrapWholeWords
+            },
+
+            PrimaryButtonText = $"Switch to {game}",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        var result = await _windowManagerService.ShowDialogAsync(switchGameDialog);
+
+        if (result != ContentDialogResult.Primary)
+        {
+            SelectedGame = game;
+            return;
+        }
+
+        await _selectedGameService.SetSelectedGame(game);
+        await RestartApp().ConfigureAwait(false);
+    }
+
+    public async void OnNavigatedTo(object parameter)
+    {
+        SelectedGame = await _selectedGameService.GetSelectedGameAsync();
+    }
+
+    public void OnNavigatedFrom()
+    {
     }
 }
 

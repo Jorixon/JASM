@@ -96,6 +96,7 @@ public partial class App : Application
                 services.AddSingleton<AutoUpdaterService>();
 
                 services.AddSingleton<ImageHandlerService>();
+                services.AddSingleton<SelectedGameService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();

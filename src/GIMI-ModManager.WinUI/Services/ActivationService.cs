@@ -34,6 +34,7 @@ public class ActivationService : IActivationService
     private readonly UpdateChecker _updateChecker;
     private readonly IWindowManagerService _windowManagerService;
     private readonly AutoUpdaterService _autoUpdaterService;
+    private readonly SelectedGameService _selectedGameService;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -45,7 +46,7 @@ public class ActivationService : IActivationService
         IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
         IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
-        ILanguageLocalizer languageLocalizer)
+        ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -60,6 +61,7 @@ public class ActivationService : IActivationService
         _autoUpdaterService = autoUpdaterService;
         _gameService = gameService;
         _languageLocalizer = languageLocalizer;
+        _selectedGameService = selectedGameService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -117,12 +119,9 @@ public class ActivationService : IActivationService
 
     private async Task InitializeAsync()
     {
-        var jsonPath = IsMsix ? "ms-appx:///Assets/characters.json" : $"{AppDomain.CurrentDomain.BaseDirectory}Assets";
+        await _selectedGameService.InitializeAsync();
         await SetLanguage();
         await SetScreenSize();
-        await _genshinService.InitializeAsync(jsonPath).ConfigureAwait(false);
-        await _gameService.InitializeAsync($"{AppDomain.CurrentDomain.BaseDirectory}/Assets/Games/Genshin",
-            _localSettingsService.ApplicationDataFolder).ConfigureAwait(false);
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
     }
 
