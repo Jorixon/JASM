@@ -231,6 +231,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public Task EnableModListAsync(ICharacter moddableObject)
     {
+        CreateModListFolder(moddableObject);
         var modList = new CharacterModList(moddableObject, GetCharacterModFolderPath(moddableObject), logger: _logger);
 
         _characterModLists.Add(modList);
@@ -238,12 +239,23 @@ public sealed class SkinManagerService : ISkinManagerService
         return RefreshModsAsync(moddableObject.InternalName);
     }
 
-    public Task DisableModListAsync(IModdableObject moddableObject)
+    public Task DisableModListAsync(IModdableObject moddableObject, bool deleteFolder = false)
     {
         var modList = GetCharacterModList(moddableObject);
+        var modFolder = new DirectoryInfo(modList.AbsModsFolderPath);
 
         _characterModLists.Remove(modList);
         modList.Dispose();
+
+        if (deleteFolder)
+        {
+            if (modFolder.Exists)
+            {
+                _logger.Information("Deleting mod folder '{ModFolder}'", modFolder.FullName);
+                modFolder.Delete(true);
+            }
+        }
+
         return Task.CompletedTask;
     }
 
@@ -496,10 +508,13 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         var characters = _gameService.GetCharacters();
         foreach (var character in characters)
-        {
-            var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
-            characterModFolder.Create();
-        }
+            CreateModListFolder(character);
+    }
+
+    private void CreateModListFolder(INameable character)
+    {
+        var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
+        characterModFolder.Create();
     }
 
     public async Task<int> ReorganizeModsAsync(string? characterFolderToReorganize = null,
@@ -625,7 +640,7 @@ public sealed class SkinManagerService : ISkinManagerService
         return movedMods;
     }
 
-    private string GetCharacterModFolderPath(ICharacter character)
+    private string GetCharacterModFolderPath(INameable character)
     {
         return Path.Combine(_activeModsFolder.FullName, character.InternalName);
     }

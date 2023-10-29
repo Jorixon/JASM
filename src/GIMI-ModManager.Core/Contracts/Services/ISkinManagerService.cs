@@ -57,7 +57,7 @@ public interface ISkinManagerService : IDisposable
 
     public Task EnableModListAsync(ICharacter moddableObject);
 
-    public Task DisableModListAsync(IModdableObject moddableObject);
+    public Task DisableModListAsync(IModdableObject moddableObject, bool deleteFolder = false);
 }
 
 public enum SetModStatus

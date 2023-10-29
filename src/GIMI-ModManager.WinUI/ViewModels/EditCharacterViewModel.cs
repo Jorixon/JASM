@@ -6,7 +6,6 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
-using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
@@ -23,7 +22,6 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     private readonly ISkinManagerService _skinManagerService;
     private ICharacter _character = null!;
     private readonly ILogger _logger;
-    private readonly INavigationService _navigationService;
 
     private readonly ImageHandlerService _imageHandlerService;
 
@@ -33,19 +31,18 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [ObservableProperty] private int _modsCount;
     [ObservableProperty] private string _keyToAddInput = string.Empty;
 
-    [ObservableProperty] private bool _isCharacterDisabled;
+    [ObservableProperty] private CharacterStatus _characterStatus = new();
 
     public ObservableCollection<ValidationErrors> ValidationErrors { get; } = new();
 
 
     public EditCharacterViewModel(IGameService gameService, ILogger logger, ISkinManagerService skinManagerService,
-        ImageHandlerService imageHandlerService, INavigationService navigationService)
+        ImageHandlerService imageHandlerService)
     {
         _gameService = gameService;
         _logger = logger;
         _skinManagerService = skinManagerService;
         _imageHandlerService = imageHandlerService;
-        _navigationService = navigationService;
     }
 
 
@@ -75,7 +72,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
         if (!_gameService.GetDisabledCharacters().Contains(character))
         {
-            IsCharacterDisabled = false;
+            CharacterStatus.SetEnabled(true);
             var modList = _skinManagerService.GetCharacterModList(_character);
             ModFolderUri = new Uri(modList.AbsModsFolderPath);
             ModFolderString = ModFolderUri.LocalPath;
@@ -83,7 +80,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         }
         else
         {
-            IsCharacterDisabled = true;
+            CharacterStatus.SetEnabled(false);
             ModFolderUri = new Uri(_skinManagerService.ActiveModsFolderPath);
             ModFolderString = ModFolderUri.LocalPath;
             ModsCount = 0;
@@ -123,7 +120,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private async Task PickImage()
     {
-        var image = await _imageHandlerService.PickImageAsync();
+        var image = await _imageHandlerService.PickImageAsync(false);
 
         if (image is null)
             return;
@@ -132,7 +129,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         CheckForChanges();
     }
 
-    private bool CanDisableCharacter() => !AnyChanges();
+    private bool CanDisableCharacter() => CharacterStatus.IsEnabled && !AnyChanges();
 
     [RelayCommand(CanExecute = nameof(CanDisableCharacter))]
     private async Task DisableCharacter()
@@ -182,7 +179,43 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             $"Disabling character {_character.InternalName} with deleteFolder={deleteFolderCheckBox.IsChecked}");
 
         await _gameService.DisableCharacterAsync(_character);
-        await _skinManagerService.DisableModListAsync(_character);
+        await _skinManagerService.DisableModListAsync(_character, deleteFolderCheckBox.IsChecked ?? false);
+        ResetState();
+    }
+
+    private bool CanEnableCharacter() => CharacterStatus.IsDisabled && !AnyChanges();
+
+    [RelayCommand(CanExecute = nameof(CanEnableCharacter))]
+    private async Task EnableCharacter()
+    {
+        var dialogContent = new TextBlock()
+        {
+            Text =
+                "Are you sure you want to enable this character? " +
+                "This will be executed immediately on pressing yes",
+            TextWrapping = TextWrapping.WrapWholeWords,
+            Margin = new Thickness(0, 0, 0, 8)
+        };
+
+        var enableDialog = new ContentDialog
+        {
+            Title = "Enable Character",
+            Content = dialogContent,
+            PrimaryButtonText = "Yes, enable this character",
+            CloseButtonText = "No",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        var result = await enableDialog.ShowAsync();
+
+        if (result != ContentDialogResult.Primary)
+            return;
+
+        _logger.Information($"Enabling character {_character.InternalName}");
+
+        await _gameService.EnableCharacterAsync(_character);
+        await _skinManagerService.EnableModListAsync(_character);
         ResetState();
     }
 
@@ -282,6 +315,16 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         ResetState();
     }
 
+    private bool CanResetCharacterToDefault() => true;
+
+    [RelayCommand(CanExecute = nameof(CanResetCharacterToDefault))]
+    private async Task ResetCharacterToDefaultAsync()
+    {
+        _logger.Information($"Resetting character {_character.InternalName} to default");
+        await _gameService.ResetOverrideForCharacterAsync(_character);
+        ResetState();
+    }
+
     private void ResetState()
     {
         CharacterVm.PropertyChanged -= CheckForChanges;
@@ -311,6 +354,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     {
         DummySaveCommand.NotifyCanExecuteChanged();
         DisableCharacterCommand.NotifyCanExecuteChanged();
+        EnableCharacterCommand.NotifyCanExecuteChanged();
         SaveChangesCommand.NotifyCanExecuteChanged();
         RevertChangesCommand.NotifyCanExecuteChanged();
     }
@@ -353,3 +397,21 @@ public class ValidationErrors
 }
 
 public record ModModelProperty(string Key, string Value);
+
+public class CharacterStatus : ObservableObject
+{
+    private bool _isEnabled;
+
+    public bool IsEnabled => _isEnabled;
+
+    private bool _isDisabled;
+
+    public bool IsDisabled => _isDisabled;
+
+
+    public void SetEnabled(bool enabled)
+    {
+        SetProperty(ref _isEnabled, enabled, nameof(IsEnabled));
+        SetProperty(ref _isDisabled, !enabled, nameof(IsDisabled));
+    }
+}

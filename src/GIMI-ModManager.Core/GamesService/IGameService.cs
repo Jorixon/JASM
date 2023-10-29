@@ -18,6 +18,8 @@ public interface IGameService
     public Task DisableCharacterAsync(ICharacter character);
 
     public Task EnableCharacterAsync(ICharacter character);
+    public Task ResetOverrideForCharacterAsync(ICharacter character);
+
 
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
         Uri? imageUri = null, IGameClass? gameClass = null, IGameElement? gameElement = null,

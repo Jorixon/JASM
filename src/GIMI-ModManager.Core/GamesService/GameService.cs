@@ -56,6 +56,9 @@ public class GameService : IGameService
     public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null)
     {
+        if (_initialized)
+            throw new InvalidOperationException("GameService is already initialized");
+
         _assetsDirectory = new DirectoryInfo(assetsDirectory);
         if (!_assetsDirectory.Exists)
             throw new DirectoryNotFoundException($"Directory not found at path: {_assetsDirectory.FullName}");
@@ -73,41 +76,51 @@ public class GameService : IGameService
 
         await InitializeClassesAsync();
 
-        await InitializeCharactersAsync(disabledCharacters ?? Array.Empty<string>());
+        await InitializeCharactersAsync();
 
         _initialized = true;
     }
 
 
-    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
+    public async Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
     {
+        ArgumentException.ThrowIfNullOrEmpty(newDisplayName, nameof(newDisplayName));
+
+        await _gameSettingsManager.SetDisplayNameOverride(character.InternalName, newDisplayName);
         character.DisplayName = newDisplayName;
-        return Task.CompletedTask;
     }
 
-    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
+    public async Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
     {
         ArgumentNullException.ThrowIfNull(newImageUri, nameof(newImageUri));
 
         if (!File.Exists(newImageUri.LocalPath))
-            throw new ArgumentException();
+            throw new ArgumentException($"Image file does not exist at {newImageUri.LocalPath}", nameof(newImageUri));
 
+        await _gameSettingsManager.SetImageOverride(character.InternalName, newImageUri);
         character.ImageUri = newImageUri;
-        return Task.CompletedTask;
     }
 
-    public Task DisableCharacterAsync(ICharacter character)
+    public async Task DisableCharacterAsync(ICharacter character)
     {
+        await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, true);
         _characters.Remove(character);
         _disabledCharacters.Add(character);
-        return Task.CompletedTask;
     }
 
-    public Task EnableCharacterAsync(ICharacter character)
+    public async Task EnableCharacterAsync(ICharacter character)
     {
+        await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, false);
         _disabledCharacters.Remove(character);
         _characters.Add(character);
-        return Task.CompletedTask;
+    }
+
+    public async Task ResetOverrideForCharacterAsync(ICharacter character)
+    {
+        await _gameSettingsManager.RemoveOverride(character.InternalName);
+        character.DisplayName = character.DefaultCharacter.DisplayName;
+        character.ImageUri = character.DefaultCharacter.ImageUri;
+        character.Keys = character.DefaultCharacter.Keys;
     }
 
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
@@ -266,12 +279,13 @@ public class GameService : IGameService
             await MapDisplayNames(regionFileName, Regions.AllRegions);
     }
 
-    private async Task InitializeCharactersAsync(ICollection<string> disabledCharacters)
+    private async Task InitializeCharactersAsync()
     {
         const string characterFileName = "characters.json";
         var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Characters");
 
         var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName);
+        var overrideSettings = await _gameSettingsManager.ReadSettingsAsync();
 
         foreach (var jsonCharacter in jsonCharacters)
         {
@@ -280,14 +294,9 @@ public class GameService : IGameService
                 .SetRegion(Regions.AllRegions)
                 .SetElement(Elements.AllElements)
                 .SetClass(Classes.AllClasses)
-                .SetCharacterOverride(null)
                 .CreateCharacter(imageFolder: imageFolderName);
 
-
-            if (disabledCharacters.Any(x => character.InternalName.Equals(x)))
-                _disabledCharacters.Add(character);
-            else
-                _characters.Add(character);
+            _characters.Add(character);
         }
 
         _characters.Insert(0, getOthersCharacter());
@@ -296,6 +305,22 @@ public class GameService : IGameService
 
         if (LanguageOverrideAvailable())
             await MapDisplayNames(characterFileName, _characters);
+
+        foreach (var character in _characters)
+        {
+            var characterOverride = overrideSettings.CharacterOverrides.FirstOrDefault(x =>
+                x.Key.Equals(character.InternalName.Id, StringComparison.OrdinalIgnoreCase)).Value;
+
+            if (characterOverride is null) continue;
+
+            MapCustomOverrides(character, characterOverride);
+
+            if (characterOverride?.IsDisabled is not null && characterOverride.IsDisabled.Value)
+            {
+                _disabledCharacters.Add(character);
+                _characters.Remove(character);
+            }
+        }
     }
 
     private async Task InitializeClassesAsync()
@@ -505,6 +530,15 @@ public class GameService : IGameService
                 }
             }
         }
+    }
+
+    private void MapCustomOverrides(ICharacter character, JsonCharacterOverride @override)
+    {
+        if (!@override.DisplayName.IsNullOrEmpty())
+            character.DisplayName = @override.DisplayName;
+
+        if (!@override.Image.IsNullOrEmpty())
+            character.ImageUri = Uri.TryCreate(@override.Image, UriKind.Absolute, out var uri) ? uri : null;
     }
 
     private async void LanguageChangedHandler(object? sender, EventArgs args)

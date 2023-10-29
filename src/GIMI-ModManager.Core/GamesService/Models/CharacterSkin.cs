@@ -35,6 +35,21 @@ public class CharacterSkin : ICharacterSkin
         return characterSkin;
     }
 
+    public ICharacterSkin Clone()
+    {
+        return new CharacterSkin
+        {
+            IsDefault = IsDefault,
+            ModFilesName = ModFilesName,
+            Rarity = Rarity,
+            ImageUri = ImageUri,
+            DisplayName = DisplayName,
+            InternalName = InternalName,
+            Character = Character,
+            ReleaseDate = ReleaseDate
+        };
+    }
+
     internal CharacterSkin()
     {
     }

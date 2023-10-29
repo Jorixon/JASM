@@ -57,6 +57,7 @@
                         </Image>
 
                         <TextBlock
+                            Margin="8,0,0,0"
                             VerticalAlignment="Center"
                             FontSize="20"
                             Style="{ThemeResource BodyStrongTextBlockStyle}"

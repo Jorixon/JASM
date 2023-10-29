@@ -566,7 +566,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     public void OnNavigatedFrom()
     {
-        _modList.ModsChanged -= ModListOnModsChanged;
+        if (_modList is not null)
+            _modList.ModsChanged -= ModListOnModsChanged;
     }
 
 

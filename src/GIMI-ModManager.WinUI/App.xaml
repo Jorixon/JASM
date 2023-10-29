@@ -1,7 +1,8 @@
 ﻿<Application
     x:Class="GIMI_ModManager.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -11,6 +12,7 @@
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
                 <ResourceDictionary Source="/Styles/FontTypes.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <xaml:BoolToVisibleConverter x:Key="BoolToVisibilityConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

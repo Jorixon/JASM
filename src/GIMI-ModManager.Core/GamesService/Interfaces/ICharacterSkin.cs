@@ -22,4 +22,6 @@ public interface ICharacterSkin : IRarity, IImageSupport, INameable
     /// If Empty => no automatic mod detection
     /// </summary>
     public string ModFilesName { get; }
+
+    public ICharacterSkin Clone();
 }

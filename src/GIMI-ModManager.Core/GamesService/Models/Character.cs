@@ -17,9 +17,10 @@ public class Character : ICharacter, IEquatable<Character>
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }
     public Uri? ImageUri { get; set; }
+    public ICharacter DefaultCharacter { get; internal set; } = null!;
     public IGameClass Class { get; internal set; } = null!;
     public IGameElement Element { get; internal set; } = null!;
-    public ICollection<string> Keys { get; internal set; } = Array.Empty<string>();
+    public ICollection<string> Keys { get; set; } = Array.Empty<string>();
     public DateTime ReleaseDate { get; internal set; }
     public ICollection<IRegion> Regions { get; internal set; } = Array.Empty<IRegion>();
     public ICollection<ICharacterSkin> Skins { get; internal set; } = new List<ICharacterSkin>();
@@ -69,6 +70,25 @@ public class Character : ICharacter, IEquatable<Character>
         }
 
         return new CharacterBuilder(character, jsonCharacter);
+    }
+
+    internal Character Clone()
+    {
+        return new Character
+        {
+            InternalName = InternalName,
+            ModFilesName = ModFilesName,
+            DisplayName = DisplayName,
+            IsMultiMod = IsMultiMod,
+            Keys = Keys,
+            Rarity = Rarity,
+            ReleaseDate = ReleaseDate,
+            Skins = Skins.Select(skin => skin.Clone()).ToArray(),
+            Class = Class,
+            Element = Element,
+            Regions = Regions,
+            ImageUri = ImageUri
+        };
     }
 
     internal Character()
@@ -208,21 +228,6 @@ internal sealed class CharacterBuilder
         return this;
     }
 
-    public CharacterBuilder SetCharacterOverride(JsonCharacter? character)
-    {
-        if (character is null)
-            return this;
-
-        if (!character.DisplayName.IsNullOrEmpty())
-            _character.DisplayName = character.DisplayName;
-
-        if (!character.Image.IsNullOrEmpty())
-            _character.ImageUri = Uri.TryCreate(character.Image, UriKind.Absolute, out var uri) ? uri : null;
-
-
-        return this;
-    }
-
 
     private void SetImage(string imageFolder, string? image)
     {
@@ -266,6 +271,7 @@ internal sealed class CharacterBuilder
             SetImage(imageFolder, jsonCharacterSkin.Image);
         }
 
+        _character.DefaultCharacter = _character.Clone();
 
         return _character;
     }
