@@ -72,8 +72,20 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
     {
         _characters = _gameService.GetCharacters().Concat(_gameService.GetDisabledCharacters()).ToList();
 
+        ICharacter? character = null;
+        if (parameter is string internalName)
+        {
+            character = _characters.FirstOrDefault(c => c.InternalNameEquals(internalName));
+            if (character is not null)
+            {
+                SetCharacter(character);
+                return;
+            }
+        }
+
+
         if (_lastSelectedCharacter is null) return;
-        var character = _characters.FirstOrDefault(c => c.InternalNameEquals(_lastSelectedCharacter));
+        character = _characters.FirstOrDefault(c => c.InternalNameEquals(_lastSelectedCharacter));
         if (character is null) return;
         SetCharacter(character);
     }

@@ -178,14 +178,30 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel MaxWidth="220">
+                    <Grid>
 
-                    <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackCommand}">
-                        <Button.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Escape" IsEnabled="True" />
-                        </Button.KeyboardAccelerators>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                        <FontIcon Glyph="&#xE72B; &#xE80A; " />
-                    </Button>
+                        <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackToGridCommand}">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Escape" IsEnabled="True" />
+                            </Button.KeyboardAccelerators>
+
+                            <FontIcon Glyph="&#xE72B; &#xE80A; " />
+                        </Button>
+
+
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind ViewModel.GoToCharacterEditScreenCommand}">
+                            <FontIcon Glyph="&#xE70F;" />
+                        </Button>
+                    </Grid>
+
                     <Grid
                         x:Name="itemHero"
                         Width="200"

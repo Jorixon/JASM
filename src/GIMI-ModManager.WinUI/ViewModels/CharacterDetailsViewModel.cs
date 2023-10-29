@@ -559,9 +559,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
 
     [RelayCommand]
-    private void GoBack()
+    private void GoBackToGrid()
     {
-        _navigationService.GoBack();
+        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+    }
+
+    [RelayCommand]
+    private void GoToCharacterEditScreen()
+    {
+        _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, ShownCharacter.InternalName);
     }
 
     public void OnNavigatedFrom()
