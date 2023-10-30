@@ -426,14 +426,20 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             var modSkin = (await LoadModSettings(mod))?.CharacterSkinOverride;
 
-            if (modSkin is not null && modSkin.Equals(skin.InternalName, StringComparison.CurrentCultureIgnoreCase))
+            if (modSkin is not null && (modSkin.Equals(skin.InternalName, StringComparison.CurrentCultureIgnoreCase) ||
+                                        modSkin.Equals(
+                                            skin.InternalName.Replace("Default_", "",
+                                                StringComparison.CurrentCultureIgnoreCase),
+                                            StringComparison.CurrentCultureIgnoreCase)))
             {
                 filteredMods.Add(mod);
                 continue;
             }
 
-            if (modSkin is not null &&
-                !ShownCharacter.InGameSkins.Any(skinVm => skinVm.InternalName.Equals(modSkin)))
+            if (modSkin is not null && !ShownCharacter.InGameSkins.Any(skinVm =>
+                    skinVm.InternalName.Equals(modSkin, StringComparison.CurrentCultureIgnoreCase) ||
+                    skinVm.InternalName.Replace("Default_", "", StringComparison.CurrentCultureIgnoreCase)
+                        .Equals(modSkin, StringComparison.CurrentCultureIgnoreCase)))
             {
                 // In this case, the override skin is not a valid skin for this character, so we just add it.
                 Debugger.Break();
@@ -444,7 +450,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             var detectedSkin =
                 _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter.InternalName);
 
-            if (modSkin == null && detectedSkin is not null && detectedSkin.InternalNameEquals(skin.InternalName))
+            if (modSkin is null && detectedSkin is not null && detectedSkin.InternalNameEquals(skin.InternalName))
                 filteredMods.Add(mod);
         }
 
