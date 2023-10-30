@@ -40,9 +40,9 @@
                 x:Name="CharacterSearchBox"
                 Width="300"
                 HorizontalAlignment="Left"
-                Header="Search for a character"
+                Header="Search for a character to edit"
                 ItemsSource="{x:Bind ViewModel.Suggestions}"
-                PlaceholderText="Search for characters..."
+                PlaceholderText="Start typing to search..."
                 QuerySubmitted="CharacterSearchBox_OnQuerySubmitted"
                 SuggestionChosen="CharacterSearchBox_OnSuggestionChosen"
                 TextChanged="CharacterSearchBox_OnTextChanged">

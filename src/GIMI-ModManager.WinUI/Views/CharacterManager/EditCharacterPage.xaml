@@ -141,6 +141,7 @@
                     <TextBlock FontSize="16" Text="Character Search Keys" />
                     <TextBox
                         Grid.Column="1"
+                        IsEnabled="False"
                         PlaceholderText="New Key Name..."
                         Text="{x:Bind ViewModel.KeyToAddInput, Mode=TwoWay}" />
                     <Button
@@ -148,7 +149,8 @@
                         Margin="0,0,10,0"
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.AddKeyCommand}"
-                        Content="Add Search Key" />
+                        Content="Add Search Key"
+                        IsEnabled="False" />
                 </Grid>
 
                 <ListView
@@ -176,7 +178,8 @@
                                     HorizontalAlignment="Right"
                                     Command="{Binding ElementName=EditCharacterPageRoot, Path=ViewModel.RemoveKeyCommand, Mode=OneWay}"
                                     CommandParameter="{Binding Mode=OneWay}"
-                                    Content="Remove" />
+                                    Content="Remove"
+                                    IsEnabled="False" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

@@ -261,17 +261,17 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         }
 
         // Check for duplicate keys
-
-        if (characters.FirstOrDefault(c => c.Keys.Any(key => CharacterVm.Keys.Contains(key))) is
-            { } duplicateKeyCharacter)
-        {
-            errors.Add(new ValidationErrors
-            {
-                InputField = "Field: Keys",
-                ErrorMessage =
-                    $"Key already in use by Id: {duplicateKeyCharacter.InternalName} | DisplayName: {duplicateKeyCharacter.DisplayName}"
-            });
-        }
+        // TODO: Implement key editing
+        //if (characters.FirstOrDefault(c => c.Keys.Any(key => CharacterVm.Keys.Contains(key))) is
+        //    { } duplicateKeyCharacter)
+        //{
+        //    errors.Add(new ValidationErrors
+        //    {
+        //        InputField = "Field: Keys",
+        //        ErrorMessage =
+        //            $"Key already in use by Id: {duplicateKeyCharacter.InternalName} | DisplayName: {duplicateKeyCharacter.DisplayName}"
+        //    });
+        //}
 
         if (errors.Count > 0)
         {
@@ -334,6 +334,10 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
     private bool AnyChanges()
     {
+        // TODO: Implement key editing
+        if (CharacterVm.Keys.Any(key => !_character.Keys.Contains(key)))
+            return false; // Remove this once key editing has been implemented
+
         if (CharacterVm.DisplayName != _character.DisplayName)
             return true;
 
@@ -341,11 +345,12 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             CharacterVm.ImageUri != _character.ImageUri)
             return true;
 
-        if (CharacterVm.Keys.Count != _character.Keys.Count)
-            return true;
+        //if (CharacterVm.Keys.Count != _character.Keys.Count)
+        //    return true;
 
-        if (CharacterVm.Keys.Any(key => !_character.Keys.Contains(key)))
-            return true;
+        //if (CharacterVm.Keys.Any(key => !_character.Keys.Contains(key)))
+        //    return true;
+
 
         return false;
     }

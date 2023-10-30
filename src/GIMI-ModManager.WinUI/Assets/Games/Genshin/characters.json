@@ -1254,7 +1254,6 @@
     "Id": 57,
     "Keys": [
       "traveler",
-      "(female)",
       "lumine"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
@@ -1274,7 +1273,6 @@
     "Id": 56,
     "Keys": [
       "traveler",
-      "(male)",
       "aether"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
