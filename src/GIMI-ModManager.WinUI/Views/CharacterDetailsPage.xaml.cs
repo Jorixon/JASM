@@ -412,15 +412,15 @@ public sealed partial class CharacterDetailsPage : Page
             return;
 
         var package = Clipboard.GetContent();
-        if (package.Contains(StandardDataFormats.Bitmap))
+        if (package.Contains(StandardDataFormats.StorageItems))
+        {
+            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await package.GetStorageItemsAsync());
+        }
+        else if (package.Contains(StandardDataFormats.Bitmap))
         {
             var imageStream = await package.GetBitmapAsync();
             if (imageStream is null) return;
             await ViewModel.ModPaneVM.SetImageFromBitmapStreamAsync(imageStream, package.AvailableFormats);
-        }
-        else if (package.Contains(StandardDataFormats.StorageItems))
-        {
-            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await package.GetStorageItemsAsync());
         }
     }
 
