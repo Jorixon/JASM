@@ -283,6 +283,7 @@ public class GameService : IGameService
     {
         const string characterFileName = "characters.json";
         var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Characters");
+        var characterSkinPath = Path.Combine(_assetsDirectory.FullName, "Images", "AltCharacterSkins");
 
         var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName);
         var overrideSettings = await _gameSettingsManager.ReadSettingsAsync();
@@ -294,7 +295,7 @@ public class GameService : IGameService
                 .SetRegion(Regions.AllRegions)
                 .SetElement(Elements.AllElements)
                 .SetClass(Classes.AllClasses)
-                .CreateCharacter(imageFolder: imageFolderName);
+                .CreateCharacter(imageFolder: imageFolderName, characterSkinImageFolder: characterSkinPath);
 
             _characters.Add(character);
         }
@@ -306,6 +307,7 @@ public class GameService : IGameService
         if (LanguageOverrideAvailable())
             await MapDisplayNames(characterFileName, _characters);
 
+        var disabledCharacters = new List<ICharacter>();
         foreach (var character in _characters)
         {
             var characterOverride = overrideSettings.CharacterOverrides.FirstOrDefault(x =>
@@ -317,9 +319,14 @@ public class GameService : IGameService
 
             if (characterOverride?.IsDisabled is not null && characterOverride.IsDisabled.Value)
             {
-                _disabledCharacters.Add(character);
-                _characters.Remove(character);
+                disabledCharacters.Add(character);
             }
+        }
+
+        foreach (var disabledCharacter in disabledCharacters)
+        {
+            _characters.Remove(disabledCharacter);
+            _disabledCharacters.Add(disabledCharacter);
         }
     }
 

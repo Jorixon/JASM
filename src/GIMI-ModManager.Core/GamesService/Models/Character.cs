@@ -229,19 +229,20 @@ internal sealed class CharacterBuilder
     }
 
 
-    private void SetImage(string imageFolder, string? image)
+    private Uri? GetImage(string imageFolder, string? image)
     {
-        if (image.IsNullOrEmpty()) return;
+        if (image.IsNullOrEmpty()) return null;
 
         var imagePath = Path.Combine(imageFolder, image);
         if (File.Exists(imagePath))
-            _character.ImageUri = new Uri(imagePath);
-        else
-            Log.Debug("Image {Image} for {Name} {CharacterName} is invalid", image, _character.DisplayName,
-                _character.InternalName);
+            return new Uri(imagePath);
+
+        Log.Debug("Image {Image} for {Name} {CharacterName} is invalid", image, _character.DisplayName,
+            _character.InternalName);
+        return null;
     }
 
-    public Character CreateCharacter(string imageFolder)
+    public Character CreateCharacter(string imageFolder, string characterSkinImageFolder)
     {
         if (!_regionSet)
             throw new InvalidOperationException("Region not set");
@@ -256,7 +257,7 @@ internal sealed class CharacterBuilder
 
 
         // Set images
-        SetImage(imageFolder, _jsonCharacter.Image);
+        _character.ImageUri = GetImage(imageFolder, _jsonCharacter.Image);
 
         foreach (var characterSkin in _character.Skins)
         {
@@ -268,7 +269,7 @@ internal sealed class CharacterBuilder
             if (jsonCharacterSkin is null)
                 continue;
 
-            SetImage(imageFolder, jsonCharacterSkin.Image);
+            characterSkin.ImageUri = GetImage(characterSkinImageFolder, jsonCharacterSkin.Image);
         }
 
         _character.DefaultCharacter = _character.Clone();

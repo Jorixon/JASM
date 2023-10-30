@@ -29,44 +29,58 @@
             Style="{StaticResource TitleTextBlockStyle}"
             Text="Character Manager" />
 
-        <AutoSuggestBox
-            x:Name="CharacterSearchBox"
-            Grid.Row="1"
-            Width="300"
-            HorizontalAlignment="Left"
-            Header="Search for a character"
-            ItemsSource="{x:Bind ViewModel.Suggestions}"
-            PlaceholderText="Search for characters..."
-            QuerySubmitted="CharacterSearchBox_OnQuerySubmitted"
-            SuggestionChosen="CharacterSearchBox_OnSuggestionChosen"
-            TextChanged="CharacterSearchBox_OnTextChanged">
-            <AutoSuggestBox.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="F"
-                    Invoked="CharacterSearchBox_Ctrl_F"
-                    Modifiers="Control" />
-            </AutoSuggestBox.KeyboardAccelerators>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <AutoSuggestBox.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:CharacterSearchResult">
-                    <StackPanel Margin="0,8" Orientation="Horizontal">
-                        <Image Height="40">
-                            <Image.Source>
-                                <BitmapImage DecodePixelHeight="40" UriSource="{x:Bind ImagePath}" />
-                            </Image.Source>
-                        </Image>
+            <AutoSuggestBox
+                x:Name="CharacterSearchBox"
+                Width="300"
+                HorizontalAlignment="Left"
+                Header="Search for a character"
+                ItemsSource="{x:Bind ViewModel.Suggestions}"
+                PlaceholderText="Search for characters..."
+                QuerySubmitted="CharacterSearchBox_OnQuerySubmitted"
+                SuggestionChosen="CharacterSearchBox_OnSuggestionChosen"
+                TextChanged="CharacterSearchBox_OnTextChanged">
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="F"
+                        Invoked="CharacterSearchBox_Ctrl_F"
+                        Modifiers="Control" />
+                </AutoSuggestBox.KeyboardAccelerators>
 
-                        <TextBlock
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center"
-                            FontSize="20"
-                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind Name}" />
-                    </StackPanel>
-                </DataTemplate>
-            </AutoSuggestBox.ItemTemplate>
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:CharacterSearchResult">
+                        <StackPanel Margin="0,8" Orientation="Horizontal">
+                            <Image Height="40">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelHeight="40" UriSource="{x:Bind ImagePath}" />
+                                </Image.Source>
+                            </Image>
 
-        </AutoSuggestBox>
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+
+            <InfoBar
+                Title="Experimental Feature"
+                Grid.Column="2"
+                IsClosable="False"
+                IsOpen="True"
+                Message="This feature is experimental and may not work as expected. I can not guarantee that settings will persist between releases for now" />
+        </Grid>
+
 
         <Frame
             x:Name="EditFrame"

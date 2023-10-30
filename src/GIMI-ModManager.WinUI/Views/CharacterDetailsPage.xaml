@@ -214,7 +214,7 @@
                         <Image HorizontalAlignment="Center" VerticalAlignment="Center">
 
                             <Image.Source>
-                                <BitmapImage UriSource="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneTime}" />
+                                <BitmapImage UriSource="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneWay}" />
                             </Image.Source>
 
                         </Image>

@@ -49,7 +49,7 @@ public sealed class SkinManagerService : ISkinManagerService
             var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
             if (!characterModFolder.Exists)
             {
-                _logger.Warning("Character mod folder for '{Character}' does not exist", character.DisplayName);
+                _logger.Debug("Character mod folder for '{Character}' does not exist", character.DisplayName);
                 continue;
             }
 
@@ -247,13 +247,10 @@ public sealed class SkinManagerService : ISkinManagerService
         _characterModLists.Remove(modList);
         modList.Dispose();
 
-        if (deleteFolder)
+        if (deleteFolder && modFolder.Exists)
         {
-            if (modFolder.Exists)
-            {
-                _logger.Information("Deleting mod folder '{ModFolder}'", modFolder.FullName);
-                modFolder.Delete(true);
-            }
+            _logger.Information("Deleting mod folder '{ModFolder}'", modFolder.FullName);
+            modFolder.Delete(true);
         }
 
         return Task.CompletedTask;
@@ -471,7 +468,7 @@ public sealed class SkinManagerService : ISkinManagerService
     }
 
 
-    public async Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null,
+    public Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
     {
         _logger.Debug(
@@ -501,7 +498,7 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
         _activeModsFolder.Create();
         InitializeFolderStructure();
-        await ScanForModsAsync();
+        return ScanForModsAsync();
     }
 
     private void InitializeFolderStructure()

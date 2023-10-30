@@ -15,7 +15,7 @@ public interface ISkinManagerService : IDisposable
     public ICharacterModList GetCharacterModList(string internalName);
     public ICharacterModList GetCharacterModList(IModdableObject character);
 
-    public Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath,
+    public Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath,
         string? threeMigotoRootfolder = null);
 
     /// <summary>

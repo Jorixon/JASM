@@ -2,14 +2,18 @@
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.AppManagment;
 
 public class SelectedGameService
 {
+    private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILogger _logger;
+
     private const string _defaultApplicationDataFolder = "ApplicationData";
 
-    private readonly string _jasmAppData =
+    private readonly string _jasmAppDataPath =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "JASM");
 
     private const string ConfigFile = "game.json";
@@ -18,13 +22,13 @@ public class SelectedGameService
     public const string Genshin = "Genshin";
     public const string Honkai = "Honkai";
 
-    private readonly ILocalSettingsService _localSettingsService;
 
-    public SelectedGameService(ILocalSettingsService localSettingsService)
+    public SelectedGameService(ILocalSettingsService localSettingsService, ILogger logger)
     {
         _localSettingsService = localSettingsService;
-        Directory.CreateDirectory(_jasmAppData);
-        _configPath = Path.Combine(_jasmAppData, ConfigFile);
+        _logger = logger;
+        Directory.CreateDirectory(_jasmAppDataPath);
+        _configPath = Path.Combine(_jasmAppDataPath, ConfigFile);
     }
 
     private string GetGameSpecificSettingsFolderName(string game)
@@ -32,20 +36,25 @@ public class SelectedGameService
         return Path.Combine(_defaultApplicationDataFolder + "_" + game);
     }
 
-    public Task SetSelectedGame(string game)
+    public async Task SetSelectedGame(string game)
     {
         if (!IsValidGame(game))
             throw new ArgumentException("Invalid game name.");
 
+        if (await GetSelectedGameAsync() == game)
+            return;
 
         _localSettingsService.SetApplicationDataFolderName(GetGameSpecificSettingsFolderName(game));
-        return SaveSelectedGameAsync(game);
+        await SaveSelectedGameAsync(game).ConfigureAwait(false);
     }
 
     public async Task InitializeAsync()
     {
         if (!File.Exists(_configPath))
+        {
+            CopyOldAppFolder(Genshin);
             await SaveSelectedGameAsync(Genshin);
+        }
 
 
         var selectedGame = await GetSelectedGameAsync();
@@ -57,7 +66,6 @@ public class SelectedGameService
     {
         if (!File.Exists(_configPath))
             return Genshin;
-
 
         var selectedGame = JsonConvert.DeserializeObject<SelectedGameModel>(await File.ReadAllTextAsync(_configPath));
 
@@ -114,6 +122,35 @@ public class SelectedGameService
             return supportedGame is SupportedGames.Genshin or SupportedGames.Honkai;
 
         return game == Genshin || game == Honkai;
+    }
+
+
+    private void CopyOldAppFolder(string game)
+    {
+        var oldAppSettingsFolder = new DirectoryInfo(Path.Combine(_jasmAppDataPath, _defaultApplicationDataFolder));
+
+        if (!oldAppSettingsFolder.Exists)
+        {
+            _logger.Information("Could not find old app folder. Skipping copy.");
+            return;
+        }
+
+        _logger.Information("Copying old app settings folder to new name.");
+
+        var newAppSettingsFolder =
+            new DirectoryInfo(Path.Combine(_jasmAppDataPath, GetGameSpecificSettingsFolderName(game)));
+        newAppSettingsFolder.Create();
+
+        if (newAppSettingsFolder.GetFiles().Any())
+        {
+            _logger.Information("New app settings folder is not empty. Skipping copy.");
+            return;
+        }
+
+        foreach (var file in oldAppSettingsFolder.GetFiles())
+        {
+            file.CopyTo(Path.Combine(newAppSettingsFolder.FullName, file.Name));
+        }
     }
 }
 

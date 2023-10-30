@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
-using GIMI_ModManager.WinUI.Services;
-using PathPicker = GIMI_ModManager.WinUI.ViewModels.SubVms.PathPicker;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 
 namespace GIMI_ModManager.WinUI.Validators.PreConfigured;
 

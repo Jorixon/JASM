@@ -129,15 +129,16 @@
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock
                         Margin="0,0,0,8"
-                        Text="JASM supports Genshin Impact and Honkai Star Rail"
+                        Text="JASM currently only supports Genshin Impact, but will support Honkai Star Rail Soon™"
                         TextWrapping="WrapWholeWords" />
 
                     <ComboBox
                         x:Name="GameSelectorComboBox"
                         Header="Selected Game:"
-                        SelectionChanged="GameSelectorComboBox_OnSelectionChanged"
+                        IsEnabled="False"
                         ItemsSource="{x:Bind ViewModel.Games}"
-                        SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}" />
+                        SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
+                        SelectionChanged="GameSelectorComboBox_OnSelectionChanged" />
                 </StackPanel>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Elevator Process" />

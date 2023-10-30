@@ -49,7 +49,7 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
             Path.Combine(App.ASSET_DIR, "Games", await _selectedGameService.GetSelectedGameAsync()),
             _localSettingsService.ApplicationDataFolder);
 
-        await _skinManagerService.Initialize(modManagerOptions!.ModsFolderPath!, null,
+        await _skinManagerService.InitializeAsync(modManagerOptions!.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);
 
         _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, args.Arguments, true);

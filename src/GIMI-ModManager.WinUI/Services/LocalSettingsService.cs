@@ -65,6 +65,10 @@ public class LocalSettingsService : ILocalSettingsService
             throw new ArgumentException("Folder name cannot be null or empty", nameof(folderName));
 
         _applicationDataFolder = Path.Combine(_localApplicationData, _jasm, folderName);
+#if DEBUG
+        _applicationDataFolder += "_Debug";
+#endif
+
         _isInitialized = false;
         _settings = new Dictionary<string, object>();
     }
