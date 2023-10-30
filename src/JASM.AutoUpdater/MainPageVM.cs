@@ -160,8 +160,9 @@ public partial class MainPageVM : ObservableRecipient
 
         if (getJasmAsset?.browser_download_url is null)
         {
-            Stop("Could not find JASM archive in the newest release on GitHub. This may be due to the developer having to manually upload the zip which can take a few minutes. " +
-                 "If the problem persists, then you may have to update JASM manually");
+            Stop(
+                "Could not find JASM archive in the newest release on GitHub. This may be due to the developer having to manually upload the zip which can take a few minutes. " +
+                "If the problem persists, then you may have to update JASM manually");
             return null;
         }
 
@@ -265,17 +266,27 @@ public partial class MainPageVM : ObservableRecipient
             return;
         }
 
-        _newJasmExePath = Path.Combine(_installedJasmFolder.FullName, "JASM - Just Another Skin Manager.exe");
+        const string jasmExe = "JASM - Just Another Skin Manager.exe";
+        _newJasmExePath = Path.Combine(_installedJasmFolder.FullName, jasmExe);
 
         var containsJasmExe = false;
+        var containsSystemFiles = false;
+        var systemFileFound = string.Empty;
         var warningFiles = new List<string>();
 
         foreach (var fileSystemInfo in _installedJasmFolder.EnumerateFileSystemInfos())
         {
-            if (fileSystemInfo.Name.Equals("JASM - Just Another Skin Manager.exe",
+            if (fileSystemInfo.Name.Equals(jasmExe,
                     StringComparison.CurrentCultureIgnoreCase))
             {
                 containsJasmExe = true;
+            }
+
+            if (SystemEntries.WindowsEntries.Any(fileEntry => fileSystemInfo.Name.Equals(fileEntry,
+                    StringComparison.CurrentCultureIgnoreCase)))
+            {
+                containsSystemFiles = true;
+                systemFileFound = fileSystemInfo.Name;
             }
 
             if (fileSystemInfo.Name.Equals("3DMigoto Loader.exe", StringComparison.CurrentCultureIgnoreCase))
@@ -297,7 +308,15 @@ public partial class MainPageVM : ObservableRecipient
         if (!containsJasmExe)
         {
             Stop(
-                $"Failed to find 'JASM - Just Another Skin Manager.exe' in installed JASM folder. Path: {_installedJasmFolder}");
+                $"Failed to find '{jasmExe}' in installed JASM folder. Path: {_installedJasmFolder}");
+            return;
+        }
+
+        if (containsSystemFiles)
+        {
+            Stop(
+                $"JASM folder seems to contain windows system files, this should never happen. File Found: '{systemFileFound}' at " +
+                $"Path: {_installedJasmFolder}");
             return;
         }
 

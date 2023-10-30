@@ -91,15 +91,19 @@ public class SkinMod : Mod, ISkinMod
 
     private static string? HasMergedInIFile(DirectoryInfo modDirectory)
     {
+        var mergedIniPath = modDirectory.EnumerateFiles("merged.ini", SearchOption.TopDirectoryOnly)
+            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase))
+            ?.FullName;
+
+        if (mergedIniPath is not null)
+            return mergedIniPath;
+
         return modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
             .FirstOrDefault(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase))
             ?.FullName;
     }
 
-    public string? GetModIniPath()
-    {
-        return HasMergedInIFile(_modDirectory);
-    }
+    public string? GetModIniPath() => HasMergedInIFile(_modDirectory);
 
     public static bool operator ==(SkinMod? left, SkinMod? right)
     {

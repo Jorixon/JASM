@@ -1,5 +1,48 @@
 # Changelog
 
+## [1.4.6](https://github.com/Jorixon/JASM/compare/v1.4.5...v1.4.6) (2023-10-22)
+
+
+### Miscellaneous
+
+* Added Wriothesley Character ([6a7943f](https://github.com/Jorixon/JASM/commit/6a7943fe0b5c518cd42a0e61df005f24a77cd694))
+* Changed Auto Updater .NET version from 6 to 7 ([ce53022](https://github.com/Jorixon/JASM/commit/ce530223228b3e133218d93a50868775cb2223c2))
+
+## [1.4.5](https://github.com/Jorixon/JASM/compare/v1.4.4...v1.4.5) (2023-10-22)
+
+
+### Bug Fixes
+
+* KeySwaps not loading when the mod's filepath changed ([#69](https://github.com/Jorixon/JASM/issues/69)) ([b69e24c](https://github.com/Jorixon/JASM/commit/b69e24ce7904ea6070559ec735a71651f74b3dc3))
+
+
+### Miscellaneous
+
+* Updated WinAppSDK to Version 1.4.2 (1.4.231008000) ([b69e24c](https://github.com/Jorixon/JASM/commit/b69e24ce7904ea6070559ec735a71651f74b3dc3))
+
+## [1.4.4](https://github.com/Jorixon/JASM/compare/v1.4.3...v1.4.4) (2023-10-09)
+
+
+### Bug Fixes
+
+* JASM will no longer crash if you move 3Dmigoto folder without changing it in the settings ([b334e97](https://github.com/Jorixon/JASM/commit/b334e970eda8ecf9328056186365c5703694a92a))
+
+
+### Tweaks
+
+* Improved key relevance in character search ([b334e97](https://github.com/Jorixon/JASM/commit/b334e970eda8ecf9328056186365c5703694a92a))
+
+
+### Miscellaneous
+
+* Ability to disable all mods as a part of first time startup ([b334e97](https://github.com/Jorixon/JASM/commit/b334e970eda8ecf9328056186365c5703694a92a))
+* An error window is now shown on crash/exceptions ([b334e97](https://github.com/Jorixon/JASM/commit/b334e970eda8ecf9328056186365c5703694a92a))
+
+
+### Code Refactoring
+
+* Refactored large parts of the code related to SkinMod ([#63](https://github.com/Jorixon/JASM/issues/63)) ([b334e97](https://github.com/Jorixon/JASM/commit/b334e970eda8ecf9328056186365c5703694a92a))
+
 ## [1.4.3](https://github.com/Jorixon/JASM/compare/v1.4.2...v1.4.3) (2023-10-04)
 
 

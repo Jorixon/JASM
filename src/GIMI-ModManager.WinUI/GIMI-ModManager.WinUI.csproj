@@ -16,7 +16,7 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<BaseOutputPath></BaseOutputPath>
 		<!-- x-release-please-start-version -->
-		<VersionPrefix>1.4.3</VersionPrefix>
+		<VersionPrefix>1.4.6</VersionPrefix>
 		<!-- x-release-please-end -->
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
@@ -671,6 +671,9 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Genshin\Images\Characters\Character_Paimon_Thumb.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\Games\Genshin\Images\Characters\Character_Wriothesley_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Genshin\Images\Start_Game.png">

@@ -1527,5 +1527,23 @@
     "InGameSkins": [],
     "InternalName": "Zhongli",
     "DisplayName": "Zhongli"
+  },
+  {
+    "Id": 78,
+    "Keys": [
+      "wriothesley"
+    ],
+    "ReleaseDate": "2023-10-17T00:00:00",
+    "Image": "Character_Wriothesley_Thumb.webp",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Catalyst",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Wriothesley",
+    "InGameSkins": [],
+    "InternalName": "Wriothesley",
+    "DisplayName": "Wriothesley"
   }
 ]
