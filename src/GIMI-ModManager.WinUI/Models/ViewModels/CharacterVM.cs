@@ -118,4 +118,23 @@ public partial class SkinVM : ObservableObject
     public SkinVM()
     {
     }
+
+    public bool InternalNameEquals(SkinVM? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return InternalNameEquals(other.InternalName);
+    }
+
+
+    public bool InternalNameEquals(string? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return string.Equals(InternalName, other,
+                   StringComparison.OrdinalIgnoreCase)
+               ||
+               string.Equals(InternalName, other.Replace("Default_", "", StringComparison.OrdinalIgnoreCase),
+                   StringComparison.OrdinalIgnoreCase);
+    }
 }

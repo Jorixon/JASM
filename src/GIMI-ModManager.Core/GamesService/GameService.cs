@@ -129,7 +129,7 @@ public class GameService : IGameService
         ICollection<ICharacterSkin>? additionalSkins = null, DateTime? releaseDate = null) =>
         throw new NotImplementedException();
 
-    public ICharacter? GetCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
+    public ICharacter? QueryCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
         int minScore = 100)
     {
         var searchResult = QueryCharacters(keywords, restrictToCharacters, minScore);
@@ -146,6 +146,13 @@ public class GameService : IGameService
             characters = characters.Concat(GetDisabledCharacters());
 
         return characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
+    }
+
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName)
+    {
+        // Might want to use reflection to get all properties that are of type IModdableObject
+        // For now we just check _characters
+        return GetCharacterByIdentifier(internalName);
     }
 
 
@@ -225,12 +232,10 @@ public class GameService : IGameService
     }
 
 
-    public bool IsMultiMod(IModdableObject modNameable)
+    public bool IsMultiMod(IModdableObject moddableObject)
     {
-        var isMultiMod = IsMultiMod(modNameable.InternalName);
-        if (isMultiMod) return true;
-
-        return modNameable.IsMultiMod;
+        var isMultiMod = IsMultiMod(moddableObject.InternalName);
+        return isMultiMod || moddableObject.IsMultiMod;
     }
 
     public bool IsMultiMod(string modInternalName)
@@ -401,7 +406,8 @@ public class GameService : IGameService
             Keys = new[] { "others", "unknown" },
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters", "Character_Others.png")),
             Element = Elements.AllElements.First(),
-            Class = Classes.AllClasses.First()
+            Class = Classes.AllClasses.First(),
+            IsMultiMod = true
         };
         AddDefaultSkin(character);
         return character;
@@ -423,7 +429,8 @@ public class GameService : IGameService
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
                 "Character_Gliders_Thumb.webp")),
             Element = Elements.AllElements.First(),
-            Class = Classes.AllClasses.First()
+            Class = Classes.AllClasses.First(),
+            IsMultiMod = true
         };
         AddDefaultSkin(character);
         return character;
@@ -445,7 +452,8 @@ public class GameService : IGameService
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
                 "Character_Weapons_Thumb.webp")),
             Element = Elements.AllElements.First(),
-            Class = Classes.AllClasses.First()
+            Class = Classes.AllClasses.First(),
+            IsMultiMod = true
         };
 
         AddDefaultSkin(character);

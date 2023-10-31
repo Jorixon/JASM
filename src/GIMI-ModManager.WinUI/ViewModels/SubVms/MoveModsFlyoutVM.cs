@@ -354,7 +354,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         }
 
         SuggestedCharacters.Clear();
-        SelectedCharacter = _gameService.GetCharacter(character.InternalName);
+        SelectedCharacter = _gameService.QueryCharacter(character.InternalName);
         SearchText = character.DisplayName;
         return true;
     }

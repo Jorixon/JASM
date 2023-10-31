@@ -311,7 +311,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _backendCharacters = backendCharacters;
 
-        // Add notifcations
+        // Add notifications
         foreach (var character in _characters)
         {
             var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
@@ -344,14 +344,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             else if (modList.Character is ICharacter character)
             {
                 var addWarning = false;
-                var subSkinsFound = new List<string>();
+                var subSkinsFound = new List<ICharacterSkin>();
                 foreach (var characterSkinEntry in modList.Mods)
                 {
                     if (!characterSkinEntry.IsEnabled) continue;
 
-                    var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)
-                        ?.ModFilesName;
-
+                    var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
                     var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
 
 
@@ -362,14 +360,17 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                         mod.WithModSettings(modSettingsResult.AsT0);
 
                     if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
-                        subSkin = mod.CharacterSkinOverride;
+                        subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
+                            .FirstOrDefault(x =>
+                                x.InternalNameEquals(mod.CharacterSkinOverride.Replace("Default_", "",
+                                    StringComparison.OrdinalIgnoreCase)));
 
                     if (subSkin is null)
                         continue;
 
 
                     if (subSkinsFound.All(foundSubSkin =>
-                            !foundSubSkin.Equals(subSkin, StringComparison.CurrentCultureIgnoreCase)))
+                            !subSkin.InternalNameEquals(foundSubSkin)))
                     {
                         subSkinsFound.Add(subSkin);
                         continue;

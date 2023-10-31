@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 
-public class InternalName : IEquatable<InternalName>, IEquatable<string>
+public sealed class InternalName : IEquatable<InternalName>, IEquatable<string>
 {
     public string Id { get; }
 
@@ -12,8 +11,6 @@ public class InternalName : IEquatable<InternalName>, IEquatable<string>
     {
         ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
         Id = id.Trim().ToLower(CultureInfo.InvariantCulture);
-        if (Id != id.Trim().ToLower())
-            Debugger.Break();
     }
 
     public bool Equals(InternalName? other)

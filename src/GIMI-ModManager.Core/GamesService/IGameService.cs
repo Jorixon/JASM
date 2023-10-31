@@ -26,10 +26,12 @@ public interface IGameService
         ICollection<IRegion>? regions = null, ICollection<ICharacterSkin>? additionalSkins = null,
         DateTime? releaseDate = null);
 
-    public ICharacter? GetCharacter(string keywords,
+    public ICharacter? QueryCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
 
     public ICharacter? GetCharacterByIdentifier(string internalName, bool includeDisabledCharacters = false);
+
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName);
 
     public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
@@ -44,7 +46,7 @@ public interface IGameService
     public List<ICharacter> GetDisabledCharacters();
 
 
-    public bool IsMultiMod(IModdableObject modNameable);
+    public bool IsMultiMod(IModdableObject moddableObject);
     public bool IsMultiMod(string modInternalName);
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }

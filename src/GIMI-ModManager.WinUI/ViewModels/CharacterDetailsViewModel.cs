@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
@@ -328,7 +327,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter.InternalName));
         var modList = new List<ModModel>();
 
-        var mods = _gameService.IsMultiMod(ShownCharacter.InternalName) || !MultipleInGameSkins
+        var mods = _gameService.IsMultiMod(_modList.Character) || !MultipleInGameSkins
             ? _modList.Mods
             : await FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
 
@@ -426,31 +425,35 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             var modSkin = (await LoadModSettings(mod))?.CharacterSkinOverride;
 
-            if (modSkin is not null && (modSkin.Equals(skin.InternalName, StringComparison.CurrentCultureIgnoreCase) ||
-                                        modSkin.Equals(
-                                            skin.InternalName.Replace("Default_", "",
-                                                StringComparison.CurrentCultureIgnoreCase),
-                                            StringComparison.CurrentCultureIgnoreCase)))
+            // Has skin override and is a match for the shown skin
+            if (modSkin is not null && skin.InternalNameEquals(modSkin))
             {
                 filteredMods.Add(mod);
                 continue;
             }
 
+            // Has override skin, but does not match any of the characters skins
             if (modSkin is not null && !ShownCharacter.InGameSkins.Any(skinVm =>
-                    skinVm.InternalName.Equals(modSkin, StringComparison.CurrentCultureIgnoreCase) ||
-                    skinVm.InternalName.Replace("Default_", "", StringComparison.CurrentCultureIgnoreCase)
-                        .Equals(modSkin, StringComparison.CurrentCultureIgnoreCase)))
+                    skinVm.InternalNameEquals(modSkin)))
             {
                 // In this case, the override skin is not a valid skin for this character, so we just add it.
-                Debugger.Break();
                 filteredMods.Add(mod);
                 continue;
             }
+
 
             var detectedSkin =
                 _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter.InternalName);
 
+            // If we can detect the skin, and the mod has no override skin, check if the detected skin matches the shown skin.
             if (modSkin is null && detectedSkin is not null && detectedSkin.InternalNameEquals(skin.InternalName))
+            {
+                filteredMods.Add(mod);
+                continue;
+            }
+
+            // If we can't detect the skin, and the mod has no override skin, we add it.
+            if (detectedSkin is null && modSkin is null)
                 filteredMods.Add(mod);
         }
 

@@ -4,7 +4,7 @@ using GIMI_ModManager.Core.GamesService.JsonModels;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 
-[DebuggerDisplay("{" + nameof(DisplayName) + "}" + " (" + nameof(InternalName) + ")")]
+[DebuggerDisplay("{" + nameof(DisplayName) + "}" + " {" + nameof(InternalName) + "}")]
 public class CharacterSkin : ICharacterSkin
 {
     public bool IsDefault { get; internal set; }
