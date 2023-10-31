@@ -3,6 +3,10 @@
 public interface ILocalSettingsService
 {
     public string SettingsLocation { get; }
+    public string ApplicationDataFolder { get; }
+
+    public void SetApplicationDataFolderName(string folderName);
+
     Task<T?> ReadSettingAsync<T>(string key);
 
     Task<T> ReadOrCreateSettingAsync<T>(string key) where T : new();

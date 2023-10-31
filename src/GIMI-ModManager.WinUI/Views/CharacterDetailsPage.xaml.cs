@@ -4,9 +4,9 @@ using Windows.Storage.Streams;
 using Windows.System;
 using CommunityToolkit.WinUI.UI.Animations;
 using CommunityToolkit.WinUI.UI.Controls;
-using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI;
@@ -320,7 +320,7 @@ public sealed partial class CharacterDetailsPage : Page
         AutoSuggestBoxSuggestionChosenEventArgs args)
     {
         //sender.IsEnabled = false;
-        ViewModel.MoveModsFlyoutVM.SearchText = ((GenshinCharacter)args.SelectedItem).DisplayName;
+        ViewModel.MoveModsFlyoutVM.SearchText = ((CharacterVM)args.SelectedItem).DisplayName;
         userScrolling = true;
         //ViewModel.MoveModsFlyoutVM.SelectCharacterCommand.Execute(args.SelectedItem);
     }
@@ -345,7 +345,7 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void MoveModSearch_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        var anyCharacterFound = ViewModel.MoveModsFlyoutVM.SelectCharacter(args.ChosenSuggestion as GenshinCharacter);
+        var anyCharacterFound = ViewModel.MoveModsFlyoutVM.SelectCharacter(args.ChosenSuggestion as CharacterVM);
         if (!anyCharacterFound)
             return;
         sender.IsEnabled = false;
@@ -412,15 +412,15 @@ public sealed partial class CharacterDetailsPage : Page
             return;
 
         var package = Clipboard.GetContent();
-        if (package.Contains(StandardDataFormats.Bitmap))
+        if (package.Contains(StandardDataFormats.StorageItems))
+        {
+            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await package.GetStorageItemsAsync());
+        }
+        else if (package.Contains(StandardDataFormats.Bitmap))
         {
             var imageStream = await package.GetBitmapAsync();
             if (imageStream is null) return;
             await ViewModel.ModPaneVM.SetImageFromBitmapStreamAsync(imageStream, package.AvailableFormats);
-        }
-        else if (package.Contains(StandardDataFormats.StorageItems))
-        {
-            await ViewModel.ModPaneVM.SetImageFromDragDropFile(await package.GetStorageItemsAsync());
         }
     }
 

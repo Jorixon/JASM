@@ -1,8 +1,9 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
-using GIMI_ModManager.Core.Entities.Genshin;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
+using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using OneOf;
 using OneOf.Types;
@@ -13,7 +14,7 @@ namespace GIMI_ModManager.Core.Services;
 
 public sealed class SkinManagerService : ISkinManagerService
 {
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
     private readonly ILogger _logger;
     private readonly ModCrawlerService _modCrawlerService;
 
@@ -22,12 +23,13 @@ public sealed class SkinManagerService : ISkinManagerService
     private DirectoryInfo? _threeMigotoFolder;
 
     private FileSystemWatcher _userIniWatcher = null!;
+
     private readonly List<ICharacterModList> _characterModLists = new();
     public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
 
-    public SkinManagerService(IGenshinService genshinService, ILogger logger, ModCrawlerService modCrawlerService)
+    public SkinManagerService(IGameService gameService, ILogger logger, ModCrawlerService modCrawlerService)
     {
-        _genshinService = genshinService;
+        _gameService = gameService;
         _modCrawlerService = modCrawlerService;
         _logger = logger.ForContext<SkinManagerService>();
     }
@@ -41,13 +43,13 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         _activeModsFolder.Refresh();
 
-        var characters = _genshinService.GetCharacters();
+        var characters = _gameService.GetCharacters();
         foreach (var character in characters)
         {
             var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
             if (!characterModFolder.Exists)
             {
-                _logger.Warning("Character mod folder for '{Character}' does not exist", character.DisplayName);
+                _logger.Debug("Character mod folder for '{Character}' does not exist", character.DisplayName);
                 continue;
             }
 
@@ -69,7 +71,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public async Task<RefreshResult> RefreshModsAsync(GenshinCharacter? refreshForCharacter = null)
+    public async Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null)
     {
         var modsUntracked = new List<string>();
         var newModsFound = new List<ISkinMod>();
@@ -78,7 +80,8 @@ public sealed class SkinManagerService : ISkinManagerService
 
         foreach (var characterModList in _characterModLists)
         {
-            if (refreshForCharacter is not null && characterModList.Character.Id != refreshForCharacter.Id) continue;
+            if (refreshForCharacter is not null &&
+                !characterModList.Character.InternalNameEquals(refreshForCharacter)) continue;
 
             var modsDirectory = new DirectoryInfo(characterModList.AbsModsFolderPath);
             modsDirectory.Refresh();
@@ -190,7 +193,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
 
         _logger.Information("Transferring {ModsCount} mods from '{SourceCharacter}' to '{DestinationCharacter}'",
-            mods.Count, source.Character.DisplayName, destination.Character.DisplayName);
+            mods.Count, source.Character.InternalName, destination.Character.InternalName);
 
         using var sourceDisabled = source.DisableWatcher();
         using var destinationDisabled = destination.DisableWatcher();
@@ -224,6 +227,33 @@ public sealed class SkinManagerService : ISkinManagerService
     public ISkinMod? GetModById(Guid id)
     {
         return _characterModLists.SelectMany(x => x.Mods).FirstOrDefault(x => x.Id == id)?.Mod;
+    }
+
+    public Task EnableModListAsync(ICharacter moddableObject)
+    {
+        CreateModListFolder(moddableObject);
+        var modList = new CharacterModList(moddableObject, GetCharacterModFolderPath(moddableObject), logger: _logger);
+
+        _characterModLists.Add(modList);
+
+        return RefreshModsAsync(moddableObject.InternalName);
+    }
+
+    public Task DisableModListAsync(IModdableObject moddableObject, bool deleteFolder = false)
+    {
+        var modList = GetCharacterModList(moddableObject);
+        var modFolder = new DirectoryInfo(modList.AbsModsFolderPath);
+
+        _characterModLists.Remove(modList);
+        modList.Dispose();
+
+        if (deleteFolder && modFolder.Exists)
+        {
+            _logger.Information("Deleting mod folder '{ModFolder}'", modFolder.FullName);
+            modFolder.Delete(true);
+        }
+
+        return Task.CompletedTask;
     }
 
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
@@ -295,7 +325,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         if (keepCharacterFolderStructure && !zip) // Copy mods organized by character
         {
-            var characterToFolder = new Dictionary<GenshinCharacter, DirectoryInfo>();
+            var characterToFolder = new Dictionary<IModdableObject, DirectoryInfo>();
             var emptyFoldersCount = 0;
 
             foreach (var characterModList in characterModLists)
@@ -307,13 +337,13 @@ public sealed class SkinManagerService : ISkinManagerService
                 }
 
                 var characterFolder = new DirectoryInfo(Path.Combine(exportFolder.FullName,
-                    characterModList.Character.DisplayName));
+                    characterModList.Character.InternalName));
 
                 characterToFolder.Add(characterModList.Character, characterFolder);
                 characterFolder.Create();
             }
 
-            if (characterToFolder.Count != _genshinService.GetCharacters().Count() - emptyFoldersCount)
+            if (characterToFolder.Count != _gameService.GetCharacters().Count() - emptyFoldersCount)
                 throw new InvalidOperationException(
                     "Failed to create character folders in export folder, character mismatch");
 
@@ -338,14 +368,14 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(oldName);
                     _logger.Information("Copied mod '{ModName}' to export character folder '{CharacterFolder}'",
                         mod.Name,
-                        characterSkinEntry.ModList.Character.DisplayName);
+                        characterSkinEntry.ModList.Character.InternalName);
 
                     continue;
                 }
 
                 exportedMods.Add(characterSkinEntry.Mod.CopyTo(destinationFolder.FullName));
                 _logger.Information("Copied mod '{ModName}' to export character folder '{CharacterFolder}'", mod.Name,
-                    characterSkinEntry.ModList.Character.DisplayName);
+                    characterSkinEntry.ModList.Character.InternalName);
             }
 
             ModExportProgress?.Invoke(this,
@@ -425,15 +455,20 @@ public sealed class SkinManagerService : ISkinManagerService
             }
     }
 
-    public ICharacterModList GetCharacterModList(GenshinCharacter character)
+    public ICharacterModList GetCharacterModList(string internalName)
     {
-        var characterModList = _characterModLists.First(x => x.Character.Id == character.Id);
+        var characterModList = _characterModLists.First(x => x.Character.InternalNameEquals(internalName));
 
         return characterModList;
     }
 
+    public ICharacterModList GetCharacterModList(IModdableObject character)
+    {
+        return GetCharacterModList(character.InternalName);
+    }
 
-    public async Task Initialize(string activeModsFolderPath, string? unloadedModsFolderPath = null,
+
+    public Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
     {
         _logger.Debug(
@@ -463,32 +498,42 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
         _activeModsFolder.Create();
         InitializeFolderStructure();
-        await ScanForModsAsync();
+        return ScanForModsAsync();
     }
 
     private void InitializeFolderStructure()
     {
-        var characters = _genshinService.GetCharacters();
+        var characters = _gameService.GetCharacters();
         foreach (var character in characters)
-        {
-            var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
-            characterModFolder.Create();
-        }
+            CreateModListFolder(character);
     }
 
-    public async Task<int> ReorganizeModsAsync(GenshinCharacter? characterFolderToReorganize = null,
+    private void CreateModListFolder(INameable character)
+    {
+        var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
+        characterModFolder.Create();
+    }
+
+    public async Task<int> ReorganizeModsAsync(string? characterFolderToReorganize = null,
         bool disableMods = false)
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
+        var characterFolder = characterFolderToReorganize is null
+            ? null
+            : _gameService.GetCharacterByIdentifier(characterFolderToReorganize);
+
         if (characterFolderToReorganize is null)
             _logger.Information("Reorganizing mods");
         else
-            _logger.Information("Reorganizing mods for '{Character}'", characterFolderToReorganize.DisplayName);
+            _logger.Information("Reorganizing mods for '{Character}'", characterFolder?.InternalName);
 
         _activeModsFolder.Refresh();
-        var characters = _genshinService.GetCharacters().ToArray();
-        var othersCharacter = _genshinService.GetCharacter(_genshinService.OtherCharacterId);
+        var characters = _gameService.GetCharacters().ToArray();
+
+        var disabledCharacters = _gameService.GetDisabledCharacters();
+
+        var othersCharacter = _gameService.GetCharacterByIdentifier("Others");
         if (othersCharacter is null)
         {
             _logger.Error("Failed to get 'Others' character");
@@ -497,22 +542,22 @@ public sealed class SkinManagerService : ISkinManagerService
 
         var movedMods = 0;
 
-        var folderToReorganize = characterFolderToReorganize is null
+        var folderToReorganize = characterFolder is null
             ? _activeModsFolder
-            : new DirectoryInfo(GetCharacterModFolderPath(characterFolderToReorganize));
+            : new DirectoryInfo(GetCharacterModFolderPath(characterFolder));
 
         foreach (var folder in folderToReorganize.EnumerateDirectories())
         {
             // Is a character folder continue
-            var character = characters.FirstOrDefault(x =>
-                x.DisplayName.Equals(folder.Name, StringComparison.InvariantCultureIgnoreCase));
+            var character = characters.Concat(disabledCharacters).FirstOrDefault(x =>
+                x.InternalName.Equals(folder.Name));
             if (character is not null)
                 continue;
 
 
             var closestMatchCharacter =
-                _modCrawlerService.GetFirstSubSkinRecursive(folder.FullName)?.Character as GenshinCharacter ??
-                _genshinService.GetCharacter(folder.Name);
+                _modCrawlerService.GetFirstSubSkinRecursive(folder.FullName)?.Character ??
+                _gameService.QueryCharacter(folder.Name);
 
 
             switch (closestMatchCharacter)
@@ -528,7 +573,7 @@ public sealed class SkinManagerService : ISkinManagerService
             }
 
 
-            var modList = GetCharacterModList(closestMatchCharacter);
+            var modList = GetCharacterModList(closestMatchCharacter.InternalName);
             ISkinMod? mod = null;
             try
             {
@@ -551,7 +596,7 @@ public sealed class SkinManagerService : ISkinManagerService
                     mod.Rename(DuplicateModAffixHelper.AppendNumberAffix(mod.Name));
                     _logger.Information(
                         "Mod '{ModName}' already exists in '{CharacterFolder}', renaming to {NewModName}",
-                        oldName, closestMatchCharacter.DisplayName, mod.Name);
+                        oldName, closestMatchCharacter.InternalName, mod.Name);
                     renameAttempts++;
                     if (renameAttempts <= 10) continue;
                     _logger.Error(
@@ -563,15 +608,15 @@ public sealed class SkinManagerService : ISkinManagerService
                 if (renameAttempts > 10) continue;
 
 
-                mod.MoveTo(GetCharacterModList(closestMatchCharacter).AbsModsFolderPath);
+                mod.MoveTo(GetCharacterModList(closestMatchCharacter.InternalName).AbsModsFolderPath);
                 _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder", mod.Name,
-                    closestMatchCharacter.DisplayName);
+                    closestMatchCharacter.InternalName);
                 movedMods++;
             }
             catch (Exception e)
             {
                 _logger.Error(e, "Failed to move mod '{ModName}' to '{CharacterFolder}'", mod.FullPath,
-                    closestMatchCharacter.DisplayName);
+                    closestMatchCharacter.InternalName);
                 continue;
             }
 
@@ -592,9 +637,9 @@ public sealed class SkinManagerService : ISkinManagerService
         return movedMods;
     }
 
-    private string GetCharacterModFolderPath(GenshinCharacter character)
+    private string GetCharacterModFolderPath(INameable character)
     {
-        return Path.Combine(_activeModsFolder.FullName, character.DisplayName);
+        return Path.Combine(_activeModsFolder.FullName, character.InternalName);
     }
 
 

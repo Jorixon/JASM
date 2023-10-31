@@ -16,17 +16,15 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     private readonly ILogger _logger;
     private readonly NotificationManager _notificationManager;
     private readonly ISkinManagerService _skinManagerService;
-    private readonly IGenshinService _genshinService;
     private readonly ModCrawlerService _modCrawlerService;
 
 
     public DebugViewModel(ILogger logger, NotificationManager notificationManager,
-        ISkinManagerService skinManagerService, IGenshinService genshinService, ModCrawlerService modCrawlerService)
+        ISkinManagerService skinManagerService, ModCrawlerService modCrawlerService)
     {
         _logger = logger;
         _notificationManager = notificationManager;
         _skinManagerService = skinManagerService;
-        _genshinService = genshinService;
         _modCrawlerService = modCrawlerService;
     }
 
@@ -55,17 +53,6 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedTo(object parameter)
     {
-        var characters = _genshinService.GetCharacters().Take(5);
-        foreach (var character in characters)
-        {
-            var vm = new SelectCharacterTemplate
-            {
-                DisplayName = character.DisplayName,
-                ImagePath = character.ImageUri ?? " ",
-                IsSelected = false
-            };
-            Items.Add(vm);
-        }
     }
 
     public void OnNavigatedFrom()

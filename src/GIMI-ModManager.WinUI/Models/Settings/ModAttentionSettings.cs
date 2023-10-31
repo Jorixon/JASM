@@ -7,5 +7,5 @@ public class ModAttentionSettings
 {
     [JsonIgnore] public const string Key = "ModAttentionSettings";
 
-    public Dictionary<int, ModNotification[]> ModNotifications { get; set; } = new();
+    public Dictionary<string, ModNotification[]> ModNotifications { get; set; } = new();
 }

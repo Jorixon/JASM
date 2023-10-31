@@ -1,0 +1,37 @@
+[
+	{
+		"InternalName": "Pyro",
+		"DisplayName": "Pyro",
+		"Image": "Pyro.svg"
+	},
+	{
+		"InternalName": "Hydro",
+		"DisplayName": "Hydro",
+		"Image": "Hydro.svg"
+	},
+	{
+		"InternalName": "Anemo",
+		"DisplayName": "Anemo",
+		"Image": "Anemo.svg"
+	},
+	{
+		"InternalName": "Electro",
+		"DisplayName": "Electro",
+		"Image" :  "Electro.svg"
+	},
+	{
+		"InternalName": "Dendro",
+		"DisplayName": "Dendro",
+		"Image": "Dendro.svg"
+	},
+	{
+		"InternalName": "Cryo",
+		"DisplayName": "Cryo",
+		"Image": "Cryo.svg"
+	},
+	{
+		"InternalName": "Geo",
+		"DisplayName": "Geo",
+		"Image": "Geo.svg"
+	}
+]

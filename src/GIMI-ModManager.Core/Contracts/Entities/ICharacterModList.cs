@@ -1,9 +1,9 @@
 ﻿using GIMI_ModManager.Core.Entities;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 
 namespace GIMI_ModManager.Core.Contracts.Entities;
 
-public interface ICharacterModList
+public interface ICharacterModList : IDisposable
 {
     public string AbsModsFolderPath { get; }
     public string DisabledPrefix { get; }
@@ -16,7 +16,7 @@ public interface ICharacterModList
     /// <summary>
     /// The character this mod list is for.
     /// </summary>
-    public GenshinCharacter Character { get; }
+    public IModdableObject Character { get; }
 
     /// <summary>
     /// Add a mod to the mod list. Starts tracking the mod.

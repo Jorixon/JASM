@@ -15,4 +15,10 @@
     <ProjectReference Include="..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="characters.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

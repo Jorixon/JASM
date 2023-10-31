@@ -6,10 +6,10 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:genshin="using:GIMI_ModManager.Core.Entities.Genshin"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.Models.ViewModels"
     xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     x:Name="CharacterDetailsRoot"
     mc:Ignorable="d">
@@ -87,7 +87,7 @@
                                 Text="{x:Bind ViewModel.MoveModsFlyoutVM.SearchText, Mode=TwoWay}"
                                 TextChanged="MoveModSearch_OnTextChanged">
                                 <AutoSuggestBox.ItemTemplate>
-                                    <DataTemplate x:DataType="genshin:GenshinCharacter">
+                                    <DataTemplate x:DataType="viewModels:CharacterVM">
                                         <TextBlock Text="{x:Bind DisplayName}" />
                                     </DataTemplate>
                                 </AutoSuggestBox.ItemTemplate>
@@ -178,14 +178,30 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel MaxWidth="220">
+                    <Grid>
 
-                    <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackCommand}">
-                        <Button.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="Escape" IsEnabled="True" />
-                        </Button.KeyboardAccelerators>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                        <FontIcon Glyph="&#xE72B; &#xE80A; " />
-                    </Button>
+                        <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackToGridCommand}">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Escape" IsEnabled="True" />
+                            </Button.KeyboardAccelerators>
+
+                            <FontIcon Glyph="&#xE72B; &#xE80A; " />
+                        </Button>
+
+
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind ViewModel.GoToCharacterEditScreenCommand}">
+                            <FontIcon Glyph="&#xE70F;" />
+                        </Button>
+                    </Grid>
+
                     <Grid
                         x:Name="itemHero"
                         Width="200"
@@ -195,10 +211,13 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         CornerRadius="10">
-                        <Image
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneWay}" />
+                        <Image HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                            <Image.Source>
+                                <BitmapImage UriSource="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneWay}" />
+                            </Image.Source>
+
+                        </Image>
                     </Grid>
                     <TextBlock
                         Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
@@ -210,7 +229,7 @@
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.Below="itemHero"
                         Text="{x:Bind ViewModel.ShownCharacter.DisplayName}"
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="Wrap" />
                     <!--  Style="{ThemeResource TitleTextBlockStyle}"  -->
 
 

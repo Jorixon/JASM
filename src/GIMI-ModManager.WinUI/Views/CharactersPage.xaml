@@ -119,11 +119,11 @@
                 </Button>
                 <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,4,0" Text="Start Genshin" />
+                        <TextBlock Margin="0,0,4,0" Text="{x:Bind ViewModel.ShortGameName}" />
                         <Image
                             Width="16"
                             Height="16"
-                            Source="../Assets/Images/Start_Genshin.png" />
+                            Source="{x:Bind ViewModel.StartGameIcon}" />
                     </StackPanel>
                     <ToolTipService.ToolTip>
                         <StackPanel Orientation="Horizontal">
@@ -168,7 +168,8 @@
                                 Width="60"
                                 MaxWidth="80"
                                 MaxHeight="40"
-                                IsSelected="{x:Bind IsSelected, Mode=TwoWay}">
+                                IsSelected="{x:Bind IsSelected, Mode=TwoWay}"
+                                ToolTipService.ToolTip="{x:Bind Name}">
                                 <Grid Padding="4,0" HorizontalAlignment="Center">
                                     <Image
                                         VerticalAlignment="Center"

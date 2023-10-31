@@ -10,11 +10,14 @@ using CommunityToolkit.Mvvm.Input;
 using ErrorOr;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
@@ -26,7 +29,7 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILogger _logger;
@@ -34,8 +37,10 @@ public partial class SettingsViewModel : ObservableRecipient
     private readonly INavigationViewService _navigationViewService;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
+    private readonly ILanguageLocalizer _localizer;
     private readonly AutoUpdaterService _autoUpdaterService;
+    private readonly SelectedGameService _selectedGameService;
 
 
     private readonly NotificationManager _notificationManager;
@@ -61,6 +66,15 @@ public partial class SettingsViewModel : ObservableRecipient
 
     [ObservableProperty] private ObservableCollection<string> _languages = new();
     [ObservableProperty] private string _selectedLanguage = string.Empty;
+
+    [ObservableProperty] private ObservableCollection<string> _games = new()
+    {
+        SupportedGames.Genshin.ToString(),
+        SupportedGames.Honkai.ToString()
+    };
+
+    [ObservableProperty] private string _selectedGame = string.Empty;
+
     private Dictionary<string, string> _nameToLangCode = new();
 
     public PathPicker PathToGIMIFolderPicker { get; }
@@ -77,8 +91,8 @@ public partial class SettingsViewModel : ObservableRecipient
         INavigationViewService navigationViewService, IWindowManagerService windowManagerService,
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
-        IGenshinService genshinService, AutoUpdaterService autoUpdaterService
-    )
+        IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
+        SelectedGameService selectedGameService)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -88,8 +102,10 @@ public partial class SettingsViewModel : ObservableRecipient
         _windowManagerService = windowManagerService;
         _skinManagerService = skinManagerService;
         _updateChecker = updateChecker;
-        _genshinService = genshinService;
+        _gameService = gameService;
         _autoUpdaterService = autoUpdaterService;
+        _localizer = localizer;
+        _selectedGameService = selectedGameService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -139,7 +155,7 @@ public partial class SettingsViewModel : ObservableRecipient
         cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
 
 
-        var supportedCultures = App.Localizer.GetAvailableLanguages().ToArray();
+        var supportedCultures = _localizer.AvailableLanguages.Select(l => l.LanguageCode).ToArray();
 
         foreach (var culture in cultures)
         {
@@ -148,7 +164,7 @@ public partial class SettingsViewModel : ObservableRecipient
             Languages.Add(culture.NativeName);
             _nameToLangCode.Add(culture.NativeName, culture.Name.ToLower());
 
-            if (culture.Name.ToLower() == App.Localizer.GetCurrentLanguage())
+            if (_localizer.CurrentLanguage.Equals(culture))
                 SelectedLanguage = culture.NativeName;
         }
     }
@@ -287,7 +303,6 @@ public partial class SettingsViewModel : ObservableRecipient
         if (result == ContentDialogResult.Primary)
         {
             _navigationViewService.IsEnabled = false;
-            var genshinService = App.GetService<IGenshinService>();
 
             try
             {
@@ -296,7 +311,8 @@ public partial class SettingsViewModel : ObservableRecipient
 
                 movedModsCount += await Task.Run(() =>
                     _skinManagerService.ReorganizeModsAsync(
-                        genshinService.GetCharacter(genshinService.OtherCharacterId))); // Others folder
+                        _gameService.GetCharacterByIdentifier(_gameService.OtherCharacterInternalName)!
+                            .InternalName)); // Others folder
 
                 await _skinManagerService.RefreshModsAsync();
 
@@ -478,7 +494,7 @@ public partial class SettingsViewModel : ObservableRecipient
 
         dialog.ContentTemplate = contentDialog.ContentTemplate;
 
-        var model = new ExportModsDialogModel(_genshinService.GetCharacters());
+        var model = new ExportModsDialogModel(CharacterVM.FromCharacters(_gameService.GetCharacters()));
         dialog.DataContext = model;
         var result = await _windowManagerService.ShowDialogAsync(dialog);
 
@@ -499,7 +515,8 @@ public partial class SettingsViewModel : ObservableRecipient
         var charactersToExport =
             model.CharacterModsToBackup.Where(modList => modList.IsChecked).Select(ch => ch.Character);
         var modsList = new List<ICharacterModList>();
-        foreach (var character in charactersToExport) modsList.Add(_skinManagerService.GetCharacterModList(character));
+        foreach (var character in charactersToExport)
+            modsList.Add(_skinManagerService.GetCharacterModList(character.InternalName));
 
         try
         {
@@ -542,10 +559,10 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         if (_nameToLangCode.TryGetValue(selectedLanguageName, out var langCode))
         {
-            if (langCode == App.Localizer.GetCurrentLanguage())
+            if (langCode == _localizer.CurrentLanguage.LanguageCode)
                 return;
 
-            await App.Localizer.SetLanguage(langCode);
+            await _localizer.SetLanguageAsync(langCode);
 
             var appSettings = await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key);
             appSettings.Language = langCode;
@@ -574,6 +591,53 @@ public partial class SettingsViewModel : ObservableRecipient
                 TimeSpan.FromSeconds(10));
         }
     }
+
+
+    [RelayCommand]
+    private async Task SelectGameAsync(string? game)
+    {
+        var jasmSelectedGame = await _selectedGameService.GetSelectedGameAsync();
+
+        if (game.IsNullOrEmpty() || game == jasmSelectedGame)
+            return;
+
+        var switchGameDialog = new ContentDialog()
+        {
+            Title = "Switch Game",
+            Content = new TextBlock()
+            {
+                Text =
+                    "Switching games will restart the application. " +
+                    "This is required to ensure that the application is configured correctly for the selected game.\n\n" +
+                    "Do you want to switch games?",
+                TextWrapping = TextWrapping.WrapWholeWords
+            },
+
+            PrimaryButtonText = $"Switch to {game}",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        var result = await _windowManagerService.ShowDialogAsync(switchGameDialog);
+
+        if (result != ContentDialogResult.Primary)
+        {
+            SelectedGame = game;
+            return;
+        }
+
+        await _selectedGameService.SetSelectedGame(game);
+        await RestartApp().ConfigureAwait(false);
+    }
+
+    public async void OnNavigatedTo(object parameter)
+    {
+        SelectedGame = await _selectedGameService.GetSelectedGameAsync();
+    }
+
+    public void OnNavigatedFrom()
+    {
+    }
 }
 
 public partial class ExportModsDialogModel : ObservableObject
@@ -594,7 +658,7 @@ public partial class ExportModsDialogModel : ObservableObject
 
     [ObservableProperty] private SetModStatus _setModStatus = SetModStatus.KeepCurrent;
 
-    public ExportModsDialogModel(IEnumerable<GenshinCharacter> characters)
+    public ExportModsDialogModel(IEnumerable<CharacterVM> characters)
     {
         SetModStatus = SetModStatus.KeepCurrent;
         foreach (var character in characters) CharacterModsToBackup.Add(new CharacterCheckboxModel(character));
@@ -604,9 +668,9 @@ public partial class ExportModsDialogModel : ObservableObject
 public partial class CharacterCheckboxModel : ObservableObject
 {
     [ObservableProperty] private bool _isChecked = true;
-    [ObservableProperty] private GenshinCharacter _character;
+    [ObservableProperty] private CharacterVM _character;
 
-    public CharacterCheckboxModel(GenshinCharacter character)
+    public CharacterCheckboxModel(CharacterVM character)
     {
         _character = character;
     }

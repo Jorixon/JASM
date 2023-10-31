@@ -1,7 +1,8 @@
 ﻿using System.Security.Principal;
 using Windows.Foundation;
 using CommunityToolkit.WinUI;
-using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
@@ -23,13 +24,15 @@ public class ActivationService : IActivationService
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly ILogger _logger = Log.ForContext<ActivationService>();
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
+    private readonly ILanguageLocalizer _languageLocalizer;
     private readonly ElevatorService _elevatorService;
     private readonly GenshinProcessManager _genshinProcessManager;
     private readonly ThreeDMigtoProcessManager _threeDMigtoProcessManager;
     private readonly UpdateChecker _updateChecker;
     private readonly IWindowManagerService _windowManagerService;
     private readonly AutoUpdaterService _autoUpdaterService;
+    private readonly SelectedGameService _selectedGameService;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -38,21 +41,24 @@ public class ActivationService : IActivationService
     public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
         IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService,
         ILocalSettingsService localSettingsService,
-        IGenshinService genshinService, ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
+        ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
-        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService)
+        IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
+        ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
-        _genshinService = genshinService;
         _elevatorService = elevatorService;
         _genshinProcessManager = genshinProcessManager;
         _threeDMigtoProcessManager = threeDMigtoProcessManager;
         _updateChecker = updateChecker;
         _windowManagerService = windowManagerService;
         _autoUpdaterService = autoUpdaterService;
+        _gameService = gameService;
+        _languageLocalizer = languageLocalizer;
+        _selectedGameService = selectedGameService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -110,10 +116,9 @@ public class ActivationService : IActivationService
 
     private async Task InitializeAsync()
     {
-        var jsonPath = IsMsix ? "ms-appx:///Assets/characters.json" : $"{AppDomain.CurrentDomain.BaseDirectory}Assets";
+        await _selectedGameService.InitializeAsync();
         await SetLanguage();
         await SetScreenSize();
-        await _genshinService.InitializeAsync(jsonPath).ConfigureAwait(false);
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
     }
 
@@ -174,7 +179,7 @@ public class ActivationService : IActivationService
     // There has to be a better way to do this. But for now this works.
     // Window does not have the closing event, so I can't save the size on close.
     // Application might exit ungracefully, unsure if this is a problem.
-    private void ScreenSizeSavingTimer_Tick(object sender, object e)
+    private void ScreenSizeSavingTimer_Tick(object? sender, object? e)
     {
         var width = App.MainWindow.Width;
         var height = App.MainWindow.Height;
@@ -280,9 +285,11 @@ public class ActivationService : IActivationService
             return;
         }
 
-        var supportedLanguages = App.Localizer.GetAvailableLanguages().ToArray();
+        var supportedLanguages = _languageLocalizer.AvailableLanguages;
+        var language = supportedLanguages.FirstOrDefault(lang =>
+            lang.LanguageCode.Equals(selectedLanguage, StringComparison.CurrentCultureIgnoreCase));
 
-        if (supportedLanguages.Contains(selectedLanguage))
-            await App.Localizer.SetLanguage(selectedLanguage);
+        if (language != null)
+            await _languageLocalizer.SetLanguageAsync(language);
     }
 }

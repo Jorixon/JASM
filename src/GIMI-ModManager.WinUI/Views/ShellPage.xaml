@@ -75,6 +75,12 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
+                <NavigationViewItem helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModel" Content="Character Management">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB7E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
                 <NavigationViewItem
                     x:Name="DebugItem"
                     helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.DebugViewModel"
@@ -83,6 +89,8 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+
+
 
             </NavigationView.MenuItems>
 
@@ -93,6 +101,8 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
+
+
 
             <!--<NavigationView.HeaderTemplate>
                 <DataTemplate>

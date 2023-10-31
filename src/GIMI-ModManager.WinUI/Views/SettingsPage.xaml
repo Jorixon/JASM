@@ -122,7 +122,23 @@
                         ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
                         SelectionChanged="LanguageSelectorComboBox_OnSelectionChanged" />
+                </StackPanel>
 
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Game" />
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        Text="JASM currently only supports Genshin Impact, but will support Honkai Star Rail Soon™"
+                        TextWrapping="WrapWholeWords" />
+
+                    <ComboBox
+                        x:Name="GameSelectorComboBox"
+                        Header="Selected Game:"
+                        IsEnabled="False"
+                        ItemsSource="{x:Bind ViewModel.Games}"
+                        SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
+                        SelectionChanged="GameSelectorComboBox_OnSelectionChanged" />
                 </StackPanel>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Elevator Process" />

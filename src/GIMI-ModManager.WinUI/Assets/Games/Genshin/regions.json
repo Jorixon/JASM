@@ -1,0 +1,30 @@
+[
+  {
+    "InternalName": "Mondstadt",
+    "DisplayName": "Mondstadt"
+  },
+  {
+    "InternalName": "Liyue",
+    "DisplayName": "Liyue"
+  },
+  {
+    "InternalName": "Inazuma",
+    "DisplayName": "Inazuma"
+  },
+  {
+    "InternalName": "Sumeru",
+    "DisplayName": "Sumeru"
+  },
+  {
+    "InternalName": "Fontaine",
+    "DisplayName": "Fontaine"
+  },
+  {
+    "InternalName": "Khaenri'ah",
+    "DisplayName": "Khaenri'ah"
+  },
+  {
+    "InternalName": "Snezhnaya",
+    "DisplayName": "Snezhnaya"
+  }
+]

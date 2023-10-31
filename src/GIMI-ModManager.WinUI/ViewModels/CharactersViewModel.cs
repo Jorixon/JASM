@@ -4,12 +4,16 @@ using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities.Genshin;
+using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Settings;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -20,7 +24,7 @@ namespace GIMI_ModManager.WinUI.ViewModels;
 
 public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IGenshinService _genshinService;
+    private readonly IGameService _gameService;
     private readonly ILogger _logger;
     private readonly INavigationService _navigationService;
     private readonly ISkinManagerService _skinManagerService;
@@ -33,13 +37,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public readonly GenshinProcessManager GenshinProcessManager;
 
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+    public readonly string StartGameIcon;
+    public readonly string ShortGameName;
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
     public OverviewDockPanelVM DockPanelVM { get; }
 
 
-    private IReadOnlyList<GenshinCharacter> _characters = new List<GenshinCharacter>();
+    private IReadOnlyList<ICharacter> _characters = new List<ICharacter>();
 
     private IReadOnlyList<CharacterGridItemModel> _backendCharacters = new List<CharacterGridItemModel>();
     public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
@@ -63,14 +69,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private bool isNavigating = true;
 
-    public CharactersViewModel(IGenshinService genshinService, ILogger logger, INavigationService navigationService,
+    public CharactersViewModel(IGameService gameService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
         ModCrawlerService modCrawlerService, ModSettingsService modSettingsService)
     {
-        _genshinService = genshinService;
+        _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
         _navigationService = navigationService;
         _skinManagerService = skinManagerService;
@@ -92,23 +98,26 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         DockPanelVM = new OverviewDockPanelVM();
         DockPanelVM.FilterElementSelected += FilterElementSelected;
         DockPanelVM.Initialize();
+        StartGameIcon = _gameService.GameIcon;
+        ShortGameName = "Start " + _gameService.GameShortName;
     }
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
     {
-        if (e.Element.Length == 0)
+        if (e.InternalElementNames.Length == 0)
         {
             _filters.Remove(FilterType.Element);
             ResetContent();
             return;
         }
 
-        _filters[FilterType.Element] = new GridFilter(character => e.Element.Contains(character.Character.Element));
+        _filters[FilterType.Element] = new GridFilter(character =>
+            e.InternalElementNames.Contains(character.Character.Element.InternalName));
         ResetContent();
     }
 
     private readonly CharacterGridItemModel _noCharacterFound =
-        new(new GenshinCharacter { Id = -999999, DisplayName = "No Characters Found..." });
+        new(new Character("None", "No Characters Found..."));
 
     public void AutoSuggestBox_TextChanged(string text)
     {
@@ -123,7 +132,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _genshinService.GetCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
+        var suitableItems = _gameService.QueryCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
             .Take(5)
             .Select(x => new CharacterGridItemModel(x.Key))
             .ToList();
@@ -246,156 +255,171 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        var characters = _genshinService.GetCharacters().OrderBy(g => g.DisplayName).ToList();
-        var others = characters.FirstOrDefault(ch => ch.Id == _genshinService.OtherCharacterId);
-        if (others is not null) // Add to front
+        await Task.Run(async () =>
         {
-            characters.Remove(others);
-            characters.Insert(0, others);
-        }
-
-        var gliders = characters.FirstOrDefault(ch => ch.Id == _genshinService.GlidersCharacterId);
-        if (gliders is not null) // Add to end
-        {
-            characters.Remove(gliders);
-            characters.Add(gliders);
-        }
-
-        var weapons = characters.FirstOrDefault(ch => ch.Id == _genshinService.WeaponsCharacterId);
-        if (weapons is not null) // Add to end
-        {
-            characters.Remove(weapons);
-            characters.Add(weapons);
-        }
-
-
-        _characters = characters;
-
-        characters = new List<GenshinCharacter>(_characters);
-
-        var pinnedCharactersOptions = await ReadCharacterSettings();
-
-        var backendCharacters = new List<CharacterGridItemModel>();
-        foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
-        {
-            var character = characters.FirstOrDefault(x => x.Id == pinedCharacterId);
-            if (character is not null)
+            var characters = _gameService.GetCharacters().ToList();
+            var others =
+                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.OtherCharacterInternalName));
+            if (others is not null) // Add to front
             {
-                backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
-                characters.Remove(character);
+                characters.Remove(others);
+                characters.Insert(0, others);
             }
-        }
 
-        foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
-        {
-            var character = characters.FirstOrDefault(x => x.Id == hiddenCharacterId);
-            if (character is not null)
+            var gliders =
+                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.GlidersCharacterInternalName));
+            if (gliders is not null) // Add to end
             {
-                backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
-                characters.Remove(character);
+                characters.Remove(gliders);
+                characters.Add(gliders);
             }
-        }
 
-        // Add rest of characters
-        foreach (var genshinCharacter in characters)
-        {
-            backendCharacters.Add(new CharacterGridItemModel(genshinCharacter));
-        }
-
-        _backendCharacters = backendCharacters;
-
-        // Add notifcations
-        foreach (var genshinCharacter in _characters)
-        {
-            var characterGridItemModel = FindCharacterById(genshinCharacter.Id);
-            if (characterGridItemModel is null) continue;
-            var notifications = _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
-            foreach (var modNotification in notifications)
+            var weapons =
+                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.WeaponsCharacterInternalName));
+            if (weapons is not null) // Add to end
             {
-                if (modNotification.AttentionType != AttentionType.Added) continue;
-
-                characterGridItemModel.Notification = true;
-                characterGridItemModel.NotificationType = modNotification.AttentionType;
+                characters.Remove(weapons);
+                characters.Add(weapons);
             }
-        }
 
-        // Character Ids where more than 1 skin is enabled
-        var charactersWithMultipleMods = _skinManagerService.CharacterModLists
-            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
 
-        var charactersWithMultipleActiveSkins = new List<int>();
-        foreach (var modList in charactersWithMultipleMods)
-        {
-            if (_genshinService.IsMultiModCharacter(modList.Character))
-                continue;
+            _characters = characters;
 
-            var addWarning = false;
-            var subSkinsFound = new List<string>();
-            foreach (var characterSkinEntry in modList.Mods)
+            characters = new List<ICharacter>(_characters);
+
+            var pinnedCharactersOptions = await ReadCharacterSettings();
+
+            var backendCharacters = new List<CharacterGridItemModel>();
+            foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
             {
-                if (!characterSkinEntry.IsEnabled) continue;
-
-                var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath)?.Name;
-
-                var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
-
-
-                var mod = ModModel.FromMod(characterSkinEntry);
-
-
-                if (modSettingsResult.IsT0)
-                    mod.WithModSettings(modSettingsResult.AsT0);
-
-                if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
-                    subSkin = mod.CharacterSkinOverride;
-
-                if (subSkin is null)
-                    continue;
-
-
-                if (subSkinsFound.All(foundSubSkin =>
-                        !foundSubSkin.Equals(subSkin, StringComparison.CurrentCultureIgnoreCase)))
+                var character = characters.FirstOrDefault(x => x.InternalNameEquals(pinedCharacterId));
+                if (character is not null)
                 {
-                    subSkinsFound.Add(subSkin);
-                    continue;
+                    backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
+                    characters.Remove(character);
                 }
-
-
-                addWarning = true;
-                break;
             }
 
-            if (addWarning || subSkinsFound.Count > 1 && modList.Character.InGameSkins.Count == 1)
-                charactersWithMultipleActiveSkins.Add(modList.Character.Id);
-        }
+            foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
+            {
+                var character = characters.FirstOrDefault(x => x.InternalNameEquals(hiddenCharacterId));
+                if (character is not null)
+                {
+                    backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
+                    characters.Remove(character);
+                }
+            }
+
+            // Add rest of characters
+            foreach (var character in characters)
+            {
+                backendCharacters.Add(new CharacterGridItemModel(character));
+            }
+
+            _backendCharacters = backendCharacters;
+
+            // Add notifications
+            foreach (var character in _characters)
+            {
+                var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
+                if (characterGridItemModel is null) continue;
+                var notifications =
+                    _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
+                foreach (var modNotification in notifications)
+                {
+                    if (modNotification.AttentionType != AttentionType.Added) continue;
+
+                    characterGridItemModel.Notification = true;
+                    characterGridItemModel.NotificationType = modNotification.AttentionType;
+                }
+            }
+
+            // Character Ids where more than 1 skin is enabled
+            var charactersWithMultipleMods = _skinManagerService.CharacterModLists
+                .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
+
+            var charactersWithMultipleActiveSkins = new List<string>();
+            foreach (var modList in charactersWithMultipleMods)
+            {
+                if (_gameService.IsMultiMod(modList.Character))
+                    continue;
 
 
-        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
-                     charactersWithMultipleActiveSkins.Contains(x.Character.Id)))
-        {
-            if (_genshinService.IsMultiModCharacter(characterGridItemModel.Character))
-                continue;
+                if (modList.Mods.Count(modEntry => modEntry.IsEnabled) > 2)
+                {
+                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+                }
+                else if (modList.Character is ICharacter character)
+                {
+                    var addWarning = false;
+                    var subSkinsFound = new List<ICharacterSkin>();
+                    foreach (var characterSkinEntry in modList.Mods)
+                    {
+                        if (!characterSkinEntry.IsEnabled) continue;
 
-            characterGridItemModel.Warning = true;
-        }
+                        var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
+                        var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
 
 
-        if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
-        {
-            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
-                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
-        }
+                        var mod = ModModel.FromMod(characterSkinEntry);
 
-        var lastCharacters = new List<CharacterGridItemModel>
-        {
-            FindCharacterById(_genshinService.GlidersCharacterId)!,
-            FindCharacterById(_genshinService.WeaponsCharacterId)!
-        };
 
-        _lastCharacters = lastCharacters.ToArray();
+                        if (modSettingsResult.IsT0)
+                            mod.WithModSettings(modSettingsResult.AsT0);
 
-        _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
-            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters);
+                        if (!mod.CharacterSkinOverride.IsNullOrEmpty())
+                            subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
+                                .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
+
+                        if (subSkin is null)
+                            continue;
+
+
+                        if (subSkinsFound.All(foundSubSkin =>
+                                !subSkin.InternalNameEquals(foundSubSkin)))
+                        {
+                            subSkinsFound.Add(subSkin);
+                            continue;
+                        }
+
+
+                        addWarning = true;
+                        break;
+                    }
+
+                    if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                        charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+                }
+            }
+
+
+            foreach (var characterGridItemModel in _backendCharacters.Where(x =>
+                         charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
+            {
+                if (_gameService.IsMultiMod(characterGridItemModel.Character))
+                    continue;
+
+                characterGridItemModel.Warning = true;
+            }
+
+
+            if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
+            {
+                _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+                    _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+            }
+
+            var lastCharacters = new List<CharacterGridItemModel>
+            {
+                FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
+                FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
+            };
+
+            _lastCharacters = lastCharacters.ToArray();
+
+            _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
+                FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters);
+        });
 
         // ShowOnlyModsCharacters
         var settings =
@@ -411,7 +435,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         SortByDescending = settings.SortByDescending;
 
         _sortingMethod = new SortingMethod(settings.SortingMethod,
-            FindCharacterById(_genshinService.OtherCharacterId), _lastCharacters, SortByDescending);
+            FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters, SortByDescending);
         SelectedSortingMethod = settings.SortingMethod;
 
         isNavigating = false;
@@ -452,7 +476,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
-            _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+            _skinManagerService.GetCharacterModList(characterGridItem.Character.InternalName).Mods.Any());
 
         ShowOnlyCharactersWithMods = true;
 
@@ -500,7 +524,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             var settingss = await ReadCharacterSettings();
 
-            var pinedCharacterss = _backendCharacters.Where(ch => ch.IsPinned).Select(ch => ch.Character.Id).ToArray();
+            var pinedCharacterss = _backendCharacters.Where(ch => ch.IsPinned)
+                .Select(ch => ch.Character.InternalName.Id)
+                .ToArray();
             settingss.PinedCharacters = pinedCharacterss;
             await SaveCharacterSettings(settingss);
             return;
@@ -515,7 +541,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         var pinedCharacters = _backendCharacters
             .Where(ch => ch.IsPinned)
-            .Select(ch => ch.Character.Id)
+            .Select(ch => ch.Character.InternalName.Id)
             .ToArray();
 
         settings.PinedCharacters = pinedCharacters;
@@ -525,7 +551,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
     [RelayCommand]
-    private void HideCharacter(GenshinCharacter character)
+    private void HideCharacter(CharacterGridItemModel character)
     {
         NotImplemented.Show("Hiding characters is not implemented yet");
     }
@@ -612,11 +638,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         var modList =
             _skinManagerService.CharacterModLists.FirstOrDefault(x =>
-                x.Character.Id == characterGridItemModel.Character.Id);
+                x.Character.InternalNameEquals(characterGridItemModel.Character));
         if (modList is null)
         {
             _logger.Warning("No mod list found for character {Character}",
-                characterGridItemModel.Character.DisplayName);
+                characterGridItemModel.Character.InternalName);
             return;
         }
 
@@ -630,7 +656,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             {
                 var notfiy = new ModNotification()
                 {
-                    CharacterId = modList.Character.Id,
+                    CharacterInternalName = modList.Character.InternalName,
                     AttentionType = AttentionType.Added,
                     ModFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name,
                     Message = "Mod added from character overview"
@@ -654,26 +680,27 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         if (!errored)
             NotificationManager.ShowNotification("Mod added",
-                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.DisplayName}",
+                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.InternalName}",
                 TimeSpan.FromSeconds(2));
     }
 
 
     public Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
     {
-        var modNameToCharacter = new Dictionary<IStorageItem, GenshinCharacter>();
-        var othersCharacter = _genshinService.GetCharacters().First(x => x.Id == _genshinService.OtherCharacterId);
+        var modNameToCharacter = new Dictionary<IStorageItem, ICharacter>();
+        var othersCharacter = _gameService.GetCharacters()
+            .First(x => x.InternalName == _gameService.OtherCharacterInternalName);
 
         foreach (var storageItem in storageItems)
         {
             var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
-            var result = _genshinService.GetCharacters(modName, minScore: 100);
+            var result = _gameService.QueryCharacters(modName, minScore: 100);
 
             var character = result.FirstOrDefault().Key;
             if (character is not null)
             {
                 _logger.Debug("Mod {ModName} was detected as {Character}", modName,
-                    character.DisplayName);
+                    character.InternalName);
                 modNameToCharacter.Add(storageItem, character);
             }
             else
@@ -686,9 +713,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         return Task.CompletedTask;
     }
 
-    private CharacterGridItemModel? FindCharacterById(int id)
+    private CharacterGridItemModel? FindCharacterByInternalName(string internalName)
     {
-        return _backendCharacters.FirstOrDefault(x => x.Character.Id == id);
+        return _backendCharacters.FirstOrDefault(x =>
+            x.Character.InternalNameEquals(internalName));
+    }
+
+    private CharacterGridItemModel? FindCharacter(ICharacter character)
+    {
+        return FindCharacterByInternalName(character.InternalName);
     }
 
 
@@ -698,7 +731,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (isNavigating) return;
         var sortingMethodType = methodTypes.First();
 
-        _sortingMethod = new SortingMethod(sortingMethodType, FindCharacterById(_genshinService.OtherCharacterId),
+        _sortingMethod = new SortingMethod(sortingMethodType,
+            FindCharacterByInternalName(_gameService.OtherCharacterInternalName),
             _lastCharacters, isDescending: SortByDescending);
         ResetContent();
 

@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
-
+using GIMI_ModManager.WinUI.Views.CharacterManager;
 using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -14,13 +13,14 @@ public class PageService : IPageService
 
     public PageService()
     {
-        //Configure<MainViewModel, MainPage>();
         Configure<StartupViewModel, StartupPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<NotificationsViewModel, NotificationsPage>();
         Configure<CharactersViewModel, CharactersPage>();
         Configure<CharacterDetailsViewModel, CharacterDetailsPage>();
         Configure<DebugViewModel, DebugPage>();
+        Configure<CharacterManagerViewModel, CharacterManagerPage>();
+        Configure<EditCharacterViewModel, EditCharacterPage>();
     }
 
     public Type GetPageType(string key)
@@ -52,7 +52,8 @@ public class PageService : IPageService
             var type = typeof(V);
             if (_pages.ContainsValue(type))
             {
-                throw new ArgumentException($"This type is already configured with key {_pages.First(p => p.Value == type).Key}");
+                throw new ArgumentException(
+                    $"This type is already configured with key {_pages.First(p => p.Value == type).Key}");
             }
 
             _pages.Add(key, type);

@@ -9,7 +9,10 @@
     mc:Ignorable="d">
 
     <Grid>
-        <HyperlinkButton VerticalAlignment="Center" NavigateUri="{x:Bind Link, Mode=OneWay}">
+        <HyperlinkButton
+            VerticalAlignment="Center"
+            Click="ButtonBase_OnClick"
+            NavigateUri="{x:Bind Link, Mode=OneWay}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock
                     Margin="0,0,8,0"

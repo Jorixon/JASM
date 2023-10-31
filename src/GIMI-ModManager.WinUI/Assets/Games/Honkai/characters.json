@@ -1,0 +1,20 @@
+[
+  {
+    "Id": 0,
+    "Keys": [
+      "trailblazer"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "Character_Albedo_Thumb.png",
+    "Rarity": 5,
+    "Element": "Adaptive",
+    "Class": "Adaptive",
+    "Region": [
+      "Astral Express"
+    ],
+    "ModFilesName": "trailblazer",
+    "InGameSkins": [],
+    "InternalName": "Trailblazer",
+    "DisplayName": "Trailblazer"
+  }
+]

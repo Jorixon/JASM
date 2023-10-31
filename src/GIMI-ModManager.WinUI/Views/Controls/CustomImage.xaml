@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GIMI_ModManager.WinUI.Views.Controls.CustomImage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="CustomImageRoot"
+    mc:Ignorable="d">
+
+
+
+    <StackPanel>
+        <StackPanel.Resources>
+            <MenuFlyout x:Name="CustomImageFlyout">
+                <MenuFlyoutItem
+                    Height="40"
+                    Icon="Paste"
+                    Text="Paste Image" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Height="40"
+                    Icon="Copy"
+                    Text="Copy Image" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Icon="Delete" Text="Clear image" />
+            </MenuFlyout>
+        </StackPanel.Resources>
+
+
+        <Grid>
+            <Image x:Name="CustomImageControl">
+                <Image.Source>
+                    <BitmapImage DecodePixelWidth="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}" UriSource="{x:Bind ImageUri, Mode=OneWay}" />
+                </Image.Source>
+            </Image>
+            <Button
+                HorizontalAlignment="{x:Bind ButtonHorizontalAlignment, Mode=OneWay}"
+                VerticalAlignment="{x:Bind ButtonVerticalAlignment, Mode=OneWay}"
+                Background="{ThemeResource SmokeFillColorDefaultBrush}"
+                Command="{x:Bind EditButtonCommand, Mode=OneWay}"
+                ToolTipService.ToolTip="Pick an Image">
+                <FontIcon x:Name="EditButtonFontIcon" Glyph="&#xE70F;" />
+            </Button>
+        </Grid>
+
+    </StackPanel>
+</UserControl>

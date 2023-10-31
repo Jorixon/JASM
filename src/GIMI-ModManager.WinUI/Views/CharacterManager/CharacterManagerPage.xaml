@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.CharacterManagerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <xaml:ValueToBoolConverter x:Key="ValueToBoolConverter" />
+        <xaml:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+    </Page.Resources>
+
+    <Grid Margin="0,-24,-44,0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            HorizontalAlignment="Left"
+            FontSize="28"
+            Style="{StaticResource TitleTextBlockStyle}"
+            Text="Character Manager" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <AutoSuggestBox
+                x:Name="CharacterSearchBox"
+                Width="300"
+                HorizontalAlignment="Left"
+                Header="Search for a character to edit"
+                ItemsSource="{x:Bind ViewModel.Suggestions}"
+                PlaceholderText="Start typing to search..."
+                QuerySubmitted="CharacterSearchBox_OnQuerySubmitted"
+                SuggestionChosen="CharacterSearchBox_OnSuggestionChosen"
+                TextChanged="CharacterSearchBox_OnTextChanged">
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="F"
+                        Invoked="CharacterSearchBox_Ctrl_F"
+                        Modifiers="Control" />
+                </AutoSuggestBox.KeyboardAccelerators>
+
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:CharacterSearchResult">
+                        <StackPanel Margin="0,8" Orientation="Horizontal">
+                            <Image Height="40">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelHeight="40" UriSource="{x:Bind ImagePath}" />
+                                </Image.Source>
+                            </Image>
+
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+
+            <InfoBar
+                Title="Experimental Feature"
+                Grid.Column="2"
+                IsClosable="False"
+                IsOpen="True"
+                Message="This feature is experimental and may not work as expected. I can not guarantee that settings will persist between releases for now" />
+        </Grid>
+
+
+        <Frame
+            x:Name="EditFrame"
+            Grid.Row="2"
+            Margin="8"
+            IsNavigationStackEnabled="False">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <NavigationThemeTransition />
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>
+
+
+    </Grid>
+</Page>

@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GIMI_ModManager.Core.Entities.Genshin;
-using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.GamesService;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -10,7 +9,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 public partial class OverviewDockPanelVM : ObservableRecipient
 {
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<OverviewDockPanelVM>();
-    private readonly IGenshinService _genshinService = App.GetService<IGenshinService>();
+    private readonly IGameService _gameService = App.GetService<IGameService>();
 
     public event EventHandler<FilterElementSelectedArgs>? FilterElementSelected;
     public ObservableCollection<ElementIcon> Elements { get; set; } = new();
@@ -21,18 +20,13 @@ public partial class OverviewDockPanelVM : ObservableRecipient
     public void Initialize()
     {
         _logger.Debug("Initializing OverviewDockPanelVM");
-        var elements = _genshinService.GetElements().Where(e => e != Core.Entities.Genshin.Elements.None).Reverse();
+        var elements = _gameService.GetElements().Where(e => !e.InternalNameEquals("None")).Reverse();
 
         foreach (var element in elements)
         {
-            Elements.Add(new ElementIcon(element.ToString(), GetElementIconPath(element), element));
-            Debug.Assert(File.Exists(GetElementIconPath(element)) || element == Core.Entities.Genshin.Elements.None,
-                $"{GetElementIconPath(element)}");
+            Elements.Add(new ElementIcon(element.DisplayName, element.ImageUri!.ToString(), element.InternalName));
         }
     }
-
-    private string GetElementIconPath(Elements element) =>
-        Path.Combine(App.ROOT_DIR, "Assets", "Images", "Elements", $"Element_{element}.svg");
 
 
     public void ElementSelectionChanged(IEnumerable<ElementIcon> newItems, IEnumerable<ElementIcon> removedItems)
@@ -48,17 +42,17 @@ public partial class OverviewDockPanelVM : ObservableRecipient
         }
 
         FilterElementSelected?.Invoke(this,
-            new FilterElementSelectedArgs(SelectedElements.Select(e => e.Element).ToArray()));
+            new FilterElementSelectedArgs(SelectedElements.Select(e => e.InternalElementName)));
     }
 }
 
 public sealed class FilterElementSelectedArgs : EventArgs
 {
-    public Elements[] Element { get; }
+    public string[] InternalElementNames { get; }
 
-    public FilterElementSelectedArgs(Elements[] element)
+    public FilterElementSelectedArgs(IEnumerable<string> internalElementName)
     {
-        Element = element;
+        InternalElementNames = internalElementName.ToArray();
     }
 }
 
@@ -67,14 +61,14 @@ public partial class ElementIcon : ObservableObject
 {
     public string Name { get; set; }
     public string ImageUri { get; set; }
-    public Elements Element { get; set; }
+    public string InternalElementName { get; set; }
 
     [ObservableProperty] private bool _isSelected;
 
-    public ElementIcon(string name, string imageUri, Elements element)
+    public ElementIcon(string name, string imageUri, string internalElementName)
     {
         Name = name;
         ImageUri = imageUri;
-        Element = element;
+        InternalElementName = internalElementName;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace GIMI_ModManager.Core.Helpers;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace GIMI_ModManager.Core.Helpers;
 
 public static class Extensions
 {
@@ -17,9 +19,24 @@ public static class Extensions
                 StringComparison.CurrentCultureIgnoreCase);
     }
 
+    /// <inheritdoc cref="List{T}.ForEach"/>
     public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
     {
-        foreach (var item in enumerable)
-            action(item);
+        ArgumentNullException.ThrowIfNull(enumerable);
+        ArgumentNullException.ThrowIfNull(action);
+
+        if (enumerable is List<T> list)
+            list.ForEach(action);
+        else
+            foreach (var item in enumerable)
+                action(item);
+    }
+
+    /// <summary>
+    /// Returns true if the string is null or whitespace.
+    /// </summary>
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? value)
+    {
+        return string.IsNullOrWhiteSpace(value);
     }
 }
