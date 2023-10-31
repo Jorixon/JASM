@@ -3,7 +3,6 @@ using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
-
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -85,7 +84,8 @@ public class NavigationService : INavigationService
     {
         var pageType = _pageService.GetPageType(pageKey);
 
-        if (_frame != null && (_frame.Content?.GetType() != pageType || (parameter != null && !parameter.Equals(_lastParameterUsed))))
+        if (_frame != null && (_frame.Content?.GetType() != pageType ||
+                               (parameter != null && !parameter.Equals(_lastParameterUsed))))
         {
             _frame.Tag = clearNavigation;
             var vmBeforeNavigation = _frame.GetPageViewModel();
@@ -119,7 +119,7 @@ public class NavigationService : INavigationService
             const int maxBackStackEntries = 6;
             if (frame.BackStackDepth > maxBackStackEntries)
             {
-                for (int i = 0; i < maxBackStackEntries-1; i++)
+                for (int i = 0; i < maxBackStackEntries - 1; i++)
                 {
                     frame.BackStack.RemoveAt(0);
                     GC.Collect();
@@ -136,6 +136,10 @@ public class NavigationService : INavigationService
         }
     }
 
-    public void SetListDataItemForNextConnectedAnimation(object item) => Frame.SetListDataItemForNextConnectedAnimation(item);
+    public void SetListDataItemForNextConnectedAnimation(object item) =>
+        Frame.SetListDataItemForNextConnectedAnimation(item);
 
+    // Get BackStackItems from Frame
+
+    public ICollection<PageStackEntry> GetBackStackItems() => Frame?.BackStack ?? Array.Empty<PageStackEntry>();
 }

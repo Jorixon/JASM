@@ -95,6 +95,7 @@
                         Text="Set Display Name:" />
                     <TextBox
                         Grid.Row="3"
+                        MaxWidth="300"
                         HorizontalAlignment="Stretch"
                         FontFamily="{StaticResource GenshinFont}"
                         FontSize="16"

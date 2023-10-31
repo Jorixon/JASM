@@ -131,10 +131,15 @@ public partial class SkinVM : ObservableObject
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
+
+        // We need to check for the default prefix as well, for older versions of the mod manager
+        // that didn't have the prefix in the internal name
         return string.Equals(InternalName, other,
                    StringComparison.OrdinalIgnoreCase)
                ||
                string.Equals(InternalName, other.Replace("Default_", "", StringComparison.OrdinalIgnoreCase),
+                   StringComparison.OrdinalIgnoreCase)
+               || string.Equals(InternalName, "Default_" + other,
                    StringComparison.OrdinalIgnoreCase);
     }
 }

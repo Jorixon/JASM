@@ -22,6 +22,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
+using GIMI_ModManager.WinUI.Views;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -570,6 +571,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private void GoBackToGrid()
     {
+        var gridLastStack = _navigationService.GetBackStackItems().FirstOrDefault(backStackItem =>
+            backStackItem.SourcePageType == typeof(CharactersPage));
+
+        if (gridLastStack is not null)
+        {
+            _navigationService.GoBack();
+            return;
+        }
+
         _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
     }
 

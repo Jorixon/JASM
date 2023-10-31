@@ -229,7 +229,7 @@
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.Below="itemHero"
                         Text="{x:Bind ViewModel.ShownCharacter.DisplayName}"
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="Wrap" />
                     <!--  Style="{ThemeResource TitleTextBlockStyle}"  -->
 
 

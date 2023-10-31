@@ -235,9 +235,9 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             return false;
         }
 
-        CharacterVm.DisplayName = CharacterVm.DisplayName.Trim();
+        var displayName = CharacterVm.DisplayName.Trim();
 
-        if (string.IsNullOrWhiteSpace(CharacterVm.DisplayName))
+        if (string.IsNullOrWhiteSpace(displayName))
         {
             errors.Add(new ValidationErrors
             {
@@ -249,7 +249,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
         // Check for duplicate display names
         if (characters.FirstOrDefault(c =>
-                c.DisplayName.Equals(CharacterVm.DisplayName, StringComparison.OrdinalIgnoreCase)) is
+                c.DisplayName.Equals(displayName, StringComparison.OrdinalIgnoreCase)) is
             { } duplicateDisplayNameCharacter)
         {
             errors.Add(new ValidationErrors
@@ -296,8 +296,9 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         if (!AnyChanges())
             return;
 
-        if (_character.DisplayName != CharacterVm.DisplayName)
-            await _gameService.SetCharacterDisplayNameAsync(_character, CharacterVm.DisplayName);
+        var displayName = CharacterVm.DisplayName.Trim();
+        if (_character.DisplayName != displayName)
+            await _gameService.SetCharacterDisplayNameAsync(_character, displayName);
 
         if (CharacterVm.ImageUri.LocalPath != _imageHandlerService.PlaceholderImagePath &&
             _character.ImageUri != CharacterVm.ImageUri)
@@ -338,7 +339,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         if (CharacterVm.Keys.Any(key => !_character.Keys.Contains(key)))
             return false; // Remove this once key editing has been implemented
 
-        if (CharacterVm.DisplayName != _character.DisplayName)
+        if (CharacterVm.DisplayName.Trim() != _character.DisplayName)
             return true;
 
         if (CharacterVm.ImageUri.LocalPath != _imageHandlerService.PlaceholderImagePath &&

@@ -7,11 +7,13 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Settings;
+using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -253,166 +255,171 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        var characters = _gameService.GetCharacters().ToList();
-        var others = characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.OtherCharacterInternalName));
-        if (others is not null) // Add to front
+        await Task.Run(async () =>
         {
-            characters.Remove(others);
-            characters.Insert(0, others);
-        }
-
-        var gliders = characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.GlidersCharacterInternalName));
-        if (gliders is not null) // Add to end
-        {
-            characters.Remove(gliders);
-            characters.Add(gliders);
-        }
-
-        var weapons = characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.WeaponsCharacterInternalName));
-        if (weapons is not null) // Add to end
-        {
-            characters.Remove(weapons);
-            characters.Add(weapons);
-        }
-
-
-        _characters = characters;
-
-        characters = new List<ICharacter>(_characters);
-
-        var pinnedCharactersOptions = await ReadCharacterSettings();
-
-        var backendCharacters = new List<CharacterGridItemModel>();
-        foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
-        {
-            var character = characters.FirstOrDefault(x => x.InternalNameEquals(pinedCharacterId));
-            if (character is not null)
+            var characters = _gameService.GetCharacters().ToList();
+            var others =
+                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.OtherCharacterInternalName));
+            if (others is not null) // Add to front
             {
-                backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
-                characters.Remove(character);
+                characters.Remove(others);
+                characters.Insert(0, others);
             }
-        }
 
-        foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
-        {
-            var character = characters.FirstOrDefault(x => x.InternalNameEquals(hiddenCharacterId));
-            if (character is not null)
+            var gliders =
+                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.GlidersCharacterInternalName));
+            if (gliders is not null) // Add to end
             {
-                backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
-                characters.Remove(character);
+                characters.Remove(gliders);
+                characters.Add(gliders);
             }
-        }
 
-        // Add rest of characters
-        foreach (var character in characters)
-        {
-            backendCharacters.Add(new CharacterGridItemModel(character));
-        }
-
-        _backendCharacters = backendCharacters;
-
-        // Add notifications
-        foreach (var character in _characters)
-        {
-            var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
-            if (characterGridItemModel is null) continue;
-            var notifications = _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
-            foreach (var modNotification in notifications)
+            var weapons =
+                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.WeaponsCharacterInternalName));
+            if (weapons is not null) // Add to end
             {
-                if (modNotification.AttentionType != AttentionType.Added) continue;
-
-                characterGridItemModel.Notification = true;
-                characterGridItemModel.NotificationType = modNotification.AttentionType;
+                characters.Remove(weapons);
+                characters.Add(weapons);
             }
-        }
-
-        // Character Ids where more than 1 skin is enabled
-        var charactersWithMultipleMods = _skinManagerService.CharacterModLists
-            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
-
-        var charactersWithMultipleActiveSkins = new List<string>();
-        foreach (var modList in charactersWithMultipleMods)
-        {
-            if (_gameService.IsMultiMod(modList.Character))
-                continue;
 
 
-            if (modList.Mods.Count(modEntry => modEntry.IsEnabled) > 2)
+            _characters = characters;
+
+            characters = new List<ICharacter>(_characters);
+
+            var pinnedCharactersOptions = await ReadCharacterSettings();
+
+            var backendCharacters = new List<CharacterGridItemModel>();
+            foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
             {
-                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
-            }
-            else if (modList.Character is ICharacter character)
-            {
-                var addWarning = false;
-                var subSkinsFound = new List<ICharacterSkin>();
-                foreach (var characterSkinEntry in modList.Mods)
+                var character = characters.FirstOrDefault(x => x.InternalNameEquals(pinedCharacterId));
+                if (character is not null)
                 {
-                    if (!characterSkinEntry.IsEnabled) continue;
+                    backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
+                    characters.Remove(character);
+                }
+            }
 
-                    var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
-                    var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
+            foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
+            {
+                var character = characters.FirstOrDefault(x => x.InternalNameEquals(hiddenCharacterId));
+                if (character is not null)
+                {
+                    backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
+                    characters.Remove(character);
+                }
+            }
+
+            // Add rest of characters
+            foreach (var character in characters)
+            {
+                backendCharacters.Add(new CharacterGridItemModel(character));
+            }
+
+            _backendCharacters = backendCharacters;
+
+            // Add notifications
+            foreach (var character in _characters)
+            {
+                var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
+                if (characterGridItemModel is null) continue;
+                var notifications =
+                    _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
+                foreach (var modNotification in notifications)
+                {
+                    if (modNotification.AttentionType != AttentionType.Added) continue;
+
+                    characterGridItemModel.Notification = true;
+                    characterGridItemModel.NotificationType = modNotification.AttentionType;
+                }
+            }
+
+            // Character Ids where more than 1 skin is enabled
+            var charactersWithMultipleMods = _skinManagerService.CharacterModLists
+                .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
+
+            var charactersWithMultipleActiveSkins = new List<string>();
+            foreach (var modList in charactersWithMultipleMods)
+            {
+                if (_gameService.IsMultiMod(modList.Character))
+                    continue;
 
 
-                    var mod = ModModel.FromMod(characterSkinEntry);
-
-
-                    if (modSettingsResult.IsT0)
-                        mod.WithModSettings(modSettingsResult.AsT0);
-
-                    if (!string.IsNullOrWhiteSpace(mod.CharacterSkinOverride))
-                        subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
-                            .FirstOrDefault(x =>
-                                x.InternalNameEquals(mod.CharacterSkinOverride.Replace("Default_", "",
-                                    StringComparison.OrdinalIgnoreCase)));
-
-                    if (subSkin is null)
-                        continue;
-
-
-                    if (subSkinsFound.All(foundSubSkin =>
-                            !subSkin.InternalNameEquals(foundSubSkin)))
+                if (modList.Mods.Count(modEntry => modEntry.IsEnabled) > 2)
+                {
+                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+                }
+                else if (modList.Character is ICharacter character)
+                {
+                    var addWarning = false;
+                    var subSkinsFound = new List<ICharacterSkin>();
+                    foreach (var characterSkinEntry in modList.Mods)
                     {
-                        subSkinsFound.Add(subSkin);
-                        continue;
+                        if (!characterSkinEntry.IsEnabled) continue;
+
+                        var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
+                        var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
+
+
+                        var mod = ModModel.FromMod(characterSkinEntry);
+
+
+                        if (modSettingsResult.IsT0)
+                            mod.WithModSettings(modSettingsResult.AsT0);
+
+                        if (!mod.CharacterSkinOverride.IsNullOrEmpty())
+                            subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
+                                .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
+
+                        if (subSkin is null)
+                            continue;
+
+
+                        if (subSkinsFound.All(foundSubSkin =>
+                                !subSkin.InternalNameEquals(foundSubSkin)))
+                        {
+                            subSkinsFound.Add(subSkin);
+                            continue;
+                        }
+
+
+                        addWarning = true;
+                        break;
                     }
 
-
-                    addWarning = true;
-                    break;
+                    if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                        charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
                 }
-
-                if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
-                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
             }
-        }
 
 
-        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
-                     charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
-        {
-            if (_gameService.IsMultiMod(characterGridItemModel.Character))
-                continue;
+            foreach (var characterGridItemModel in _backendCharacters.Where(x =>
+                         charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
+            {
+                if (_gameService.IsMultiMod(characterGridItemModel.Character))
+                    continue;
 
-            characterGridItemModel.Warning = true;
-        }
+                characterGridItemModel.Warning = true;
+            }
 
 
-        if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
-        {
-            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
-                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
-        }
+            if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
+            {
+                _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+                    _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+            }
 
-        var lastCharacters = new List<CharacterGridItemModel>
-        {
-            FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
-            FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
-        };
+            var lastCharacters = new List<CharacterGridItemModel>
+            {
+                FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
+                FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
+            };
 
-        _lastCharacters = lastCharacters.ToArray();
+            _lastCharacters = lastCharacters.ToArray();
 
-        _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
-            FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters);
+            _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
+                FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters);
+        });
 
         // ShowOnlyModsCharacters
         var settings =
