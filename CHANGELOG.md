@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://github.com/Jorixon/JASM/compare/v1.4.6...v1.5.0) (2023-10-31)
+
+
+### Features
+
+* Ability to change display name of characters and disable characters ([#66](https://github.com/Jorixon/JASM/issues/66)) ([691baa9](https://github.com/Jorixon/JASM/commit/691baa9ef1ea750d40815ecad11ee9dee757fab6))
+
+
+### Miscellaneous
+
+* Auto Updater now checks for windows system folders in the jasm directory before updating ([3fa8758](https://github.com/Jorixon/JASM/commit/3fa875861e7dafc85abcbbbba22de113674ae5b1))
+* Laid the foundation for HSR support and localization of game related text like character names ([691baa9](https://github.com/Jorixon/JASM/commit/691baa9ef1ea750d40815ecad11ee9dee757fab6))
+* Renamed Travelers to their respective canon names and changed their image ([691baa9](https://github.com/Jorixon/JASM/commit/691baa9ef1ea750d40815ecad11ee9dee757fab6))
+
 ## [1.4.6](https://github.com/Jorixon/JASM/compare/v1.4.5...v1.4.6) (2023-10-22)
 
 
