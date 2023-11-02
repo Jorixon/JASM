@@ -157,12 +157,17 @@ public class GameService : IGameService
 
 
     public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
-        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100)
+        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100,
+        bool includeDisabledCharacters = false)
     {
         var searchResult = new Dictionary<ICharacter, int>();
         searchQuery = searchQuery.ToLower().Trim();
 
-        foreach (var character in restrictToCharacters ?? GetCharacters())
+        var charactersToSearch = restrictToCharacters ?? (includeDisabledCharacters
+            ? GetCharacters().Concat(GetDisabledCharacters())
+            : GetCharacters()).AsEnumerable();
+
+        foreach (var character in charactersToSearch)
         {
             var loweredDisplayName = character.DisplayName.ToLower();
 

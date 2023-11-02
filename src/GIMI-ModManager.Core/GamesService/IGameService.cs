@@ -34,7 +34,8 @@ public interface IGameService
     public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName);
 
     public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
-        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
+        IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100,
+        bool includeDisabledCharacters = false);
 
     public List<IGameElement> GetElements();
 
