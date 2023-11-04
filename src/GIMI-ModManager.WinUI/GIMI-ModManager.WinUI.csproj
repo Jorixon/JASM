@@ -187,6 +187,7 @@
 		<None Remove="Views\Controls\SelectCharacterFromGrid.xaml" />
 		<None Remove="Views\DebugPage.xaml" />
 		<None Remove="Views\ErrorWindow.xaml" />
+		<None Remove="Views\ModUpdateAvailableWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
 	</ItemGroup>
 
@@ -203,9 +204,16 @@
 		<PackageReference Include="FluentValidation" Version="11.7.1" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.13" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
 		<PackageReference Include="OneOf" Version="3.0.263" />
+		<PackageReference Include="Polly" Version="8.1.0" />
+		<PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
+		<PackageReference Include="Polly.Extensions" Version="8.1.0" />
+		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+		<PackageReference Include="Polly.RateLimiting" Version="8.1.0" />
 		<PackageReference Include="Serilog" Version="3.0.1" />
 		<PackageReference Include="Serilog.Expressions" Version="3.4.1" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
@@ -603,6 +611,9 @@
 		<None Update="Assets\Games\Honkai\weaponClasses.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\ModUpdateAvailableWindow.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\Controls\CustomImage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

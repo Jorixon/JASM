@@ -446,4 +446,8 @@ public sealed partial class CharacterDetailsPage : Page
         Clipboard.SetContent(package);
         Clipboard.Flush();
     }
+
+    private void NotificationButton_OnPointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+    }
 }

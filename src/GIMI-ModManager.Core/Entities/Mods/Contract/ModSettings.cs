@@ -7,7 +7,8 @@ namespace GIMI_ModManager.Core.Entities.Mods.Contract;
 public record ModSettings
 {
     public ModSettings(Guid id, string? customName = null, string? author = null, string? version = null,
-        Uri? modUrl = null, Uri? imagePath = null, string? characterSkinOverride = null)
+        Uri? modUrl = null, Uri? imagePath = null, string? characterSkinOverride = null, DateTime? dateAdded = null,
+        DateTime? lastChecked = null)
     {
         Id = id;
         CustomName = customName;
@@ -16,9 +17,11 @@ public record ModSettings
         ModUrl = modUrl;
         ImagePath = imagePath;
         CharacterSkinOverride = characterSkinOverride;
+        DateAdded = dateAdded;
+        LastChecked = lastChecked;
     }
 
-    public ModSettings DeepCopyWithProperties(string? characterSkinOverride = null)
+    public ModSettings DeepCopyWithProperties(string? newCharacterSkinOverride = null, DateTime? newLastChecked = null)
     {
         return new ModSettings(
             Id,
@@ -27,7 +30,9 @@ public record ModSettings
             Version,
             ModUrl,
             ImagePath,
-            characterSkinOverride ?? CharacterSkinOverride
+            newCharacterSkinOverride ?? CharacterSkinOverride,
+            DateAdded,
+            newLastChecked ?? LastChecked
         );
     }
 
@@ -49,6 +54,10 @@ public record ModSettings
 
     public string? CharacterSkinOverride { get; internal set; }
 
+    public DateTime? DateAdded { get; internal set; }
+
+    public DateTime? LastChecked { get; internal set; }
+
 
     internal static ModSettings FromJsonSkinSettings(ISkinMod skinMod, JsonModSettings settings)
     {
@@ -60,7 +69,9 @@ public record ModSettings
             Version = settings.Version,
             ModUrl = ModsHelpers.StringUrlToUri(settings.ModUrl),
             ImagePath = ModsHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath),
-            CharacterSkinOverride = settings.CharacterSkinOverride
+            CharacterSkinOverride = settings.CharacterSkinOverride,
+            DateAdded = DateTime.TryParse(settings.DateAdded, out var dateAdded) ? dateAdded : null,
+            LastChecked = DateTime.TryParse(settings.LastChecked, out var lastChecked) ? lastChecked : null
         };
     }
 
@@ -74,7 +85,9 @@ public record ModSettings
             Version = Version,
             ModUrl = ModUrl?.ToString(),
             ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod, ImagePath?.LocalPath),
-            CharacterSkinOverride = CharacterSkinOverride
+            CharacterSkinOverride = CharacterSkinOverride,
+            DateAdded = DateAdded?.ToString(),
+            LastChecked = LastChecked?.ToString()
         };
     }
 

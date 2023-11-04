@@ -35,6 +35,14 @@
                         <FontIcon Glyph="{x:Bind ViewModel.PinGlyph, Mode=OneWay}" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.ClearNotificationsCommand}"
+                    CommandParameter="{Binding}"
+                    Text="Clear Notifications">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE894;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
             </MenuFlyout>
         </Grid.Resources>
 

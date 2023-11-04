@@ -40,14 +40,22 @@ public class SkinModSettingsManager
         if (File.Exists(_settingsFilePath))
         {
             var modSettings = await ReadSettingsAsync().ConfigureAwait(false);
+            var updateSettings = false;
 
             if (modSettings.Id == Guid.Empty)
             {
                 modSettings.Id = Guid.NewGuid();
-                await SaveSettingsAsync(modSettings).ConfigureAwait(false);
-                _settings = modSettings;
+                updateSettings = true;
             }
 
+            if (modSettings.DateAdded is null)
+            {
+                modSettings.DateAdded = DateTime.Now;
+                updateSettings = true;
+            }
+
+            if (updateSettings)
+                await SaveSettingsAsync(modSettings).ConfigureAwait(false);
 
             return modSettings.Id;
         }
@@ -112,19 +120,6 @@ public class SkinModSettingsManager
             return new SettingsNotLoaded();
 
         return _settings;
-    }
-
-    private Task CopyAndSetModImage(ModSettings modSettings, string imagePath)
-    {
-        var uri = Uri.TryCreate(imagePath, UriKind.Absolute, out var result) &&
-                  result.Scheme == Uri.UriSchemeFile
-            ? result
-            : null;
-
-        if (uri is null)
-            throw new ArgumentException("Invalid image path.", nameof(imagePath));
-
-        return CopyAndSetModImage(modSettings, uri);
     }
 
     private async Task CopyAndSetModImage(ModSettings modSettings, Uri imagePath)

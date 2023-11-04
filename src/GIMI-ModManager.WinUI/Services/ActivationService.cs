@@ -10,6 +10,7 @@ using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -33,6 +34,7 @@ public class ActivationService : IActivationService
     private readonly IWindowManagerService _windowManagerService;
     private readonly AutoUpdaterService _autoUpdaterService;
     private readonly SelectedGameService _selectedGameService;
+    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -44,7 +46,8 @@ public class ActivationService : IActivationService
         ElevatorService elevatorService, GenshinProcessManager genshinProcessManager,
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
         IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
-        ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService)
+        ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService,
+        ModUpdateAvailableChecker modUpdateAvailableChecker)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -59,6 +62,7 @@ public class ActivationService : IActivationService
         _gameService = gameService;
         _languageLocalizer = languageLocalizer;
         _selectedGameService = selectedGameService;
+        _modUpdateAvailableChecker = modUpdateAvailableChecker;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -131,6 +135,7 @@ public class ActivationService : IActivationService
         await _genshinProcessManager.TryInitialize();
         await _threeDMigtoProcessManager.TryInitialize();
         await _updateChecker.InitializeAsync();
+        Task.Run(() => _modUpdateAvailableChecker.InitializeAsync());
         await Task.Run(() => _autoUpdaterService.UpdateAutoUpdater()).ConfigureAwait(false);
     }
 
@@ -209,6 +214,7 @@ public class ActivationService : IActivationService
         }
 
         _logger.Debug("JASM shutting down...");
+        _modUpdateAvailableChecker.CancelAndStop();
         _updateChecker.Dispose();
         var tmpDir = new DirectoryInfo(App.TMP_DIR);
         if (!tmpDir.Exists) return;

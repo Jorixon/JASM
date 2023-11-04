@@ -69,7 +69,7 @@ public class ModNotificationManager
                 .ToArray();
     }
 
-    public async Task ClearModNotifications(ICharacter? character = null, bool persistent = false)
+    public async Task ClearModNotificationsAsync(IModdableObject? character = null, bool persistent = false)
     {
         if (!persistent)
         {

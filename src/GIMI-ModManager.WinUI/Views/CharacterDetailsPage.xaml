@@ -413,10 +413,19 @@
                                                         <ItemsRepeater.ItemTemplate>
                                                             <DataTemplate x:DataType="notifications:ModNotification">
                                                                 <Grid Margin="4,0" VerticalAlignment="Center">
-                                                                    <FontIcon
-                                                                        VerticalAlignment="Bottom"
-                                                                        Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                                                                        Glyph="{x:Bind AttentionType, Converter={StaticResource AttentionTypeToSymbolConverter}}" />
+                                                                    <Button
+                                                                        PointerEntered="NotificationButton_OnPointerEntered"
+                                                                        Margin="0"
+                                                                        Padding="0"
+                                                                        BorderThickness="0"
+                                                                        CornerRadius="0">
+                                                                        <Button.Content>
+                                                                            <FontIcon
+                                                                                VerticalAlignment="Bottom"
+                                                                                Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                                                                Glyph="{x:Bind AttentionType, Converter={StaticResource AttentionTypeToSymbolConverter}}" />
+                                                                        </Button.Content>
+                                                                    </Button>
                                                                 </Grid>
                                                             </DataTemplate>
                                                         </ItemsRepeater.ItemTemplate>

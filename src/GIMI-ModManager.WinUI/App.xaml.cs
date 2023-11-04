@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
@@ -17,7 +18,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Polly;
+using Polly.RateLimiting;
+using Polly.Retry;
 using Serilog;
+using Serilog.Events;
 using Serilog.Templates;
 
 namespace GIMI_ModManager.WinUI;
@@ -59,8 +64,14 @@ public partial class App : Application
             .UseContentRoot(AppContext.BaseDirectory)
             .UseSerilog((context, configuration) =>
             {
-                configuration.ReadFrom.Configuration(context.Configuration);
+                configuration.MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning);
+
+                configuration.Filter.ByExcluding(logEvent =>
+                    logEvent.Exception is RateLimiterRejectedException);
                 configuration.Enrich.FromLogContext();
+
+
+                configuration.ReadFrom.Configuration(context.Configuration);
                 var mt = new ExpressionTemplate(
                     "[{@t:yyyy-MM-dd'T'HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
                 configuration.WriteTo.File(formatter: mt, "logs\\log.txt");
@@ -106,6 +117,53 @@ public partial class App : Application
                 services.AddSingleton<ModSettingsService>();
                 services.AddSingleton<KeySwapService>();
                 services.AddSingleton<ILanguageLocalizer, Localizer>();
+
+                services.AddSingleton<GameBananaCache>();
+                services.AddTransient<IModUpdateChecker, GameBananaChecker>();
+
+
+                services.AddHttpClient<IModUpdateChecker, GameBananaChecker>(client =>
+                    {
+                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
+                        client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    })
+                    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
+                    {
+                        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
+                    })
+                    .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+
+
+                services.AddResiliencePipeline(GameBananaChecker.HttpClientName, (builder, context) =>
+                {
+                    var limiter = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions()
+                    {
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                        QueueLimit = 0,
+                        TokenLimit = 5,
+                        AutoReplenishment = true,
+                        TokensPerPeriod = 1,
+                        ReplenishmentPeriod = TimeSpan.FromSeconds(2)
+                    });
+
+                    builder
+                        .AddRateLimiter(limiter)
+                        .AddRetry(new RetryStrategyOptions()
+                        {
+                            BackoffType = DelayBackoffType.Linear,
+                            UseJitter = true,
+                            MaxRetryAttempts = 8,
+                            Delay = TimeSpan.FromMilliseconds(200)
+                        });
+
+                    builder.TelemetryListener = null;
+                    context.OnPipelineDisposed(() =>
+                    {
+                        Log.Debug("Disposing rate limiter");
+                        limiter.Dispose();
+                    });
+                });
+                services.AddSingleton<ModUpdateAvailableChecker>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();

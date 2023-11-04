@@ -319,20 +319,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             _backendCharacters = backendCharacters;
 
             // Add notifications
-            foreach (var character in _characters)
-            {
-                var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
-                if (characterGridItemModel is null) continue;
-                var notifications =
-                    _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
-                foreach (var modNotification in notifications)
-                {
-                    if (modNotification.AttentionType != AttentionType.Added) continue;
-
-                    characterGridItemModel.Notification = true;
-                    characterGridItemModel.NotificationType = modNotification.AttentionType;
-                }
-            }
+            RefreshNotifications();
 
             // Character Ids where more than 1 skin is enabled
             var charactersWithMultipleMods = _skinManagerService.CharacterModLists
@@ -442,6 +429,33 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ResetContent();
     }
 
+    private void RefreshNotifications()
+    {
+        foreach (var character in _characters)
+        {
+            var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
+            if (characterGridItemModel is null) continue;
+            var notifications =
+                _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
+
+            if (!notifications.Any())
+            {
+                characterGridItemModel.Notification = false;
+                characterGridItemModel.NotificationType = AttentionType.None;
+            }
+
+            foreach (var modNotification in notifications)
+            {
+                if (modNotification.AttentionType == AttentionType.Added ||
+                    modNotification.AttentionType == AttentionType.UpdateAvailable)
+                {
+                    characterGridItemModel.Notification = true;
+                    characterGridItemModel.NotificationType = modNotification.AttentionType;
+                }
+            }
+        }
+    }
+
     public void OnNavigatedFrom()
     {
     }
@@ -501,6 +515,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public void OnRightClickContext(CharacterGridItemModel clickedCharacter)
     {
+        ClearNotificationsCommand.CanExecute(clickedCharacter);
         if (clickedCharacter.IsPinned)
         {
             PinText = DefaultUnpinText;
@@ -549,6 +564,18 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 
+
+    private bool canClearNotifications(CharacterGridItemModel? character)
+    {
+        return character?.Notification ?? false;
+    }
+
+    [RelayCommand(CanExecute = nameof(canClearNotifications))]
+    private async Task ClearNotificationsAsync(CharacterGridItemModel character)
+    {
+        await _modNotificationManager.ClearModNotificationsAsync(character.Character);
+        RefreshNotifications();
+    }
 
     [RelayCommand]
     private void HideCharacter(CharacterGridItemModel character)

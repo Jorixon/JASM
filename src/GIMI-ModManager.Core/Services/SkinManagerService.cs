@@ -26,6 +26,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     private readonly List<ICharacterModList> _characterModLists = new();
     public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
+    public bool IsInitialized { get; private set; }
 
     public SkinManagerService(IGameService gameService, ILogger logger, ModCrawlerService modCrawlerService)
     {
@@ -468,7 +469,7 @@ public sealed class SkinManagerService : ISkinManagerService
     }
 
 
-    public Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
+    public async Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
     {
         _logger.Debug(
@@ -498,7 +499,8 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
         _activeModsFolder.Create();
         InitializeFolderStructure();
-        return ScanForModsAsync();
+        await ScanForModsAsync();
+        IsInitialized = true;
     }
 
     private void InitializeFolderStructure()
