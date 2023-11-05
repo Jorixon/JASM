@@ -25,6 +25,7 @@ public sealed class ModUpdateAvailableChecker
     private bool _forceUpdate = false;
 
     private List<Guid>? _checkOnlyMods;
+    private TimeSpan _waitTime = TimeSpan.FromMinutes(30);
 
     public ModUpdateAvailableChecker(ISkinManagerService skinManagerService, ILogger logger,
         ModNotificationManager modNotificationManager, GameBananaCache gameBananaCache)
@@ -100,8 +101,8 @@ public sealed class ModUpdateAvailableChecker
     {
         try
         {
-            _logger.Information("Waiting for next mod check at {nextCheck}", DateTime.Now.AddMinutes(5));
-            await Task.Delay(TimeSpan.FromMinutes(60), token);
+            _logger.Information("Next update check will run at {WaitTime}", DateTime.Now.Add(_waitTime));
+            await Task.Delay(_waitTime, token);
         }
         catch (TaskCanceledException)
         {
@@ -148,14 +149,21 @@ public sealed class ModUpdateAvailableChecker
             taskToMod.Add(fetchTask, characterSkinEntry);
         }
 
+        if (!tasks.Any())
+        {
+            _logger.Debug("No mods to check for updates");
+            return;
+        }
+
+
         while (tasks.Any())
         {
             var finishedTask = await Task.WhenAny(tasks);
             tasks.Remove(finishedTask);
+            var characterSkinEntry = taskToMod[finishedTask];
             try
             {
                 var result = await finishedTask;
-                var characterSkinEntry = taskToMod[finishedTask];
                 await UpdateLastChecked(characterSkinEntry.Mod, result);
                 _gameBananaCache.CacheRetrievedMods(characterSkinEntry.Mod.Id, result);
                 if (result.AnyNewMods)
@@ -163,7 +171,8 @@ public sealed class ModUpdateAvailableChecker
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Failed to check for updates");
+                _logger.Error(e, "An error occurred while checking for mod update for {ModName}",
+                    characterSkinEntry.Mod.Name);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

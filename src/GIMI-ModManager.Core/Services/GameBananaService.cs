@@ -164,6 +164,7 @@ public record UpdateCheckResult
 public record ModsRetrievedResult
 {
     public DateTime CheckTime { get; init; }
+    public DateTime LastCheck { get; init; }
     public Uri SitePageUrl { get; init; } = null!;
     public bool AnyNewMods { get; init; }
     public ICollection<UpdateCheckResult> Mods { get; init; } = Array.Empty<UpdateCheckResult>();
@@ -195,6 +196,7 @@ internal static class ApiToResultMapper
         return new ModsRetrievedResult
         {
             CheckTime = DateTime.Now,
+            LastCheck = lastCheck,
             SitePageUrl = sitePageUrl,
             AnyNewMods = anyNewMods,
             Mods = updateCheckResults

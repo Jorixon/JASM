@@ -20,6 +20,8 @@ public partial class ModUpdateVM : ObservableRecipient
 
     [ObservableProperty] private Uri? _modPath = null;
 
+    [ObservableProperty] private DateTime _lastUpdateCheck = DateTime.Now;
+
 
     public ObservableCollection<UpdateCheckResult> Results = new();
 
@@ -54,6 +56,7 @@ public partial class ModUpdateVM : ObservableRecipient
         ModName = modSettings.CustomName ?? mod.Name;
         ModPage = modResult.SitePageUrl;
         ModPath = new Uri(mod.FullPath);
+        LastUpdateCheck = modResult.LastCheck;
 
         modResult.Mods.ForEach(x => Results.Add(x));
     }

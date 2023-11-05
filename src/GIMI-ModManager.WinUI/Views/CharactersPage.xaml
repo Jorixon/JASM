@@ -35,6 +35,8 @@
                         <FontIcon Glyph="{x:Bind ViewModel.PinGlyph, Mode=OneWay}" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+                <MenuFlyoutItem Text="Check for updates" />
+                <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     Command="{x:Bind ViewModel.ClearNotificationsCommand}"
                     CommandParameter="{Binding}"

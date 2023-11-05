@@ -126,9 +126,13 @@ public class WindowManagerService : IWindowManagerService
         window.Show();
         if (activate)
         {
-            window.Activate();
             window.BringToFront();
         }
+    }
+
+    public WindowEx? GetWindow(object identifier)
+    {
+        return _windows.Find(x => x.Item2.Equals(identifier))?.Item1;
     }
 
 
@@ -172,5 +176,6 @@ public interface IWindowManagerService
     void CloseWindow(WindowEx window);
     WindowEx CreateWindow(UIElement windowContent, bool activate = true);
     void CreateWindow(WindowEx window, object? identifier, bool activate = true);
+    WindowEx? GetWindow(object identifier);
     Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null);
 }

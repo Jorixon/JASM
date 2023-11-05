@@ -37,9 +37,12 @@
                     Margin="10"
                     FontSize="20"
                     FontWeight="Bold"
-                    Text="Update Available" />
+                    Text="New Downloadable Files Found" />
 
-                <controls:LinkButton Link="{x:Bind ViewModel.ModPath, Mode=OneWay}" Text="{x:Bind ViewModel.ModPath.LocalPath, Mode=OneWay, FallbackValue=ModPath}" />
+                <controls:LinkButton
+                    Link="{x:Bind ViewModel.ModPath, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.ModPath.LocalPath, Mode=OneWay, FallbackValue=ModPath}"
+                    ToolTipService.ToolTip="Open Mod folder..." />
             </StackPanel>
 
             <ListView
@@ -68,6 +71,14 @@
                                         IsTextSelectionEnabled="True"
                                         Style="{ThemeResource SubtitleTextBlockStyle}"
                                         Text="{x:Bind FileName}" />
+
+
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        IsTextSelectionEnabled="True"
+                                        Text="{x:Bind Description}" />
+
                                     <TextBlock
                                         Grid.Row="0"
                                         Grid.Column="1"
@@ -78,7 +89,7 @@
                                         Grid.Row="1"
                                         Grid.Column="1"
                                         HorizontalAlignment="Right"
-                                        Content="Download"
+                                        Content="(Not Implemented) Download "
                                         IsEnabled="False" />
                                 </Grid>
                             </controls:BoolBorder>
@@ -89,11 +100,21 @@
             </ListView>
 
             <Grid Grid.Row="2" Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 <Button
                     Width="200"
                     Height="50"
                     HorizontalAlignment="Left"
                     Content="Ignore Update" />
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock Text="Last Checked:" />
+                    <TextBlock Text="{x:Bind ViewModel.LastUpdateCheck, Mode=OneWay}" />
+                </StackPanel>
+
             </Grid>
 
         </Grid>

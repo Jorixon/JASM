@@ -23,7 +23,7 @@ public class ActivationService : IActivationService
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService;
-    private readonly ILogger _logger = Log.ForContext<ActivationService>();
+    private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly IGameService _gameService;
     private readonly ILanguageLocalizer _languageLocalizer;
@@ -47,7 +47,7 @@ public class ActivationService : IActivationService
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
         IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
         ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService,
-        ModUpdateAvailableChecker modUpdateAvailableChecker)
+        ModUpdateAvailableChecker modUpdateAvailableChecker, ILogger logger)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -63,6 +63,7 @@ public class ActivationService : IActivationService
         _languageLocalizer = languageLocalizer;
         _selectedGameService = selectedGameService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
+        _logger = logger.ForContext<ActivationService>();
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -215,12 +216,15 @@ public class ActivationService : IActivationService
 
         _logger.Debug("JASM shutting down...");
         _modUpdateAvailableChecker.CancelAndStop();
-        _updateChecker.Dispose();
+        _updateChecker.CancelAndStop();
         var tmpDir = new DirectoryInfo(App.TMP_DIR);
-        if (!tmpDir.Exists) return;
+        if (tmpDir.Exists)
+        {
+            _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
+            tmpDir.Delete(true);
+        }
 
-        _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
-        tmpDir.Delete(true);
+        _logger.Debug("JASM shutdown complete.");
     }
 
     // Declared here for now, might move to a different class later.

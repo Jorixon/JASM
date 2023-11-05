@@ -41,7 +41,6 @@ public sealed class UpdateChecker : IDisposable
         }
 
         CurrentVersion = version;
-        App.MainWindow.Closed += (sender, args) => Dispose();
     }
 
     public async Task InitializeAsync()
@@ -83,13 +82,9 @@ public sealed class UpdateChecker : IDisposable
                 }
                 catch (TaskCanceledException e)
                 {
-                    _logger.Debug(e, "Update checker stopped");
-                    break;
                 }
                 catch (OperationCanceledException e)
                 {
-                    _logger.Debug(e, "Update checker canceled");
-                    break;
                 }
                 catch (Exception e)
                 {
@@ -160,7 +155,14 @@ public sealed class UpdateChecker : IDisposable
 
     public void Dispose()
     {
+        _cancellationTokenSource.Dispose();
+    }
+
+    public void CancelAndStop()
+    {
         _cancellationTokenSource.Cancel();
+        Dispose();
+        _logger.Debug("JASM update checker stopped");
     }
 
     private void OnNewVersionAvailable(Version e)

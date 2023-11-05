@@ -588,10 +588,23 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             return;
         }
 
+        var existingWindow = _windowManagerService.GetWindow(mod.Id);
+        if (existingWindow is not null)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(100);
+                existingWindow.BringToFront();
+            });
+            return;
+        }
+
 
         var modWindow = new ModUpdateAvailableWindow(mod.Id);
         modWindow.Title = $"New Mod Files Available: {mod.Mod.Name}";
-        _windowManagerService.CreateWindow(modWindow, mod.Id);
+        _windowManagerService.CreateWindow(modWindow, identifier: mod.Id);
+        await Task.Delay(100);
+        modWindow.BringToFront();
     }
 
 
