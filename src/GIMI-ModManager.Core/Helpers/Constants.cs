@@ -3,5 +3,5 @@
 public static class Constants
 {
     public static readonly IReadOnlyCollection<string> SupportedImageExtensions = new[]
-        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg", ".webp", "bitmap" };
+        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg", ".webp", ".bitmap" };
 }
