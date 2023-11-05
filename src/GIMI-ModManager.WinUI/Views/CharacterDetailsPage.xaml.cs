@@ -406,6 +406,7 @@ public sealed partial class CharacterDetailsPage : Page
 
         ViewModel.ModPaneVM.IsEditingModName = true;
         ModNameTextBlock.SetFocus();
+        ModNameTextBlock.TextSelectionStart = ModNameTextBlock.Text.Length;
     }
 
     private async void ImageFlyout_PasteImage(object sender, RoutedEventArgs e)

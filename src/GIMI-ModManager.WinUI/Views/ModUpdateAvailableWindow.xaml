@@ -55,7 +55,10 @@
                     SelectionMode="None">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="services:UpdateCheckResult">
-                            <Grid Margin="0,8" CornerRadius="4">
+                            <Grid
+                                Margin="0,8"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="4">
 
                                 <controls:BoolBorder
                                     BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
@@ -98,7 +101,7 @@
                                             Grid.Column="1"
                                             HorizontalAlignment="Right"
                                             Text="New since last check"
-                                            Visibility="{x:Bind IsNewer, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            Visibility="{Binding Path=IsNewer, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                                         <Button
                                             Grid.Row="1"
@@ -124,32 +127,51 @@
                         Height="50"
                         HorizontalAlignment="Left"
                         Command="{x:Bind ViewModel.IgnoreAndCloseCommand}"
-                        Content="Ignore and Close" />
+                        Content="Ignore and Close"
+                        ToolTipService.ToolTip="Removes the notification and closes this window" />
 
-                    <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                        <TextBlock Text="Last Checked:" />
+                    <StackPanel
+                        Grid.Column="1"
+                        Padding="4"
+                        HorizontalAlignment="Right"
+                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                        CornerRadius="4">
+                        <TextBlock Text="Last Check:" />
                         <TextBlock Text="{x:Bind ViewModel.LastUpdateCheck, Mode=OneWay}" />
                     </StackPanel>
 
                 </Grid>
 
             </Grid>
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" Background="{ThemeResource SmokeFillColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Margin="10,0"
-                        VerticalAlignment="Center"
-                        Text="Mod Page:" />
-                    <controls:LinkButton
-                        VerticalAlignment="Center"
-                        Link="{x:Bind ViewModel.ModPage, Mode=OneWay}"
-                        Text="{x:Bind ViewModel.ModPage, Mode=OneWay}"
-                        ToolTipService.ToolTip="Open in default browser..." />
-                </StackPanel>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10,0"
+                            VerticalAlignment="Center"
+                            Text="Mod Page:" />
+                        <controls:LinkButton
+                            VerticalAlignment="Center"
+                            Link="{x:Bind ViewModel.ModPage, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.ModPage, Mode=OneWay}"
+                            ToolTipService.ToolTip="Open in default browser..." />
+                    </StackPanel>
+                    <ProgressRing
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        IsActive="False" />
+
+                </Grid>
+
                 <WebView2
                     x:Name="ModPageBrowser"
                     Grid.Row="1"
