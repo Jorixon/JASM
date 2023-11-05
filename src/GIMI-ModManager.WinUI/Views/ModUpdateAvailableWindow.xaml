@@ -10,130 +10,154 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:GIMI_ModManager.Core.Services"
     xmlns:winUiEx="using:WinUIEx"
+    x:Name="RootWindow"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
-        <Grid.Resources />
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10*" />
-            <ColumnDefinition Width="6*" />
-        </Grid.ColumnDefinitions>
-
+    <Page>
+        <Page.Resources>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </Page.Resources>
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="6*" />
+            </Grid.ColumnDefinitions>
 
-                <TextBlock
-                    Margin="10"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Text="New Downloadable Files Found" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <controls:LinkButton
-                    Link="{x:Bind ViewModel.ModPath, Mode=OneWay}"
-                    Text="{x:Bind ViewModel.ModPath.LocalPath, Mode=OneWay, FallbackValue=ModPath}"
-                    ToolTipService.ToolTip="Open Mod folder..." />
-            </StackPanel>
+                <StackPanel Orientation="Horizontal">
 
-            <ListView
-                Grid.Row="1"
-                ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
-                SelectionMode="None">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="services:UpdateCheckResult">
-                        <Grid Margin="0,8" CornerRadius="4">
+                    <TextBlock
+                        Margin="10"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="New Downloadable Files Found" />
 
-                            <controls:BoolBorder
-                                BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
-                                BorderSize="2"
-                                ShowBorder="{x:Bind IsNewer}">
-                                <Grid Margin="8">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock
-                                            IsTextSelectionEnabled="True"
-                                            Style="{ThemeResource SubtitleTextBlockStyle}"
-                                            Text="{x:Bind FileName}" />
-
-                                        <TextBlock
-                                            Margin="8,0"
-                                            VerticalAlignment="Bottom"
-                                            Text="{x:Bind DateAdded}" />
-                                    </StackPanel>
-
-
-
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        Grid.Column="0"
-                                        IsTextSelectionEnabled="True"
-                                        Text="{x:Bind Description}" />
-
-                                    <TextBlock
-                                        Grid.Row="0"
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        Text="New since last check" />
-
-                                    <Button
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        Content="(Not Implemented) Download "
-                                        IsEnabled="False" />
-                                </Grid>
-                            </controls:BoolBorder>
-                        </Grid>
-
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <Grid Grid.Row="2" Padding="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button
-                    Width="200"
-                    Height="50"
-                    HorizontalAlignment="Left"
-                    Command="{x:Bind ViewModel.IgnoreAndCloseCommand}"
-                    Content="Ignore and Close" />
-
-                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                    <TextBlock Text="Last Checked:" />
-                    <TextBlock Text="{x:Bind ViewModel.LastUpdateCheck, Mode=OneWay}" />
+                    <controls:LinkButton
+                        Link="{x:Bind ViewModel.ModPath, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.ModPath.LocalPath, Mode=OneWay, FallbackValue=ModPath}"
+                        ToolTipService.ToolTip="Open Mod folder..." />
                 </StackPanel>
 
+                <ListView
+                    Grid.Row="1"
+                    ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
+                    SelectionMode="None">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="services:UpdateCheckResult">
+                            <Grid Margin="0,8" CornerRadius="4">
+
+                                <controls:BoolBorder
+                                    BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                                    BorderSize="2"
+                                    ShowBorder="{x:Bind IsNewer}">
+                                    <Grid Margin="8">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                Text="{x:Bind FileName}" />
+
+                                            <TextBlock
+                                                Margin="8,0"
+                                                VerticalAlignment="Bottom"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{x:Bind DateAdded}" />
+                                        </StackPanel>
+
+
+
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            IsTextSelectionEnabled="True"
+                                            Text="{x:Bind Description}" />
+
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            Text="New since last check"
+                                            Visibility="{x:Bind IsNewer, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                        <Button
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            Content="(Not Implemented) Download "
+                                            IsEnabled="False" />
+                                    </Grid>
+                                </controls:BoolBorder>
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Grid Grid.Row="2" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Width="200"
+                        Height="50"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.IgnoreAndCloseCommand}"
+                        Content="Ignore and Close" />
+
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                        <TextBlock Text="Last Checked:" />
+                        <TextBlock Text="{x:Bind ViewModel.LastUpdateCheck, Mode=OneWay}" />
+                    </StackPanel>
+
+                </Grid>
+
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        Text="Mod Page:" />
+                    <controls:LinkButton
+                        VerticalAlignment="Center"
+                        Link="{x:Bind ViewModel.ModPage, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.ModPage, Mode=OneWay}"
+                        ToolTipService.ToolTip="Open in default browser..." />
+                </StackPanel>
+                <WebView2
+                    x:Name="ModPageBrowser"
+                    Grid.Row="1"
+                    DefaultBackgroundColor="Gray"
+                    Source="{x:Bind ViewModel.ModPage, Mode=TwoWay}" />
             </Grid>
 
         </Grid>
-        <Grid Grid.Column="1">
-            <WebView2
-                x:Name="ModPageBrowser"
-                DefaultBackgroundColor="Gray"
-                Source="{x:Bind ViewModel.ModPage, Mode=OneWay}" />
-        </Grid>
+    </Page>
 
-    </Grid>
 </winUiEx:WindowEx>
