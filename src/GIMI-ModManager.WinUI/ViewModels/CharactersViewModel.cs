@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
@@ -96,8 +97,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 RefreshModsInGameCommand.NotifyCanExecuteChanged();
         };
 
-        _modNotificationManager.ModNotificationAdded += (sender, args) =>
-            App.MainWindow.DispatcherQueue.TryEnqueue(RefreshNotifications);
+        _modNotificationManager.OnModNotification += (sender, args) =>
+            App.MainWindow.DispatcherQueue.EnqueueAsync(RefreshNotificationsAsync);
 
         DockPanelVM = new OverviewDockPanelVM();
         DockPanelVM.FilterElementSelected += FilterElementSelected;
@@ -323,7 +324,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             _backendCharacters = backendCharacters;
 
             // Add notifications
-            RefreshNotifications();
+            await RefreshNotificationsAsync();
 
             // Character Ids where more than 1 skin is enabled
             var charactersWithMultipleMods = _skinManagerService.CharacterModLists
@@ -433,14 +434,14 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ResetContent();
     }
 
-    private void RefreshNotifications()
+    private async Task RefreshNotificationsAsync()
     {
         foreach (var character in _characters)
         {
             var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
             if (characterGridItemModel is null) continue;
             var notifications =
-                _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
+                await _modNotificationManager.GetNotificationsForInternalNameAsync(character.InternalName);
 
             if (!notifications.Any())
             {
@@ -577,8 +578,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand(CanExecute = nameof(canClearNotifications))]
     private async Task ClearNotificationsAsync(CharacterGridItemModel character)
     {
-        await _modNotificationManager.ClearModNotificationsAsync(character.Character);
-        RefreshNotifications();
+        await _modNotificationManager.ClearModNotificationsAsync(character.Character.InternalName);
+        await RefreshNotificationsAsync().ConfigureAwait(false);
     }
 
     [RelayCommand]

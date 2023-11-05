@@ -59,18 +59,27 @@
                                 ShowBorder="{x:Bind IsNewer}">
                                 <Grid Margin="8">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition />
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
 
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        IsTextSelectionEnabled="True"
-                                        Style="{ThemeResource SubtitleTextBlockStyle}"
-                                        Text="{x:Bind FileName}" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock
+                                            IsTextSelectionEnabled="True"
+                                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                                            Text="{x:Bind FileName}" />
+
+                                        <TextBlock
+                                            Margin="8,0"
+                                            VerticalAlignment="Bottom"
+                                            Text="{x:Bind DateAdded}" />
+                                    </StackPanel>
+
 
 
                                     <TextBlock
@@ -108,7 +117,8 @@
                     Width="200"
                     Height="50"
                     HorizontalAlignment="Left"
-                    Content="Ignore Update" />
+                    Command="{x:Bind ViewModel.IgnoreAndCloseCommand}"
+                    Content="Ignore and Close" />
 
                 <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                     <TextBlock Text="Last Checked:" />
@@ -119,7 +129,10 @@
 
         </Grid>
         <Grid Grid.Column="1">
-            <WebView2 x:Name="ModPageBrowser" Source="{x:Bind ViewModel.ModPage, Mode=OneWay}" />
+            <WebView2
+                x:Name="ModPageBrowser"
+                DefaultBackgroundColor="Gray"
+                Source="{x:Bind ViewModel.ModPage, Mode=OneWay}" />
         </Grid>
 
     </Grid>

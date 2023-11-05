@@ -158,6 +158,7 @@ public record UpdateCheckResult
     public string FileName { get; }
     public string Description { get; }
     public DateTime DateAdded { get; }
+    public TimeSpan Age => DateTime.Now - DateAdded;
     public string Md5Checksum { get; }
 }
 

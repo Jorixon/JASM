@@ -12,4 +12,7 @@ public interface ISkinMod : IMod, IEqualityComparer<ISkinMod>
 
     public bool ContainsOnlyJasmFiles();
     public string? GetModIniPath();
+
+    // Get folder name without the disabled prefix
+    public string GetNameWithoutDisabledPrefix();
 }

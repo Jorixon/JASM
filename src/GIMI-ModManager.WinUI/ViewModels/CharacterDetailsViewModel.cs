@@ -104,6 +104,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModListVM.OnModsSelected += OnModsSelected;
 
         ModPaneVM = new ModPaneVM();
+
+        _modNotificationManager.OnModNotification += OnOnModNotificationHandler;
+    }
+
+    private void OnOnModNotificationHandler(object? sender, ModNotificationManager.ModNotificationEvent e)
+    {
+        App.MainWindow.DispatcherQueue.EnqueueAsync(() => RefreshModsCommand.ExecuteAsync(null));
     }
 
     private async void OnModsSelected(object? sender, ModListVM.ModSelectedEventArgs args)
@@ -122,7 +129,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (recentlyAddedModNotifications.Any())
             foreach (var modNotification in recentlyAddedModNotifications)
             {
-                await _modNotificationManager.RemoveModNotification(modNotification.Id);
+                await _modNotificationManager.RemoveModNotificationAsync(modNotification.Id);
 
                 foreach (var newModModel in args.Mods)
                 {
@@ -346,22 +353,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             if (modSettings != null)
                 newModModel.WithModSettings(modSettings);
 
-            ModNotification? inMemoryModNotification =
-                _modNotificationManager.InMemoryModNotifications.FirstOrDefault(x =>
-                    x.ModFolderName.Equals(skinEntry.Mod.Name, StringComparison.CurrentCultureIgnoreCase) &&
-                    x.CharacterInternalName == ShownCharacter.InternalName);
+            var notifications = await _modNotificationManager.GetNotificationsAsync();
 
-            if (inMemoryModNotification != null)
-                newModModel.ModNotifications.Add(inMemoryModNotification);
+            var modNotifications = notifications.Where(x => x.ModId == skinEntry.Id).ToArray();
 
-            //modModel.ModNotifications.Add(new ModNotification()
-            //{
-            //    CharacterInternalName = ShownCharacter.Id,
-            //    ShowOnOverview = false,
-            //    ModFolderName = Path.GetFileNameWithoutExtension(skinEntry.Mod.Name) ?? string.Empty,
-            //    AttentionType = AttentionType.Added,
-            //    Message = $"Mod '{skinEntry.Mod.Name}' was added to {ShownCharacter.DisplayName}'s mod folder.",
-            //});
+            modNotifications.ForEach(newModModel.ModNotifications.Add);
 
 
             modList.Add(newModModel);
@@ -591,7 +587,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var existingWindow = _windowManagerService.GetWindow(mod.Id);
         if (existingWindow is not null)
         {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(async () =>
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             {
                 await Task.Delay(100);
                 existingWindow.BringToFront();

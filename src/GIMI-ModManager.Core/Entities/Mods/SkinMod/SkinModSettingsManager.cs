@@ -3,6 +3,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.FileModels;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
+using GIMI_ModManager.Core.Helpers;
 using Newtonsoft.Json;
 using OneOf;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -12,6 +13,7 @@ namespace GIMI_ModManager.Core.Entities.Mods.SkinMod;
 public class SkinModSettingsManager
 {
     private readonly ISkinMod _skinMod;
+    private readonly IReadOnlyCollection<string> _supportedImageExtensions = Constants.SupportedImageExtensions;
     private const string configFileName = ".JASM_ModConfig.json";
     private const string ImageName = ".JASM_Cover";
 
@@ -54,6 +56,23 @@ public class SkinModSettingsManager
                 updateSettings = true;
             }
 
+            if (modSettings.ImagePath is not null && !File.Exists(modSettings.ImagePath.LocalPath))
+            {
+                modSettings.ImagePath = null;
+                updateSettings = true;
+            }
+
+            if (modSettings.ImagePath is null)
+            {
+                var images = DetectImages();
+                if (images.Any())
+                {
+                    modSettings.ImagePath = images.FirstOrDefault();
+                    updateSettings = true;
+                }
+            }
+
+
             if (updateSettings)
                 await SaveSettingsAsync(modSettings).ConfigureAwait(false);
 
@@ -61,7 +80,10 @@ public class SkinModSettingsManager
         }
 
         var newId = Guid.NewGuid();
-        var settings = new JsonModSettings() { Id = newId.ToString() };
+
+        var image = DetectImages().FirstOrDefault();
+
+        var settings = new JsonModSettings() { Id = newId.ToString(), ImagePath = image?.LocalPath };
         var json = JsonSerializer.Serialize(settings, _serializerOptions);
 
         await File.WriteAllTextAsync(_settingsFilePath, json).ConfigureAwait(false);
@@ -153,6 +175,42 @@ public class SkinModSettingsManager
             return;
 
         File.Delete(oldImageUri.LocalPath);
+    }
+
+    private readonly string[] _imageNamePriority = new[] { ".jasm_cover", "preview", "cover" };
+
+    public Uri[] DetectImages()
+    {
+        var modDir = new DirectoryInfo(_skinMod.FullPath);
+        if (!modDir.Exists)
+            return Array.Empty<Uri>();
+
+        var images = new List<FileInfo>();
+        foreach (var file in modDir.EnumerateFiles())
+        {
+            if (!_imageNamePriority.Any(i => file.Name.ToLower().StartsWith(i)))
+                continue;
+
+
+            var extension = file.Extension.ToLower();
+            if (!_supportedImageExtensions.Contains(extension))
+                continue;
+
+            images.Add(file);
+        }
+
+        // Sort images by priority
+        foreach (var imageName in _imageNamePriority.Reverse())
+        {
+            var image = images.FirstOrDefault(x => x.Name.ToLower().StartsWith(imageName));
+            if (image is null)
+                continue;
+
+            images.Remove(image);
+            images.Insert(0, image);
+        }
+
+        return images.Select(x => new Uri(x.FullName)).ToArray();
     }
 }
 

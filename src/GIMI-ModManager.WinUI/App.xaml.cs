@@ -121,7 +121,9 @@ public partial class App : Application
                 services.AddSingleton<GameBananaCache>();
                 services.AddTransient<IModUpdateChecker, GameBananaChecker>();
 
-
+                // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
+                // I've read just about every microsoft docs page httpclients, and I can't figure out what I'm doing wrong
+                // Also tried with httpclientfactory, but that didn't work either
                 services.AddHttpClient<IModUpdateChecker, GameBananaChecker>(client =>
                     {
                         client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
@@ -133,7 +135,8 @@ public partial class App : Application
                     })
                     .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
 
-
+                // I'm preeeetty sure this is not correctly set up, not used to polly 8.x.x
+                // But it does rate limit, so I guess it's fine for now
                 services.AddResiliencePipeline(GameBananaChecker.HttpClientName, (builder, context) =>
                 {
                     var limiter = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions()
@@ -159,6 +162,7 @@ public partial class App : Application
                     builder.TelemetryListener = null;
                     context.OnPipelineDisposed(() =>
                     {
+                        // This is never called, so I'm not sure if this is correct
                         Log.Debug("Disposing rate limiter");
                         limiter.Dispose();
                     });

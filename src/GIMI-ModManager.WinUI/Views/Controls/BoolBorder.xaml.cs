@@ -8,6 +8,9 @@ using Microsoft.UI.Xaml.Media;
 
 namespace GIMI_ModManager.WinUI.Views.Controls;
 
+/// <summary>
+/// A border that can be toggled on and off with a bool. Use <c>BorderColor</c> and <c>BorderSize</c> to customize the border.
+/// </summary>
 [ContentProperty(Name = nameof(Children))]
 public sealed partial class BoolBorder : UserControl
 {

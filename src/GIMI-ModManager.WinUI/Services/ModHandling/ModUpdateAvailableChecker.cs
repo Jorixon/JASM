@@ -167,7 +167,10 @@ public sealed class ModUpdateAvailableChecker
                 await UpdateLastChecked(characterSkinEntry.Mod, result);
                 _gameBananaCache.CacheRetrievedMods(characterSkinEntry.Mod.Id, result);
                 if (result.AnyNewMods)
+                {
                     await AddModNotifications(characterSkinEntry, result);
+                    _logger.Information("New or updated mods are available for {ModName}", characterSkinEntry.Mod.Name);
+                }
             }
             catch (Exception e)
             {
@@ -208,10 +211,10 @@ public sealed class ModUpdateAvailableChecker
             ModId = characterSkinEntry.Mod.Id,
             ModCustomName = modSettings.CustomName ?? characterSkinEntry.Mod.Name,
             ModFolderName = characterSkinEntry.Mod.Name,
-            Message = $"New or updated mods are available for {characterSkinEntry.Mod.Name}"
+            Message = $"New or updated mods are available for {characterSkinEntry.Mod.GetNameWithoutDisabledPrefix()}"
         };
 
-        return _modNotificationManager.AddModNotification(modNotification);
+        return _modNotificationManager.AddModNotification(modNotification, persistent: true);
     }
 
     private bool _isStartingUpdate = false;

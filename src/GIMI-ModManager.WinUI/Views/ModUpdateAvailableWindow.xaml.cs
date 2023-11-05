@@ -5,16 +5,18 @@ using GIMI_ModManager.WinUI.ViewModels;
 
 namespace GIMI_ModManager.WinUI.Views;
 
-/// <summary>
-/// An empty window that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class ModUpdateAvailableWindow : WindowEx
 {
     public readonly ModUpdateVM ViewModel;
 
     public ModUpdateAvailableWindow(Guid modId)
     {
-        ViewModel = new ModUpdateVM(modId);
+        ViewModel = new ModUpdateVM(modId, this);
         InitializeComponent();
+
+        ModPageBrowser.Loaded += async (sender, args) =>
+        {
+            //await ModPageBrowser.EnsureCoreWebView2Async();
+        };
     }
 }

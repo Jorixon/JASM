@@ -1,6 +1,6 @@
-﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+﻿using System.Text.Json;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Models.Settings;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.Notifications;
@@ -9,11 +9,23 @@ public class ModNotificationManager
 {
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly List<ModNotification> _inMemoryModNotifications = new();
-    public IReadOnlyCollection<ModNotification> InMemoryModNotifications => _inMemoryModNotifications.AsReadOnly();
 
-    public event EventHandler<ModNotificationEvent>? ModNotificationAdded;
-    public event EventHandler<ModNotificationEvent[]>? ModNotificationsCleared;
+    private readonly List<ModNotification> _inMemoryModNotifications = new();
+    private readonly List<ModNotification> _modNotifications = new();
+
+    private bool _isInitialized;
+    private FileInfo _modNotificationsFile = null!;
+
+    public const string ModNotificationsFileName = "ModNotifications.json";
+
+    public event EventHandler<ModNotificationEvent>? OnModNotification;
+
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        AllowTrailingCommas = true,
+        WriteIndented = true
+    };
+
 
     public ModNotificationManager(ILogger logger, ILocalSettingsService localSettingsService)
     {
@@ -21,150 +33,209 @@ public class ModNotificationManager
         _localSettingsService = localSettingsService;
     }
 
+    private async Task InitializeAsync()
+    {
+        if (_isInitialized)
+            return;
+
+        var appDataFolder = new DirectoryInfo(_localSettingsService.ApplicationDataFolder);
+        if (!appDataFolder.Exists)
+            appDataFolder.Create();
+
+
+        _modNotificationsFile = new FileInfo(Path.Combine(appDataFolder.FullName, ModNotificationsFileName));
+
+        if (!_modNotificationsFile.Exists)
+        {
+            await using var fileStream = _modNotificationsFile.Create();
+
+            await JsonSerializer.SerializeAsync(fileStream, new ModNotificationsRoot(), _jsonSerializerOptions);
+            return;
+        }
+
+        await using var stream = _modNotificationsFile.OpenRead();
+        var modNotificationRoot =
+            await JsonSerializer.DeserializeAsync<ModNotificationsRoot>(stream, _jsonSerializerOptions) ??
+            new ModNotificationsRoot();
+
+        _modNotifications.AddRange(modNotificationRoot.ModNotifications);
+        _modNotifications.ForEach(x => x.IsPersistent = true);
+
+        _isInitialized = true;
+    }
+
+    private async Task SaveModNotificationsAsync()
+    {
+        await InitializeAsync();
+
+        var modNotificationsRoot = new ModNotificationsRoot
+        {
+            ModNotifications = _modNotifications.ToArray()
+        };
+
+        await using var fileStream =
+            new FileStream(_modNotificationsFile.FullName, FileMode.Truncate, FileAccess.Write);
+        await JsonSerializer.SerializeAsync(fileStream, modNotificationsRoot, _jsonSerializerOptions);
+        _modNotifications.ForEach(x => x.IsPersistent = true);
+    }
+
     public async Task AddModNotification(ModNotification modNotification, bool persistent = false)
     {
+        await InitializeAsync();
+
         if (!persistent)
         {
+            modNotification.IsPersistent = false;
             _inMemoryModNotifications.Add(modNotification);
-            ModNotificationAdded?.Invoke(this, new ModNotificationEvent(modNotification, false));
+            OnModNotification?.Invoke(this, new ModNotificationEvent(modNotification, Operation.Added));
             return;
         }
 
+        if (_modNotifications.Any(x => x.Id == modNotification.Id))
+            throw new InvalidOperationException("ModNotification with the same Id already exists");
 
-        var modAttentionSettings =
-            await _localSettingsService.ReadOrCreateSettingAsync<ModAttentionSettings>(ModAttentionSettings.Key);
+        modNotification.IsPersistent = true;
+        _modNotifications.Add(modNotification);
 
-        if (modAttentionSettings.ModNotifications.TryGetValue(modNotification.CharacterInternalName,
-                out var notifications))
-        {
-            modAttentionSettings.ModNotifications.Remove(modNotification.CharacterInternalName);
-            modAttentionSettings.ModNotifications.Add(modNotification.CharacterInternalName,
-                notifications.Append(modNotification).ToArray());
-        }
+        await SaveModNotificationsAsync();
 
-        modAttentionSettings.ModNotifications.Add(modNotification.CharacterInternalName,
-            new ModNotification[1] { modNotification });
 
-        await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)
-            .ConfigureAwait(false);
-
-        ModNotificationAdded?.Invoke(this, new ModNotificationEvent(modNotification, true));
+        OnModNotification?.Invoke(this, new ModNotificationEvent(modNotification, Operation.Added));
     }
 
-    public async Task<ModNotification[]> GetPersistentModNotifications(ICharacter? character = null)
+    /// <summary>
+    ///    Clears all mod notifications of <c>NotificationType</c> for a specific character or all characters
+    /// </summary>
+    /// <param name="character"></param>
+    /// <param name="clearType"></param>
+    /// <returns></returns>
+    public async Task ClearModNotificationsAsync(InternalName? character = null,
+        NotificationType clearType = NotificationType.All)
     {
-        var modAttentionSettings =
-            await _localSettingsService.ReadOrCreateSettingAsync<ModAttentionSettings>(ModAttentionSettings.Key);
+        await InitializeAsync();
 
-        return character is null
-            ? modAttentionSettings.ModNotifications.Select(x => x.Value).SelectMany(x => x).ToArray()
-            : modAttentionSettings.ModNotifications.First(x => x.Key == character.InternalName).Value;
-    }
+        var notifications = (await GetNotificationsAsync(clearType)).Where(x =>
+                character is null || character.Equals(x.CharacterInternalName))
+            .ToArray();
 
-    public ModNotification[] GetInMemoryModNotifications(ICharacter? character = null)
-    {
-        return character is null
-            ? _inMemoryModNotifications.ToArray()
-            : _inMemoryModNotifications.Where(x => character.InternalNameEquals(x.CharacterInternalName))
-                .ToArray();
-    }
-
-    public async Task ClearModNotificationsAsync(IModdableObject? character = null, bool persistent = false)
-    {
-        if (!persistent)
-        {
-            var removedNotifications = character is null
-                ? _inMemoryModNotifications.ToArray()
-                : _inMemoryModNotifications.Where(x => character.InternalNameEquals(x.CharacterInternalName))
-                    .ToArray();
-            if (character is null)
-                _inMemoryModNotifications.Clear();
-
-            else
-                _inMemoryModNotifications.RemoveAll(x => character.InternalNameEquals(x.CharacterInternalName));
-
-
-            ModNotificationsCleared?.Invoke(this, removedNotifications.Select(x => new ModNotificationEvent(x, false))
-                .ToArray());
-
+        if (notifications.Length == 0)
             return;
-        }
 
-        var modAttentionSettings =
-            await _localSettingsService.ReadOrCreateSettingAsync<ModAttentionSettings>(ModAttentionSettings.Key);
+        foreach (var notification in notifications)
+            _removeNotification(notification);
 
-        var removedPersistentNotifications = character is null
-            ? modAttentionSettings.ModNotifications.Select(x => x.Value).SelectMany(x => x).ToArray()
-            : modAttentionSettings.ModNotifications.First(x => character.InternalNameEquals(x.Key)).Value;
+        if (notifications.Any(x => x.IsPersistent))
+            await SaveModNotificationsAsync();
 
-        if (character is null)
-        {
-            modAttentionSettings.ModNotifications.Clear();
-        }
-        else
-        {
-            modAttentionSettings.ModNotifications.Remove(character.InternalName);
-        }
 
-        await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)
-            .ConfigureAwait(false);
-
-        ModNotificationsCleared?.Invoke(this, removedPersistentNotifications
-            .Select(x => new ModNotificationEvent(x, true))
-            .ToArray());
+        foreach (var notification in notifications)
+            OnModNotification?.Invoke(this, new ModNotificationEvent(notification, Operation.Removed));
     }
 
-    public async Task<bool> RemoveModNotification(Guid notificationId, bool persistent = false)
+    public enum NotificationType
     {
-        if (!persistent)
-        {
-            var removedNotification = _inMemoryModNotifications.FirstOrDefault(x => x.Id == notificationId);
-            if (removedNotification is null)
-                return false;
+        Persistent,
+        InMemory,
+        All
+    }
 
-            _inMemoryModNotifications.Remove(removedNotification);
-            ModNotificationsCleared?.Invoke(this, new ModNotificationEvent[1]
-            {
-                new(removedNotification, false)
-            });
-            return true;
-        }
+    private void _removeNotification(ModNotification modNotification)
+    {
+        if (!_modNotifications.Remove(modNotification))
+            _inMemoryModNotifications.Remove(modNotification);
+    }
 
-        var modAttentionSettings =
-            await _localSettingsService.ReadOrCreateSettingAsync<ModAttentionSettings>(ModAttentionSettings.Key);
+    public async Task<bool> RemoveModNotificationAsync(Guid notificationId)
+    {
+        await InitializeAsync();
 
-        var removedPersistentNotification = modAttentionSettings.ModNotifications.Select(x => x.Value)
-            .SelectMany(x => x).FirstOrDefault(x => x.Id == notificationId);
+        var notification = await GetNotificationById(notificationId, IdType.NotificationId);
 
-        if (removedPersistentNotification is null)
+        if (notification is null)
             return false;
 
-        modAttentionSettings.ModNotifications.Select(x => x.Value).SelectMany(x => x)
-            .Where(x => x.Id == notificationId).ToList().ForEach(x =>
-            {
-                modAttentionSettings.ModNotifications.Select(x => x.Value).SelectMany(x => x).ToList().Remove(x);
-            });
+        _removeNotification(notification);
 
-        await _localSettingsService.SaveSettingAsync(ModAttentionSettings.Key, modAttentionSettings)
-            .ConfigureAwait(false);
+        if (notification.IsPersistent)
+            await SaveModNotificationsAsync();
 
-        ModNotificationsCleared?.Invoke(this, new ModNotificationEvent[1]
-        {
-            new(removedPersistentNotification, true)
-        });
+
+        OnModNotification?.Invoke(this, new ModNotificationEvent(notification, Operation.Removed));
         return true;
+    }
+
+
+    public async Task<ModNotification?> GetNotificationById(Guid id, IdType type = IdType.ModId)
+    {
+        await InitializeAsync();
+
+        var notification = _inMemoryModNotifications.FirstOrDefault(x =>
+            type == IdType.NotificationId && x.Id == id || type == IdType.ModId && x.ModId == id);
+        if (notification is not null)
+        {
+            notification.IsPersistent = false;
+            return notification;
+        }
+
+        notification = _modNotifications.FirstOrDefault(x =>
+            type == IdType.NotificationId && x.Id == id || type == IdType.ModId && x.ModId == id);
+
+        if (notification is not null)
+            notification.IsPersistent = true;
+
+        return notification;
+    }
+
+    public async Task<ICollection<ModNotification>> GetNotificationsForInternalNameAsync(InternalName internalName,
+        NotificationType type = NotificationType.All)
+    {
+        await InitializeAsync();
+
+        return (await GetNotificationsAsync(type)).Where(x => internalName.Equals(x.CharacterInternalName)).ToArray();
+    }
+
+    public async Task<IReadOnlyList<ModNotification>> GetNotificationsAsync(
+        NotificationType type = NotificationType.All)
+    {
+        await InitializeAsync();
+        return type switch
+        {
+            NotificationType.Persistent => _modNotifications.AsReadOnly(),
+            NotificationType.InMemory => _inMemoryModNotifications.AsReadOnly(),
+            NotificationType.All => _modNotifications.Concat(_inMemoryModNotifications).ToArray().AsReadOnly(),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+    }
+
+    public enum IdType
+    {
+        NotificationId,
+        ModId
     }
 
 
     public class ModNotificationEvent : EventArgs
     {
         public ModNotification ModNotification { get; }
-        public bool IsPersistent { get; }
+        public bool IsPersistent => ModNotification.IsPersistent;
+        public Operation Operation { get; }
 
-        public ModNotificationEvent(ModNotification modNotification, bool isPersistent)
+
+        public ModNotificationEvent(ModNotification modNotification, Operation operation)
         {
             ModNotification = modNotification;
-            IsPersistent = isPersistent;
+            Operation = operation;
         }
     }
+
+    public enum Operation
+    {
+        Added,
+        Removed
+    }
+}
+
+public class ModNotificationsRoot
+{
+    public ModNotification[] ModNotifications { get; set; } = Array.Empty<ModNotification>();
 }

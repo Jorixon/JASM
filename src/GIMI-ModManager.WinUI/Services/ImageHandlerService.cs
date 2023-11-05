@@ -1,13 +1,11 @@
 ﻿using Windows.Storage;
 using Windows.Storage.Pickers;
+using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.WinUI.Services;
 
 public class ImageHandlerService
 {
-    private readonly string[] _supportedImageExtensions = new[]
-        { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg", ".webp" };
-
     private readonly DirectoryInfo _tmpFolder = new(Path.Combine(App.TMP_DIR, "Images"));
 
     public readonly Uri PlaceholderImageUri =
@@ -18,7 +16,7 @@ public class ImageHandlerService
     public async Task<IStorageFile?> PickImageAsync(bool copyToTmpFolder = true)
     {
         var filePicker = new FileOpenPicker();
-        foreach (var supportedImageExtension in _supportedImageExtensions)
+        foreach (var supportedImageExtension in Constants.SupportedImageExtensions)
             filePicker.FileTypeFilter.Add(supportedImageExtension);
 
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);

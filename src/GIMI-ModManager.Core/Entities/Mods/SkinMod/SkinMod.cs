@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.Core.Entities.Mods.SkinMod;
 
@@ -104,6 +105,9 @@ public class SkinMod : Mod, ISkinMod
     }
 
     public string? GetModIniPath() => HasMergedInIFile(_modDirectory);
+
+    public string GetNameWithoutDisabledPrefix() =>
+        ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(_modDirectory.Name);
 
     public static bool operator ==(SkinMod? left, SkinMod? right)
     {
