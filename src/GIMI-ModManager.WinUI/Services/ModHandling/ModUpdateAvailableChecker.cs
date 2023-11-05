@@ -101,7 +101,7 @@ public sealed class ModUpdateAvailableChecker
         try
         {
             _logger.Information("Waiting for next mod check at {nextCheck}", DateTime.Now.AddMinutes(5));
-            await Task.Delay(TimeSpan.FromMinutes(5), token);
+            await Task.Delay(TimeSpan.FromMinutes(60), token);
         }
         catch (TaskCanceledException)
         {

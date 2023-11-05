@@ -179,6 +179,7 @@
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
+		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
@@ -611,6 +612,9 @@
 		<None Update="Assets\Games\Honkai\weaponClasses.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\Controls\BoolBorder.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\ModUpdateAvailableWindow.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

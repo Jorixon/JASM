@@ -414,11 +414,14 @@
                                                             <DataTemplate x:DataType="notifications:ModNotification">
                                                                 <Grid Margin="4,0" VerticalAlignment="Center">
                                                                     <Button
-                                                                        PointerEntered="NotificationButton_OnPointerEntered"
                                                                         Margin="0"
                                                                         Padding="0"
                                                                         BorderThickness="0"
-                                                                        CornerRadius="0">
+                                                                        Click="ButtonBase_OnClick"
+                                                                        CornerRadius="0"
+                                                                        DataContext="{x:Bind}"
+                                                                        PointerEntered="NotificationButton_OnPointerEntered"
+                                                                        PointerExited="NotificationButton_OnPointerExited">
                                                                         <Button.Content>
                                                                             <FontIcon
                                                                                 VerticalAlignment="Bottom"

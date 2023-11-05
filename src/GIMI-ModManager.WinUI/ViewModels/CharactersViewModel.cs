@@ -95,6 +95,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             if (args.PropertyName == nameof(ElevatorService.ElevatorStatus))
                 RefreshModsInGameCommand.NotifyCanExecuteChanged();
         };
+
+        _modNotificationManager.ModNotificationAdded += (sender, args) =>
+            App.MainWindow.DispatcherQueue.TryEnqueue(RefreshNotifications);
+
         DockPanelVM = new OverviewDockPanelVM();
         DockPanelVM.FilterElementSelected += FilterElementSelected;
         DockPanelVM.Initialize();

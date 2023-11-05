@@ -7,9 +7,11 @@ using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.ViewModels;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -449,5 +451,25 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void NotificationButton_OnPointerEntered(object sender, PointerRoutedEventArgs e)
     {
+        if (sender is not Button button) return;
+        if (button.DataContext is not ModNotification modNotification) return;
+        if (modNotification.AttentionType != AttentionType.UpdateAvailable) return;
+
+
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Hand);
+    }
+
+    private void NotificationButton_OnPointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+    }
+
+    private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        if (button.DataContext is not ModNotification modNotification) return;
+        if (modNotification.AttentionType != AttentionType.UpdateAvailable) return;
+
+        await ViewModel.OpenNewModsWindowCommand.ExecuteAsync(modNotification).ConfigureAwait(false);
     }
 }

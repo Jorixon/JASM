@@ -140,9 +140,9 @@ public partial class App : Application
                     {
                         QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                         QueueLimit = 0,
-                        TokenLimit = 5,
+                        TokenLimit = 10,
                         AutoReplenishment = true,
-                        TokensPerPeriod = 1,
+                        TokensPerPeriod = 2,
                         ReplenishmentPeriod = TimeSpan.FromSeconds(2)
                     });
 
@@ -217,7 +217,7 @@ public partial class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        //await InitializeLocalizer();
+        Environment.SetEnvironmentVariable("WEBVIEW2_USE_VISUAL_HOSTING_FOR_OWNED_WINDOWS", "1");
         await GetService<ILanguageLocalizer>().InitializeAsync();
         NotImplemented.NotificationManager = GetService<NotificationManager>();
         base.OnLaunched(args);

@@ -19,6 +19,7 @@ using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -34,6 +35,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly INavigationService _navigationService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILocalSettingsService _localSettingsService;
+    private readonly IWindowManagerService _windowManagerService;
     private readonly NotificationManager _notificationService;
     private readonly ModDragAndDropService _modDragAndDropService;
     private readonly ModCrawlerService _modCrawlerService;
@@ -63,7 +65,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         INavigationService navigationService, ISkinManagerService skinManagerService,
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
         ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
-        ModNotificationManager modNotificationManager, ModSettingsService modSettingsService)
+        ModNotificationManager modNotificationManager, ModSettingsService modSettingsService,
+        IWindowManagerService windowManagerService)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -75,6 +78,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _modCrawlerService = modCrawlerService;
         _modNotificationManager = modNotificationManager;
         _modSettingsService = modSettingsService;
+        _windowManagerService = windowManagerService;
 
         _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
         {
@@ -565,6 +569,29 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private IEnumerable<ModModel> GetNewModModels()
     {
         return _modList.Mods.Select(mod => ModModel.FromMod(mod).WithToggleModDelegate(ToggleMod));
+    }
+
+
+    [RelayCommand]
+    private async Task OpenNewModsWindowAsync(object? modNotification)
+    {
+        if (modNotification is not ModNotification notification)
+        {
+            _logger.Warning("OpenNewModsWindowAsync called with null modModel.");
+            return;
+        }
+
+        var mod = _modList.Mods.FirstOrDefault(mod => mod.Id == notification.ModId);
+
+        if (mod is null)
+        {
+            return;
+        }
+
+
+        var modWindow = new ModUpdateAvailableWindow(mod.Id);
+        modWindow.Title = $"New Mod Files Available: {mod.Mod.Name}";
+        _windowManagerService.CreateWindow(modWindow, mod.Id);
     }
 
 
