@@ -34,10 +34,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ModCrawlerService _modCrawlerService;
     private readonly ModSettingsService _modSettingsService;
+    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
 
     public readonly GenshinProcessManager GenshinProcessManager;
-
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+
     public readonly string StartGameIcon;
     public readonly string ShortGameName;
     public NotificationManager NotificationManager { get; }
@@ -75,7 +76,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
-        ModCrawlerService modCrawlerService, ModSettingsService modSettingsService)
+        ModCrawlerService modCrawlerService, ModSettingsService modSettingsService,
+        ModUpdateAvailableChecker modUpdateAvailableChecker)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -90,6 +92,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modNotificationManager = modNotificationManager;
         _modCrawlerService = modCrawlerService;
         _modSettingsService = modSettingsService;
+        _modUpdateAvailableChecker = modUpdateAvailableChecker;
 
         ElevatorService.PropertyChanged += (sender, args) =>
         {
@@ -783,6 +786,24 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var settings = await ReadCharacterSettings();
         settings.SortByDescending = SortByDescending;
         await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
+    [RelayCommand]
+    private void CheckForUpdatesForCharacter(object? characterGridItemModel)
+    {
+        if (characterGridItemModel is not CharacterGridItemModel character)
+            return;
+
+        var modList = _skinManagerService.GetCharacterModList(character.Character);
+        if (modList is null)
+        {
+            _logger.Warning("No mod list found for character {Character}", character.Character.InternalName);
+            return;
+        }
+
+        var characterMods = modList.Mods.Select(ske => ske.Mod.Id);
+
+        _modUpdateAvailableChecker.CheckNow(true, characterMods);
     }
 }
 

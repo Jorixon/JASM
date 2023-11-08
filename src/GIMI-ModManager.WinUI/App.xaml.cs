@@ -143,10 +143,10 @@ public partial class App : Application
                     {
                         QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                         QueueLimit = 0,
-                        TokenLimit = 10,
+                        TokenLimit = 5,
                         AutoReplenishment = true,
-                        TokensPerPeriod = 2,
-                        ReplenishmentPeriod = TimeSpan.FromSeconds(2)
+                        TokensPerPeriod = 5,
+                        ReplenishmentPeriod = TimeSpan.FromSeconds(1)
                     });
 
                     builder

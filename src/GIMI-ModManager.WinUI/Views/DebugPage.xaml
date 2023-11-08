@@ -39,6 +39,10 @@
                 Maximum="{x:Bind ViewModel.ModsToCheckCount, Mode=OneWay}"
                 Value="{x:Bind ViewModel.ModsCheckedCount, Mode=OneWay}" />
             <Button Command="{x:Bind ViewModel.CheckNowCommand}">Check Now!</Button>
+            <Button
+                Margin="20,0"
+                Command="{x:Bind ViewModel.TestCommand}"
+                Content="Test" />
         </StackPanel>
 
         <ListView

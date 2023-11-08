@@ -8,6 +8,7 @@ using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
+using Microsoft.UI.Dispatching;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -102,11 +103,59 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     {
         var lumineMods = _skinManagerService.GetCharacterModList(new InternalName("traveler (female)")).Mods
             .Select(ske => ske.Mod.Id);
-        _modUpdateAvailableChecker.CheckNow();
+        _modUpdateAvailableChecker.CheckNow(true);
     }
 
     public ObservableCollection<UpdateCheckResult> Results { get; } = new();
 
+    [RelayCommand]
+    private async Task TestAsync()
+    {
+        var dispatcher = DispatcherQueue.GetForCurrentThread();
+
+        var test = Task.Run(async () =>
+        {
+            await Task.Delay(200);
+            var dispatcher3 = DispatcherQueue.GetForCurrentThread();
+
+            return 123;
+        });
+        await Test2Async();
+
+        await test;
+        var dispatcher2 = DispatcherQueue.GetForCurrentThread();
+    }
+
+    private async Task Test2Async()
+    {
+        var before = DispatcherQueue.GetForCurrentThread();
+
+        var stopper = Task.Delay(2000).ConfigureAwait(false);
+        var after = DispatcherQueue.GetForCurrentThread();
+
+        await using var file = File.Create("test");
+
+        var dispatcher = DispatcherQueue.GetForCurrentThread();
+        await stopper;
+        await using var writer = new StreamWriter(file);
+        await writer.WriteLineAsync("test").ConfigureAwait(true);
+
+        var dispatcher5 = DispatcherQueue.GetForCurrentThread();
+
+        await writer.FlushAsync().ConfigureAwait(false);
+
+        var afterwrite = DispatcherQueue.GetForCurrentThread();
+
+        var test = await Task.Run(async () =>
+        {
+            await Task.Delay(200);
+            var dispatcher3 = DispatcherQueue.GetForCurrentThread();
+
+            return 123;
+        }).ConfigureAwait(false);
+        var dispatcher2 = DispatcherQueue.GetForCurrentThread();
+        await Task.Delay(2000).ConfigureAwait(false);
+    }
 
     public void OnNavigatedTo(object parameter)
     {

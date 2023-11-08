@@ -577,14 +577,14 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             return;
         }
 
-        var mod = _modList.Mods.FirstOrDefault(mod => mod.Id == notification.ModId);
+        var skinEntry = _modList.Mods.FirstOrDefault(mod => mod.Id == notification.ModId);
 
-        if (mod is null)
+        if (skinEntry is null)
         {
             return;
         }
 
-        var existingWindow = _windowManagerService.GetWindow(mod.Id);
+        var existingWindow = _windowManagerService.GetWindow(skinEntry.Id);
         if (existingWindow is not null)
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -598,9 +598,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
 
-        var modWindow = new ModUpdateAvailableWindow(mod.Id);
-        modWindow.Title = $"New Mod Files Available: {mod.Mod.Name}";
-        _windowManagerService.CreateWindow(modWindow, identifier: mod.Id);
+        var modWindow = new ModUpdateAvailableWindow(skinEntry.Id);
+        modWindow.Title =
+            $"New Mod Files Available: {ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(skinEntry.Mod.Name)}";
+        _windowManagerService.CreateWindow(modWindow, identifier: skinEntry.Id);
         await Task.Delay(100);
         modWindow.BringToFront();
     }

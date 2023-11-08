@@ -99,6 +99,13 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         App.GetService<NotificationManager>().ShowNotification("Startup settings saved",
             $"Startup settings saved successfully to '{_localSettingsService.SettingsLocation}'",
             TimeSpan.FromSeconds(7));
+        Task.Run(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(7));
+            App.GetService<NotificationManager>().ShowNotification("JASM is still in alpha",
+                "There will be bugs and things will most likely break. Anyway, hope you enjoy using Just Another Skin Manager!",
+                TimeSpan.FromSeconds(20));
+        });
     }
 
 

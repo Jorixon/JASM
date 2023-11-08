@@ -1,9 +1,13 @@
-﻿using GIMI_ModManager.Core.Contracts.Entities;
+﻿using System.Diagnostics;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using Newtonsoft.Json;
 using Serilog;
+using static GIMI_ModManager.WinUI.Services.ModHandling.ModUpdateAvailableChecker;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
@@ -13,45 +17,76 @@ public sealed class ModUpdateAvailableChecker
     private readonly GameBananaCache _gameBananaCache;
     private readonly ILogger _logger;
     private readonly ModNotificationManager _modNotificationManager;
+    private readonly ILocalSettingsService _localSettingsService;
+    private readonly Pauser _pauser = new();
 
-    private readonly CancellationTokenSource _stoppingCancellationTokenSource = new();
+    private CancellationTokenSource? _stoppingCancellationTokenSource;
 
-    private CancellationTokenSource _waiterCancellationTokenSource = null!;
-    private CancellationTokenSource _runningCancellationTokenSource = null!;
+    private CancellationTokenSource? _waiterCancellationTokenSource;
+    private CancellationTokenSource? _runningCancellationTokenSource;
 
     private CancellationToken _waiterCancellationToken = default;
     private CancellationToken _runningCancellationToken = default;
-    private bool _isRunning = false;
-    private bool _forceUpdate = false;
+    private bool _isRunning;
+    private bool _forceUpdate;
 
     private List<Guid>? _checkOnlyMods;
-    private TimeSpan _waitTime = TimeSpan.FromMinutes(30);
+    private readonly TimeSpan _waitTime = TimeSpan.FromMinutes(30);
+
+    public event EventHandler<UpdateCheckerEvent>? OnUpdateCheckerEvent;
+    public RunningState Status { get; private set; }
+    public DateTime? NextRunAt { get; private set; }
+
 
     public ModUpdateAvailableChecker(ISkinManagerService skinManagerService, ILogger logger,
-        ModNotificationManager modNotificationManager, GameBananaCache gameBananaCache)
+        ModNotificationManager modNotificationManager, GameBananaCache gameBananaCache,
+        ILocalSettingsService localSettingsService)
     {
         _skinManagerService = skinManagerService;
         _modNotificationManager = modNotificationManager;
         _gameBananaCache = gameBananaCache;
+        _localSettingsService = localSettingsService;
         _logger = logger.ForContext<ModUpdateAvailableChecker>();
     }
 
     public async Task InitializeAsync()
     {
+        _stoppingCancellationTokenSource = new CancellationTokenSource();
+
+        var settings = await _localSettingsService
+            .ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(BackGroundModCheckerSettings.Key)
+            .ConfigureAwait(false);
+
+        if (!settings.Enabled)
+            _pauser.Pause();
+
+
         var stoppingToken = _stoppingCancellationTokenSource.Token;
+
+        Task.Run(() => StartBackgroundChecker(stoppingToken), CancellationToken.None);
+    }
+
+    private async Task StartBackgroundChecker(CancellationToken stoppingToken)
+    {
         while (!stoppingToken.IsCancellationRequested)
         {
+            Status = RunningState.Stopped;
+            OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status));
+            await _pauser.EnterAsync().ConfigureAwait(false);
+
+
             _waiterCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
             _runningCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
 
             if (!_skinManagerService.IsInitialized)
                 SpinWait.SpinUntil(() => _skinManagerService.IsInitialized || stoppingToken.IsCancellationRequested);
 
-
+            Status = RunningState.Running;
+            OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status));
             try
             {
-                await Task.Delay(2000, stoppingToken);
-                await StartBackgroundService();
+                stoppingToken.ThrowIfCancellationRequested();
+                await RunCheckerAsync().ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
@@ -61,28 +96,37 @@ public sealed class ModUpdateAvailableChecker
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Failed to check for mod updates");
+                _logger.Error(e,
+                    "An error occurred while checking for mod updates. Stopping background mod update checker...");
+                break;
             }
             finally
             {
                 _waiterCancellationTokenSource?.Dispose();
                 _runningCancellationTokenSource?.Dispose();
-                _waiterCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-                _runningCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
             }
         }
 
+        Status = RunningState.Stopped;
         _logger.Debug("ModUpdateAvailableChecker stopped");
     }
 
-    private async Task StartBackgroundService()
+    private async Task RunCheckerAsync()
     {
         try
         {
             _isRunning = true;
-            _runningCancellationToken = _runningCancellationTokenSource.Token;
+            _runningCancellationToken = _runningCancellationTokenSource!.Token;
             _logger.Information("Checking for mod updates...");
-            await CheckForUpdates(_forceUpdate, cancellationToken: _runningCancellationToken);
+
+            Status = RunningState.Running;
+            OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status));
+
+            var stopWatch = Stopwatch.StartNew();
+            await CheckForUpdates(_forceUpdate, cancellationToken: _runningCancellationToken).ConfigureAwait(false);
+            stopWatch.Stop();
+
+            _logger.Debug("Finished checking for mod updates in {Elapsed}", stopWatch.Elapsed);
         }
 
         finally
@@ -93,7 +137,7 @@ public sealed class ModUpdateAvailableChecker
         }
 
 
-        _waiterCancellationToken = _waiterCancellationTokenSource.Token;
+        _waiterCancellationToken = _waiterCancellationTokenSource!.Token;
         await WaitForNextCheck(_waiterCancellationToken).ConfigureAwait(false);
     }
 
@@ -102,11 +146,16 @@ public sealed class ModUpdateAvailableChecker
         try
         {
             _logger.Information("Next update check will run at {WaitTime}", DateTime.Now.Add(_waitTime));
-            await Task.Delay(_waitTime, token);
+            Status = RunningState.Waiting;
+            NextRunAt = DateTime.Now + _waitTime;
+            OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status, NextRunAt));
+            await Task.Delay(_waitTime, token).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
         }
+
+        NextRunAt = null;
     }
 
 
@@ -125,7 +174,7 @@ public sealed class ModUpdateAvailableChecker
         {
             var mod = characterSkinEntry.Mod;
             cancellationToken.ThrowIfCancellationRequested();
-            var modSettings = await mod.Settings.ReadSettingsAsync();
+            var modSettings = await mod.Settings.ReadSettingsAsync().ConfigureAwait(false);
 
             if (modSettings.ModUrl is null)
                 continue;
@@ -158,17 +207,17 @@ public sealed class ModUpdateAvailableChecker
 
         while (tasks.Any())
         {
-            var finishedTask = await Task.WhenAny(tasks);
+            var finishedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
             tasks.Remove(finishedTask);
             var characterSkinEntry = taskToMod[finishedTask];
             try
             {
                 var result = await finishedTask;
-                await UpdateLastChecked(characterSkinEntry.Mod, result);
+                await UpdateLastChecked(characterSkinEntry.Mod, result).ConfigureAwait(false);
                 _gameBananaCache.CacheRetrievedMods(characterSkinEntry.Mod.Id, result);
                 if (result.AnyNewMods)
                 {
-                    await AddModNotifications(characterSkinEntry, result);
+                    await AddModNotifications(characterSkinEntry, result).ConfigureAwait(false);
                     _logger.Information("New or updated mods are available for {ModName}", characterSkinEntry.Mod.Name);
                 }
             }
@@ -217,7 +266,7 @@ public sealed class ModUpdateAvailableChecker
         return _modNotificationManager.AddModNotification(modNotification, persistent: true);
     }
 
-    private bool _isStartingUpdate = false;
+    private bool _isStartingUpdate;
 
     public void CheckNow(bool forceUpdate = false, IEnumerable<Guid>? checkOnlyMods = null,
         CancellationToken cancellationToken = default)
@@ -225,8 +274,23 @@ public sealed class ModUpdateAvailableChecker
         if (_isStartingUpdate)
             return;
         _isStartingUpdate = true;
-        _waiterCancellationTokenSource.Cancel();
-        _runningCancellationTokenSource.Cancel();
+
+
+        if (_pauser.IsPaused)
+        {
+            _pauser.RunOnce();
+
+            if (!_waiterCancellationToken.IsCancellationRequested && !_runningCancellationToken.IsCancellationRequested)
+            {
+                _waiterCancellationTokenSource?.Cancel();
+                _runningCancellationTokenSource?.Cancel();
+            }
+        }
+        else
+        {
+            _waiterCancellationTokenSource?.Cancel();
+            _runningCancellationTokenSource?.Cancel();
+        }
 
         SpinWait.SpinUntil(() =>
         {
@@ -241,7 +305,127 @@ public sealed class ModUpdateAvailableChecker
 
     public void CancelAndStop()
     {
-        _stoppingCancellationTokenSource.Cancel();
-        _stoppingCancellationTokenSource.Dispose();
+        _stoppingCancellationTokenSource?.Cancel();
+    }
+
+    public async Task StopAsync()
+    {
+        var settings = await _localSettingsService
+            .ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(BackGroundModCheckerSettings.Key)
+            .ConfigureAwait(false);
+        settings.Enabled = false;
+        await _localSettingsService.SaveSettingAsync(BackGroundModCheckerSettings.Key, settings).ConfigureAwait(false);
+        _pauser.Pause();
+        _waiterCancellationTokenSource?.Cancel();
+        _runningCancellationTokenSource?.Cancel();
+        _logger.Information("Disabled background mod update checker");
+    }
+
+    public async Task StartBackgroundCheckerAsync()
+    {
+        var settings = await _localSettingsService
+            .ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(BackGroundModCheckerSettings.Key)
+            .ConfigureAwait(false);
+        settings.Enabled = true;
+        await _localSettingsService.SaveSettingAsync(BackGroundModCheckerSettings.Key, settings).ConfigureAwait(false);
+        _pauser.Resume();
+        _logger.Information("Enabled background mod update checker");
+    }
+
+    public enum RunningState
+    {
+        Running,
+        Waiting,
+        Stopped
+    }
+}
+
+public class BackGroundModCheckerSettings
+{
+    [JsonIgnore] public const string Key = "BackGroundModCheckerSettings";
+    public bool Enabled { get; set; } = true;
+}
+
+public class UpdateCheckerEvent : EventArgs
+{
+    public RunningState State { get; }
+    public DateTime? NextRunAt { get; }
+
+    public UpdateCheckerEvent(RunningState state, DateTime? nextRunAt = null)
+    {
+        State = state;
+        NextRunAt = nextRunAt;
+    }
+}
+
+public sealed class Pauser : IDisposable
+{
+    private readonly object _lock = new();
+    public bool IsPaused { get; private set; }
+    public bool IgnoreOnce { get; set; }
+
+    private CancellationTokenSource? _cancellationTokenSource;
+
+    private Task _pause()
+    {
+        return Task.Delay(-1, _cancellationTokenSource?.Token ?? CancellationToken.None);
+    }
+
+    public async Task EnterAsync()
+    {
+        lock (_lock)
+        {
+            if (IgnoreOnce)
+            {
+                IgnoreOnce = false;
+                return;
+            }
+
+            if (!IsPaused)
+                return;
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        try
+        {
+            await _pause().ConfigureAwait(false);
+        }
+        catch (TaskCanceledException)
+        {
+        }
+    }
+
+    public void RunOnce()
+    {
+        lock (_lock)
+        {
+            _cancellationTokenSource?.Cancel();
+            IgnoreOnce = true;
+        }
+    }
+
+    public void Resume()
+    {
+        lock (_lock)
+        {
+            IsPaused = false;
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = null;
+        }
+    }
+
+    public void Pause()
+    {
+        lock (_lock)
+        {
+            IsPaused = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
     }
 }

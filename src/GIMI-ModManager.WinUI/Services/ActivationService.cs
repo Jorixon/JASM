@@ -136,7 +136,7 @@ public class ActivationService : IActivationService
         await _genshinProcessManager.TryInitialize();
         await _threeDMigtoProcessManager.TryInitialize();
         await _updateChecker.InitializeAsync();
-        Task.Run(() => _modUpdateAvailableChecker.InitializeAsync());
+        await _modUpdateAvailableChecker.InitializeAsync().ConfigureAwait(false);
         await Task.Run(() => _autoUpdaterService.UpdateAutoUpdater()).ConfigureAwait(false);
     }
 
