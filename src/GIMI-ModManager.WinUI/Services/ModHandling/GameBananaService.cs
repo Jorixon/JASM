@@ -75,7 +75,7 @@ public class GameBananaService
 
         var client = App.GetService<IModUpdateChecker>();
 
-        var result = await client.CheckForUpdatesAsync(modSettings.ModUrl, modSettings.LastChecked ?? DateTime.MinValue,
+        var result = await client.CheckForUpdatesAsync(modSettings.ModUrl, modSettings.LastChecked ?? DateTime.Now,
             cancellationToken);
 
         CacheRetrievedMods(modId, result);

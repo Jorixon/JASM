@@ -188,6 +188,8 @@ public partial class App : Application
                 services.AddTransient<CharacterManagerPage>();
                 services.AddTransient<EditCharacterViewModel>();
                 services.AddTransient<EditCharacterPage>();
+                services.AddTransient<EasterEggVM>();
+                services.AddTransient<EasterEggPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

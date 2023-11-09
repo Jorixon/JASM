@@ -21,6 +21,7 @@ public class PageService : IPageService
         Configure<DebugViewModel, DebugPage>();
         Configure<CharacterManagerViewModel, CharacterManagerPage>();
         Configure<EditCharacterViewModel, EditCharacterPage>();
+        Configure<EasterEggVM, EasterEggPage>();
     }
 
     public Type GetPageType(string key)

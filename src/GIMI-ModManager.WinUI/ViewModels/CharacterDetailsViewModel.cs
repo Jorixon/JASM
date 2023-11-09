@@ -85,7 +85,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             foreach (var extractResult in args.ExtractResults)
             {
                 var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
-
                 await AddNewModAddedNotificationAsync(AttentionType.Added,
                     extractedFolderName, null);
             }
@@ -355,7 +354,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
             var notifications = await _modNotificationManager.GetNotificationsAsync();
 
-            var modNotifications = notifications.Where(x => x.ModId == skinEntry.Id).ToArray();
+            var modNotifications = notifications.Where(x =>
+                    x.ModId == skinEntry.Id || ModFolderHelpers.FolderNameEquals(x.ModFolderName, skinEntry.Mod.Name))
+                .ToArray();
 
             modNotifications.ForEach(newModModel.ModNotifications.Add);
 

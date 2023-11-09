@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
@@ -84,7 +85,11 @@ public class SkinModSettingsManager
 
         var image = DetectImages().FirstOrDefault();
 
-        var settings = new JsonModSettings() { Id = newId.ToString(), ImagePath = image?.LocalPath };
+        var settings = new JsonModSettings()
+        {
+            Id = newId.ToString(), ImagePath = image?.LocalPath,
+            DateAdded = DateTime.Now.ToString(CultureInfo.CurrentCulture)
+        };
         var json = JsonSerializer.Serialize(settings, _serializerOptions);
 
         await File.WriteAllTextAsync(_settingsFilePath, json).ConfigureAwait(false);

@@ -188,7 +188,7 @@
                     <TextBlock
                         Margin="0,8"
                         VerticalAlignment="Center"
-                        Text="The Mod Update Checker checks for updates on startup and periodically in the background"
+                        Text="The Mod Update Checker checks for updates on startup and periodically in the background, only support for GameBanana.&#x0a;Does a check every 30 minutes when enabled, however, it only checks mods that have not been checked in at least 15 minutes.&#x0a;Manually checking for updates always checks GameBanana directly"
                         TextWrapping="WrapWholeWords" />
 
                 </StackPanel>

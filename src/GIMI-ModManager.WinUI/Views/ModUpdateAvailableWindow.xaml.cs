@@ -13,7 +13,7 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
     public readonly ModUpdateVM ViewModel;
     public readonly IThemeSelectorService ThemeSelectorService = App.GetService<IThemeSelectorService>();
 
-    private bool _isFirstTimeNavigation = true;
+    //private bool _isFirstTimeNavigation = true;
 
     public ModUpdateAvailableWindow(Guid notificationId)
     {
@@ -32,12 +32,15 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
             {
                 ModPageLoadingRing.IsActive = false;
 
-                if (!_isFirstTimeNavigation) return;
+                // This automatically opens the author side pane
+                // However, it covered the update date and was annoying so I disabled it
+                // TODO: Change CSS to make it not cover the update date
+                //if (!_isFirstTimeNavigation) return;
 
-                _isFirstTimeNavigation = false;
-                await Task.Delay(1000);
-                var script = "document.getElementById('HiddenColumnToggleButton').click();";
-                await ModPageBrowser.CoreWebView2.ExecuteScriptAsync(script);
+                //_isFirstTimeNavigation = false;
+                //await Task.Delay(1000);
+                //var script = "document.getElementById('HiddenColumnToggleButton').click();";
+                //await ModPageBrowser.CoreWebView2.ExecuteScriptAsync(script);
             };
             ModPageBrowser.CoreWebView2.NavigationStarting += (_, _) => ModPageLoadingRing.IsActive = true;
             var theme = ThemeSelectorService.Theme;

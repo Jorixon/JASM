@@ -39,6 +39,7 @@
 		<Page Remove="Views\SubPages\**" />
 	</ItemGroup>
 	<ItemGroup>
+		<Content Remove="Assets\easterEgg.mp3" />
 		<Content Remove="Assets\Games\Genshin\characters.json" />
 		<Content Remove="Assets\Games\Genshin\custom\npc.json" />
 		<Content Remove="Assets\Games\Genshin\elements.json" />
@@ -165,8 +166,10 @@
 		<Content Remove="Assets\Games\Honkai\Images\Elements\Pyro.svg" />
 		<Content Remove="Assets\Games\Honkai\regions.json" />
 		<Content Remove="Assets\Games\Honkai\weaponClasses.json" />
+		<Content Remove="Assets\ModPanePlaceholder.webp" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Remove="Assets\easterEgg.mp3" />
 		<None Remove="Assets\Fonts\zh-cn2.ttf" />
 		<None Remove="Assets\Games\Genshin\Images\Characters\Character_Others.png" />
 		<None Remove="Assets\Games\Genshin\Images\Characters\Character_Others_Unused.webp" />
@@ -187,6 +190,7 @@
 		<None Remove="Views\Controls\ModListOverview.xaml" />
 		<None Remove="Views\Controls\SelectCharacterFromGrid.xaml" />
 		<None Remove="Views\DebugPage.xaml" />
+		<None Remove="Views\EasterEggPage.xaml" />
 		<None Remove="Views\ErrorWindow.xaml" />
 		<None Remove="Views\ModUpdateAvailableWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
@@ -612,6 +616,9 @@
 		<None Update="Assets\Games\Honkai\weaponClasses.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\EasterEggPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\Controls\BoolBorder.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -700,9 +707,6 @@
 		<Content Update="Assets\Games\Honkai\Images\Start_Game.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Update="Assets\ModPanePlaceholder.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
 		<Content Update="Assets\WindowIcon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -739,5 +743,15 @@
 
 	<ItemGroup>
 	  <PRIResource Remove="Mappers\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Assets\easterEgg.mp3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Assets\ModPanePlaceholder.webp">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 </Project>

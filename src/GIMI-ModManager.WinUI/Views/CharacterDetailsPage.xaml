@@ -550,6 +550,7 @@
                                     VerticalAlignment="Center"
                                     Header="Mod Url:"
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
+                                    PlaceholderText="Example URL: https://gamebanana.com/mods/117420"
                                     Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <HyperlinkButton
