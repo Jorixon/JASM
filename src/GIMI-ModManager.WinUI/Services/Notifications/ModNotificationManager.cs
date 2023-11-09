@@ -149,7 +149,7 @@ public class ModNotificationManager
     {
         await InitializeAsync();
 
-        var notification = await GetNotificationById(notificationId, IdType.NotificationId);
+        var notification = await GetNotificationById(notificationId);
 
         if (notification is null)
             return false;
@@ -165,25 +165,32 @@ public class ModNotificationManager
     }
 
 
-    public async Task<ModNotification?> GetNotificationById(Guid id, IdType type = IdType.ModId)
+    public async Task<ModNotification?> GetNotificationById(Guid id)
     {
         await InitializeAsync();
 
-        var notification = _inMemoryModNotifications.FirstOrDefault(x =>
-            type == IdType.NotificationId && x.Id == id || type == IdType.ModId && x.ModId == id);
+        var notification = _inMemoryModNotifications.FirstOrDefault(x => x.Id == id);
         if (notification is not null)
         {
             notification.IsPersistent = false;
             return notification;
         }
 
-        notification = _modNotifications.FirstOrDefault(x =>
-            type == IdType.NotificationId && x.Id == id || type == IdType.ModId && x.ModId == id);
+        notification = _modNotifications.FirstOrDefault(x => x.Id == id);
 
         if (notification is not null)
             notification.IsPersistent = true;
 
         return notification;
+    }
+
+
+    public async Task<IReadOnlyList<ModNotification>> GetNotificationsForModAsync(Guid modId,
+        NotificationType type = NotificationType.All)
+    {
+        await InitializeAsync();
+
+        return (await GetNotificationsAsync(type)).Where(x => modId.Equals(x.ModId)).ToArray();
     }
 
     public async Task<ICollection<ModNotification>> GetNotificationsForInternalNameAsync(InternalName internalName,

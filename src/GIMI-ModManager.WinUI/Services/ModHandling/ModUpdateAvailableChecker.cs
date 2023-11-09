@@ -14,7 +14,7 @@ namespace GIMI_ModManager.WinUI.Services.ModHandling;
 public sealed class ModUpdateAvailableChecker
 {
     private readonly ISkinManagerService _skinManagerService;
-    private readonly GameBananaCache _gameBananaCache;
+    private readonly GameBananaService _gameBananaService;
     private readonly ILogger _logger;
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ILocalSettingsService _localSettingsService;
@@ -39,12 +39,12 @@ public sealed class ModUpdateAvailableChecker
 
 
     public ModUpdateAvailableChecker(ISkinManagerService skinManagerService, ILogger logger,
-        ModNotificationManager modNotificationManager, GameBananaCache gameBananaCache,
+        ModNotificationManager modNotificationManager, GameBananaService gameBananaService,
         ILocalSettingsService localSettingsService)
     {
         _skinManagerService = skinManagerService;
         _modNotificationManager = modNotificationManager;
-        _gameBananaCache = gameBananaCache;
+        _gameBananaService = gameBananaService;
         _localSettingsService = localSettingsService;
         _logger = logger.ForContext<ModUpdateAvailableChecker>();
     }
@@ -187,12 +187,8 @@ public sealed class ModUpdateAvailableChecker
                 continue;
             }
 
-            var checker = App.GetService<IModUpdateChecker>();
-
-
-            var fetchTask = Task.Run(() => checker.CheckForUpdatesAsync(modSettings.ModUrl,
-                modSettings.LastChecked ?? DateTime.MinValue,
-                cancellationToken), cancellationToken);
+            var fetchTask = Task.Run(() => _gameBananaService.GetAvailableMods(mod.Id, cancellationToken),
+                cancellationToken);
 
             tasks.Add(fetchTask);
             taskToMod.Add(fetchTask, characterSkinEntry);
@@ -214,7 +210,6 @@ public sealed class ModUpdateAvailableChecker
             {
                 var result = await finishedTask;
                 await UpdateLastChecked(characterSkinEntry.Mod, result).ConfigureAwait(false);
-                _gameBananaCache.CacheRetrievedMods(characterSkinEntry.Mod.Id, result);
                 if (result.AnyNewMods)
                 {
                     await AddModNotifications(characterSkinEntry, result).ConfigureAwait(false);
@@ -260,7 +255,8 @@ public sealed class ModUpdateAvailableChecker
             ModId = characterSkinEntry.Mod.Id,
             ModCustomName = modSettings.CustomName ?? characterSkinEntry.Mod.Name,
             ModFolderName = characterSkinEntry.Mod.Name,
-            Message = $"New or updated mods are available for {characterSkinEntry.Mod.GetNameWithoutDisabledPrefix()}"
+            Message = $"New or updated mods are available for {characterSkinEntry.Mod.GetNameWithoutDisabledPrefix()}",
+            ModsRetrievedResult = result
         };
 
         return _modNotificationManager.AddModNotification(modNotification, persistent: true);
@@ -268,7 +264,7 @@ public sealed class ModUpdateAvailableChecker
 
     private bool _isStartingUpdate;
 
-    public void CheckNow(bool forceUpdate = false, IEnumerable<Guid>? checkOnlyMods = null,
+    public void CheckNow(IEnumerable<Guid>? checkOnlyMods = null, bool forceUpdate = false,
         CancellationToken cancellationToken = default)
     {
         if (_isStartingUpdate)

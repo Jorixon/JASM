@@ -598,10 +598,12 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
 
-        var modWindow = new ModUpdateAvailableWindow(skinEntry.Id);
-        modWindow.Title =
-            $"New Mod Files Available: {ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(skinEntry.Mod.Name)}";
-        _windowManagerService.CreateWindow(modWindow, identifier: skinEntry.Id);
+        var modWindow = new ModUpdateAvailableWindow(notification.Id)
+        {
+            Title =
+                $"New Mod Files Available: {ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(skinEntry.Mod.Name)}"
+        };
+        _windowManagerService.CreateWindow(modWindow, identifier: notification.Id);
         await Task.Delay(100);
         modWindow.BringToFront();
     }

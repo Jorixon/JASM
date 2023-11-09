@@ -13,9 +13,9 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
     public readonly ModUpdateVM ViewModel;
     public readonly IThemeSelectorService ThemeSelectorService = App.GetService<IThemeSelectorService>();
 
-    public ModUpdateAvailableWindow(Guid modId)
+    public ModUpdateAvailableWindow(Guid notificationId)
     {
-        ViewModel = new ModUpdateVM(modId, this);
+        ViewModel = new ModUpdateVM(notificationId, this);
         InitializeComponent();
 
         if (Content is FrameworkElement rootElement)
@@ -23,9 +23,11 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
             rootElement.RequestedTheme = ThemeSelectorService.Theme;
         }
 
-        ModPageBrowser.Loaded += async (_, _) =>
+        ModPageBrowser.Loading += async (_, _) =>
         {
             await ModPageBrowser.EnsureCoreWebView2Async();
+            ModPageBrowser.CoreWebView2.NavigationCompleted += (_, _) => ModPageLoadingRing.IsActive = false;
+            ModPageBrowser.CoreWebView2.NavigationStarting += (_, _) => ModPageLoadingRing.IsActive = true;
             var theme = ThemeSelectorService.Theme;
             var webTheme = CoreWebView2PreferredColorScheme.Auto;
             switch (theme)
@@ -42,5 +44,10 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
 
             ModPageBrowser.CoreWebView2.Profile.PreferredColorScheme = webTheme;
         };
+    }
+
+    private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    {
+        ModPageBrowser.CoreWebView2.OpenDefaultDownloadDialog();
     }
 }

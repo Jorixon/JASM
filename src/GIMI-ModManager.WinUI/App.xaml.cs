@@ -118,13 +118,13 @@ public partial class App : Application
                 services.AddSingleton<KeySwapService>();
                 services.AddSingleton<ILanguageLocalizer, Localizer>();
 
-                services.AddSingleton<GameBananaCache>();
-                services.AddTransient<IModUpdateChecker, GameBananaChecker>();
+                services.AddSingleton<GameBananaService>();
+                services.AddTransient<IModUpdateChecker, GameBananaModPageRetriever>();
 
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
                 // I've read just about every microsoft docs page httpclients, and I can't figure out what I'm doing wrong
                 // Also tried with httpclientfactory, but that didn't work either
-                services.AddHttpClient<IModUpdateChecker, GameBananaChecker>(client =>
+                services.AddHttpClient<IModUpdateChecker, GameBananaModPageRetriever>(client =>
                     {
                         client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
                         client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -137,7 +137,7 @@ public partial class App : Application
 
                 // I'm preeeetty sure this is not correctly set up, not used to polly 8.x.x
                 // But it does rate limit, so I guess it's fine for now
-                services.AddResiliencePipeline(GameBananaChecker.HttpClientName, (builder, context) =>
+                services.AddResiliencePipeline(GameBananaModPageRetriever.HttpClientName, (builder, context) =>
                 {
                     var limiter = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions()
                     {

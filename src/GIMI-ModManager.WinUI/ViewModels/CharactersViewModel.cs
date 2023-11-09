@@ -803,7 +803,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         var characterMods = modList.Mods.Select(ske => ske.Mod.Id);
 
-        _modUpdateAvailableChecker.CheckNow(true, characterMods);
+        _modUpdateAvailableChecker.CheckNow(characterMods, true);
     }
 }
 

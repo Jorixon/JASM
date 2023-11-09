@@ -5,7 +5,7 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
-public class GameBananaCache
+public class GameBananaService
 {
     private readonly ILogger _logger;
     private readonly ISkinManagerService _skinManagerService;
@@ -17,10 +17,10 @@ public class GameBananaCache
     private readonly ConcurrentDictionary<Guid, ModCacheInfo> _cache = new();
 
 
-    public GameBananaCache(ILogger logger, ISkinManagerService skinManagerService)
+    public GameBananaService(ILogger logger, ISkinManagerService skinManagerService)
     {
         _skinManagerService = skinManagerService;
-        _logger = logger.ForContext<GameBananaCache>();
+        _logger = logger.ForContext<GameBananaService>();
     }
 
 
@@ -32,23 +32,18 @@ public class GameBananaCache
                 return cacheInfo.ModPageInfo;
         }
 
-
         var mod = _skinManagerService.GetModById(modId);
         if (mod is null)
-        {
-            throw new NotImplementedException();
-        }
+            throw new InvalidOperationException($"Mod with id {modId} not found");
 
         var modSettings = await mod.Settings.ReadSettingsAsync();
-
         if (modSettings.ModUrl is null)
-        {
-            throw new NotImplementedException();
-        }
+            throw new InvalidOperationException("Mod url is null");
 
-        var worker = App.GetService<IModUpdateChecker>();
 
-        var result = await worker.GetModPageDataAsync(modSettings.ModUrl, cancellationToken);
+        var client = App.GetService<IModUpdateChecker>();
+
+        var result = await client.GetModPageDataAsync(modSettings.ModUrl, cancellationToken);
 
 
         CacheModInfo(modId, result);
@@ -62,37 +57,25 @@ public class GameBananaCache
     {
         if (_cache.TryGetValue(modId, out var cacheInfo))
         {
-            if (cacheInfo.Result is not null && cacheInfo.Result.CheckTime + _cacheDuration > DateTime.Now)
-                return cacheInfo.Result;
+            if (cacheInfo.ModsResult is not null && cacheInfo.ModsResult.CheckTime + _cacheDuration > DateTime.Now)
+                return cacheInfo.ModsResult;
         }
 
 
         var mod = _skinManagerService.GetModById(modId);
         if (mod is null)
-        {
-            throw new NotImplementedException();
-        }
+            throw new InvalidOperationException($"Mod with id {modId} not found");
+
 
         var modSettings = await mod.Settings.ReadSettingsAsync();
 
         if (modSettings.ModUrl is null)
-        {
-            throw new NotImplementedException();
-        }
+            throw new InvalidOperationException("Mod url is null");
 
-        if (modSettings.LastChecked is not null && modSettings.LastChecked + _minTimeBetweenChecks > DateTime.Now)
-        {
-            await mod.Settings.SaveSettingsAsync(modSettings.DeepCopyWithProperties(newLastChecked: DateTime.Now));
-            modSettings = await mod.Settings.ReadSettingsAsync();
-            if (modSettings.ModUrl is null)
-            {
-                throw new NotImplementedException();
-            }
-        }
 
-        var worker = App.GetService<IModUpdateChecker>();
+        var client = App.GetService<IModUpdateChecker>();
 
-        var result = await worker.CheckForUpdatesAsync(modSettings.ModUrl, modSettings.LastChecked ?? DateTime.MinValue,
+        var result = await client.CheckForUpdatesAsync(modSettings.ModUrl, modSettings.LastChecked ?? DateTime.MinValue,
             cancellationToken);
 
         CacheRetrievedMods(modId, result);
@@ -105,11 +88,11 @@ public class GameBananaCache
         _cache.AddOrUpdate(modId, new ModCacheInfo
         {
             ModPageInfo = null,
-            Result = result
+            ModsResult = result
         }, (_, oldValue) => new ModCacheInfo
         {
             ModPageInfo = oldValue.ModPageInfo,
-            Result = result
+            ModsResult = result
         });
     }
 
@@ -118,11 +101,11 @@ public class GameBananaCache
         _cache.AddOrUpdate(modId, new ModCacheInfo
         {
             ModPageInfo = result,
-            Result = null
+            ModsResult = null
         }, (_, oldValue) => new ModCacheInfo
         {
             ModPageInfo = result,
-            Result = oldValue.Result
+            ModsResult = oldValue.ModsResult
         });
     }
 }
@@ -130,5 +113,5 @@ public class GameBananaCache
 public class ModCacheInfo
 {
     public ModPageDataResult? ModPageInfo { get; set; }
-    public ModsRetrievedResult? Result { get; set; }
+    public ModsRetrievedResult? ModsResult { get; set; }
 }

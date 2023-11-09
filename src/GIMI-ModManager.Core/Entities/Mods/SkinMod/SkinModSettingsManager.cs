@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
+using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.Entities.Mods.FileModels;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
 using GIMI_ModManager.Core.Helpers;
@@ -211,13 +212,6 @@ public class SkinModSettingsManager
         }
 
         return images.Select(x => new Uri(x.FullName)).ToArray();
-    }
-}
-
-public class ModSettingsNotFoundException : Exception
-{
-    public ModSettingsNotFoundException(string message) : base(message)
-    {
     }
 }
 

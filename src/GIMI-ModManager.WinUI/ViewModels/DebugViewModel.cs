@@ -103,7 +103,7 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     {
         var lumineMods = _skinManagerService.GetCharacterModList(new InternalName("traveler (female)")).Mods
             .Select(ske => ske.Mod.Id);
-        _modUpdateAvailableChecker.CheckNow(true);
+        _modUpdateAvailableChecker.CheckNow(forceUpdate: true);
     }
 
     public ObservableCollection<UpdateCheckResult> Results { get; } = new();

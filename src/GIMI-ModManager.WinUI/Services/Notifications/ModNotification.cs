@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using GIMI_ModManager.Core.Services;
 
 namespace GIMI_ModManager.WinUI.Services.Notifications;
 
@@ -14,4 +15,7 @@ public sealed class ModNotification
     public AttentionType AttentionType { get; init; }
     public string Message { get; init; } = string.Empty;
     [JsonIgnore] public bool IsPersistent { get; set; }
+
+
+    public ModsRetrievedResult? ModsRetrievedResult { get; init; }
 }

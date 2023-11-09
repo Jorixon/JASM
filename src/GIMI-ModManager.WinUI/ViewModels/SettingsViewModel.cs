@@ -179,6 +179,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         }
 
         ModCheckerStatus = _modUpdateAvailableChecker.Status;
+        NextModCheckTime = _modUpdateAvailableChecker.NextRunAt;
         _modUpdateAvailableChecker.OnUpdateCheckerEvent += (sender, args) =>
         {
             App.MainWindow.DispatcherQueue.TryEnqueue(() =>

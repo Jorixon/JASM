@@ -7,7 +7,7 @@ using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
 
-public class GameBananaChecker : IModUpdateChecker
+public class GameBananaModPageRetriever : IModUpdateChecker
 {
     private readonly ILogger _logger;
     private readonly HttpClient _httpClient;
@@ -17,11 +17,11 @@ public class GameBananaChecker : IModUpdateChecker
     private const string DownloadUrl = "https://gamebanana.com/dl/";
     private const string DownloadsApiUrl = "https://gamebanana.com/apiv11/Mod/";
 
-    public GameBananaChecker(ILogger logger, HttpClient httpClient,
+    public GameBananaModPageRetriever(ILogger logger, HttpClient httpClient,
         ResiliencePipelineProvider<string> resiliencePipelineProvider)
     {
         _httpClient = httpClient;
-        _logger = logger.ForContext<GameBananaChecker>();
+        _logger = logger.ForContext<GameBananaModPageRetriever>();
         _resiliencePipeline = resiliencePipelineProvider.GetPipeline(HttpClientName);
     }
 
@@ -154,7 +154,7 @@ public record UpdateCheckResult
         Md5Checksum = md5Checksum;
     }
 
-    public bool IsNewer { get; }
+    public bool IsNewer { get; set; }
     public string FileName { get; }
     public string Description { get; }
     public DateTime DateAdded { get; }

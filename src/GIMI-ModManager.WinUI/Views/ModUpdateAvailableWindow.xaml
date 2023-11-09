@@ -153,6 +153,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
                         <TextBlock
@@ -165,18 +166,26 @@
                             Text="{x:Bind ViewModel.ModPage, Mode=OneWay}"
                             ToolTipService.ToolTip="Open in default browser..." />
                     </StackPanel>
-                    <ProgressRing
+                    <Button
                         Grid.Column="1"
+                        Margin="8,0"
+                        Click="ButtonBase_OnClick"
+                        Content="Downloads" />
+                    <ProgressRing
+                        x:Name="ModPageLoadingRing"
+                        Grid.Column="2"
                         HorizontalAlignment="Right"
                         IsActive="False" />
 
                 </Grid>
 
-                <WebView2
-                    x:Name="ModPageBrowser"
-                    Grid.Row="1"
-                    DefaultBackgroundColor="Gray"
-                    Source="{x:Bind ViewModel.ModPage, Mode=TwoWay}" />
+                <Grid Grid.Row="1" Background="{ThemeResource SmokeFillColorDefaultBrush}">
+                    <WebView2
+                        x:Name="ModPageBrowser"
+                        DefaultBackgroundColor="Transparent"
+                        Source="{x:Bind ViewModel.ModPage, Mode=TwoWay}" />
+                </Grid>
+
             </Grid>
 
         </Grid>
