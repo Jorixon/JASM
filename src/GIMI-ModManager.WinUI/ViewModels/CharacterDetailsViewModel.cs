@@ -584,7 +584,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             return;
         }
 
-        var existingWindow = _windowManagerService.GetWindow(skinEntry.Id);
+        var existingWindow = _windowManagerService.GetWindow(notification.Id);
         if (existingWindow is not null)
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed

@@ -214,13 +214,6 @@ public class ModNotificationManager
         };
     }
 
-    public enum IdType
-    {
-        NotificationId,
-        ModId
-    }
-
-
     public class ModNotificationEvent : EventArgs
     {
         public ModNotification ModNotification { get; }

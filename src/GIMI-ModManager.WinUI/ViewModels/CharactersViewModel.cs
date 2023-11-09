@@ -66,6 +66,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private SortingMethodType _selectedSortingMethod = SortingMethodType.Alphabetical;
     [ObservableProperty] private bool _sortByDescending;
 
+    [ObservableProperty] private bool _canCheckForUpdates = false;
+
 
     private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
 
@@ -108,6 +110,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         DockPanelVM.Initialize();
         StartGameIcon = _gameService.GameIcon;
         ShortGameName = "Start " + _gameService.GameShortName;
+
+        CanCheckForUpdates = _modUpdateAvailableChecker.Status != ModUpdateAvailableChecker.RunningState.Running;
+        _modUpdateAvailableChecker.OnUpdateCheckerEvent += (sender, args) =>
+        {
+            App.MainWindow.DispatcherQueue.EnqueueAsync(() =>
+            {
+                CanCheckForUpdates = args.State != ModUpdateAvailableChecker.RunningState.Running;
+            });
+        };
     }
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)

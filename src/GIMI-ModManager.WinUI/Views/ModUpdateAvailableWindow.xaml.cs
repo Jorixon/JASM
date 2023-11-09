@@ -13,6 +13,8 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
     public readonly ModUpdateVM ViewModel;
     public readonly IThemeSelectorService ThemeSelectorService = App.GetService<IThemeSelectorService>();
 
+    private bool _isFirstTimeNavigation = true;
+
     public ModUpdateAvailableWindow(Guid notificationId)
     {
         ViewModel = new ModUpdateVM(notificationId, this);
@@ -26,7 +28,17 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
         ModPageBrowser.Loading += async (_, _) =>
         {
             await ModPageBrowser.EnsureCoreWebView2Async();
-            ModPageBrowser.CoreWebView2.NavigationCompleted += (_, _) => ModPageLoadingRing.IsActive = false;
+            ModPageBrowser.CoreWebView2.NavigationCompleted += async (_, _) =>
+            {
+                ModPageLoadingRing.IsActive = false;
+
+                if (!_isFirstTimeNavigation) return;
+
+                _isFirstTimeNavigation = false;
+                await Task.Delay(1000);
+                var script = "document.getElementById('HiddenColumnToggleButton').click();";
+                await ModPageBrowser.CoreWebView2.ExecuteScriptAsync(script);
+            };
             ModPageBrowser.CoreWebView2.NavigationStarting += (_, _) => ModPageLoadingRing.IsActive = true;
             var theme = ThemeSelectorService.Theme;
             var webTheme = CoreWebView2PreferredColorScheme.Auto;
@@ -48,6 +60,9 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
 
     private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        ModPageBrowser.CoreWebView2.OpenDefaultDownloadDialog();
+        if (ModPageBrowser.CoreWebView2.IsDefaultDownloadDialogOpen)
+            ModPageBrowser.CoreWebView2.CloseDefaultDownloadDialog();
+        else
+            ModPageBrowser.CoreWebView2.OpenDefaultDownloadDialog();
     }
 }

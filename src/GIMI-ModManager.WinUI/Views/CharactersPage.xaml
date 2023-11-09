@@ -38,6 +38,7 @@
                 <MenuFlyoutItem
                     Command="{x:Bind ViewModel.CheckForUpdatesForCharacterCommand}"
                     CommandParameter="{Binding}"
+                    IsEnabled="{x:Bind ViewModel.CanCheckForUpdates, Mode=OneWay}"
                     Text="Check for updates">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE777;" />
