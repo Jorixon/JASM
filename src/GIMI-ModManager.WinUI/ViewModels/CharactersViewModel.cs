@@ -96,13 +96,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modSettingsService = modSettingsService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
 
-        ElevatorService.PropertyChanged += (sender, args) =>
+        ElevatorService.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(ElevatorService.ElevatorStatus))
                 RefreshModsInGameCommand.NotifyCanExecuteChanged();
         };
 
-        _modNotificationManager.OnModNotification += (sender, args) =>
+        _modNotificationManager.OnModNotification += (_, _) =>
             App.MainWindow.DispatcherQueue.EnqueueAsync(RefreshNotificationsAsync);
 
         DockPanelVM = new OverviewDockPanelVM();
@@ -111,12 +111,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         StartGameIcon = _gameService.GameIcon;
         ShortGameName = "Start " + _gameService.GameShortName;
 
-        CanCheckForUpdates = _modUpdateAvailableChecker.Status != ModUpdateAvailableChecker.RunningState.Running;
-        _modUpdateAvailableChecker.OnUpdateCheckerEvent += (sender, args) =>
+        CanCheckForUpdates = _modUpdateAvailableChecker.IsReady;
+        _modUpdateAvailableChecker.OnUpdateCheckerEvent += (_, _) =>
         {
             App.MainWindow.DispatcherQueue.EnqueueAsync(() =>
             {
-                CanCheckForUpdates = args.State != ModUpdateAvailableChecker.RunningState.Running;
+                CanCheckForUpdates = _modUpdateAvailableChecker.IsReady;
             });
         };
     }

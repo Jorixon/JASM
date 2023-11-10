@@ -176,7 +176,6 @@
 		<None Remove="Assets\Games\Genshin\Images\Characters\Character_Paimon_Thumb.png" />
 		<None Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<None Remove="Assets\Games\Honkai\Images\Start_Game.png" />
-		<None Remove="Assets\ModPanePlaceholder.webp" />
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
@@ -616,6 +615,9 @@
 		<None Update="Assets\Games\Honkai\weaponClasses.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Assets\ModPanePlaceholder.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<Page Update="Views\EasterEggPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -747,11 +749,5 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Assets\easterEgg.mp3" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Resource Include="Assets\ModPanePlaceholder.webp">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Resource>
 	</ItemGroup>
 </Project>

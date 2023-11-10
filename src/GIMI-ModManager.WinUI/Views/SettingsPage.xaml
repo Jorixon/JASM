@@ -176,6 +176,7 @@
                             IsChecked="{x:Bind ViewModel.IsModUpdateCheckerEnabled, Mode=OneWay}" />
                         <TextBlock
                             Margin="8,0,0,0"
+                            Padding="0,0,0,4"
                             VerticalAlignment="Center"
                             Text="{x:Bind ViewModel.ModCheckerStatus, Mode=OneWay}" />
                     </StackPanel>

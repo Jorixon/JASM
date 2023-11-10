@@ -16,6 +16,7 @@ public sealed class ModUpdateAvailableChecker
     private readonly ISkinManagerService _skinManagerService;
     private readonly GameBananaService _gameBananaService;
     private readonly ILogger _logger;
+    private readonly NotificationManager _notificationManager;
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly Pauser _pauser = new();
@@ -40,12 +41,13 @@ public sealed class ModUpdateAvailableChecker
 
     public ModUpdateAvailableChecker(ISkinManagerService skinManagerService, ILogger logger,
         ModNotificationManager modNotificationManager, GameBananaService gameBananaService,
-        ILocalSettingsService localSettingsService)
+        ILocalSettingsService localSettingsService, NotificationManager notificationManager)
     {
         _skinManagerService = skinManagerService;
         _modNotificationManager = modNotificationManager;
         _gameBananaService = gameBananaService;
         _localSettingsService = localSettingsService;
+        _notificationManager = notificationManager;
         _logger = logger.ForContext<ModUpdateAvailableChecker>();
     }
 
@@ -98,6 +100,11 @@ public sealed class ModUpdateAvailableChecker
             {
                 _logger.Error(e,
                     "An error occurred while checking for mod updates. Stopping background mod update checker...");
+                _notificationManager.ShowNotification(
+                    "An error occurred while checking for mod updates.",
+                    "Stopping background mod update checker...",
+                    TimeSpan.FromSeconds(20));
+                Status = RunningState.Error;
                 break;
             }
             finally
@@ -105,9 +112,10 @@ public sealed class ModUpdateAvailableChecker
                 _waiterCancellationTokenSource?.Dispose();
                 _runningCancellationTokenSource?.Dispose();
             }
+
+            Status = RunningState.Stopped;
         }
 
-        Status = RunningState.Stopped;
         _logger.Debug("ModUpdateAvailableChecker stopped");
     }
 
@@ -127,6 +135,10 @@ public sealed class ModUpdateAvailableChecker
             stopWatch.Stop();
 
             _logger.Debug("Finished checking for mod updates in {Elapsed}", stopWatch.Elapsed);
+            _notificationManager.ShowNotification("Finished checking for mod updates",
+                _checkOnlyMods is not null
+                    ? $"Checked {_checkOnlyMods.Count} mods for updates"
+                    : $"Finished checking for mod updates", TimeSpan.FromSeconds(4));
         }
 
         finally
@@ -311,6 +323,9 @@ public sealed class ModUpdateAvailableChecker
             .ConfigureAwait(false);
         settings.Enabled = false;
         await _localSettingsService.SaveSettingAsync(BackGroundModCheckerSettings.Key, settings).ConfigureAwait(false);
+        if (Status == RunningState.Error)
+            return;
+
         _pauser.Pause();
         _waiterCancellationTokenSource?.Cancel();
         _runningCancellationTokenSource?.Cancel();
@@ -324,6 +339,8 @@ public sealed class ModUpdateAvailableChecker
             .ConfigureAwait(false);
         settings.Enabled = true;
         await _localSettingsService.SaveSettingAsync(BackGroundModCheckerSettings.Key, settings).ConfigureAwait(false);
+        if (Status == RunningState.Error)
+            return;
         _pauser.Resume();
         _logger.Information("Enabled background mod update checker");
     }
@@ -332,8 +349,11 @@ public sealed class ModUpdateAvailableChecker
     {
         Running,
         Waiting,
-        Stopped
+        Stopped,
+        Error
     }
+
+    public bool IsReady => Status is RunningState.Stopped or RunningState.Waiting;
 }
 
 public class BackGroundModCheckerSettings
