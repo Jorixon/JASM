@@ -340,6 +340,18 @@ public partial class MainPageVM : ObservableRecipient
                 continue;
             }
 
+            if (fileSystemInfo.Name.Equals("JASM - Just Another Skin Manager.exe.WebView2",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (fileSystemInfo.Name.Equals("logs",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             if (fileSystemInfo is DirectoryInfo directoryInfo)
                 directoryInfo.Delete(true);
             else

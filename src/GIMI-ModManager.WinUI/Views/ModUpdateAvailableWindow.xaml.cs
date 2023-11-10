@@ -31,6 +31,7 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
             ModPageBrowser.CoreWebView2.NavigationCompleted += async (_, _) =>
             {
                 ModPageLoadingRing.IsActive = false;
+                ViewModel.IsOpenDownloadButtonEnabled = true;
 
                 // This automatically opens the author side pane
                 // However, it covered the update date and was annoying so I disabled it

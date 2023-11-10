@@ -170,7 +170,8 @@
                         Grid.Column="1"
                         Margin="8,0"
                         Click="ButtonBase_OnClick"
-                        Content="Downloads" />
+                        Content="Downloads"
+                        IsEnabled="{x:Bind ViewModel.IsOpenDownloadButtonEnabled, Mode=OneWay}" />
                     <ProgressRing
                         x:Name="ModPageLoadingRing"
                         Grid.Column="2"

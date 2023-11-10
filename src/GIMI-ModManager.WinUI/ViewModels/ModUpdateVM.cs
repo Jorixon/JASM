@@ -30,6 +30,8 @@ public partial class ModUpdateVM : ObservableRecipient
 
     [ObservableProperty] private DateTime _lastUpdateCheck = DateTime.Now;
 
+    [ObservableProperty] private bool _isOpenDownloadButtonEnabled = false;
+
 
     public ObservableCollection<UpdateCheckResult> Results = new();
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<ModUpdateVM>();
