@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/Jorixon/JASM/compare/v1.6.0...v1.6.1) (2023-11-10)
+
+
+### Bug Fixes
+
+* Auto Updater failing, due to being unable to delete WebView2 files ([34d0587](https://github.com/Jorixon/JASM/commit/34d0587c86deb48db566f2c8a78a2856753b2c43))
+
 ## [1.6.0](https://github.com/Jorixon/JASM/compare/v1.5.0...v1.6.0) (2023-11-10)
 
 
