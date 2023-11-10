@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.0](https://github.com/Jorixon/JASM/compare/v1.5.0...v1.6.0) (2023-11-10)
+
+
+### Features
+
+* JASM will now auto detect image in mod folder, looks for images in this order 1. ".jasm_cover" 2. "preview" 3. "cover" ([f05043c](https://github.com/Jorixon/JASM/commit/f05043c9de954064f5bebc9306e1ca548f9ad496))
+* JASM will now check gamebanana urls for new mod files. It does this by checking if there are any new mods since the last check. ([#78](https://github.com/Jorixon/JASM/issues/78)) ([f05043c](https://github.com/Jorixon/JASM/commit/f05043c9de954064f5bebc9306e1ca548f9ad496))
+
+
+### Bug Fixes
+
+* Unable to search for deactivated characters in the character manager page ([1f3ff34](https://github.com/Jorixon/JASM/commit/1f3ff34010ba345e0b3a3bb323ba3b11cf82deb0))
+
+
+### Miscellaneous
+
+* Added easter egg because idk ([f05043c](https://github.com/Jorixon/JASM/commit/f05043c9de954064f5bebc9306e1ca548f9ad496))
+* Reduced the number of loose files in JASM folder ([f05043c](https://github.com/Jorixon/JASM/commit/f05043c9de954064f5bebc9306e1ca548f9ad496))
+
 ## [1.5.0](https://github.com/Jorixon/JASM/compare/v1.4.6...v1.5.0) (2023-10-31)
 
 
