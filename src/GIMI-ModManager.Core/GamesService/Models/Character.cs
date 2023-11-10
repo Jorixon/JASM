@@ -189,13 +189,13 @@ internal sealed class CharacterBuilder
                 connectedRegions.Add(region);
             }
             else
-                Log.Warning("Region {Region} not found in regions list", internalRegionName);
+                Log.Debug("Region {Region} not found in regions list", internalRegionName);
         }
 
         _character.Regions = connectedRegions;
 
         if (connectedRegions.Count == 0)
-            Log.Warning("No regions found for character {Character}", _character.DisplayName);
+            Log.Debug("No regions found for character {Character}", _character.DisplayName);
 
         _regionSet = true;
         return this;

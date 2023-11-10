@@ -19,7 +19,6 @@ public partial class OverviewDockPanelVM : ObservableRecipient
 
     public void Initialize()
     {
-        _logger.Debug("Initializing OverviewDockPanelVM");
         var elements = _gameService.GetElements().Where(e => !e.InternalNameEquals("None")).Reverse();
 
         foreach (var element in elements)

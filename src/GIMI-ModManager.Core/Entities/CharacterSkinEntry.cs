@@ -26,13 +26,7 @@ public class CharacterSkinEntry : IEqualityComparer<CharacterSkinEntry>
         return x.Id.Equals(y.Id);
     }
 
-    public int GetHashCode(CharacterSkinEntry obj)
-    {
-        return obj.Id.GetHashCode();
-    }
+    public int GetHashCode(CharacterSkinEntry obj) => obj.Id.GetHashCode();
 
-    public override string ToString()
-    {
-        return "CharacterSkinEntry: " + Mod.Name + " (" + Id + ")";
-    }
+    public override string ToString() => "CharacterSkinEntry: " + Mod.Name + " (" + Id + ")";
 }

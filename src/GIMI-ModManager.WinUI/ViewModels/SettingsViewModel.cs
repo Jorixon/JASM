@@ -21,6 +21,7 @@ using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
@@ -41,6 +42,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly ILanguageLocalizer _localizer;
     private readonly AutoUpdaterService _autoUpdaterService;
     private readonly SelectedGameService _selectedGameService;
+    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
 
 
     private readonly NotificationManager _notificationManager;
@@ -75,6 +77,13 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private string _selectedGame = string.Empty;
 
+    [ObservableProperty]
+    private ModUpdateAvailableChecker.RunningState _modCheckerStatus = ModUpdateAvailableChecker.RunningState.Waiting;
+
+    [ObservableProperty] private bool _isModUpdateCheckerEnabled = false;
+
+    [ObservableProperty] private DateTime? _nextModCheckTime = null;
+
     private Dictionary<string, string> _nameToLangCode = new();
 
     public PathPicker PathToGIMIFolderPicker { get; }
@@ -92,7 +101,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
-        SelectedGameService selectedGameService)
+        SelectedGameService selectedGameService, ModUpdateAvailableChecker modUpdateAvailableChecker)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -106,6 +115,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _autoUpdaterService = autoUpdaterService;
         _localizer = localizer;
         _selectedGameService = selectedGameService;
+        _modUpdateAvailableChecker = modUpdateAvailableChecker;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -167,6 +177,17 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             if (_localizer.CurrentLanguage.Equals(culture))
                 SelectedLanguage = culture.NativeName;
         }
+
+        ModCheckerStatus = _modUpdateAvailableChecker.Status;
+        NextModCheckTime = _modUpdateAvailableChecker.NextRunAt;
+        _modUpdateAvailableChecker.OnUpdateCheckerEvent += (sender, args) =>
+        {
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                ModCheckerStatus = args.State;
+                NextModCheckTime = args.NextRunAt;
+            });
+        };
     }
 
 
@@ -630,9 +651,37 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await RestartApp().ConfigureAwait(false);
     }
 
+    [RelayCommand]
+    private async Task ToggleModUpdateChecker()
+    {
+        var modUpdateCheckerSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(
+                BackGroundModCheckerSettings.Key);
+
+        await Task.Run(async () =>
+        {
+            if (modUpdateCheckerSettings.Enabled)
+                await _modUpdateAvailableChecker.StopAsync();
+            else
+                await _modUpdateAvailableChecker.StartBackgroundCheckerAsync();
+
+            await Task.Delay(1000).ConfigureAwait(false);
+        });
+
+        modUpdateCheckerSettings = await _localSettingsService.ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(
+            BackGroundModCheckerSettings.Key);
+
+        IsModUpdateCheckerEnabled = modUpdateCheckerSettings.Enabled;
+    }
+
     public async void OnNavigatedTo(object parameter)
     {
         SelectedGame = await _selectedGameService.GetSelectedGameAsync();
+        var modUpdateCheckerOptions =
+            await _localSettingsService.ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(
+                BackGroundModCheckerSettings.Key);
+
+        IsModUpdateCheckerEnabled = modUpdateCheckerOptions.Enabled;
     }
 
     public void OnNavigatedFrom()

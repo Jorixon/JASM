@@ -167,8 +167,38 @@
                         Content="Start Elevator Process..." />
                 </StackPanel>
 
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Mod Update Checker" />
+                <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox
+                            Command="{x:Bind ViewModel.ToggleModUpdateCheckerCommand}"
+                            Content="Mod Auto Update Checker:"
+                            IsChecked="{x:Bind ViewModel.IsModUpdateCheckerEnabled, Mode=OneWay}" />
+                        <TextBlock
+                            Margin="8,0,0,0"
+                            Padding="0,0,0,4"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind ViewModel.ModCheckerStatus, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Text="Next Check at: " />
+                        <TextBlock Margin="8,0,0,0" Text="{x:Bind ViewModel.NextModCheckTime, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0,8"
+                        VerticalAlignment="Center"
+                        Text="The Mod Update Checker checks for updates on startup and periodically in the background, only support for GameBanana.&#x0a;Does a check every 30 minutes when enabled, however, it only checks mods that have not been checked in at least 15 minutes.&#x0a;Manually checking for updates always checks GameBanana directly"
+                        TextWrapping="WrapWholeWords" />
+
+                </StackPanel>
+
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Folders" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+
+
+
                     <controls:FolderSelector
                         Title="3Dmigoto Folder"
                         Margin="4,8,4,8"

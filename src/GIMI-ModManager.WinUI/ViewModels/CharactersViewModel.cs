@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
@@ -33,10 +34,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ModCrawlerService _modCrawlerService;
     private readonly ModSettingsService _modSettingsService;
+    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
 
     public readonly GenshinProcessManager GenshinProcessManager;
-
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
+
     public readonly string StartGameIcon;
     public readonly string ShortGameName;
     public NotificationManager NotificationManager { get; }
@@ -64,6 +66,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private SortingMethodType _selectedSortingMethod = SortingMethodType.Alphabetical;
     [ObservableProperty] private bool _sortByDescending;
 
+    [ObservableProperty] private bool _canCheckForUpdates = false;
+
 
     private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
 
@@ -74,7 +78,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         NotificationManager notificationManager, ElevatorService elevatorService,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
-        ModCrawlerService modCrawlerService, ModSettingsService modSettingsService)
+        ModCrawlerService modCrawlerService, ModSettingsService modSettingsService,
+        ModUpdateAvailableChecker modUpdateAvailableChecker)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -89,17 +94,31 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modNotificationManager = modNotificationManager;
         _modCrawlerService = modCrawlerService;
         _modSettingsService = modSettingsService;
+        _modUpdateAvailableChecker = modUpdateAvailableChecker;
 
-        ElevatorService.PropertyChanged += (sender, args) =>
+        ElevatorService.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(ElevatorService.ElevatorStatus))
                 RefreshModsInGameCommand.NotifyCanExecuteChanged();
         };
+
+        _modNotificationManager.OnModNotification += (_, _) =>
+            App.MainWindow.DispatcherQueue.EnqueueAsync(RefreshNotificationsAsync);
+
         DockPanelVM = new OverviewDockPanelVM();
         DockPanelVM.FilterElementSelected += FilterElementSelected;
         DockPanelVM.Initialize();
         StartGameIcon = _gameService.GameIcon;
         ShortGameName = "Start " + _gameService.GameShortName;
+
+        CanCheckForUpdates = _modUpdateAvailableChecker.IsReady;
+        _modUpdateAvailableChecker.OnUpdateCheckerEvent += (_, _) =>
+        {
+            App.MainWindow.DispatcherQueue.EnqueueAsync(() =>
+            {
+                CanCheckForUpdates = _modUpdateAvailableChecker.IsReady;
+            });
+        };
     }
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
@@ -319,20 +338,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             _backendCharacters = backendCharacters;
 
             // Add notifications
-            foreach (var character in _characters)
-            {
-                var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
-                if (characterGridItemModel is null) continue;
-                var notifications =
-                    _modNotificationManager.GetInMemoryModNotifications(characterGridItemModel.Character);
-                foreach (var modNotification in notifications)
-                {
-                    if (modNotification.AttentionType != AttentionType.Added) continue;
-
-                    characterGridItemModel.Notification = true;
-                    characterGridItemModel.NotificationType = modNotification.AttentionType;
-                }
-            }
+            await RefreshNotificationsAsync();
 
             // Character Ids where more than 1 skin is enabled
             var charactersWithMultipleMods = _skinManagerService.CharacterModLists
@@ -442,6 +448,33 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ResetContent();
     }
 
+    private async Task RefreshNotificationsAsync()
+    {
+        foreach (var character in _characters)
+        {
+            var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
+            if (characterGridItemModel is null) continue;
+            var notifications =
+                await _modNotificationManager.GetNotificationsForInternalNameAsync(character.InternalName);
+
+            if (!notifications.Any())
+            {
+                characterGridItemModel.Notification = false;
+                characterGridItemModel.NotificationType = AttentionType.None;
+            }
+
+            foreach (var modNotification in notifications)
+            {
+                if (modNotification.AttentionType == AttentionType.Added ||
+                    modNotification.AttentionType == AttentionType.UpdateAvailable)
+                {
+                    characterGridItemModel.Notification = true;
+                    characterGridItemModel.NotificationType = modNotification.AttentionType;
+                }
+            }
+        }
+    }
+
     public void OnNavigatedFrom()
     {
     }
@@ -501,6 +534,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public void OnRightClickContext(CharacterGridItemModel clickedCharacter)
     {
+        ClearNotificationsCommand.CanExecute(clickedCharacter);
         if (clickedCharacter.IsPinned)
         {
             PinText = DefaultUnpinText;
@@ -549,6 +583,18 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 
+
+    private bool canClearNotifications(CharacterGridItemModel? character)
+    {
+        return character?.Notification ?? false;
+    }
+
+    [RelayCommand(CanExecute = nameof(canClearNotifications))]
+    private async Task ClearNotificationsAsync(CharacterGridItemModel character)
+    {
+        await _modNotificationManager.ClearModNotificationsAsync(character.Character.InternalName);
+        await RefreshNotificationsAsync().ConfigureAwait(false);
+    }
 
     [RelayCommand]
     private void HideCharacter(CharacterGridItemModel character)
@@ -751,6 +797,24 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var settings = await ReadCharacterSettings();
         settings.SortByDescending = SortByDescending;
         await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
+    [RelayCommand]
+    private void CheckForUpdatesForCharacter(object? characterGridItemModel)
+    {
+        if (characterGridItemModel is not CharacterGridItemModel character)
+            return;
+
+        var modList = _skinManagerService.GetCharacterModList(character.Character);
+        if (modList is null)
+        {
+            _logger.Warning("No mod list found for character {Character}", character.Character.InternalName);
+            return;
+        }
+
+        var characterMods = modList.Mods.Select(ske => ske.Mod.Id);
+
+        _modUpdateAvailableChecker.CheckNow(characterMods, true);
     }
 }
 

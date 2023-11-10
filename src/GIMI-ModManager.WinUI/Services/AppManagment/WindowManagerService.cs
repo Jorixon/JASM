@@ -10,19 +10,34 @@ namespace GIMI_ModManager.WinUI.Services.AppManagment;
 public class WindowManagerService : IWindowManagerService
 {
     private readonly ILogger? _logger;
-    private readonly List<WindowEx> _windows = new();
+    private readonly List<Tuple<WindowEx, object>> _windows = new();
     private readonly List<WindowEx> _windowDialogOpen = new();
 
     public WindowEx MainWindow => App.MainWindow;
 
+    private void AddWindow(WindowEx window, object? identifier = null)
+    {
+        _windows.Add(new Tuple<WindowEx, object>(window, identifier ?? window));
+    }
+
+    private void RemoveWindow(WindowEx window)
+    {
+        _windows.RemoveAll(x => x.Item1.Equals(window));
+    }
+
+    private void RemoveWindow(object identifier)
+    {
+        _windows.RemoveAll(x => x.Item2.Equals(identifier));
+    }
+
     public WindowManagerService(ILogger? logger = null)
     {
         _logger = logger;
-        _windows.Add(App.MainWindow);
+        AddWindow(App.MainWindow);
         App.MainWindow.Closed += (sender, args) =>
         {
-            _windows.Remove(App.MainWindow);
-            var window = new List<WindowEx>(_windows);
+            RemoveWindow(App.MainWindow);
+            var window = new List<WindowEx>(_windows.Select(tup => tup.Item1));
             foreach (var windowEx in window)
                 try
                 {
@@ -91,12 +106,33 @@ public class WindowManagerService : IWindowManagerService
     public WindowEx CreateWindow(UIElement windowContent, bool activate = true)
     {
         var window = new WindowEx();
-        _windows.Add(window);
-        window.Closed += (sender, args) => _windows.Remove(window);
+        AddWindow(window);
+        window.Closed += (sender, args) => { RemoveWindow(window); };
         window.Content = windowContent;
         if (activate)
             window.Activate();
         return window;
+    }
+
+    public void CreateWindow(WindowEx window, object? identifier, bool activate = true)
+    {
+        AddWindow(window, identifier);
+        window.Closed += (sender, args) =>
+        {
+            RemoveWindow(window);
+            if (identifier is not null)
+                RemoveWindow(identifier);
+        };
+        window.Show();
+        if (activate)
+        {
+            window.BringToFront();
+        }
+    }
+
+    public WindowEx? GetWindow(object identifier)
+    {
+        return _windows.Find(x => x.Item2.Equals(identifier))?.Item1;
     }
 
 
@@ -125,7 +161,8 @@ public class WindowManagerService : IWindowManagerService
 
     private WindowEx GetWindow(WindowEx window)
     {
-        return _windows.Find(x => x.Equals(window)) ?? throw new ArgumentException("Window not found.", nameof(window));
+        return _windows.Find(x => x.Item1.Equals(window))?.Item1 ??
+               throw new ArgumentException("Window not found.", nameof(window));
     }
 }
 
@@ -138,5 +175,7 @@ public interface IWindowManagerService
     void ResizeWindowPercent(WindowEx window, int widthPercent, int heightPercent);
     void CloseWindow(WindowEx window);
     WindowEx CreateWindow(UIElement windowContent, bool activate = true);
+    void CreateWindow(WindowEx window, object? identifier, bool activate = true);
+    WindowEx? GetWindow(object identifier);
     Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null);
 }

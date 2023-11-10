@@ -22,7 +22,7 @@ public sealed class CharacterModList : ICharacterModList
 
     private readonly object _modsLock = new();
 
-    internal CharacterModList(ICharacter character, string absPath, ILogger? logger = null)
+    internal CharacterModList(IModdableObject character, string absPath, ILogger? logger = null)
     {
         _logger = logger?.ForContext<CharacterModList>();
         Character = character;
@@ -140,7 +140,7 @@ public sealed class CharacterModList : ICharacterModList
             _mods.Add(ModFolderHelpers.FolderHasDisabledPrefix(mod.Name)
                 ? new CharacterSkinEntry(mod, this, false)
                 : new CharacterSkinEntry(mod, this, true));
-            _logger?.Debug("Tracking {ModName} in {CharacterName} modList", mod.Name, Character.InternalName);
+            _logger?.Verbose("Tracking {ModName} in {CharacterName} modList", mod.Name, Character.InternalName);
             Debug.Assert(_mods.DistinctBy(m => m.Id).Count() == _mods.Count);
         }
     }

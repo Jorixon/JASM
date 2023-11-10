@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
-using GIMI_ModManager.Core.Entities.Mods.SkinMod;
+using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.WinUI.Models;
 using OneOf;
 using OneOf.Types;
@@ -78,7 +78,7 @@ public class ModSettingsService
 
         if (modSettings.TryPickT0(out var settings, out var errorResults))
         {
-            var newSettings = settings.DeepCopyWithProperties(characterSkinOverride: skinName);
+            var newSettings = settings.DeepCopyWithProperties(newCharacterSkinOverride: skinName);
             try
             {
                 await mod.Settings.SaveSettingsAsync(newSettings);

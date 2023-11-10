@@ -11,6 +11,7 @@ public interface ISkinManagerService : IDisposable
     public string UnloadedModsFolderPath { get; }
     public string ActiveModsFolderPath { get; }
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
+    bool IsInitialized { get; }
     public Task ScanForModsAsync();
     public ICharacterModList GetCharacterModList(string internalName);
     public ICharacterModList GetCharacterModList(IModdableObject character);

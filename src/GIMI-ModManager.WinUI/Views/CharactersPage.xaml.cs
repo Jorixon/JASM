@@ -17,7 +17,7 @@ public sealed partial class CharactersPage : Page
     {
         ViewModel = App.GetService<CharactersViewModel>();
         InitializeComponent();
-        Loaded += (sender, args) => SearchBox.Focus(FocusState.Keyboard);
+        Loaded += (sender, args) => { SearchBox.Focus(FocusState.Keyboard); };
     }
 
 

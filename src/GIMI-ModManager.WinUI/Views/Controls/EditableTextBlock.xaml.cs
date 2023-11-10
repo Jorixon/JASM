@@ -84,4 +84,13 @@ public sealed partial class EditableTextBlock : UserControl
             IsEditMode = false;
         }
     }
+
+    public static readonly DependencyProperty TextSelectionStartProperty = DependencyProperty.Register(
+        nameof(TextSelectionStart), typeof(int), typeof(EditableTextBlock), new PropertyMetadata(default(int)));
+
+    public int TextSelectionStart
+    {
+        get { return (int)GetValue(TextSelectionStartProperty); }
+        set { SetValue(TextSelectionStartProperty, value); }
+    }
 }

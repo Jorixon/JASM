@@ -35,6 +35,24 @@
                         <FontIcon Glyph="{x:Bind ViewModel.PinGlyph, Mode=OneWay}" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.CheckForUpdatesForCharacterCommand}"
+                    CommandParameter="{Binding}"
+                    IsEnabled="{x:Bind ViewModel.CanCheckForUpdates, Mode=OneWay}"
+                    Text="Check for updates">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE777;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.ClearNotificationsCommand}"
+                    CommandParameter="{Binding}"
+                    Text="Clear Notifications">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE894;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
             </MenuFlyout>
         </Grid.Resources>
 

@@ -224,24 +224,13 @@ public class GameService : IGameService
 
     public List<IRegion> GetRegions() => Regions.AllRegions.ToList();
 
-    public List<ICharacter> GetCharacters()
-    {
-        var characters = _characters.ToList();
-        return characters;
-    }
+    public List<ICharacter> GetCharacters() => _characters.ToList();
 
-    public List<ICharacter> GetDisabledCharacters()
-    {
-        var characters = _disabledCharacters.ToList();
-        return characters;
-    }
+    public List<ICharacter> GetDisabledCharacters() => _disabledCharacters.ToList();
 
 
-    public bool IsMultiMod(IModdableObject moddableObject)
-    {
-        var isMultiMod = IsMultiMod(moddableObject.InternalName);
-        return isMultiMod || moddableObject.IsMultiMod;
-    }
+    public bool IsMultiMod(IModdableObject moddableObject) =>
+        IsMultiMod(moddableObject.InternalName) || moddableObject.IsMultiMod;
 
     public bool IsMultiMod(string modInternalName)
     {

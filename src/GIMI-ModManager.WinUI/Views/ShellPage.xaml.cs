@@ -118,10 +118,48 @@ DebugItem.Visibility = Visibility.Collapsed;
         args.Handled = result;
     }
 
+    private readonly VirtualKey[] _code = new[]
+    {
+        VirtualKey.Up, VirtualKey.Up, VirtualKey.Down, VirtualKey.Down, VirtualKey.Left, VirtualKey.Right,
+        VirtualKey.Left, VirtualKey.Right, VirtualKey.B, VirtualKey.A, VirtualKey.Enter, VirtualKey.Space
+    };
+
+    private readonly List<VirtualKey> _codeKeys = new();
 
     private async void GlobalKeyHandler_Invoked(object sender, KeyRoutedEventArgs e)
     {
+        if (!IsEnabled)
+            return;
+
         if (e.Key == VirtualKey.F10)
+        {
             await ViewModel.RefreshGenshinMods();
+            return;
+        }
+
+
+        if (_code.Contains(e.Key))
+        {
+            //_codeKeys.AddRange(_code[..^2].Append(VirtualKey.Space));
+            _codeKeys.Add(e.Key);
+        }
+        else
+            _codeKeys.Clear();
+
+
+        if (_codeKeys.Count == _code.Length - 1 &&
+            _codeKeys.SequenceEqual(_code.Take(_code.Length - 2).Append(VirtualKey.Space)) ||
+            _codeKeys.SequenceEqual(_code.Take(_code.Length - 2).Append(VirtualKey.Enter)))
+        {
+            Perform_XD();
+            _codeKeys.Clear();
+        }
+        else if (_code.Length < _codeKeys.Count - 1)
+            _codeKeys.Clear();
+    }
+
+    private void Perform_XD()
+    {
+        App.GetService<INavigationService>().NavigateTo(typeof(EasterEggVM).FullName!);
     }
 }
