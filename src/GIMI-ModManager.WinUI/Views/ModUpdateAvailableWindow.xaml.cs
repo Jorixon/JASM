@@ -61,8 +61,10 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
         };
     }
 
-    private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
+        await ModPageBrowser.EnsureCoreWebView2Async();
+
         if (ModPageBrowser.CoreWebView2.IsDefaultDownloadDialogOpen)
             ModPageBrowser.CoreWebView2.CloseDefaultDownloadDialog();
         else
