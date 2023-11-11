@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.6.3](https://github.com/Jorixon/JASM/compare/v1.6.2...v1.6.3) (2023-11-11)
+
+
+### Bug Fixes
+
+* JASM window being permanently hidden if closed while it was minimized ([ed7fb6c](https://github.com/Jorixon/JASM/commit/ed7fb6ce941c3989f609865fc2ebbc023bf2d0b8))
+
+
+### Miscellaneous
+
+* JASM will now check if there are other JASM instances running before starting ([ed7fb6c](https://github.com/Jorixon/JASM/commit/ed7fb6ce941c3989f609865fc2ebbc023bf2d0b8))
+
+
+### Continuous Integration
+
+* Calculate checksum for archive during build ([#81](https://github.com/Jorixon/JASM/issues/81)) ([735d86e](https://github.com/Jorixon/JASM/commit/735d86e19cf5057e8959b8ba3808f38e816368d6))
+
 ## [1.6.2](https://github.com/Jorixon/JASM/compare/v1.6.1...v1.6.2) (2023-11-11)
 
 
