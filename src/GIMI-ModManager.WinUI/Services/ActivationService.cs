@@ -1,5 +1,7 @@
-﻿using System.Security.Principal;
+﻿using System.Diagnostics;
+using System.Security.Principal;
 using Windows.Graphics;
+using ABI.Windows.ApplicationModel.Calls.Background;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -15,6 +17,7 @@ using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
+using System.Runtime.InteropServices;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -73,6 +76,9 @@ public class ActivationService : IActivationService
 #elif RELEASE
         _logger.Information("JASM starting up in RELEASE mode...");
 #endif
+        // Check if there is another instance of JASM running
+        await CheckIfAlreadyRunningAsync();
+
         // Execute tasks before activation.
         await InitializeAsync();
 
@@ -139,6 +145,7 @@ public class ActivationService : IActivationService
         await Task.Run(() => _autoUpdaterService.UpdateAutoUpdater()).ConfigureAwait(false);
     }
 
+    const int MinimizedPosition = -32000;
     private async Task SetWindowSettings()
     {
         var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
@@ -147,7 +154,8 @@ public class ActivationService : IActivationService
             _logger.Debug($"Window size loaded: {screenSize.Width}x{screenSize.Height}");
             App.MainWindow.SetWindowSize(screenSize.Width, screenSize.Height);
 
-            if (screenSize.XPosition != 0 && screenSize.YPosition != 0)
+            if (screenSize.XPosition != 0 && screenSize.YPosition != 0 &&
+                screenSize.XPosition != MinimizedPosition && screenSize.YPosition != MinimizedPosition)
                 App.MainWindow.AppWindow.Move(new PointInt32(screenSize.XPosition, screenSize.YPosition));
             else
                 App.MainWindow.CenterOnScreen();
@@ -234,15 +242,21 @@ public class ActivationService : IActivationService
 
         var width = windowSettings.Width;
         var height = windowSettings.Height;
+        var xPosition = windowSettings.XPosition;
+        var yPosition = windowSettings.YPosition;
 
-        if (!isFullScreen)
+
+        if (!isFullScreen && App.MainWindow.WindowState != WindowState.Minimized)
         {
             width = App.MainWindow.AppWindow.Size.Width;
             height = App.MainWindow.AppWindow.Size.Height;
         }
 
-        var xPosition = App.MainWindow.AppWindow.Position.X;
-        var yPosition = App.MainWindow.AppWindow.Position.Y;
+        if (App.MainWindow.WindowState != WindowState.Minimized)
+        {
+            xPosition = App.MainWindow.AppWindow.Position.X;
+            yPosition = App.MainWindow.AppWindow.Position.Y;
+        }
 
         _logger.Debug($"Saving Window size: {width}x{height} | IsFullscreen: {isFullScreen}");
 
@@ -310,6 +324,39 @@ public class ActivationService : IActivationService
         });
     }
 
+
+    private async Task CheckIfAlreadyRunningAsync()
+    {
+        var currentProcess = Process.GetCurrentProcess();
+        var processes = Process.GetProcessesByName(currentProcess.ProcessName);
+
+        if (processes.Length <= 1) return;
+
+        var currentProcessId = currentProcess.Id;
+        var currentProcessName = currentProcess.MainModule?.ModuleName;
+
+        foreach (var process in processes)
+        {
+            if (process.Id == currentProcessId) continue;
+
+            var processName = process.MainModule?.ModuleName;
+
+
+            if (currentProcessName!.Equals(processName, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.Information("JASM is already running, exiting...");
+                var hWnd = process.MainWindowHandle;
+
+                Win32.ShowWindowAsync(new HandleRef(null, hWnd), Win32.SW_RESTORE);
+                Win32.SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0, Win32.SWP_NOSIZE | Win32.SWP_NOZORDER);
+                Win32.SetForegroundWindow(hWnd);
+
+
+                Application.Current.Exit();
+                await Task.Delay(-1);
+            }
+        }
+    }
 
     private async Task SetLanguage()
     {
