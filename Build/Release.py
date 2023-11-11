@@ -100,6 +100,9 @@ if env_file is None:
 with open(env_file, "a") as myfile:
     myfile.write(f"zipFile={releaseArchiveName}")
 
+checkSuccessfulExitCode(os.system(f"7z h -scrcsha256 .\\{releaseArchiveName}"))
+
+
 exit(0)
 
 
