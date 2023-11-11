@@ -19,6 +19,9 @@ public class ScreenSizeSettings
 
     public int Width { get; set; }
     public int Height { get; set; }
+
+    public int XPosition { get; set; }
+    public int YPosition { get; set; }
     public bool IsFullScreen { get; set; }
     [JsonIgnore] public double WidthAsDouble => Convert.ToDouble(Width);
     [JsonIgnore] public double HeightAsDouble => Convert.ToDouble(Height);

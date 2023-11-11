@@ -1,5 +1,5 @@
 ﻿using System.Security.Principal;
-using Windows.Foundation;
+using Windows.Graphics;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -123,7 +123,7 @@ public class ActivationService : IActivationService
     {
         await _selectedGameService.InitializeAsync();
         await SetLanguage();
-        await SetScreenSize();
+        await SetWindowSettings();
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
     }
 
@@ -131,7 +131,6 @@ public class ActivationService : IActivationService
     private async Task StartupAsync()
     {
         await _themeSelectorService.SetRequestedThemeAsync();
-        InitScreenSizeSaver();
         await InitCharacterOverviewSettings();
         await _genshinProcessManager.TryInitialize();
         await _threeDMigtoProcessManager.TryInitialize();
@@ -140,14 +139,21 @@ public class ActivationService : IActivationService
         await Task.Run(() => _autoUpdaterService.UpdateAutoUpdater()).ConfigureAwait(false);
     }
 
-    private async Task SetScreenSize()
+    private async Task SetWindowSettings()
     {
         var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
         if (screenSize != null)
         {
             _logger.Debug($"Window size loaded: {screenSize.Width}x{screenSize.Height}");
             App.MainWindow.SetWindowSize(screenSize.Width, screenSize.Height);
-            App.MainWindow.CenterOnScreen();
+
+            if (screenSize.XPosition != 0 && screenSize.YPosition != 0)
+                App.MainWindow.AppWindow.Move(new PointInt32(screenSize.XPosition, screenSize.YPosition));
+            else
+                App.MainWindow.CenterOnScreen();
+
+            if (screenSize.IsFullScreen)
+                App.MainWindow.Maximize();
         }
     }
 
@@ -160,45 +166,10 @@ public class ActivationService : IActivationService
                 new CharacterOverviewSettings());
     }
 
-    private Size _previousScreenSize = new(0, 0);
-    private DispatcherTimer? _timer;
 
-    private void InitScreenSizeSaver()
-    {
-        const int delayMilliseconds = 1000;
-        _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(delayMilliseconds) };
-        _timer.Tick += ScreenSizeSavingTimer_Tick;
+    private bool _isExiting = false;
 
-        App.MainWindow.SizeChanged += (sender, args) =>
-        {
-            // Reset the timer on every SizeChanged event.
-            _timer.Stop();
-            if (App.MainWindow.Height == _previousScreenSize.Height &&
-                App.MainWindow.Width == _previousScreenSize.Width)
-                return;
-
-            _previousScreenSize = new Size(App.MainWindow.Width, App.MainWindow.Height);
-            _timer.Start();
-        };
-    }
-
-    // There has to be a better way to do this. But for now this works.
-    // Window does not have the closing event, so I can't save the size on close.
-    // Application might exit ungracefully, unsure if this is a problem.
-    private void ScreenSizeSavingTimer_Tick(object? sender, object? e)
-    {
-        var width = App.MainWindow.Width;
-        var height = App.MainWindow.Height;
-        var isFullScreen = false; // TODO: Implement fullscreen
-        _logger.Debug($"Window size saved: {width}x{height}\t\nIsFullscreen: {isFullScreen}");
-        Task.Run(async () => await App.GetService<ILocalSettingsService>()
-            .SaveSettingAsync(ScreenSizeSettings.Key,
-                new ScreenSizeSettings(width, height) { IsFullScreen = isFullScreen }));
-        _timer?.Stop();
-    }
-
-
-    private void OnApplicationExit(object sender, WindowEventArgs args)
+    private async void OnApplicationExit(object sender, WindowEventArgs args)
     {
         if (App.OverrideShutdown)
         {
@@ -206,7 +177,7 @@ public class ActivationService : IActivationService
             _logger.Information("Shutdown override will be disabled in at most 1 second.");
             Task.Run(async () =>
             {
-                await Task.Delay(1000);
+                await Task.Delay(500);
                 App.OverrideShutdown = false;
                 _logger.Information("Shutdown override disabled.");
             });
@@ -214,9 +185,18 @@ public class ActivationService : IActivationService
             return;
         }
 
+        if (!_isExiting)
+            args.Handled = true;
+        else
+            return;
+
+        var saveSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
+
         _logger.Debug("JASM shutting down...");
         _modUpdateAvailableChecker.CancelAndStop();
         _updateChecker.CancelAndStop();
+
+
         var tmpDir = new DirectoryInfo(App.TMP_DIR);
         if (tmpDir.Exists)
         {
@@ -224,7 +204,49 @@ public class ActivationService : IActivationService
             tmpDir.Delete(true);
         }
 
+        await saveSettingsTask;
         _logger.Debug("JASM shutdown complete.");
+        await Task.Run(() =>
+        {
+            _isExiting = true;
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                Application.Current.Exit();
+                App.MainWindow.Close();
+            });
+        }).ConfigureAwait(false);
+    }
+
+    private async Task SaveWindowSettingsAsync()
+    {
+        if (App.MainWindow is null || App.MainWindow.AppWindow is null)
+            return;
+
+
+        var windowSettings = await _localSettingsService
+            .ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
+
+
+        var isFullScreen = App.MainWindow.WindowState == WindowState.Maximized;
+
+        var width = windowSettings.Width;
+        var height = windowSettings.Height;
+
+        if (!isFullScreen)
+        {
+            width = App.MainWindow.AppWindow.Size.Width;
+            height = App.MainWindow.AppWindow.Size.Height;
+        }
+
+        var xPosition = App.MainWindow.AppWindow.Position.X;
+        var yPosition = App.MainWindow.AppWindow.Position.Y;
+
+        _logger.Debug($"Saving Window size: {width}x{height} | IsFullscreen: {isFullScreen}");
+
+        var newWindowSettings = new ScreenSizeSettings(width, height)
+            { IsFullScreen = isFullScreen, XPosition = xPosition, YPosition = yPosition };
+
+        await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, newWindowSettings).ConfigureAwait(false);
     }
 
     // Declared here for now, might move to a different class later.
