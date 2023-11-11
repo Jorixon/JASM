@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.2](https://github.com/Jorixon/JASM/compare/v1.6.1...v1.6.2) (2023-11-11)
+
+
+### Bug Fixes
+
+* Automatic reorganization of mods was bugged. This led to (almost) all mods being placed in the "Others" folder ([bb2b0df](https://github.com/Jorixon/JASM/commit/bb2b0dfa6931b2b10e118665287bdeb2f2fdcb93))
+
+
+### Miscellaneous
+
+* Ability to use mouse 4 and mouse 5 to navigate backward and forward ([d3647d4](https://github.com/Jorixon/JASM/commit/d3647d4b427293fdb2a5420626ab7a2d3f3f4ddd))
+* JASM now remembers its last window posistion and if maximized ([aa09b3c](https://github.com/Jorixon/JASM/commit/aa09b3c74f6be157fbd704621440a4da712fe945))
+
 ## [1.6.1](https://github.com/Jorixon/JASM/compare/v1.6.0...v1.6.1) (2023-11-10)
 
 
