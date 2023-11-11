@@ -2,6 +2,7 @@
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.ViewModels;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -36,6 +37,7 @@ public sealed partial class ShellPage : Page
         AppTitleBarText.Text += " - DEBUG";
 #endif
         KeyDown += GlobalKeyHandler_Invoked;
+        PointerPressed += GlobalMouseHandler_Invoked;
 
         Loaded += (sender, args) =>
         {
@@ -62,6 +64,29 @@ public sealed partial class ShellPage : Page
 DebugItem.Visibility = Visibility.Collapsed;
 
 #endif
+    }
+
+    private void GlobalMouseHandler_Invoked(object sender, PointerRoutedEventArgs e)
+    {
+        if (!IsEnabled)
+            return;
+
+        // Check if mouse 4 or 5 is clicked
+        var mouseButton = e.GetCurrentPoint(this).Properties.PointerUpdateKind;
+
+        if (mouseButton is not (PointerUpdateKind.XButton1Pressed or PointerUpdateKind.XButton2Pressed)) return;
+
+        var navigationService = App.GetService<INavigationService>();
+
+        switch (mouseButton)
+        {
+            case PointerUpdateKind.XButton1Pressed when navigationService.CanGoBack:
+                navigationService.GoBack();
+                break;
+            case PointerUpdateKind.XButton2Pressed when navigationService.CanGoForward:
+                navigationService.GoForward();
+                break;
+        }
     }
 
 
