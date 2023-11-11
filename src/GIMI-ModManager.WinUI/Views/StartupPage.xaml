@@ -53,13 +53,14 @@
                     <StackPanel Grid.Row="0">
                         <TextBlock
                             l:Uids.Uid="Startup1"
+                            IsTextSelectionEnabled="True"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             TextWrapping="WrapWholeWords" />
                         <StackPanel Orientation="Horizontal">
 
-                            <HyperlinkButton NavigateUri="https://github.com/SilentNightSound/GI-Model-Importer">Genshin-Impact-Model-Importer (Github)</HyperlinkButton>
-                            <HyperlinkButton NavigateUri="https://gamebanana.com/games/8552">GameBanana</HyperlinkButton>
-                            <HyperlinkButton NavigateUri="https://www.nexusmods.com/genshinimpact">Nexusmods</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="https://github.com/SilentNightSound/GI-Model-Importer" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">Genshin-Impact-Model-Importer (Github)</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="https://gamebanana.com/games/8552" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">GameBanana</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="https://www.nexusmods.com/genshinimpact" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">Nexusmods</HyperlinkButton>
                         </StackPanel>
 
                     </StackPanel>
@@ -67,6 +68,7 @@
                         Grid.Row="1"
                         Margin="0,8,0,0"
                         l:Uids.Uid="Startup2"
+                        IsTextSelectionEnabled="True"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         TextWrapping="WrapWholeWords" />
 
@@ -74,6 +76,7 @@
                         Grid.Row="2"
                         Margin="0,4,0,0"
                         l:Uids.Uid="Startup3"
+                        IsTextSelectionEnabled="True"
                         Style="{ThemeResource BodyStrongTextBlockStyle}"
                         TextWrapping="WrapWholeWords" />
 
@@ -109,19 +112,11 @@
                     Visibility="Collapsed" />
 
 
-                <!--  Save  -->
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <Button Command="{x:Bind ViewModel.SaveStartupSettingsCommand}" Content="Save" />
                     <CheckBox
-                        Margin="12,0,4,0"
-                        Content="Reorganize Mods?"
+                        Margin="12,0,12,0"
+                        Content="Reorganize Mods"
                         IsChecked="{x:Bind ViewModel.ReorganizeModsOnStartup, Mode=TwoWay}" />
-
-                    <CheckBox
-                        Margin="4,0,12,0"
-                        Content="Also Disable All Mods"
-                        IsChecked="{x:Bind ViewModel.DisableMods, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.ReorganizeModsOnStartup, Mode=OneWay}" />
 
                     <Button Background="Transparent" CornerRadius="8">
                         <Button.Flyout>
@@ -158,10 +153,47 @@
                         </StackPanel>
                     </Button>
 
+                    <CheckBox
+                        Margin="40,0,12,0"
+                        Content="Also Disable All Mods"
+                        IsChecked="{x:Bind ViewModel.DisableMods, Mode=TwoWay}"
+                        IsEnabled="{x:Bind ViewModel.ReorganizeModsOnStartup, Mode=OneWay}" />
+
+                    <Button Background="Transparent" CornerRadius="8">
+                        <Button.Flyout>
+                            <Flyout>
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <StackPanel>
+
+                                    <TextBlock
+                                        Margin="0,8,0,4"
+                                        Style="{ThemeResource BodyTextBlockStyle}"
+                                        Text="Prepend DISABLED_ to all mods so that they are disabled"
+                                        TextWrapping="WrapWholeWords" />
+
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                        <StackPanel>
+                            <FontIcon FontSize="28" Glyph="&#xF142;" />
+                        </StackPanel>
+                    </Button>
+
+
+
                 </StackPanel>
 
-
-
+                <!--  Save  -->
+                <Button
+                    Margin="0,16,0,0"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.SaveStartupSettingsCommand}"
+                    Content="Save" />
 
             </StackPanel>
         </ScrollViewer>
