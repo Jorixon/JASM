@@ -166,8 +166,9 @@ public class ActivationService : IActivationService
                 new CharacterOverviewSettings());
     }
 
-
-    private bool _isExiting = false;
+// To allow jasm to save settings before exiting, we need to handle the first close event.
+// Once finished saving the handler calls itself again, but this time it will exit.
+    private bool _isExiting;
 
     private async void OnApplicationExit(object sender, WindowEventArgs args)
     {
@@ -206,6 +207,8 @@ public class ActivationService : IActivationService
 
         await saveSettingsTask;
         _logger.Debug("JASM shutdown complete.");
+
+        // Call the handler again, this time it will exit.
         await Task.Run(() =>
         {
             _isExiting = true;
