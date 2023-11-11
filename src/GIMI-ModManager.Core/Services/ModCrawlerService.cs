@@ -69,14 +69,21 @@ public class ModCrawlerService
 
     private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
 
-    private static bool IsOfSkinType(FileInfo file, ICharacterSkin skin)
+    private bool IsOfSkinType(FileInfo file, ICharacterSkin skin)
     {
         var fileExtensionMatch = ModExtensions.Any(extension =>
             file.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase));
 
+        if (skin.ModFilesName.IsNullOrEmpty())
+            return false;
 
-        return fileExtensionMatch &&
-               file.Name.Trim().StartsWith(skin.ModFilesName, StringComparison.OrdinalIgnoreCase);
+        var isMatch = fileExtensionMatch &&
+                      file.Name.Trim().StartsWith(skin.ModFilesName, StringComparison.OrdinalIgnoreCase);
+
+        if (isMatch)
+            _logger.Verbose("Skin Match: {FileName} ~= {ModFilesName}", file.Name, skin.ModFilesName);
+
+        return isMatch;
     }
 
 

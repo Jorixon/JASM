@@ -559,7 +559,8 @@ public sealed class SkinManagerService : ISkinManagerService
 
             var closestMatchCharacter =
                 _modCrawlerService.GetFirstSubSkinRecursive(folder.FullName)?.Character ??
-                _gameService.QueryCharacter(folder.Name);
+                _gameService.QueryCharacter(ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(folder.Name),
+                    minScore: 150);
 
 
             switch (closestMatchCharacter)
