@@ -2,36 +2,41 @@
 	{
 		"InternalName": "Adaptive",
 		"DisplayName": "Adaptive",
-		"Image": "Pyro.svg"
-	},
-	{
-		"InternalName": "Quantum",
-		"DisplayName": "Quantum",
-		"Image": "Hydro.svg"
-	},
-	{
-		"InternalName": "Wind",
-		"DisplayName": "Wind",
-		"Image": "Anemo.svg"
-	},
-	{
-		"InternalName": "Lightning",
-		"DisplayName": "Lightning",
-		"Image": "Electro.svg"
+		"Image": "Adaptive.svg"
 	},
 	{
 		"InternalName": "Imaginary",
 		"DisplayName": "Imaginary",
-		"Image": "Dendro.svg"
+		"Image": "Imaginary.webp"
+	},
+	{
+		"InternalName": "Quantum",
+		"DisplayName": "Quantum",
+		"Image": "Quantum.webp"
+	},
+	{
+		"InternalName": "Wind",
+		"DisplayName": "Wind",
+		"Image": "Wind.webp"
+	},
+	{
+		"InternalName": "Lightning",
+		"DisplayName": "Lightning",
+		"Image": "Lightning.webp"
 	},
 	{
 		"InternalName": "Ice",
 		"DisplayName": "Ice",
-		"Image": "Cryo.svg"
+		"Image": "Ice.webp"
+	},
+	{
+		"InternalName": "Fire",
+		"DisplayName": "Fire",
+		"Image": "Fire.webp"
 	},
 	{
 		"InternalName": "Physical",
 		"DisplayName": "Physical",
-		"Image": "Geo.svg"
+		"Image": "Physical.webp"
 	}
 ]

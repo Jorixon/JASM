@@ -32,7 +32,6 @@
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                IsEnabled="False"
                 ItemsSource="{x:Bind ViewModel.Games}"
                 SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
                 SelectionChanged="GameSelector_OnSelectionChanged" />

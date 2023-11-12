@@ -5,7 +5,7 @@
       "trailblazer"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "Character_Albedo_Thumb.png",
+    "Image": "trailblazer.gif",
     "Rarity": 5,
     "Element": "Adaptive",
     "Class": "Adaptive",
@@ -16,5 +16,726 @@
     "InGameSkins": [],
     "InternalName": "Trailblazer",
     "DisplayName": "Trailblazer"
+  },
+  {
+    "Id": 1,
+    "Keys": [
+      "arlan"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "arlan.webp",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Destruction",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "Arlan",
+    "InGameSkins": [],
+    "InternalName": "Arlan",
+    "DisplayName": "Arlan"
+  },
+  {
+    "Id": 2,
+    "Keys": [
+      "asta"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "asta.webp",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Harmony",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "Asta",
+    "InGameSkins": [],
+    "InternalName": "Asta",
+    "DisplayName": "Asta"
+  },
+  {
+    "Id": 3,
+    "Keys": [
+      "bailu"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "bailu.webp",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Bailu",
+    "InGameSkins": [],
+    "InternalName": "Bailu",
+    "DisplayName": "Bailu"
+  },
+  {
+    "Id": 4,
+    "Keys": [
+      "blade"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "blade.webp",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Blade",
+    "InGameSkins": [],
+    "InternalName": "Blade",
+    "DisplayName": "Blade"
+  },
+  {
+    "Id": 5,
+    "Keys": [
+      "bronya"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "bronya.webp",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Bronya",
+    "InGameSkins": [],
+    "InternalName": "Bronya",
+    "DisplayName": "Bronya"
+  },
+  {
+    "Id": 6,
+    "Keys": [
+      "clara"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "clara.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Clara",
+    "InGameSkins": [],
+    "InternalName": "Clara",
+    "DisplayName": "Clara"
+  },
+  {
+    "Id": 7,
+    "Keys": [
+      "dangheng"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "dangheng.webp",
+    "Rarity": 4,
+    "Element": "Wind",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Dang Heng",
+    "InGameSkins": [],
+    "InternalName": "Dang Heng",
+    "DisplayName": "Dang Heng"
+  },
+  {
+    "Id": 8,
+    "Keys": [
+      "dangheng-IL"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "DHIL.webp",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Dang Heng IL",
+    "InGameSkins": [],
+    "InternalName": "Dang Heng IL",
+    "DisplayName": "Dang Heng - IL"
+  },
+  {
+    "Id": 9,
+    "Keys": [
+      "fu xuan"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "fuxuan.webp",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Preservation",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "FuXuan",
+    "InGameSkins": [],
+    "InternalName": "FuXuan",
+    "DisplayName": "Fu Xuan"
+  },
+  {
+    "Id": 10,
+    "Keys": [
+      "gepard"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "gepard.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Preservation",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Gepard",
+    "InGameSkins": [],
+    "InternalName": "Gepard",
+    "DisplayName": "Gepard"
+  },
+  {
+    "Id": 11,
+    "Keys": [
+      "guinafen"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "guinafen.webp",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Guinafen",
+    "InGameSkins": [],
+    "InternalName": "Guinafen",
+    "DisplayName": "Guinafen"
+  },
+  {
+    "Id": 12,
+    "Keys": [
+      "herta"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "herta.webp",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Herta",
+    "InGameSkins": [],
+    "InternalName": "Herta",
+    "DisplayName": "Herta"
+  },
+  {
+    "Id": 13,
+    "Keys": [
+      "himeko"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "himeko.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Himeko",
+    "InGameSkins": [],
+    "InternalName": "Himeko",
+    "DisplayName": "Himeko"
+  },
+  {
+    "Id": 14,
+    "Keys": [
+      "hook"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "hook.webp",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Hook",
+    "InGameSkins": [],
+    "InternalName": "Hook",
+    "DisplayName": "Hook"
+  },
+  {
+    "Id": 15,
+    "Keys": [
+      "jingyuan"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "jingyuan.webp",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "JingYuan",
+    "InGameSkins": [],
+    "InternalName": "JingYuan",
+    "DisplayName": "Jing Yuan"
+  },
+  {
+    "Id": 16,
+    "Keys": [
+      "jingliu"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "jingliu.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Jingliu",
+    "InGameSkins": [],
+    "InternalName": "Jingliu",
+    "DisplayName": "Jingliu"
+  },
+  {
+    "Id": 17,
+    "Keys": [
+      "kafka"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "kafka.webp",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu",
+      "Heaven xD"
+    ],
+    "ModFilesName": "Kafka",
+    "InGameSkins": [],
+    "InternalName": "Kafka",
+    "DisplayName": "Kafka"
+  },
+  {
+    "Id": 18,
+    "Keys": [
+      "luka"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "luka.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Luka",
+    "InGameSkins": [],
+    "InternalName": "Luka",
+    "DisplayName": "Luka"
+  },
+  {
+    "Id": 19,
+    "Keys": [
+      "luocha"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "luocha.webp",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Luocha",
+    "InGameSkins": [],
+    "InternalName": "Luocha",
+    "DisplayName": "Luocha"
+  },
+  {
+    "Id": 20,
+    "Keys": [
+      "lynx"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "lynx.webp",
+    "Rarity": 4,
+    "Element": "Quantum",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Lynx",
+    "InGameSkins": [],
+    "InternalName": "Lynx",
+    "DisplayName": "Lynx"
+  },
+  {
+    "Id": 21,
+    "Keys": [
+      "march7"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "march7.webp",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Preservation",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "March7",
+    "InGameSkins": [],
+    "InternalName": "March7",
+    "DisplayName": "March 7th"
+  },
+  {
+    "Id": 22,
+    "Keys": [
+      "natasha"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "natasha.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Natasha",
+    "InGameSkins": [],
+    "InternalName": "Natasha",
+    "DisplayName": "Natasha"
+  },
+  {
+    "Id": 23,
+    "Keys": [
+      "pela"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "pela.webp",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Pela",
+    "InGameSkins": [],
+    "InternalName": "Pela",
+    "DisplayName": "Pela"
+  },
+  {
+    "Id": 24,
+    "Keys": [
+      "qingque"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "qingque.webp",
+    "Rarity": 4,
+    "Element": "Quantum",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Qingque",
+    "InGameSkins": [],
+    "InternalName": "Qingque",
+    "DisplayName": "Qingque"
+  },
+  {
+    "Id": 25,
+    "Keys": [
+      "sampo"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "sampo.webp",
+    "Rarity": 4,
+    "Element": "Wind",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Sampo",
+    "InGameSkins": [],
+    "InternalName": "Sampo",
+    "DisplayName": "Sampo"
+  },
+  {
+    "Id": 25,
+    "Keys": [
+      "seele"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "seele.webp",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Seele",
+    "InGameSkins": [],
+    "InternalName": "Seele",
+    "DisplayName": "Seele"
+  },
+  {
+    "Id": 26,
+    "Keys": [
+      "serval"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "serval.webp",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Serval",
+    "InGameSkins": [],
+    "InternalName": "Serval",
+    "DisplayName": "Serval"
+  },
+  {
+    "Id": 27,
+    "Keys": [
+      "silverwolf"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "silverwolf.webp",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "SilverWolf",
+    "InGameSkins": [],
+    "InternalName": "SilverWolf",
+    "DisplayName": "Silver Wolf"
+  },
+  {
+    "Id": 28,
+    "Keys": [
+      "sushang"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "sushang.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Sushang",
+    "InGameSkins": [],
+    "InternalName": "Sushang",
+    "DisplayName": "Sushang"
+  },
+  {
+    "Id": 29,
+    "Keys": [
+      "tingyun"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "tingyun.webp",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Tingyun",
+    "InGameSkins": [],
+    "InternalName": "Tingyun",
+    "DisplayName": "Tingyun"
+  },
+  {
+    "Id": 30,
+    "Keys": [
+      "topaz"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "topaz.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Topaz",
+    "InGameSkins": [],
+    "InternalName": "Topaz",
+    "DisplayName": "Topaz and Numby"
+  },
+  {
+    "Id": 31,
+    "Keys": [
+      "welt"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "welt.webp",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Welt",
+    "InGameSkins": [],
+    "InternalName": "Welt",
+    "DisplayName": "Welt"
+  },
+  {
+    "Id": 32,
+    "Keys": [
+      "yanqing"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "yanqing.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Yanqing",
+    "InGameSkins": [],
+    "InternalName": "Yanqing",
+    "DisplayName": "Yanqing"
+  },
+  {
+    "Id": 33,
+    "Keys": [
+      "yukong"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "yukong.webp",
+    "Rarity": 4,
+    "Element": "Imaginary",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Yukong",
+    "InGameSkins": [],
+    "InternalName": "Yukong",
+    "DisplayName": "Yukong"
+  },
+  {
+    "Id": 34,
+    "Keys": [
+      "argenti"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "argenti.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Argenti",
+    "InGameSkins": [],
+    "InternalName": "Argenti",
+    "DisplayName": "Argenti"
+  },
+  {
+    "Id": 35,
+    "Keys": [
+      "drratio"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "drratio.webp",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "DrRatio",
+    "InGameSkins": [],
+    "InternalName": "DrRatio",
+    "DisplayName": "Dr. Ratio"
+  },
+  {
+    "Id": 36,
+    "Keys": [
+      "hanya"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "hanya.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Hanya",
+    "InGameSkins": [],
+    "InternalName": "Hanya",
+    "DisplayName": "Hanya"
+  },
+  {
+    "Id": 37,
+    "Keys": [
+      "huohuo"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "huohuo.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Abudance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Huohuo",
+    "InGameSkins": [],
+    "InternalName": "Huohuo",
+    "DisplayName": "Huohuo"
+  },
+  {
+    "Id": 38,
+    "Keys": [
+      "ruanmei"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "ruanmei.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "RuanMei",
+    "InGameSkins": [],
+    "InternalName": "RuanMei",
+    "DisplayName": "Ruan Mei"
+  },
+  {
+    "Id": 39,
+    "Keys": [
+      "xueyi"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "xueyi.webp",
+    "Rarity": 4,
+    "Element": "Quantum",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Xueyi",
+    "InGameSkins": [],
+    "InternalName": "Xueyi",
+    "DisplayName": "Xueyi"
   }
 ]

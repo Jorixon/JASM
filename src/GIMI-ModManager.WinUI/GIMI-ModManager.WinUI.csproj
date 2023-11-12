@@ -154,18 +154,65 @@
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\elements.json" />
 		<Content Remove="Assets\Games\Genshin\regions.json" />
 		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
-		<Content Remove="Assets\Games\Honkai\characters.json" />
-		<Content Remove="Assets\Games\Honkai\elements.json" />
-		<Content Remove="Assets\Games\Honkai\game.json" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Anemo.svg" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Cryo.svg" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Dendro.svg" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Electro.svg" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Geo.svg" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Hydro.svg" />
-		<Content Remove="Assets\Games\Honkai\Images\Elements\Pyro.svg" />
-		<Content Remove="Assets\Games\Honkai\regions.json" />
-		<Content Remove="Assets\Games\Honkai\weaponClasses.json" />
+		<Content Remove="Assets\Games\Honkai\Images\Start_Game.webp" />
+    
+    <Content Remove="Assets\Games\Honkai\regions.json" />
+    <Content Remove="Assets\Games\Honkai\weaponClasses.json" />
+    <Content Remove="Assets\Games\Honkai\characters.json" />
+    <Content Remove="Assets\Games\Honkai\elements.json" />
+    <Content Remove="Assets\Games\Honkai\game.json" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Adaptive.svg" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Fire.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Ice.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Imaginary.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Lightning.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Physical.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Pyro.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Quantum.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Elements\Wind.webp" />
+     
+    <Content Remove="Assets\Games\Honkai\Images\Characters\argenti.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\arlan.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\asta.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\bailu.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\blade.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\bronya.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\clara.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\dangheng.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\DHIL.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\drratio.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\fuxuan.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\gepard.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\guinafen.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\hanya.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\herta.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\himeko.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\hook.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\huohuo.png" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\jingliu.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\jingyuan.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\kafka.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\luka.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\luocha.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\lynx.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\march7.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\natasha.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\pela.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\qingque.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\ruanmei.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\sampo.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\seele.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\serval.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\silverwolf.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\sushang.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\tingyun.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\topaz.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\trailblazer.gif" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\welt.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\xueyi.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
+    <Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
+		
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 	</ItemGroup>
 	<ItemGroup>
@@ -588,33 +635,162 @@
 		<None Update="Assets\Games\Honkai\game.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Anemo.svg">
+		<None Update="Assets\Games\Honkai\Images\Start_Game.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Cryo.svg">
+    <None Update="Assets\Games\Honkai\regions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\weaponClasses.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+		<None Update="Assets\Games\Honkai\Images\Elements\Adaptive.svg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Dendro.svg">
+		<None Update="Assets\Games\Honkai\Images\Elements\Ice.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Electro.svg">
+		<None Update="Assets\Games\Honkai\Images\Elements\Fire.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Geo.svg">
+		<None Update="Assets\Games\Honkai\Images\Elements\Imaginary.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Hydro.svg">
+		<None Update="Assets\Games\Honkai\Images\Elements\Lightning.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\Images\Elements\Pyro.svg">
+		<None Update="Assets\Games\Honkai\Images\Elements\Physical.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\regions.json">
+		<None Update="Assets\Games\Honkai\Images\Elements\Quantum.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Assets\Games\Honkai\weaponClasses.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+    <None Update="Assets\Games\Honkai\Images\Elements\Wind.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\argenti.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\arlan.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\asta.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\bailu.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\blade.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\bronya.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\clara.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\dangheng.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\DHIL.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\drratio.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\fuxuan.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\gepard.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\guinafen.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\hanya.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\herta.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\himeko.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\hook.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\huohuo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\jingliu.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\jingyuan.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\kafka.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\luka.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\luocha.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\lynx.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\march7.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\natasha.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\pela.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\qingque.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\ruanmei.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\sampo.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\seele.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\serval.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\silverwolf.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\sushang.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\tingyun.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\topaz.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\trailblazer.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\welt.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\xueyi.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\yanqing.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Games\Honkai\Images\Characters\yukong.webp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
 		<None Update="Assets\ModPanePlaceholder.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

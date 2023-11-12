@@ -68,6 +68,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private bool _canCheckForUpdates = false;
 
+    [ObservableProperty] private Uri? _gameBananaLink;
 
     private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
 
@@ -110,6 +111,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         DockPanelVM.Initialize();
         StartGameIcon = _gameService.GameIcon;
         ShortGameName = "Start " + _gameService.GameShortName;
+        GameBananaLink = _gameService.GameBananaUrl;
 
         CanCheckForUpdates = _modUpdateAvailableChecker.IsReady;
         _modUpdateAvailableChecker.OnUpdateCheckerEvent += (_, _) =>

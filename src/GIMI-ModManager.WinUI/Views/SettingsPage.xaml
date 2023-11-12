@@ -135,7 +135,6 @@
                     <ComboBox
                         x:Name="GameSelectorComboBox"
                         Header="Selected Game:"
-                        IsEnabled="False"
                         ItemsSource="{x:Bind ViewModel.Games}"
                         SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
                         SelectionChanged="GameSelectorComboBox_OnSelectionChanged" />

@@ -8,6 +8,7 @@ public interface IGameService
     public string GameName { get; }
     public string GameShortName { get; }
     public string GameIcon { get; }
+    public Uri GameBananaUrl { get; }
 
     public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null);

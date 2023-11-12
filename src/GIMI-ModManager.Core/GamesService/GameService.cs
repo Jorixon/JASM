@@ -25,6 +25,7 @@ public class GameService : IGameService
     public string GameName { get; private set; } = string.Empty;
     public string GameShortName { get; private set; } = string.Empty;
     public string GameIcon { get; private set; } = string.Empty;
+    public Uri GameBananaUrl { get; private set; } = new("https://gamebanana.com/");
 
     private readonly List<ICharacter> _characters = new();
 
@@ -253,6 +254,7 @@ public class GameService : IGameService
 
         GameName = game.GameName;
         GameShortName = game.GameShortName;
+        GameBananaUrl = Uri.TryCreate(game.GameBananaUrl, UriKind.Absolute, out var uri) ? uri : null;
         var iconPath = Path.Combine(_assetsDirectory.FullName, "Images", game.GameIcon);
         if (File.Exists(iconPath))
             GameIcon = Path.Combine(_assetsDirectory.FullName, "Images", game.GameIcon);
