@@ -339,6 +339,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             _backendCharacters = backendCharacters;
 
+            var distinctReleaseDates = _backendCharacters
+                .Where(ch => ch.Character.ReleaseDate != default)
+                .DistinctBy(ch => ch.Character.ReleaseDate)
+                .Count();
+
+            if (distinctReleaseDates == 1)
+                SortingMethods.Remove(SortingMethodType.ReleaseDate);
+
+
             // Add notifications
             await RefreshNotificationsAsync();
 

@@ -23,7 +23,7 @@
       "arlan"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "arlan.webp",
+    "Image": "arlan.png",
     "Rarity": 4,
     "Element": "Lightning",
     "Class": "Destruction",
@@ -41,7 +41,7 @@
       "asta"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "asta.webp",
+    "Image": "asta.png",
     "Rarity": 4,
     "Element": "Fire",
     "Class": "Harmony",
@@ -59,7 +59,7 @@
       "bailu"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "bailu.webp",
+    "Image": "bailu.png",
     "Rarity": 5,
     "Element": "Lightning",
     "Class": "Abundance",
@@ -77,7 +77,7 @@
       "blade"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "blade.webp",
+    "Image": "blade.png",
     "Rarity": 5,
     "Element": "Wind",
     "Class": "Destruction",
@@ -95,7 +95,7 @@
       "bronya"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "bronya.webp",
+    "Image": "bronya.png",
     "Rarity": 5,
     "Element": "Wind",
     "Class": "Harmony",
@@ -113,7 +113,7 @@
       "clara"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "clara.webp",
+    "Image": "clara.png",
     "Rarity": 5,
     "Element": "Physical",
     "Class": "Destruction",
@@ -131,7 +131,7 @@
       "dangheng"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "dangheng.webp",
+    "Image": "dangheng.png",
     "Rarity": 4,
     "Element": "Wind",
     "Class": "Hunt",
@@ -149,7 +149,7 @@
       "dangheng-IL"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "DHIL.webp",
+    "Image": "DHIL.png",
     "Rarity": 5,
     "Element": "Imaginary",
     "Class": "Destruction",
@@ -167,7 +167,7 @@
       "fu xuan"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "fuxuan.webp",
+    "Image": "fuxuan.png",
     "Rarity": 5,
     "Element": "Quantum",
     "Class": "Preservation",
@@ -185,7 +185,7 @@
       "gepard"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "gepard.webp",
+    "Image": "gepard.png",
     "Rarity": 5,
     "Element": "Ice",
     "Class": "Preservation",
@@ -203,7 +203,7 @@
       "guinafen"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "guinafen.webp",
+    "Image": "guinafen.png",
     "Rarity": 4,
     "Element": "Fire",
     "Class": "Nihility",
@@ -221,7 +221,7 @@
       "herta"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "herta.webp",
+    "Image": "herta.png",
     "Rarity": 4,
     "Element": "Ice",
     "Class": "Erudition",
@@ -239,7 +239,7 @@
       "himeko"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "himeko.webp",
+    "Image": "himeko.png",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Erudition",
@@ -257,7 +257,7 @@
       "hook"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "hook.webp",
+    "Image": "hook.png",
     "Rarity": 4,
     "Element": "Fire",
     "Class": "Destruction",
@@ -275,7 +275,7 @@
       "jingyuan"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "jingyuan.webp",
+    "Image": "jingyuan.png",
     "Rarity": 5,
     "Element": "Lightning",
     "Class": "Erudition",
@@ -293,7 +293,7 @@
       "jingliu"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "jingliu.webp",
+    "Image": "jingliu.png",
     "Rarity": 5,
     "Element": "Ice",
     "Class": "Destruction",
@@ -311,7 +311,7 @@
       "kafka"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "kafka.webp",
+    "Image": "kafka.png",
     "Rarity": 5,
     "Element": "Lightning",
     "Class": "Nihility",
@@ -330,7 +330,7 @@
       "luka"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "luka.webp",
+    "Image": "luka.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Nihility",
@@ -348,7 +348,7 @@
       "luocha"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "luocha.webp",
+    "Image": "luocha.png",
     "Rarity": 5,
     "Element": "Imaginary",
     "Class": "Abundance",
@@ -366,7 +366,7 @@
       "lynx"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "lynx.webp",
+    "Image": "lynx.png",
     "Rarity": 4,
     "Element": "Quantum",
     "Class": "Abundance",
@@ -384,7 +384,7 @@
       "march7"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "march7.webp",
+    "Image": "march7.png",
     "Rarity": 4,
     "Element": "Ice",
     "Class": "Preservation",
@@ -402,7 +402,7 @@
       "natasha"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "natasha.webp",
+    "Image": "natasha.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Abundance",
@@ -420,7 +420,7 @@
       "pela"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "pela.webp",
+    "Image": "pela.png",
     "Rarity": 4,
     "Element": "Ice",
     "Class": "Nihility",
@@ -438,7 +438,7 @@
       "qingque"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "qingque.webp",
+    "Image": "qingque.png",
     "Rarity": 4,
     "Element": "Quantum",
     "Class": "Erudition",
@@ -456,7 +456,7 @@
       "sampo"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "sampo.webp",
+    "Image": "sampo.png",
     "Rarity": 4,
     "Element": "Wind",
     "Class": "Nihility",
@@ -474,7 +474,7 @@
       "seele"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "seele.webp",
+    "Image": "seele.png",
     "Rarity": 5,
     "Element": "Quantum",
     "Class": "Hunt",
@@ -492,7 +492,7 @@
       "serval"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "serval.webp",
+    "Image": "serval.png",
     "Rarity": 4,
     "Element": "Lightning",
     "Class": "Erudition",
@@ -510,7 +510,7 @@
       "silverwolf"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "silverwolf.webp",
+    "Image": "silverwolf.png",
     "Rarity": 5,
     "Element": "Quantum",
     "Class": "Nihility",
@@ -528,7 +528,7 @@
       "sushang"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "sushang.webp",
+    "Image": "sushang.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Hunt",
@@ -546,7 +546,7 @@
       "tingyun"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "tingyun.webp",
+    "Image": "tingyun.png",
     "Rarity": 4,
     "Element": "Lightning",
     "Class": "Harmony",
@@ -564,7 +564,7 @@
       "topaz"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "topaz.webp",
+    "Image": "topaz.png",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Hunt",
@@ -582,7 +582,7 @@
       "welt"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "welt.webp",
+    "Image": "welt.png",
     "Rarity": 5,
     "Element": "Imaginary",
     "Class": "Nihility",
@@ -600,7 +600,7 @@
       "yanqing"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "yanqing.webp",
+    "Image": "yanqing.png",
     "Rarity": 5,
     "Element": "Ice",
     "Class": "Hunt",
@@ -618,7 +618,7 @@
       "yukong"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "yukong.webp",
+    "Image": "yukong.png",
     "Rarity": 4,
     "Element": "Imaginary",
     "Class": "Harmony",
@@ -636,7 +636,7 @@
       "argenti"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "argenti.webp",
+    "Image": "argenti.png",
     "Rarity": 5,
     "Element": "Physical",
     "Class": "Erudition",
@@ -654,7 +654,7 @@
       "drratio"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "drratio.webp",
+    "Image": "drratio.png",
     "Rarity": 5,
     "Element": "Imaginary",
     "Class": "Hunt",
@@ -672,7 +672,7 @@
       "hanya"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "hanya.webp",
+    "Image": "hanya.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Harmony",
@@ -708,7 +708,7 @@
       "ruanmei"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "ruanmei.webp",
+    "Image": "ruanmei.png",
     "Rarity": 5,
     "Element": "Ice",
     "Class": "Harmony",
@@ -726,7 +726,7 @@
       "xueyi"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "xueyi.webp",
+    "Image": "xueyi.png",
     "Rarity": 4,
     "Element": "Quantum",
     "Class": "Destruction",
