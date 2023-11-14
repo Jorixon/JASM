@@ -70,7 +70,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "AmberCN",
-        "Image": "Character_Skin_AmberCN_Thumb.webp",
+        "Image": "Character_Skin_AmberCN_Thumb.png",
         "InternalName": "AmberCN",
         "DisplayName": "AmberCN"
       }
@@ -132,7 +132,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "BarbaraSummertime",
-        "Image": "Character_Skin_BarbaraSummertime_Thumb.webp",
+        "Image": "Character_Skin_BarbaraSummertime_Thumb.png",
         "InternalName": "Summertime Sparkle",
         "DisplayName": "Summertime Sparkle"
       }
@@ -200,7 +200,7 @@
       "charlotte"
     ],
     "ReleaseDate": "2023-11-08T00:00:00",
-    "Image": "Character_Charlotte_Thumb.webp",
+    "Image": "Character_Charlotte_Thumb.png",
     "Rarity": 0,
     "Element": "Cryo",
     "Class": "",
@@ -236,7 +236,7 @@
       "clorinde"
     ],
     "ReleaseDate": "2024-01-01T00:00:00",
-    "Image": "Character_Clorinde_Thumb.webp",
+    "Image": "Character_Clorinde_Thumb.png",
     "Rarity": 0,
     "Element": "Electro",
     "Class": "",
@@ -319,7 +319,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "DilucFlamme",
-        "Image": "Character_Skin_DilucFlamme_Thumb.webp",
+        "Image": "Character_Skin_DilucFlamme_Thumb.png",
         "InternalName": "Red Dead of Night",
         "DisplayName": "Red Dead of Night"
       }
@@ -416,7 +416,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "FischlHighness",
-        "Image": "Character_Skin_FischlHighness_Thumb.webp",
+        "Image": "Character_Skin_FischlHighness_Thumb.png",
         "InternalName": "Ein Immernachtstraum",
         "DisplayName": "Ein Immernachtstraum"
       }
@@ -449,7 +449,7 @@
       "focalors"
     ],
     "ReleaseDate": "2023-11-08T00:00:00",
-    "Image": "Character_Furina_Thumb.webp",
+    "Image": "Character_Furina_Thumb.png",
     "Rarity": 0,
     "Element": "Hydro",
     "Class": "",
@@ -533,13 +533,13 @@
     "InGameSkins": [
       {
         "ModFilesName": "JeanCN",
-        "Image": "Character_Skin_JeanCN_Thumb.webp",
+        "Image": "Character_Skin_JeanCN_Thumb.png",
         "InternalName": "JeanCN",
         "DisplayName": "JeanCN"
       },
       {
         "ModFilesName": "JeanSea",
-        "Image": "Character_Skin_JeanSea_Thumb.webp",
+        "Image": "Character_Skin_JeanSea_Thumb.png",
         "InternalName": "Sea Breeze Dandelion",
         "DisplayName": "Sea Breeze Dandelion"
       }
@@ -584,7 +584,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KaeyaSailwind",
-        "Image": "Character_Skin_KaeyaSailwind_Thumb.webp",
+        "Image": "Character_Skin_KaeyaSailwind_Thumb.png",
         "InternalName": "Sailwind Shadow",
         "DisplayName": "Sailwind Shadow"
       }
@@ -610,7 +610,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "AyakaSpringbloom",
-        "Image": "Character_Skin_AyakaSpringbloom_Thumb.webp",
+        "Image": "Character_Skin_AyakaSpringbloom_Thumb.png",
         "InternalName": "Springbloom Missive",
         "DisplayName": "Springbloom Missive"
       }
@@ -672,7 +672,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KeqingOpulent",
-        "Image": "Character_Skin_KeqingOpulent_Thumb.webp",
+        "Image": "Character_Skin_KeqingOpulent_Thumb.png",
         "InternalName": "Opulent Splendor",
         "DisplayName": "Opulent Splendor"
       }
@@ -715,7 +715,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KleeBlossoming",
-        "Image": "Character_Skin_KleeBlossoming_Thumb.webp",
+        "Image": "Character_Skin_KleeBlossoming_Thumb.png",
         "InternalName": "Blossoming Starlight",
         "DisplayName": "Blossoming Starlight"
       }
@@ -796,7 +796,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "LisaSobriquet",
-        "Image": "Character_Skin_LisaSobriquet_Thumb.webp",
+        "Image": "Character_Skin_LisaSobriquet_Thumb.png",
         "InternalName": "A Sobriquet Under Shade",
         "DisplayName": "A Sobriquet Under Shade"
       },
@@ -881,7 +881,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "MonaCN",
-        "Image": "Character_Skin_MonaCN_Thumb.webp",
+        "Image": "Character_Skin_MonaCN_Thumb.png",
         "InternalName": "MonaCN",
         "DisplayName": "MonaCN"
       }
@@ -914,7 +914,7 @@
       "navia"
     ],
     "ReleaseDate": "2024-01-01T00:00:00",
-    "Image": "Character_Navia_Thumb.webp",
+    "Image": "Character_Navia_Thumb.png",
     "Rarity": 0,
     "Element": "Geo",
     "Class": "",
@@ -932,7 +932,7 @@
       "neuvillette"
     ],
     "ReleaseDate": "2023-09-27T00:00:00",
-    "Image": "Character_Neuvillette_Thumb.webp",
+    "Image": "Character_Neuvillette_Thumb.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Catalyst",
@@ -979,7 +979,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "NingguangOrchid",
-        "Image": "Character_Skin_NingguangOrchid_Thumb.webp",
+        "Image": "Character_Skin_NingguangOrchid_Thumb.png",
         "InternalName": "Orchid's Evening Gown",
         "DisplayName": "Orchid's Evening Gown"
       }
@@ -1095,7 +1095,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "RosariaCN",
-        "Image": "Character_Skin_RosariaCN_Thumb.webp",
+        "Image": "Character_Skin_RosariaCN_Thumb.png",
         "InternalName": "RosariaCN",
         "DisplayName": "RosariaCN"
       }
@@ -1257,7 +1257,7 @@
       "lumine"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Traveler_(Female)_Thumb.webp",
+    "Image": "Character_Traveler_(Female)_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -1276,7 +1276,7 @@
       "aether"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Traveler_(Male)_Thumb.webp",
+    "Image": "Character_Traveler_(Male)_Thumb.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -1532,7 +1532,7 @@
       "wriothesley"
     ],
     "ReleaseDate": "2023-10-17T00:00:00",
-    "Image": "Character_Wriothesley_Thumb.webp",
+    "Image": "Character_Wriothesley_Thumb.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Catalyst",

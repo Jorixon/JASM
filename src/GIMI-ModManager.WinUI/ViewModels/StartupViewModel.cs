@@ -25,12 +25,29 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly IGameService _gameService;
     private readonly SelectedGameService _selectedGameService;
 
+
+    private const string _genshinModelImporterName = "Genshin-Impact-Model-Importer";
+    private const string _genshinModelImporterShortName = "GIMI";
+    private readonly Uri _genshinGameBananaUrl = new("https://gamebanana.com/games/8552");
+    private readonly Uri _genshinModelImporterUrl = new("https://github.com/SilentNightSound/GI-Model-Importer");
+
+    private const string _honkaiModelImporterName = "Star-Rail-Model-Importer";
+    private const string _honkaiModelImporterShortName = "SRMI";
+    private readonly Uri _honkaiGameBananaUrl = new("https://gamebanana.com/games/18366");
+    private readonly Uri _honkaiModelImporterUrl = new("https://github.com/SilentNightSound/SR-Model-Importer");
+
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
     [ObservableProperty] private string _selectedGame = SelectedGameService.Genshin;
+
+    [ObservableProperty] private string _modelImporterName = _genshinModelImporterName;
+    [ObservableProperty] private string _modelImporterShortName = _genshinModelImporterShortName;
+    [ObservableProperty] private Uri _gameBananaUrl = new("https://gamebanana.com/games/8552");
+
+    [ObservableProperty] private Uri _modelImporterUrl = new("https://github.com/SilentNightSound");
 
     public ObservableCollection<string> Games { get; } = new()
     {
@@ -134,6 +151,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         SetPaths(settings);
 
         SelectedGame = await _selectedGameService.GetSelectedGameAsync();
+        SetGameInfo(SelectedGame);
     }
 
     [RelayCommand]
@@ -149,6 +167,26 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
         SetPaths(settings);
+        SetGameInfo(game);
+    }
+
+
+    private void SetGameInfo(string game)
+    {
+        if (game == SelectedGameService.Genshin)
+        {
+            ModelImporterName = _genshinModelImporterName;
+            ModelImporterShortName = _genshinModelImporterShortName;
+            GameBananaUrl = _genshinGameBananaUrl;
+            ModelImporterUrl = _genshinModelImporterUrl;
+        }
+        else if (game == SelectedGameService.Honkai)
+        {
+            ModelImporterName = _honkaiModelImporterName;
+            ModelImporterShortName = _honkaiModelImporterShortName;
+            GameBananaUrl = _honkaiGameBananaUrl;
+            ModelImporterUrl = _honkaiModelImporterUrl;
+        }
     }
 
 
