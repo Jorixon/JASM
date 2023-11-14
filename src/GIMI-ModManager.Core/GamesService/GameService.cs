@@ -22,10 +22,11 @@ public class GameService : IGameService
     private GameSettingsManager _gameSettingsManager = null!;
 
 
-    public string GameName { get; private set; } = string.Empty;
-    public string GameShortName { get; private set; } = string.Empty;
-    public string GameIcon { get; private set; } = string.Empty;
-    public Uri GameBananaUrl { get; private set; } = new("https://gamebanana.com/");
+    public GameInfo GameInfo { get; private set; }
+    public string GameName => GameInfo.GameName;
+    public string GameShortName => GameInfo.GameShortName;
+    public string GameIcon => GameInfo.GameIcon;
+    public Uri GameBananaUrl => GameInfo.GameBananaUrl;
 
     private readonly List<ICharacter> _characters = new();
 
@@ -247,19 +248,12 @@ public class GameService : IGameService
         if (!File.Exists(gameFilePath))
             throw new FileNotFoundException($"{gameFileName} File not found at path: {gameFilePath}");
 
-        var game = JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath));
+        var jsonGameInfo = JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath));
 
-        if (game is null)
+        if (jsonGameInfo is null)
             throw new InvalidOperationException($"{gameFilePath} file is empty");
 
-        GameName = game.GameName;
-        GameShortName = game.GameShortName;
-        GameBananaUrl = Uri.TryCreate(game.GameBananaUrl, UriKind.Absolute, out var uri) ? uri : null;
-        var iconPath = Path.Combine(_assetsDirectory.FullName, "Images", game.GameIcon);
-        if (File.Exists(iconPath))
-            GameIcon = Path.Combine(_assetsDirectory.FullName, "Images", game.GameIcon);
-        else
-            GameIcon = " ";
+        GameInfo = new GameInfo(jsonGameInfo, _assetsDirectory);
     }
 
     private async Task InitializeRegionsAsync()
@@ -726,3 +720,4 @@ internal abstract class BaseMapper<T> where T : class, INameable, new()
         }
     }
 }
+

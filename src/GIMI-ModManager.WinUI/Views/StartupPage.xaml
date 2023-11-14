@@ -34,7 +34,8 @@
                 VerticalAlignment="Bottom"
                 ItemsSource="{x:Bind ViewModel.Games}"
                 SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
-                SelectionChanged="GameSelector_OnSelectionChanged" />
+                SelectionChanged="GameSelector_OnSelectionChanged"
+                ToolTipService.ToolTip="Select the game you want to manage mods for. This can be changed at any time on the settings page" />
         </Grid>
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
@@ -57,9 +58,16 @@
                             TextWrapping="WrapWholeWords" />
                         <StackPanel Orientation="Horizontal">
 
-                            <HyperlinkButton NavigateUri="https://github.com/SilentNightSound/GI-Model-Importer" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">Genshin-Impact-Model-Importer (Github)</HyperlinkButton>
-                            <HyperlinkButton NavigateUri="https://gamebanana.com/games/8552" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">GameBanana</HyperlinkButton>
-                            <HyperlinkButton NavigateUri="https://www.nexusmods.com/genshinimpact" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">Nexusmods</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="{x:Bind ViewModel.ModelImporterUrl, Mode=OneWay}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">
+                                <HyperlinkButton.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Margin="0,0,4,0" Text="{x:Bind ViewModel.ModelImporterName, Mode=OneWay}" />
+                                        <TextBlock Text="(GitHub)" />
+                                    </StackPanel>
+                                </HyperlinkButton.Content>
+                            </HyperlinkButton>
+                            <HyperlinkButton NavigateUri="{x:Bind ViewModel.GameBananaUrl, Mode=OneWay}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">GameBanana</HyperlinkButton>
+                            <HyperlinkButton NavigateUri="https://www.nexusmods.com/" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">Nexusmods</HyperlinkButton>
                         </StackPanel>
 
                     </StackPanel>

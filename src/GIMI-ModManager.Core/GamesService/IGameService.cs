@@ -5,6 +5,7 @@ namespace GIMI_ModManager.Core.GamesService;
 
 public interface IGameService
 {
+    public GameInfo GameInfo { get; }
     public string GameName { get; }
     public string GameShortName { get; }
     public string GameIcon { get; }
