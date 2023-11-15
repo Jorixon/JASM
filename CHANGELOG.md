@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/Jorixon/JASM/compare/v1.6.3...v1.7.0) (2023-11-15)
+
+
+### Features
+
+* Honkai Star Rail support added ([#83](https://github.com/Jorixon/JASM/issues/83)) ([05c4d86](https://github.com/Jorixon/JASM/commit/05c4d862e1e1c70d1b9234dc9c05786314feff8f))
+
+
+### Bug Fixes
+
+* Unable to restart app when switching game ([a8d59e2](https://github.com/Jorixon/JASM/commit/a8d59e2dd77fa7f115c0f7e62e1d6d1e7978c150))
+
 ## [1.6.3](https://github.com/Jorixon/JASM/compare/v1.6.2...v1.6.3) (2023-11-11)
 
 
