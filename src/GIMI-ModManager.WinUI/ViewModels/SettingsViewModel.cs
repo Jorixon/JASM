@@ -364,7 +364,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        await Task.Delay(TimeSpan.FromSeconds(3));
+        await Task.Delay(TimeSpan.FromSeconds(2));
 
 
         var exePath = Assembly.GetEntryAssembly()!.Location;

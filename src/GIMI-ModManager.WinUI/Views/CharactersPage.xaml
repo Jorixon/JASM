@@ -80,7 +80,10 @@
                     Style="{StaticResource TitleTextBlockStyle}"
                     Text="Character Overview" />
 
-                <HyperlinkButton VerticalAlignment="Bottom" NavigateUri="https://gamebanana.com/games/8552">
+                <HyperlinkButton
+                    VerticalAlignment="Bottom"
+                    NavigateUri="{x:Bind ViewModel.GameBananaLink, Mode=OneWay}"
+                    ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="0,0,8,0" Text="GameBanana" />
                         <FontIcon FontSize="12" Glyph="&#xE8A7;" />
@@ -138,10 +141,17 @@
                 <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="0,0,4,0" Text="{x:Bind ViewModel.ShortGameName}" />
-                        <Image
+                        <Grid
                             Width="16"
                             Height="16"
-                            Source="{x:Bind ViewModel.StartGameIcon}" />
+                            CornerRadius="8">
+                            <Image>
+                                <Image.Source>
+                                    <BitmapImage DecodePixelWidth="16" UriSource="{x:Bind ViewModel.StartGameIcon}" />
+                                </Image.Source>
+                            </Image>
+                        </Grid>
+
                     </StackPanel>
                     <ToolTipService.ToolTip>
                         <StackPanel Orientation="Horizontal">
