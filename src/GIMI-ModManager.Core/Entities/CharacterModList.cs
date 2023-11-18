@@ -11,7 +11,16 @@ namespace GIMI_ModManager.Core.Entities;
 public sealed class CharacterModList : ICharacterModList
 {
     private readonly ILogger? _logger;
-    public IReadOnlyCollection<CharacterSkinEntry> Mods => new List<CharacterSkinEntry>(_mods).AsReadOnly();
+
+    public IReadOnlyCollection<CharacterSkinEntry> Mods
+    {
+        get
+        {
+            lock (_modsLock)
+                return new List<CharacterSkinEntry>(_mods).AsReadOnly();
+        }
+    }
+
     public string AbsModsFolderPath { get; }
     private readonly List<CharacterSkinEntry> _mods = new();
     public const string DISABLED_PREFIX = ModFolderHelpers.DISABLED_PREFIX;

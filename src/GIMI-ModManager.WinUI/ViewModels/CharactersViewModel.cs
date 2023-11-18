@@ -823,9 +823,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var characterMods = modList.Mods.Select(ske => ske.Mod.Id);
+        var check = CheckModsFor.Character(character.Character);
 
-        _modUpdateAvailableChecker.CheckNow(characterMods, true);
+        _modUpdateAvailableChecker.CheckNow(check.WithIgnoreLastChecked());
     }
 }
 

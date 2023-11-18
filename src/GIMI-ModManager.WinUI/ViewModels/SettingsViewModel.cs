@@ -688,9 +688,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         await Task.Run(async () =>
         {
             if (modUpdateCheckerSettings.Enabled)
-                await _modUpdateAvailableChecker.StopAsync();
+                await _modUpdateAvailableChecker.DisableAutoCheckerAsync();
             else
-                await _modUpdateAvailableChecker.StartBackgroundCheckerAsync();
+                await _modUpdateAvailableChecker.EnableAutoCheckerAsync();
 
             await Task.Delay(1000).ConfigureAwait(false);
         });
