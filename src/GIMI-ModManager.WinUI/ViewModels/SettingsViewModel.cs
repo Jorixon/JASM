@@ -364,17 +364,44 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        await Task.Delay(TimeSpan.FromSeconds(3));
+        await Task.Delay(TimeSpan.FromSeconds(2));
 
 
         var exePath = Assembly.GetEntryAssembly()!.Location;
         exePath = Path.ChangeExtension(exePath, ".exe");
 
-        Process.Start(new ProcessStartInfo
+        if (exePath.IsNullOrEmpty() || !File.Exists(exePath))
         {
-            FileName = exePath,
-            UseShellExecute = true
-        });
+            exePath = Environment.ProcessPath;
+            exePath = Path.ChangeExtension(exePath, ".exe");
+            _logger.Debug("Restarting from process path: {ExePath}", exePath);
+        }
+
+        if (exePath.IsNullOrEmpty() || !File.Exists(exePath))
+        {
+            _logger.Error("Unable to find exe path at {ExePath}. Shutting down...", exePath);
+            Application.Current.Exit();
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = exePath,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error restarting app");
+            _notificationManager.ShowNotification("Error restarting app", "Please restart manually",
+                TimeSpan.FromSeconds(4));
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            Application.Current.Exit();
+            return;
+        }
+
 
         Application.Current.Exit();
     }

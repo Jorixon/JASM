@@ -2,5 +2,6 @@
   "GameName": "Genshin Impact",
   "GameShortName": "Genshin",
   "RarityName": "Quality",
-  "GameIcon": "Start_Game.png"
+  "GameIcon": "Start_Game.png",
+  "GameBananaUrl": "https://gamebanana.com/games/8552"
 }

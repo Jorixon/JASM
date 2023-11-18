@@ -2,5 +2,33 @@
   {
     "InternalName": "Adaptive",
     "DisplayName": "Adaptive"
+  },
+  {
+    "InternalName": "Abundance",
+    "DisplayName": "Abundance"
+  },
+  {
+    "InternalName": "Destruction",
+    "DisplayName": "Destruction"
+  },
+  {
+    "InternalName": "Erudition",
+    "DisplayName": "Erudition"
+  },
+  {
+    "InternalName": "Harmony",
+    "DisplayName": "Harmony"
+  },
+  {
+    "InternalName": "Hunt",
+    "DisplayName": "Hunt"
+  },
+  {
+    "InternalName": "Nihility",
+    "DisplayName": "Nihility"
+  },
+  {
+    "InternalName": "Preservation",
+    "DisplayName": "Preservation"
   }
 ]
