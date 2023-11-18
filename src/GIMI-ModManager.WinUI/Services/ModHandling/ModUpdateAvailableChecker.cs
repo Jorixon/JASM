@@ -27,12 +27,23 @@ public sealed class ModUpdateAvailableChecker
 
     private readonly TimeSpan _waitTime = TimeSpan.FromMinutes(30);
 
+    private readonly BlockingCollection<ModCheckRequest>
+        _modCheckRequests = new(new ConcurrentQueue<ModCheckRequest>());
+
     public event EventHandler<UpdateCheckerEvent>? OnUpdateCheckerEvent;
     public RunningState Status { get; private set; }
     public DateTime? NextRunAt { get; private set; }
 
-    private readonly BlockingCollection<CheckModsFor>
-        _modCheckRequests = new(new ConcurrentQueue<CheckModsFor>());
+
+    public bool IsReady => Status is RunningState.Stopped or RunningState.Waiting;
+
+    public enum RunningState
+    {
+        Running,
+        Waiting,
+        Stopped,
+        Error
+    }
 
     public ModUpdateAvailableChecker(ISkinManagerService skinManagerService, ILogger logger,
         ModNotificationManager modNotificationManager, GameBananaService gameBananaService,
@@ -57,33 +68,6 @@ public sealed class ModUpdateAvailableChecker
         return Task.CompletedTask;
     }
 
-    private CheckModsFor GetNextRequest(CancellationToken stoppingToken)
-    {
-        var check = _modCheckRequests.Take(stoppingToken);
-        Status = RunningState.Running;
-        OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status)
-        {
-            CheckModsFor = check
-        });
-        return check;
-    }
-
-    private async Task FinishedRequestAsync(ModCheckRequest request, CancellationToken stoppingToken)
-    {
-        var settings = await _localSettingsService
-            .ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(BackGroundModCheckerSettings.Key)
-            .ConfigureAwait(false);
-
-        stoppingToken.ThrowIfCancellationRequested();
-
-        Status = settings.Enabled ? RunningState.Waiting : RunningState.Stopped;
-
-        OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status, NextRunAt)
-        {
-            CheckModsFor = request.CheckModsFor,
-            ModCheckRequest = request
-        });
-    }
 
     private async Task StartBackgroundChecker(CancellationToken stoppingToken)
     {
@@ -133,15 +117,15 @@ public sealed class ModUpdateAvailableChecker
             }
 
 
-            var request = new ModCheckRequest(modCheckRequest);
-            request.SetModsToCheck(modsToCheck);
+            var requestOperation = new ModCheckOperation(modCheckRequest);
+            requestOperation.SetModsToCheck(modsToCheck);
 
 
             try
             {
                 stoppingToken.ThrowIfCancellationRequested();
-                await RunCheckerAsync(request, stoppingToken).ConfigureAwait(false);
-                await FinishedRequestAsync(request, stoppingToken).ConfigureAwait(false);
+                await RunCheckerAsync(requestOperation, stoppingToken).ConfigureAwait(false);
+                await FinishedRequestAsync(requestOperation, stoppingToken).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
@@ -167,9 +151,38 @@ public sealed class ModUpdateAvailableChecker
         _logger.Debug("ModUpdateAvailableChecker stopped");
     }
 
-    private async Task RunCheckerAsync(ModCheckRequest modCheckRequest, CancellationToken runningCancellationToken)
+    private ModCheckRequest GetNextRequest(CancellationToken stoppingToken)
     {
-        if (!modCheckRequest.CheckModsFor.ScheduledCheck && !modCheckRequest.ModsToCheck.Any())
+        var check = _modCheckRequests.Take(stoppingToken);
+        Status = RunningState.Running;
+        OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status)
+        {
+            ModCheckRequest = check
+        });
+        return check;
+    }
+
+    private async Task FinishedRequestAsync(ModCheckOperation operation, CancellationToken stoppingToken)
+    {
+        var settings = await _localSettingsService
+            .ReadOrCreateSettingAsync<BackGroundModCheckerSettings>(BackGroundModCheckerSettings.Key)
+            .ConfigureAwait(false);
+
+        stoppingToken.ThrowIfCancellationRequested();
+
+        Status = settings.Enabled ? RunningState.Waiting : RunningState.Stopped;
+
+        OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status, NextRunAt)
+        {
+            ModCheckRequest = operation.ModCheckRequest,
+            ModCheckOperation = operation
+        });
+    }
+
+
+    private async Task RunCheckerAsync(ModCheckOperation modCheckOperation, CancellationToken runningCancellationToken)
+    {
+        if (!modCheckOperation.ModCheckRequest.ScheduledCheck && !modCheckOperation.ModsToCheck.Any())
         {
             _notificationManager.ShowNotification("No mods to check for updates",
                 $"None of the mods were valid, therefore no check has been performed", TimeSpan.FromSeconds(4));
@@ -180,16 +193,17 @@ public sealed class ModUpdateAvailableChecker
         OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status));
 
         var stopWatch = Stopwatch.StartNew();
-        await CheckForUpdates(modCheckRequest, cancellationToken: runningCancellationToken).ConfigureAwait(false);
+        await CheckForUpdates(modCheckOperation, cancellationToken: runningCancellationToken).ConfigureAwait(false);
         stopWatch.Stop();
 
         _logger.Debug("Finished checking for mod updates in {Elapsed}", stopWatch.Elapsed);
 
-        if (modCheckRequest.CheckModsFor.IsCharacterCheck && modCheckRequest.CheckModsFor.Characters.Length == 1)
+        if (modCheckOperation.ModCheckRequest.IsCharacterCheck &&
+            modCheckOperation.ModCheckRequest.Characters.Length == 1)
         {
             _notificationManager.ShowNotification("Finished checking for mod updates",
-                $"Finished checking {modCheckRequest.ModsToCheck.Count} mods for updates for" +
-                $" {modCheckRequest.CheckModsFor.Characters.First().DisplayName}",
+                $"Finished checking {modCheckOperation.ModsToCheck.Count} mods for updates for" +
+                $" {modCheckOperation.ModCheckRequest.Characters.First().DisplayName}",
                 TimeSpan.FromSeconds(4));
         }
         else
@@ -226,9 +240,10 @@ public sealed class ModUpdateAvailableChecker
         return true;
     }
 
-    private async Task CheckForUpdates(ModCheckRequest modCheckRequest, CancellationToken cancellationToken = default)
+    private async Task CheckForUpdates(ModCheckOperation modCheckOperation,
+        CancellationToken cancellationToken = default)
     {
-        var modEntries = modCheckRequest.ModsToCheck;
+        var modEntries = modCheckOperation.ModsToCheck;
 
 
         var tasks = new List<Task<ModsRetrievedResult>>();
@@ -281,7 +296,7 @@ public sealed class ModUpdateAvailableChecker
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        modCheckRequest.RequestFinished();
+        modCheckOperation.RequestFinished();
     }
 
     private Task AddModNotifications(CharacterSkinEntry characterSkinEntry, ModsRetrievedResult result)
@@ -307,17 +322,17 @@ public sealed class ModUpdateAvailableChecker
         return _modNotificationManager.AddModNotification(modNotification, persistent: true);
     }
 
-    public void CheckNow(CheckModsFor? checkSettings = null)
+    public void CheckNow(ModCheckRequest? checkRequest = null)
     {
-        if (checkSettings is null)
+        if (checkRequest is null)
         {
             _modCheckRequests.Add(
-                CheckModsFor.ModId(
+                ModCheckRequest.ForModId(
                     _skinManagerService.CharacterModLists.SelectMany(chm => chm.Mods.Select(ske => ske.Mod.Id))));
             return;
         }
 
-        _modCheckRequests.Add(checkSettings);
+        _modCheckRequests.Add(checkRequest);
     }
 
     public void CancelAndStop()
@@ -355,15 +370,6 @@ public sealed class ModUpdateAvailableChecker
         ResetProducer();
     }
 
-    public enum RunningState
-    {
-        Running,
-        Waiting,
-        Stopped,
-        Error
-    }
-
-    public bool IsReady => Status is RunningState.Stopped or RunningState.Waiting;
 
     private async Task AutoCheckerProducer(CancellationToken stoppingToken)
     {
@@ -387,7 +393,7 @@ public sealed class ModUpdateAvailableChecker
                     .ConfigureAwait(false);
             }
 
-            var check = CheckModsFor.ModId(
+            var check = ModCheckRequest.ForModId(
                 _skinManagerService.CharacterModLists.SelectMany(chm => chm.Mods.Select(ske => ske.Mod.Id)));
             check.ScheduledCheck = true;
 
@@ -439,8 +445,8 @@ public class UpdateCheckerEvent : EventArgs
 {
     public RunningState State { get; }
     public DateTime? NextRunAt { get; }
-    public CheckModsFor? CheckModsFor { get; init; }
     public ModCheckRequest? ModCheckRequest { get; init; }
+    public ModCheckOperation? ModCheckOperation { get; init; }
 
     public UpdateCheckerEvent(RunningState state, DateTime? nextRunAt = null)
     {
@@ -449,10 +455,10 @@ public class UpdateCheckerEvent : EventArgs
     }
 }
 
-public class ModCheckRequest
+public class ModCheckOperation
 {
-    public Guid Id => CheckModsFor.Id;
-    public CheckModsFor CheckModsFor { get; }
+    public Guid Id => ModCheckRequest.Id;
+    public ModCheckRequest ModCheckRequest { get; }
 
     public DateTime? RequestFinishedAt { get; private set; }
 
@@ -462,9 +468,9 @@ public class ModCheckRequest
     public IReadOnlyList<CharacterSkinEntry> ModsToCheck => _modsToCheck.AsReadOnly();
 
 
-    public ModCheckRequest(CheckModsFor request)
+    public ModCheckOperation(ModCheckRequest request)
     {
-        CheckModsFor = request;
+        ModCheckRequest = request;
     }
 
     public void SetModsToCheck(IEnumerable<CharacterSkinEntry> mods)
@@ -482,7 +488,7 @@ public class ModCheckRequest
     }
 }
 
-public class CheckModsFor
+public class ModCheckRequest
 {
     public Guid Id { get; } = Guid.NewGuid();
     public DateTime RequestedAt { get; } = DateTime.Now;
@@ -499,37 +505,37 @@ public class CheckModsFor
     [MemberNotNullWhen(true, nameof(ModIds))]
     public bool IsModIdCheck => ModIds is not null;
 
-    private CheckModsFor()
+    private ModCheckRequest()
     {
     }
 
-    public static CheckModsFor Character(IModdableObject character)
+    public static ModCheckRequest ForCharacter(IModdableObject character)
     {
-        return new CheckModsFor()
+        return new ModCheckRequest()
         {
             Characters = new[] { character }
         };
     }
 
-    public static CheckModsFor ModId(Guid modId)
+    public static ModCheckRequest ForModId(Guid modId)
     {
-        return new CheckModsFor()
+        return new ModCheckRequest()
         {
             ModIds = new[] { modId }
         };
     }
 
-    public static CheckModsFor ModId(IEnumerable<Guid> modIds)
+    public static ModCheckRequest ForModId(IEnumerable<Guid> modIds)
     {
-        return new CheckModsFor()
+        return new ModCheckRequest()
         {
             ModIds = modIds.ToArray()
         };
     }
 
-    public CheckModsFor WithIgnoreLastChecked()
+    public ModCheckRequest WithIgnoreLastChecked(bool ignoreMinimumWaitTime = true)
     {
-        IgnoreLastCheckedTime = true;
+        IgnoreLastCheckedTime = ignoreMinimumWaitTime;
         return this;
     }
 }

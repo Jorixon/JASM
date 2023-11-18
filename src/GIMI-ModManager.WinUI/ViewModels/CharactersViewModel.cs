@@ -823,7 +823,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var check = CheckModsFor.Character(character.Character);
+        var check = ModCheckRequest.ForCharacter(character.Character);
 
         _modUpdateAvailableChecker.CheckNow(check.WithIgnoreLastChecked());
     }
