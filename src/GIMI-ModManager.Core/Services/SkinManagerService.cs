@@ -1,4 +1,6 @@
-﻿using GIMI_ModManager.Core.Contracts.Entities;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
@@ -25,7 +27,20 @@ public sealed class SkinManagerService : ISkinManagerService
     private FileSystemWatcher _userIniWatcher = null!;
 
     private readonly List<ICharacterModList> _characterModLists = new();
-    public IReadOnlyCollection<ICharacterModList> CharacterModLists => _characterModLists.AsReadOnly();
+
+    public IReadOnlyCollection<ICharacterModList> CharacterModLists
+    {
+        get
+        {
+            lock (_modListLock)
+            {
+                return _characterModLists.AsReadOnly();
+            }
+        }
+    }
+
+
+    private readonly object _modListLock = new();
     public bool IsInitialized { get; private set; }
 
     public SkinManagerService(IGameService gameService, ILogger logger, ModCrawlerService modCrawlerService)
@@ -61,7 +76,12 @@ public sealed class SkinManagerService : ISkinManagerService
             {
                 try
                 {
-                    var mod = await SkinMod.CreateModAsync(modFolder.FullName);
+                    var mod = await SkinMod.CreateModAsync(modFolder.FullName).ConfigureAwait(false);
+
+                    if (GetModById(mod.Id) is not null)
+                        mod = await SkinMod.CreateModAsync(modFolder.FullName, true).ConfigureAwait(false);
+
+
                     characterModList.TrackMod(mod);
                 }
                 catch (Exception e)
@@ -143,12 +163,15 @@ public sealed class SkinManagerService : ISkinManagerService
 
                 try
                 {
-                    var newMod = await SkinMod.CreateModAsync(modDirectory.FullName);
+                    var newMod = await SkinMod.CreateModAsync(modDirectory.FullName).ConfigureAwait(false);
 
                     if (GetModById(newMod.Id) is not null)
                     {
-                        newMod = await SkinMod.CreateModAsync(modDirectory.FullName, true);
+                        _logger.Debug("Mod '{ModName}' has ID that already exists in mod list, generating new ID",
+                            newMod.Name);
+                        newMod = await SkinMod.CreateModAsync(modDirectory.FullName, true).ConfigureAwait(false);
                     }
+
 
                     characterModList.TrackMod(newMod);
                     newModsFound.Add(newMod);
@@ -225,10 +248,8 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public event EventHandler<ExportProgress>? ModExportProgress;
 
-    public ISkinMod? GetModById(Guid id)
-    {
-        return _characterModLists.SelectMany(x => x.Mods).FirstOrDefault(x => x.Id == id)?.Mod;
-    }
+    public ISkinMod? GetModById(Guid id) =>
+        CharacterModLists.SelectMany(x => x.Mods).FirstOrDefault(x => x.Id == id)?.Mod;
 
     public Task EnableModListAsync(ICharacter moddableObject)
     {
@@ -501,6 +522,12 @@ public sealed class SkinManagerService : ISkinManagerService
         InitializeFolderStructure();
         await ScanForModsAsync();
         IsInitialized = true;
+
+#if DEBUG
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        Task.Run(DebugDuplicateIdChecker).ConfigureAwait(false);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#endif
     }
 
     private void InitializeFolderStructure()
@@ -581,6 +608,12 @@ public sealed class SkinManagerService : ISkinManagerService
             try
             {
                 mod = await SkinMod.CreateModAsync(folder);
+                if (GetModById(mod.Id) is not null)
+                {
+                    _logger.Debug("Mod '{ModName}' has ID that already exists in mod list, generating new ID",
+                        mod.Name);
+                    mod = await SkinMod.CreateModAsync(folder, true);
+                }
             }
             catch (Exception e)
             {
@@ -709,6 +742,31 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         _userIniWatcher?.Dispose();
     }
+
+#if DEBUG
+    [DoesNotReturn]
+    private async Task DebugDuplicateIdChecker()
+    {
+        while (true)
+        {
+            await Task.Delay(1000);
+            var mods = _characterModLists.SelectMany(x => x.Mods).Select(x => x.Mod);
+            var duplicateIds = mods.GroupBy(x => x.Id).Where(x => x.Count() > 1).ToArray();
+
+            if (duplicateIds.Any())
+            {
+                foreach (var duplicateId in duplicateIds)
+                {
+                    _logger.Error("Duplicate ID found: {Id}", duplicateId.Key);
+                    foreach (var mod in duplicateId)
+                        _logger.Error("Mod: {ModName}", mod.Name);
+                }
+
+                Debugger.Break();
+            }
+        }
+    }
+#endif
 }
 
 public class UserIniChanged : EventArgs

@@ -465,8 +465,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             var characterGridItemModel = FindCharacterByInternalName(character.InternalName);
             if (characterGridItemModel is null) continue;
-            var notifications =
-                await _modNotificationManager.GetNotificationsForInternalNameAsync(character.InternalName);
+
+            var characterMods = _skinManagerService.GetCharacterModList(character).Mods;
+
+            var notifications = new List<ModNotification>();
+            foreach (var characterSkinEntry in characterMods)
+            {
+                var modNotification = await _modNotificationManager.GetNotificationsForModAsync(characterSkinEntry.Id);
+                notifications.AddRange(modNotification);
+            }
 
             if (!notifications.Any())
             {

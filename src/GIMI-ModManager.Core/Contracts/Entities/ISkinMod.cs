@@ -2,7 +2,7 @@
 
 namespace GIMI_ModManager.Core.Contracts.Entities;
 
-public interface ISkinMod : IMod, IEqualityComparer<ISkinMod>
+public interface ISkinMod : IMod, IEqualityComparer<ISkinMod>, IEquatable<ISkinMod>
 {
     Guid Id { get; }
     public bool HasMergedInI { get; }
