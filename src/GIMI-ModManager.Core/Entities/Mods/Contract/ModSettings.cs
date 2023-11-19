@@ -63,12 +63,12 @@ public record ModSettings
     {
         return new ModSettings
         {
-            Id = ModsHelpers.StringToGuid(settings.Id),
+            Id = SkinModHelpers.StringToGuid(settings.Id),
             CustomName = settings.CustomName,
             Author = settings.Author,
             Version = settings.Version,
-            ModUrl = ModsHelpers.StringUrlToUri(settings.ModUrl),
-            ImagePath = ModsHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath),
+            ModUrl = SkinModHelpers.StringUrlToUri(settings.ModUrl),
+            ImagePath = SkinModHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath),
             CharacterSkinOverride = settings.CharacterSkinOverride,
             DateAdded = DateTime.TryParse(settings.DateAdded, out var dateAdded) ? dateAdded : null,
             LastChecked = DateTime.TryParse(settings.LastChecked, out var lastChecked) ? lastChecked : null
@@ -84,7 +84,7 @@ public record ModSettings
             Author = Author,
             Version = Version,
             ModUrl = ModUrl?.ToString(),
-            ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod, ImagePath?.LocalPath),
+            ImagePath = SkinModHelpers.UriPathToModRelativePath(skinMod, ImagePath?.LocalPath),
             CharacterSkinOverride = CharacterSkinOverride,
             DateAdded = DateAdded?.ToString(),
             LastChecked = LastChecked?.ToString()

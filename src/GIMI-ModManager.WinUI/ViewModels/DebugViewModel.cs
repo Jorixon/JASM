@@ -1,8 +1,12 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities.Mods.Helpers;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
@@ -20,11 +24,14 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     private readonly ModCrawlerService _modCrawlerService;
     private readonly IModUpdateChecker _modUpdateChecker;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
+    private readonly ImageHandlerService _imageHandlerService;
+    private readonly GameBananaService _gameBananaService;
 
 
     public DebugViewModel(ILogger logger, NotificationManager notificationManager,
         ISkinManagerService skinManagerService, ModCrawlerService modCrawlerService,
-        IModUpdateChecker modUpdateChecker, ModUpdateAvailableChecker modUpdateAvailableChecker)
+        IModUpdateChecker modUpdateChecker, ModUpdateAvailableChecker modUpdateAvailableChecker,
+        ImageHandlerService imageHandlerService, GameBananaService gameBananaService)
     {
         _logger = logger;
         _notificationManager = notificationManager;
@@ -32,6 +39,18 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
         _modCrawlerService = modCrawlerService;
         _modUpdateChecker = modUpdateChecker;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
+        _imageHandlerService = imageHandlerService;
+        _gameBananaService = gameBananaService;
+
+        PropertyChanged += OnPropertyChanged;
+    }
+
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ModUrl))
+        {
+            await GetModInfo(ModUrl);
+        }
     }
 
     public void OnNavigatedTo(object parameter)
@@ -40,8 +59,18 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedFrom()
     {
+        if (_modInstallation is not null)
+        {
+            _modInstallation.Dispose();
+            _modInstallation = null;
+        }
     }
 
+
+    private readonly Uri PlaceholderImageUri = App.GetService<ImageHandlerService>().PlaceholderImageUri;
+
+    public ICharacterModList CharacterModList { get; } = App.GetService<ISkinManagerService>()
+        .GetCharacterModList(new InternalName("Kamisato Ayaka"));
 
     [RelayCommand]
     private async Task SelectModDebugAsync()
@@ -59,24 +88,213 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
         }
 
         var dir = new DirectoryInfo(folder.Path);
-        _modInstallation = ModInstallation.Start(dir);
+        _modInstallation = ModInstallation.Start(dir, CharacterModList);
+
         RootFolder.Clear();
         RootFolder.Add(new RootFolder(dir));
+
+        await Task.Run(() =>
+        {
+            var modDir = _modInstallation.AutoSetModRootFolder();
+            if (modDir is not null)
+            {
+                var fileSystemItem = RootFolder.First().GetByPath(modDir.FullName);
+                if (fileSystemItem is not null)
+                    App.MainWindow.DispatcherQueue.TryEnqueue(() => { SetRootFolder(fileSystemItem); });
+            }
+
+            var shaderFixesDir = _modInstallation.AutoSetShaderFixesFolder();
+            if (shaderFixesDir is not null)
+            {
+                var fileSystemItem = RootFolder.First().GetByPath(shaderFixesDir.FullName);
+                if (fileSystemItem is not null)
+                    App.MainWindow.DispatcherQueue.TryEnqueue(() => { SetShaderFixesFolder(fileSystemItem); });
+            }
+
+            var autoFoundImages = SkinModHelpers.DetectModPreviewImages(_modInstallation.ModFolder.FullName);
+
+            if (autoFoundImages.Any())
+                App.MainWindow.DispatcherQueue.TryEnqueue(() => { ModPreviewImagePath = autoFoundImages.First(); });
+        }).ConfigureAwait(false);
     }
+
+    public readonly string RootFolderIcon = "\uF89A";
+    public readonly string ShaderFixesFolderIcon = "\uE710";
+    public readonly string SelectedImageIcon = "\uE8B9";
+    public readonly string SelectedMergeIniIcon = "\uE8A5";
+
+    private bool _canSetRootFolder(object? fileSystemObject)
+    {
+        if (fileSystemObject is not FileSystemItem fileSystemItem || _modInstallation is null)
+            return false;
+
+        if (!fileSystemItem.IsFolder)
+            return false;
+
+        if (fileSystemItem.Path == _lastSelectedRootFolder?.Path ||
+            fileSystemItem.Path == _lastSelectedShaderFixesFolder?.Path)
+            return false;
+
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(_canSetRootFolder))]
+    private void SetRootFolder(object? fileSystemObject)
+    {
+        if (fileSystemObject is not FileSystemItem fileSystemItem || _modInstallation is null)
+            return;
+
+        if (!fileSystemItem.IsFolder)
+            return;
+
+        if (LastSelectedRootFolder is not null)
+            LastSelectedRootFolder.RightIcon = null;
+
+
+        _modInstallation.SetRootModFolder(new DirectoryInfo(fileSystemItem.Path));
+        fileSystemItem.RightIcon = RootFolderIcon;
+        LastSelectedRootFolder = fileSystemItem;
+    }
+
+    [ObservableProperty] private FileSystemItem? _lastSelectedRootFolder;
+
+    private bool _canSetShaderFixesFolder(object? fileSystemObject)
+    {
+        if (fileSystemObject is not FileSystemItem fileSystemItem || _modInstallation is null)
+            return false;
+
+        if (!fileSystemItem.IsFolder)
+            return false;
+
+        if (fileSystemItem.Path == _lastSelectedRootFolder?.Path ||
+            fileSystemItem.Path == _lastSelectedShaderFixesFolder?.Path)
+            return false;
+
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(_canSetShaderFixesFolder))]
+    private void SetShaderFixesFolder(object? fileSystemObject)
+    {
+        if (fileSystemObject is not FileSystemItem fileSystemItem || _modInstallation is null)
+            return;
+
+        if (!fileSystemItem.IsFolder)
+            return;
+
+        if (LastSelectedShaderFixesFolder is not null)
+            LastSelectedShaderFixesFolder.RightIcon = null;
+
+        _modInstallation.SetShaderFixesFolder(new DirectoryInfo(fileSystemItem.Path));
+        fileSystemItem.RightIcon = ShaderFixesFolderIcon;
+        LastSelectedShaderFixesFolder = fileSystemItem;
+    }
+
+    [RelayCommand]
+    private void SetModPreviewImage()
+    {
+    }
+
+    [RelayCommand]
+    private void AddMod()
+    {
+        if (_modInstallation is null)
+            return;
+        var skinModDupe = _modInstallation.AnyDuplicateName();
+
+        if (skinModDupe is not null)
+        {
+            DuplicateModFolderName = skinModDupe.Name;
+            skinModDupe.Settings.TryGetSettings(out var skinSettings);
+
+            if (skinSettings is not null)
+            {
+                DuplicateModCustomName =
+                    skinSettings.CustomName.IsNullOrEmpty() ? skinModDupe.Name : skinSettings.CustomName;
+            }
+
+            ModFolderName = _modInstallation.ModFolder.Name;
+
+            DuplicateModDialog?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+    }
+
+    private Dictionary<Uri, ModPageDataResult> _modPageDataCache = new();
+
+    private async Task GetModInfo(string url)
+    {
+        if (url.IsNullOrEmpty() || IsRetrievingModInfo || (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty()))
+            return;
+
+        var isValidUrl = Uri.TryCreate(url, UriKind.Absolute, out var modPageUrl) &&
+                         (modPageUrl.Scheme == Uri.UriSchemeHttps &&
+                          modPageUrl.Host.Equals("gamebanana.com", StringComparison.OrdinalIgnoreCase));
+
+        if (!isValidUrl || modPageUrl is null)
+            return;
+
+        IsRetrievingModInfo = true;
+
+        try
+        {
+            if (!_modPageDataCache.TryGetValue(modPageUrl, out var modInfo))
+            {
+                modInfo = await Task.Run(() =>
+                    App.GetService<IModUpdateChecker>().GetModPageDataAsync(modPageUrl, CancellationToken.None));
+                _modPageDataCache.Add(modPageUrl, modInfo);
+            }
+
+            if (CustomName.IsNullOrEmpty() && !modInfo.ModName.IsNullOrEmpty())
+                CustomName = modInfo.ModName;
+
+            if (Author.IsNullOrEmpty() && !modInfo.AuthorName.IsNullOrEmpty())
+                Author = modInfo.AuthorName;
+
+            if (ModPreviewImagePath == PlaceholderImageUri)
+            {
+                var newImage = modInfo.PreviewImages?.FirstOrDefault();
+                if (newImage is not null)
+                    ModPreviewImagePath = newImage;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to retrieve mod info");
+        }
+        finally
+        {
+            IsRetrievingModInfo = false;
+        }
+    }
+
+
+    public event EventHandler? DuplicateModDialog;
+
+    [ObservableProperty] private bool _isRetrievingModInfo;
+    [ObservableProperty] private FileSystemItem? _lastSelectedShaderFixesFolder;
 
 
     private ModInstallation? _modInstallation;
 
-    [ObservableProperty] ObservableCollection<RootFolder> _rootFolder = new();
+    [ObservableProperty] private string _modFolderName = string.Empty;
+
+    [ObservableProperty] private string _duplicateModFolderName = string.Empty;
+    [ObservableProperty] private string _duplicateModCustomName = string.Empty;
+
+    [ObservableProperty] private Uri _modPreviewImagePath = App.GetService<ImageHandlerService>().PlaceholderImageUri;
     [ObservableProperty] private string _customName = string.Empty;
     [ObservableProperty] private string _modUrl = string.Empty;
     [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
+
+    [ObservableProperty] private ObservableCollection<RootFolder> _rootFolder = new();
 }
 
 public partial class RootFolder : ObservableObject
 {
     private readonly DirectoryInfo _folder;
+    public string Path => _folder.FullName;
     public string Name => _folder.Name;
 
     public RootFolder(DirectoryInfo folder)
@@ -86,40 +304,33 @@ public partial class RootFolder : ObservableObject
     }
 
     [ObservableProperty] private ObservableCollection<FileSystemItem> _fileSystemItems = new();
+
+    public FileSystemItem? GetByPath(string path)
+    {
+        foreach (var fileSystemItem in FileSystemItems)
+        {
+            if (fileSystemItem.Path.Equals(path, StringComparison.OrdinalIgnoreCase))
+                return fileSystemItem;
+
+            var fs = fileSystemItem.GetByPath(path);
+
+            if (fs is not null)
+                return fs;
+        }
+
+        return null;
+    }
 }
 
 public partial class FileSystemItem : ObservableObject
 {
     private readonly FileSystemInfo _fileSystemInfo;
-    private readonly int _recursionCount;
+    public string Path => _fileSystemInfo.FullName;
     public string Name => _fileSystemInfo.Name;
 
     public bool IsFolder => _fileSystemInfo is DirectoryInfo;
 
     public bool IsFile => _fileSystemInfo is FileInfo;
-
-    public FileSystemItem(FileSystemInfo fileSystemInfo, int recursionCount = 0)
-    {
-        _fileSystemInfo = fileSystemInfo;
-        _recursionCount = recursionCount;
-
-        if (_recursionCount < 2)
-        {
-            _isExpanded = true;
-        }
-
-        if (_recursionCount > 5)
-        {
-            return;
-        }
-
-        if (fileSystemInfo is DirectoryInfo dir)
-        {
-            _leftIcon = "\uE8B7";
-            dir.EnumerateFileSystemInfos()
-                .ForEach(fse => FileSystemItems.Add(new FileSystemItem(fse, _recursionCount + 1)));
-        }
-    }
 
     [ObservableProperty] private bool _isExpanded;
 
@@ -128,29 +339,38 @@ public partial class FileSystemItem : ObservableObject
 
     [ObservableProperty] private string? _leftIcon;
     [ObservableProperty] private string? _rightIcon;
+
+    public FileSystemItem(FileSystemInfo fileSystemInfo, int recursionCount = 0)
+    {
+        _fileSystemInfo = fileSystemInfo;
+
+        if (recursionCount < 2)
+        {
+            _isExpanded = true;
+        }
+
+        if (recursionCount > 5)
+        {
+            return;
+        }
+
+        if (fileSystemInfo is DirectoryInfo dir)
+        {
+            LeftIcon = "\uE8B7";
+            dir.EnumerateFileSystemInfos()
+                .ForEach(fse => FileSystemItems.Add(new FileSystemItem(fse, recursionCount + 1)));
+        }
+    }
+
+    public FileSystemItem? GetByPath(string path)
+    {
+        foreach (var fileSystemItem in FileSystemItems)
+        {
+            if (fileSystemItem.Path.Equals(path, StringComparison.OrdinalIgnoreCase))
+                return fileSystemItem;
+            fileSystemItem.GetByPath(path);
+        }
+
+        return null;
+    }
 }
-
-//public class FolderVM : ObservableObject
-//{
-//    private readonly DirectoryInfo _folder;
-//    public string Name => _folder.Name;
-
-//    public FolderVM(DirectoryInfo folder)
-//    {
-//        _folder = folder;
-//    }
-
-//    ObservableCollection<FolderVM> _folders = new();
-//    ObservableCollection<FileVM> _files = new();
-//}
-
-//public class FileVM : ObservableObject
-//{
-//    private readonly FileInfo _file;
-//    public string Name => _file.Name;
-
-//    public FileVM(FileInfo file)
-//    {
-//        _file = file;
-//    }
-//}

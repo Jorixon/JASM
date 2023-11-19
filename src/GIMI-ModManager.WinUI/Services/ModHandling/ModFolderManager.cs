@@ -1,4 +1,7 @@
-﻿using Serilog;
+﻿using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 // Start with installing (and unzipping) the mod to the temp folder, before this process starts
@@ -30,41 +33,132 @@ public class ModFolderManager
     }
 }
 
-public class ModInstallation
+public sealed class ModInstallation : IDisposable
 {
-    private DirectoryInfo _originalModFolder { get; init; } = null!;
+    private readonly ICharacterModList _destinationModList;
+    private readonly ModCrawlerService _modCrawlerService = App.GetService<ModCrawlerService>();
+    private readonly DirectoryInfo _originalModFolder;
+    private readonly List<FileStream> _lockedFiles = new();
 
-    private DirectoryInfo _modFolder { get; set; } = null!;
 
+    public DirectoryInfo ModFolder { get; private set; }
+    private DirectoryInfo? _shaderFixesFolder;
     private List<FileInfo> _shaderFixesFiles = new();
 
-    // Lock mod folder
-    public static ModInstallation Start(DirectoryInfo modFolder)
+
+    private ModInstallation(DirectoryInfo originalModFolder, ICharacterModList destinationModList)
     {
-        return new ModInstallation
+        _originalModFolder = originalModFolder;
+        _destinationModList = destinationModList;
+        ModFolder = new DirectoryInfo(originalModFolder.FullName);
+        LockFiles();
+    }
+
+    private void LockFiles()
+    {
+        foreach (var fileInfo in _originalModFolder.GetFiles("*", SearchOption.AllDirectories))
         {
-            _originalModFolder = modFolder,
-            _modFolder = modFolder
-        };
+            var fileStream = fileInfo.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            _lockedFiles.Add(fileStream);
+        }
+    }
+
+    // Lock mod folder
+    public static ModInstallation Start(DirectoryInfo modFolder, ICharacterModList destinationModList)
+    {
+        return new ModInstallation(modFolder, destinationModList);
     }
 
 
-    public void SetRootModFolder()
+    public void SetRootModFolder(DirectoryInfo newRootFolder)
     {
+        if (newRootFolder.FullName == ModFolder.FullName)
+            return;
+
+        if (newRootFolder.FullName == _shaderFixesFolder?.FullName)
+            throw new ArgumentException("The new root folder is the same as the current shader fixes folder");
+
+        if (!newRootFolder.Exists)
+            throw new DirectoryNotFoundException($"The folder {newRootFolder.FullName} does not exist");
+
+        ModFolder = newRootFolder;
     }
 
     public void SetShaderFixesFolder(DirectoryInfo shaderFixesFolder)
     {
+        if (shaderFixesFolder.FullName == ModFolder.FullName)
+            throw new ArgumentException("The new shader fixes folder is the same as the current root folder");
+
+        if (!shaderFixesFolder.Exists)
+            throw new DirectoryNotFoundException($"The folder {shaderFixesFolder.FullName} does not exist");
+
+        _shaderFixesFiles.Clear();
+        _shaderFixesFiles.AddRange(shaderFixesFolder.GetFiles("*.txt", SearchOption.TopDirectoryOnly));
+        _shaderFixesFolder = shaderFixesFolder;
     }
 
 
-    public bool CheckForDuplicateMod()
+    public DirectoryInfo? AutoSetModRootFolder()
     {
-        return false;
+        var jasmConfigFile = _modCrawlerService.GetFirstJasmConfigFileAsync(_originalModFolder);
+        DirectoryInfo? modRootFolder = null;
+        if (jasmConfigFile is not null)
+        {
+            modRootFolder = new DirectoryInfo(jasmConfigFile.DirectoryName!);
+        }
+        else
+        {
+            var mergedIniFile = _modCrawlerService.GetMergedIniFile(_originalModFolder);
+            if (mergedIniFile is not null)
+                modRootFolder = new DirectoryInfo(mergedIniFile.DirectoryName!);
+        }
+
+        if (modRootFolder is null)
+            return null;
+
+        SetRootModFolder(modRootFolder);
+        return modRootFolder;
     }
 
-    // Finishes the mod installation
+    public DirectoryInfo? AutoSetShaderFixesFolder()
+    {
+        var shaderFixesFolder = _modCrawlerService.GetShaderFixesFolder(_originalModFolder);
+        if (shaderFixesFolder is null)
+            return null;
+
+        SetShaderFixesFolder(shaderFixesFolder);
+        return shaderFixesFolder;
+    }
+
+
+    public ISkinMod? AnyDuplicateName()
+    {
+        var skinEntries = _destinationModList.Mods;
+
+        foreach (var skinEntry in skinEntries)
+        {
+            if (ModFolderHelpers.FolderNameEquals(skinEntry.Mod.Name, ModFolder.Name))
+                return skinEntry.Mod;
+        }
+
+        return null;
+    }
+
+    public void RenameAndAdd()
+    {
+    }
+
+    public void AddAndReplace()
+    {
+    }
+
     public void AddModAsync()
     {
+    }
+
+    public void Dispose()
+    {
+        foreach (var fileStream in _lockedFiles)
+            fileStream.Dispose();
     }
 }

@@ -98,4 +98,32 @@ public class ModCrawlerService
         foreach (var directoryFiles in RecursiveGetFiles(directory))
             yield return directoryFiles;
     }
+
+
+    public FileInfo? GetFirstJasmConfigFileAsync(DirectoryInfo directoryInfo)
+    {
+        return directoryInfo.GetFiles(Constants.ModConfigFileName, SearchOption.AllDirectories).FirstOrDefault();
+    }
+
+    public FileInfo? GetMergedIniFile(DirectoryInfo directoryInfo)
+    {
+        foreach (var file in directoryInfo.EnumerateFiles("*.ini", SearchOption.AllDirectories))
+        {
+            if (file.Name.Trim().Equals(Constants.MergedIniName, StringComparison.OrdinalIgnoreCase))
+                return file;
+        }
+
+        return null;
+    }
+
+    public DirectoryInfo? GetShaderFixesFolder(DirectoryInfo directoryInfo)
+    {
+        foreach (var dir in directoryInfo.EnumerateDirectories("*", SearchOption.AllDirectories))
+        {
+            if (dir.Name.Trim().Equals(Constants.ShaderFixesFolderName, StringComparison.OrdinalIgnoreCase))
+                return dir;
+        }
+
+        return null;
+    }
 }

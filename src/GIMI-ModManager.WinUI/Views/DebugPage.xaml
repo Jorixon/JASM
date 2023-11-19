@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,16 +14,43 @@
 
     <Page.Resources>
 
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
+
+
+        <MenuFlyout x:Name="FileFlyout">
+            <MenuFlyoutItem Text="Set merged.ini file" />
+            <MenuFlyoutItem Text="Set mod preview" />
+        </MenuFlyout>
+
+        <MenuFlyout x:Name="FolderFlyout">
+            <MenuFlyoutItem
+                Command="{x:Bind ViewModel.SetRootFolderCommand, Mode=OneWay}"
+                CommandParameter="{Binding}"
+                Text="Set Root Mod Folder" />
+            <MenuFlyoutItem
+                Command="{x:Bind ViewModel.SetShaderFixesFolderCommand}"
+                CommandParameter="{Binding}"
+                Text="Set ShaderFixes Folder" />
+        </MenuFlyout>
+
         <DataTemplate x:Key="RootFolderTemplate" x:DataType="viewModels:RootFolder">
-            <TreeViewItem IsExpanded="True" ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}">
-                <TextBlock Text="{x:Bind Name}" />
+            <TreeViewItem
+                DoubleTapped="RootFolder_DoubleClicked"
+                IsExpanded="True"
+                ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Margin="0,0,4,0" Glyph="&#xED25;" />
+                    <TextBlock Text="{x:Bind Name}" />
+                </StackPanel>
             </TreeViewItem>
         </DataTemplate>
 
         <DataTemplate x:Key="FileSystemItemTemplate" x:DataType="viewModels:FileSystemItem">
-            <TreeViewItem IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}" ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}">
-
-                <Grid>
+            <TreeViewItem
+                IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}"
+                Loaded="FrameworkElement_OnLoaded">
+                <Grid DoubleTapped="FileSystemItem_DoubleClicked">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -37,7 +65,7 @@
 
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <FontIcon Margin="4,0" Glyph="{x:Bind RightIcon, Mode=OneWay}" />
+                        <FontIcon Margin="0,0,12,0" Glyph="{x:Bind RightIcon, Mode=OneWay}" />
                     </StackPanel>
 
                 </Grid>
@@ -57,17 +85,28 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ContentDialog x:Name="DuplicateModDialog" Title="A folder with the same name exists">
+        <ContentDialog
+            x:Name="DuplicateModDialog"
+            Title="A folder with the same name exists"
+            CloseButtonText="Cancel"
+            DefaultButton="Primary"
+            PrimaryButtonText="Rename and Add mod"
+            SecondaryButtonText="Overwrite existing">
             <ContentDialog.Content>
-
-                <Grid>
+                <Grid MinWidth="500">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <InfoBar
+                        IsClosable="False"
+                        IsOpen="True"
+                        Message="1. You can choose to overwrite the old mod, deleting it.&#x0a;Or&#x0a;2. You can rename either the new or the old mod"
+                        Severity="Warning" />
 
-                    <Grid>
+                    <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -75,25 +114,36 @@
 
 
                         <StackPanel Margin="4">
-                            <TextBox PlaceholderText="CustomName" />
-                            <TextBox PlaceholderText="FolderName" />
+                            <TextBlock Text="New Mod:" />
+                            <TextBox
+                                Margin="4"
+                                Header="Custom name"
+                                PlaceholderText="CustomName"
+                                Text="{x:Bind ViewModel.CustomName, Mode=TwoWay}" />
+                            <TextBox
+                                Margin="4"
+                                Header="Folder name"
+                                PlaceholderText="FolderName"
+                                Text="{x:Bind ViewModel.ModFolderName, Mode=TwoWay}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="4">
-                            <TextBox PlaceholderText="CustomName" />
-                            <TextBox PlaceholderText="FolderName" />
+                            <TextBlock Text="Other Mod:" />
+                            <TextBox
+                                Margin="4"
+                                Header="Custom name"
+                                PlaceholderText="CustomName"
+                                Text="{x:Bind ViewModel.DuplicateModCustomName, Mode=TwoWay}" />
+                            <TextBox
+                                Margin="4"
+                                Header="Folder name"
+                                PlaceholderText="FolderName"
+                                Text="{x:Bind ViewModel.DuplicateModFolderName, Mode=TwoWay}" />
+                            <controls:LinkButton Text="Open existing mod folder..." />
                         </StackPanel>
 
                     </Grid>
 
-
-                    <StackPanel
-                        Grid.Row="1"
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal">
-                        <Button Content="Cancel" />
-                        <Button Content="Save" />
-                    </StackPanel>
 
                 </Grid>
 
@@ -101,6 +151,7 @@
         </ContentDialog>
 
         <Button
+            Grid.Row="0"
             Margin="0,8"
             Command="{x:Bind ViewModel.SelectModDebugCommand}"
             Content="Debug Select Mod Folder" />
@@ -120,24 +171,37 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
-                    <Image
-                        Width="150"
-                        Height="150"
-                        Source="../Assets/ModPanePlaceholder.webp" />
-                    <TextBlock Text="Url" />
-                    <TextBox />
-                    <TextBlock Text="Mod Custom Name" />
-                    <TextBox />
-                    <TextBlock Text="Author" />
-                    <TextBox />
-                    <TextBlock Text="Description" />
-                    <RichEditBox MinHeight="100" />
 
-                </StackPanel>
+                <ScrollViewer>
+
+                    <StackPanel MinWidth="350">
+                        <Image MinWidth="350" MaxHeight="800">
+                            <Image.Source>
+                                <BitmapImage UriSource="{x:Bind ViewModel.ModPreviewImagePath, Mode=OneWay}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBox
+                            Header="Mod page url"
+                            IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
+                            KeyDown="UrlTextBox_KeyDown"
+                            PlaceholderText="Paste URL to auto populate fields (GameBanana only)"
+                            Text="{x:Bind ViewModel.ModUrl, Mode=TwoWay}" />
+                        <TextBox
+                            Header="Mod Custom Name"
+                            IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
+                            PlaceholderText="Custom Name display throughout JASM"
+                            Text="{x:Bind ViewModel.CustomName, Mode=TwoWay}" />
+                        <TextBox
+                            Header="Author"
+                            IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.Author, Mode=TwoWay}" />
+                        <RichEditBox MinHeight="100" Header="Description" />
+
+                    </StackPanel>
+                </ScrollViewer>
 
 
                 <!--
@@ -149,8 +213,8 @@
                 <Grid Grid.Column="1">
 
                     <Grid.RowDefinitions>
-                        <RowDefinition MinHeight="500" />
                         <RowDefinition />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
@@ -160,12 +224,58 @@
                         ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
                         ItemsSource="{x:Bind ViewModel.RootFolder, Mode=OneWay}" />
 
-                    <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+                    <StackPanel Grid.Row="1">
 
-                        <TextBlock Text="ModFolder: Ayaka Test" />
-                        <TextBlock Text="PreviewImage: Auto" />
-                        <TextBlock Text="MergedIniFile: Auto" />
-                        <TextBlock Text="ShaderFixes Folder: Auto" />
+                        <StackPanel Margin="0,8,0,12" Orientation="Horizontal">
+                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.RootFolderIcon}" />
+                            <TextBlock Margin="4,0" Text="ModFolder:" />
+                            <TextBlock Text="{x:Bind ViewModel.LastSelectedRootFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
+                        </StackPanel>
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedImageIcon}" />
+                            <TextBlock Margin="4,0" Text="PreviewImage:" />
+                            <TextBlock Text="Auto" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <CheckBox
+                                Content="Auto"
+                                IsChecked="True"
+                                IsEnabled="False" />
+                            <CheckBox Content="Url" IsEnabled="False" />
+                            <CheckBox Content="Mod Files" IsEnabled="False" />
+                            <CheckBox Content="Ignore" IsEnabled="False" />
+                        </StackPanel>
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedMergeIniIcon}" />
+                            <TextBlock Margin="4,0" Text="MergedIniFile Folder:" />
+                            <TextBlock Text="Auto" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <CheckBox
+                                Content="Auto"
+                                IsChecked="True"
+                                IsEnabled="False" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.ShaderFixesFolderIcon}" />
+                            <TextBlock Margin="4,0" Text="ShaderFixes Folder:" />
+                            <TextBlock Text="{x:Bind ViewModel.LastSelectedShaderFixesFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Content="Auto" IsEnabled="False" />
+                            <CheckBox
+                                Content="Manual Select"
+                                IsChecked="True"
+                                IsEnabled="False" />
+                            <CheckBox Content="Ignore" IsEnabled="False" />
+                        </StackPanel>
 
 
                     </StackPanel>
@@ -173,7 +283,7 @@
                     <Button
                         Grid.Row="2"
                         HorizontalAlignment="Right"
-                        Click="ButtonBase_OnClick"
+                        Command="{x:Bind ViewModel.AddModCommand}"
                         Content="Add Mod" />
 
 

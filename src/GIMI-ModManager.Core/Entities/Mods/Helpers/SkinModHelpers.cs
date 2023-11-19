@@ -1,8 +1,9 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.Core.Entities.Mods.Helpers;
 
-internal static class ModsHelpers
+public static class SkinModHelpers
 {
     public static string? UriPathToModRelativePath(ISkinMod mod, string? uriPath)
     {
@@ -87,5 +88,41 @@ internal static class ModsHelpers
             return Guid.NewGuid();
 
         return Guid.TryParse(guid, out var result) ? result : Guid.NewGuid();
+    }
+
+    public static readonly string[] _imageNamePriority = new[] { ".jasm_cover", "preview", "cover" };
+
+    public static Uri[] DetectModPreviewImages(string modDirPath)
+    {
+        var modDir = new DirectoryInfo(modDirPath);
+        if (!modDir.Exists)
+            return Array.Empty<Uri>();
+
+        var images = new List<FileInfo>();
+        foreach (var file in modDir.EnumerateFiles())
+        {
+            if (!_imageNamePriority.Any(i => file.Name.ToLower().StartsWith(i)))
+                continue;
+
+
+            var extension = file.Extension.ToLower();
+            if (!Constants.SupportedImageExtensions.Contains(extension))
+                continue;
+
+            images.Add(file);
+        }
+
+        // Sort images by priority
+        foreach (var imageName in _imageNamePriority.Reverse())
+        {
+            var image = images.FirstOrDefault(x => x.Name.ToLower().StartsWith(imageName));
+            if (image is null)
+                continue;
+
+            images.Remove(image);
+            images.Insert(0, image);
+        }
+
+        return images.Select(x => new Uri(x.FullName)).ToArray();
     }
 }

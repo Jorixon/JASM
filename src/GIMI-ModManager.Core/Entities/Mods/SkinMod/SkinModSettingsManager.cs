@@ -17,7 +17,7 @@ public class SkinModSettingsManager
 {
     private readonly ISkinMod _skinMod;
     private readonly IReadOnlyCollection<string> _supportedImageExtensions = Constants.SupportedImageExtensions;
-    private const string configFileName = ".JASM_ModConfig.json";
+    private readonly string configFileName = Constants.ModConfigFileName;
     private const string ImageName = ".JASM_Cover";
 
     private string _settingsFilePath => Path.Combine(_skinMod.FullPath, configFileName);
@@ -67,7 +67,7 @@ public class SkinModSettingsManager
 
             if (modSettings.ImagePath is null)
             {
-                var images = DetectImages();
+                var images = SkinModHelpers.DetectModPreviewImages(_skinMod.FullPath);
                 if (images.Any())
                 {
                     modSettings.ImagePath = images.FirstOrDefault();
@@ -84,7 +84,7 @@ public class SkinModSettingsManager
 
         var newId = Guid.NewGuid();
 
-        var image = DetectImages().FirstOrDefault();
+        var image = SkinModHelpers.DetectModPreviewImages(_skinMod.FullPath).FirstOrDefault();
 
         var settings = new JsonModSettings()
         {
@@ -130,7 +130,7 @@ public class SkinModSettingsManager
 
     public async Task SaveSettingsAsync(ModSettings modSettings)
     {
-        if (modSettings.ImagePath is not null && !ModsHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
+        if (modSettings.ImagePath is not null && !SkinModHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
             await CopyAndSetModImage(modSettings, modSettings.ImagePath);
 
 
@@ -184,41 +184,6 @@ public class SkinModSettingsManager
         File.Delete(oldImageUri.LocalPath);
     }
 
-    private readonly string[] _imageNamePriority = new[] { ".jasm_cover", "preview", "cover" };
-
-    public Uri[] DetectImages()
-    {
-        var modDir = new DirectoryInfo(_skinMod.FullPath);
-        if (!modDir.Exists)
-            return Array.Empty<Uri>();
-
-        var images = new List<FileInfo>();
-        foreach (var file in modDir.EnumerateFiles())
-        {
-            if (!_imageNamePriority.Any(i => file.Name.ToLower().StartsWith(i)))
-                continue;
-
-
-            var extension = file.Extension.ToLower();
-            if (!_supportedImageExtensions.Contains(extension))
-                continue;
-
-            images.Add(file);
-        }
-
-        // Sort images by priority
-        foreach (var imageName in _imageNamePriority.Reverse())
-        {
-            var image = images.FirstOrDefault(x => x.Name.ToLower().StartsWith(imageName));
-            if (image is null)
-                continue;
-
-            images.Remove(image);
-            images.Insert(0, image);
-        }
-
-        return images.Select(x => new Uri(x.FullName)).ToArray();
-    }
 
     public async Task SetLastCheckedTimeAsync(DateTime dateTime)
     {

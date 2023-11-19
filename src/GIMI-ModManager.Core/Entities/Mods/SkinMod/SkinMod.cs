@@ -7,7 +7,7 @@ public class SkinMod : Mod, ISkinMod
 {
     private const string ModIniName = "merged.ini";
     private string _modIniPath = string.Empty;
-    private const string configFileName = ".JASM_ModConfig.json";
+    private readonly string configFileName = Constants.ModConfigFileName;
     private string _configFilePath = string.Empty;
 
     public Guid Id { get; private set; }
