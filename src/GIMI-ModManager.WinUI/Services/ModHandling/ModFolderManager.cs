@@ -1,8 +1,7 @@
-﻿using Windows.Storage;
-using Serilog;
+﻿using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
-// Start with installing (and unzipping) the mod to the temp folder
+// Start with installing (and unzipping) the mod to the temp folder, before this process starts
 
 // If a single folder
 // Check if the mod already exists in the mods folder
@@ -25,12 +24,7 @@ public class ModFolderManager
         _modDragAndDropService = modDragAndDropService;
     }
 
-    public async Task MoveToWorkFolder(IReadOnlyList<IStorageItem>? storageItems)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task MoveToModsFolder(IReadOnlyList<IStorageItem>? storageItems)
+    public Task StartModInstallationAsync(DirectoryInfo modFolder)
     {
         throw new NotImplementedException();
     }

@@ -8,6 +8,7 @@ using GIMI_ModManager.Core.Entities.Mods.Helpers;
 using GIMI_ModManager.Core.Helpers;
 using Newtonsoft.Json;
 using OneOf;
+using Serilog;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.Entities.Mods.SkinMod;
@@ -217,6 +218,37 @@ public class SkinModSettingsManager
         }
 
         return images.Select(x => new Uri(x.FullName)).ToArray();
+    }
+
+    public async Task SetLastCheckedTimeAsync(DateTime dateTime)
+    {
+        var settings = _settings ?? await ReadSettingsAsync().ConfigureAwait(false);
+        settings.LastChecked = dateTime;
+
+        await SaveSettingsAsync(settings).ConfigureAwait(false);
+    }
+
+    public bool TryGetSettings(out ModSettings? modSettings)
+    {
+        modSettings = _settings;
+        return modSettings is not null;
+    }
+
+    public async Task<ModSettings?> TryReadSettingsAsync()
+    {
+        if (!File.Exists(_settingsFilePath))
+            return null;
+
+        try
+        {
+            return await ReadSettingsAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Failed to read mod settings file. Path: {Path}", _settingsFilePath);
+        }
+
+        return null;
     }
 }
 

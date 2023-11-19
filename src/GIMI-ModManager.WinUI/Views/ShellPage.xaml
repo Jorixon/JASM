@@ -81,6 +81,12 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
+                <NavigationViewItem helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.ModsOverviewVM" Content="Mods Overview">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA37;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
                 <NavigationViewItem
                     x:Name="DebugItem"
                     helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.DebugViewModel"
