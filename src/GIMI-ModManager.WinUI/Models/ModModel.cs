@@ -22,6 +22,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _modUrl = string.Empty;
     [ObservableProperty] private string _modVersion = string.Empty;
+    [ObservableProperty] private DateTime _dateAdded;
 
     [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
     [ObservableProperty] private string _author = string.Empty;
@@ -88,6 +89,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
         ImagePath = settings.ImagePath ?? PlaceholderImagePath;
         Author = settings.Author ?? string.Empty;
         CharacterSkinOverride = settings.CharacterSkinOverride ?? string.Empty;
+        DateAdded = settings.DateAdded ?? DateTime.MinValue;
         return this;
     }
 

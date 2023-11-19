@@ -190,6 +190,8 @@ public partial class App : Application
                 services.AddTransient<EditCharacterPage>();
                 services.AddTransient<EasterEggVM>();
                 services.AddTransient<EasterEggPage>();
+                services.AddTransient<ModsOverviewVM>();
+                services.AddTransient<ModsOverviewPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

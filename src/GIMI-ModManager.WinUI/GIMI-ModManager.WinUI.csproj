@@ -257,6 +257,7 @@
 		<None Remove="Views\DebugPage.xaml" />
 		<None Remove="Views\EasterEggPage.xaml" />
 		<None Remove="Views\ErrorWindow.xaml" />
+		<None Remove="Views\ModsOverviewPage.xaml" />
 		<None Remove="Views\ModUpdateAvailableWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
 	</ItemGroup>
@@ -291,6 +292,7 @@
 		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageReference Include="Serilog.Sinks.EventLog" Version="3.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="Syncfusion.Grid.WinUI" Version="23.1.44" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
 		<PackageReference Include="WinUI3Localizer" Version="2.1.0" />
 		<PackageReference Include="WinUIEx" Version="2.3.3" />
@@ -864,6 +866,9 @@
 		<None Update="Assets\ModPanePlaceholder.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\ModsOverviewPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\EasterEggPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>
