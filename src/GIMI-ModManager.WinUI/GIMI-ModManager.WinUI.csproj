@@ -27,15 +27,19 @@
 	<ItemGroup>
 		<Compile Remove="Mappers\**" />
 		<Compile Remove="Views\Components\**" />
+		<Compile Remove="Views\ModInstaller\**" />
 		<Compile Remove="Views\SubPages\**" />
 		<EmbeddedResource Remove="Mappers\**" />
 		<EmbeddedResource Remove="Views\Components\**" />
+		<EmbeddedResource Remove="Views\ModInstaller\**" />
 		<EmbeddedResource Remove="Views\SubPages\**" />
 		<None Remove="Mappers\**" />
 		<None Remove="Views\Components\**" />
+		<None Remove="Views\ModInstaller\**" />
 		<None Remove="Views\SubPages\**" />
 		<Page Remove="Mappers\**" />
 		<Page Remove="Views\Components\**" />
+		<Page Remove="Views\ModInstaller\**" />
 		<Page Remove="Views\SubPages\**" />
 	</ItemGroup>
 	<ItemGroup>
@@ -1122,5 +1126,9 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Assets\easterEgg.mp3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PRIResource Remove="Views\ModInstaller\**" />
 	</ItemGroup>
 </Project>

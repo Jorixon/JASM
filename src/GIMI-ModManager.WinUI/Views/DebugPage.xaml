@@ -8,46 +8,183 @@
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:GIMI_ModManager.Core.Services"
-    xmlns:viewModels="using:GIMI_ModManager.WinUI.Models.ViewModels"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Name="Template" x:DataType="services:UpdateCheckResult">
-            <StackPanel
-                Padding="8"
-                BorderBrush="Gray"
-                BorderThickness="1">
-                <TextBlock Text="{x:Bind FileName}" />
-                <TextBlock Text="{x:Bind Description}" />
-                <TextBlock Text="{x:Bind DateAdded}" />
-            </StackPanel>
+
+        <DataTemplate x:Key="RootFolderTemplate" x:DataType="viewModels:RootFolder">
+            <TreeViewItem IsExpanded="True" ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}">
+                <TextBlock Text="{x:Bind Name}" />
+            </TreeViewItem>
         </DataTemplate>
+
+        <DataTemplate x:Key="FileSystemItemTemplate" x:DataType="viewModels:FileSystemItem">
+            <TreeViewItem IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}" ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <FontIcon Margin="0,0,4,0" Glyph="{x:Bind LeftIcon, Mode=OneWay}" />
+
+
+                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" />
+
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <FontIcon Margin="4,0" Glyph="{x:Bind RightIcon, Mode=OneWay}" />
+                    </StackPanel>
+
+                </Grid>
+            </TreeViewItem>
+        </DataTemplate>
+
+
+        <local:ExplorerItemTemplateSelector
+            x:Key="ExplorerItemTemplateSelector"
+            FileSystemItem="{StaticResource FileSystemItemTemplate}"
+            RootFolderTemplate="{StaticResource RootFolderTemplate}" />
     </Page.Resources>
+
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition />
         </Grid.RowDefinitions>
+        <ContentDialog x:Name="DuplicateModDialog" Title="A folder with the same name exists">
+            <ContentDialog.Content>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBox Text="{x:Bind ViewModel.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Command="{x:Bind ViewModel.CheckCommand}" Content="Check" />
-            <ProgressRing
-                IsActive="{x:Bind ViewModel.IsChecking, Mode=OneWay}"
-                IsIndeterminate="False"
-                Maximum="{x:Bind ViewModel.ModsToCheckCount, Mode=OneWay}"
-                Value="{x:Bind ViewModel.ModsCheckedCount, Mode=OneWay}" />
-            <Button Command="{x:Bind ViewModel.CheckNowCommand}">Check Now!</Button>
-            <Button
-                Margin="20,0"
-                Command="{x:Bind ViewModel.TestCommand}"
-                Content="Test" />
-        </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-        <ListView
-            Grid.Row="1"
-            ItemTemplate="{x:Bind Template}"
-            ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+
+                        <StackPanel Margin="4">
+                            <TextBox PlaceholderText="CustomName" />
+                            <TextBox PlaceholderText="FolderName" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="4">
+                            <TextBox PlaceholderText="CustomName" />
+                            <TextBox PlaceholderText="FolderName" />
+                        </StackPanel>
+
+                    </Grid>
+
+
+                    <StackPanel
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                        <Button Content="Cancel" />
+                        <Button Content="Save" />
+                    </StackPanel>
+
+                </Grid>
+
+            </ContentDialog.Content>
+        </ContentDialog>
+
+        <Button
+            Margin="0,8"
+            Command="{x:Bind ViewModel.SelectModDebugCommand}"
+            Content="Debug Select Mod Folder" />
+
+        <Grid x:Name="ModInstallRoot" Grid.Row="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="Mod install" />
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <Image
+                        Width="150"
+                        Height="150"
+                        Source="../Assets/ModPanePlaceholder.webp" />
+                    <TextBlock Text="Url" />
+                    <TextBox />
+                    <TextBlock Text="Mod Custom Name" />
+                    <TextBox />
+                    <TextBlock Text="Author" />
+                    <TextBox />
+                    <TextBlock Text="Description" />
+                    <RichEditBox MinHeight="100" />
+
+                </StackPanel>
+
+
+                <!--
+                    Folder overview
+                    Select Root Mod Folder
+                    Select ShaderFixes
+                    Select Image
+                -->
+                <Grid Grid.Column="1">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition MinHeight="500" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TreeView
+                        CanDragItems="False"
+                        CanReorderItems="False"
+                        ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
+                        ItemsSource="{x:Bind ViewModel.RootFolder, Mode=OneWay}" />
+
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+
+                        <TextBlock Text="ModFolder: Ayaka Test" />
+                        <TextBlock Text="PreviewImage: Auto" />
+                        <TextBlock Text="MergedIniFile: Auto" />
+                        <TextBlock Text="ShaderFixes Folder: Auto" />
+
+
+                    </StackPanel>
+
+                    <Button
+                        Grid.Row="2"
+                        HorizontalAlignment="Right"
+                        Click="ButtonBase_OnClick"
+                        Content="Add Mod" />
+
+
+                </Grid>
+
+
+            </Grid>
+
+
+        </Grid>
+
+
     </Grid>
 </Page>

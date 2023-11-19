@@ -29,3 +29,42 @@ public class ModFolderManager
         throw new NotImplementedException();
     }
 }
+
+public class ModInstallation
+{
+    private DirectoryInfo _originalModFolder { get; init; } = null!;
+
+    private DirectoryInfo _modFolder { get; set; } = null!;
+
+    private List<FileInfo> _shaderFixesFiles = new();
+
+    // Lock mod folder
+    public static ModInstallation Start(DirectoryInfo modFolder)
+    {
+        return new ModInstallation
+        {
+            _originalModFolder = modFolder,
+            _modFolder = modFolder
+        };
+    }
+
+
+    public void SetRootModFolder()
+    {
+    }
+
+    public void SetShaderFixesFolder(DirectoryInfo shaderFixesFolder)
+    {
+    }
+
+
+    public bool CheckForDuplicateMod()
+    {
+        return false;
+    }
+
+    // Finishes the mod installation
+    public void AddModAsync()
+    {
+    }
+}
