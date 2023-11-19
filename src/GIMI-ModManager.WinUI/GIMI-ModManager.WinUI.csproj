@@ -292,7 +292,6 @@
 		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageReference Include="Serilog.Sinks.EventLog" Version="3.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="Syncfusion.Grid.WinUI" Version="23.1.44" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
 		<PackageReference Include="WinUI3Localizer" Version="2.1.0" />
 		<PackageReference Include="WinUIEx" Version="2.3.3" />
