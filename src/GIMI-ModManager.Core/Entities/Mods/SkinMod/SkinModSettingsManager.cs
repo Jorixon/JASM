@@ -228,6 +228,12 @@ public class SkinModSettingsManager
         await SaveSettingsAsync(settings).ConfigureAwait(false);
     }
 
+    public bool TryGetSettings(out ModSettings? modSettings)
+    {
+        modSettings = _settings;
+        return modSettings is not null;
+    }
+
     public async Task<ModSettings?> TryReadSettingsAsync()
     {
         if (!File.Exists(_settingsFilePath))

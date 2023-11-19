@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -184,13 +185,24 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     public async void OnNavigatedTo(object parameter)
     {
-        if (parameter is not CharacterGridItemModel characterGridItemModel)
+        var internalName = new InternalName("_");
+
+
+        if (parameter is CharacterGridItemModel characterGridItemModel)
         {
-            ErrorNavigateBack();
-            return;
+            internalName = characterGridItemModel.Character.InternalName;
+        }
+        else if (parameter is INameable iInternalName)
+        {
+            internalName = iInternalName.InternalName;
+        }
+        else if (parameter is string internalNameString)
+        {
+            internalName = new InternalName(internalNameString);
         }
 
-        var character = _gameService.GetCharacterByIdentifier(characterGridItemModel.Character.InternalName);
+
+        var character = _gameService.GetCharacterByIdentifier(internalName);
         if (character is null)
         {
             ErrorNavigateBack();

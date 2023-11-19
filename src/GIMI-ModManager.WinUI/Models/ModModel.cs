@@ -17,6 +17,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
     public IModdableObject Character { get; private init; }
     [ObservableProperty] private bool _isEnabled;
     [ObservableProperty] private string _folderName = string.Empty;
+    [ObservableProperty] private string _folderPath = string.Empty;
 
 
     [ObservableProperty] private string _name = string.Empty;
@@ -66,6 +67,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
             Character = character,
             Name = name,
             FolderName = skinMod.Name,
+            FolderPath = skinMod.FullPath,
             IsEnabled = isEnabled
         };
 

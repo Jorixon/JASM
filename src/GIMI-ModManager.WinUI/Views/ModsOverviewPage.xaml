@@ -3,11 +3,13 @@
     x:Class="GIMI_ModManager.WinUI.Views.ModsOverviewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
+    x:Name="PageRoot"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -28,26 +30,58 @@
 
         <DataTemplate x:Key="CharacterTemplate" x:DataType="viewModels:ModdableObjectNode">
             <TreeViewItem IsExpanded="True" ItemsSource="{x:Bind Mods}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="0,0,5,0" />
-                    <TextBlock Text="{x:Bind ModdableObject.DisplayName}" />
-                </StackPanel>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="32">
+                            <Image.Source>
+                                <BitmapImage DecodePixelWidth="32" UriSource="{x:Bind ImagePath}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Margin="4,0,4,0" />
+                        <TextBlock Text="{x:Bind ModdableObject.DisplayName}" />
+                    </StackPanel>
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding Path=GoToCharacterCommand, Mode=OneWay}"
+                        CommandParameter="{x:Bind ModdableObject}"
+                        Content="Go to Character" />
+
+                </Grid>
+
             </TreeViewItem>
         </DataTemplate>
 
         <DataTemplate x:Key="ModTemplate" x:DataType="models:ModModel">
             <TreeViewItem>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Name: " />
-                    <TextBlock Text="{x:Bind Name}" />
-                    <TextBlock Margin="0,0,10,0" />
-                    <TextBlock Text="Date added: " />
-                    <TextBlock Text="{x:Bind DateAdded}" />
-                    <TextBlock Margin="0,0,10,0" />
-                    <TextBlock Text="Folder name: " />
-                    <TextBlock Text="{x:Bind FolderName}" />
+                <Grid>
 
-                </StackPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="{x:Bind Name}" />
+
+                    <controls:LinkButton
+                        Grid.Column="1"
+                        Link="{x:Bind FolderPath}"
+                        Text="{x:Bind FolderName}"
+                        ToolTipService.ToolTip="Open skin folder" />
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Margin="0,0,4,0" Text="Added:" />
+                        <TextBlock Text="{x:Bind DateAdded}" />
+                    </StackPanel>
+
+                </Grid>
+
             </TreeViewItem>
         </DataTemplate>
 
@@ -69,6 +103,7 @@
         <StackPanel Orientation="Horizontal">
 
             <TextBlock
+                Margin="0,0,0,12"
                 HorizontalAlignment="Center"
                 FontSize="28"
                 Style="{StaticResource TitleTextBlockStyle}"
