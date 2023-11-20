@@ -83,7 +83,7 @@ public sealed class CharacterModList : ICharacterModList
             ISkinMod newSkinMod = null!;
             try
             {
-                newSkinMod = await SkinMod.CreateModAsync(new DirectoryInfo(e.FullPath));
+                newSkinMod = await SkinMod.CreateModAsync(new DirectoryInfo(e.FullPath), true);
             }
             catch (Exception exception)
             {
@@ -195,7 +195,7 @@ public sealed class CharacterModList : ICharacterModList
             mod.Rename(newName);
 
 
-            _mods.First(m => m.Mod == mod).IsEnabled = true;
+            _mods.First(m => m.Mod.Equals(mod)).IsEnabled = true;
         }
         finally
         {

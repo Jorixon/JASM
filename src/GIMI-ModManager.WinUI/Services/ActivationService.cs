@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using Windows.Graphics;
-using ABI.Windows.ApplicationModel.Calls.Background;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -13,11 +13,11 @@ using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
-using System.Runtime.InteropServices;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -38,6 +38,7 @@ public class ActivationService : IActivationService
     private readonly AutoUpdaterService _autoUpdaterService;
     private readonly SelectedGameService _selectedGameService;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
+    private readonly ModNotificationManager _modNotificationManager;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -50,7 +51,8 @@ public class ActivationService : IActivationService
         ThreeDMigtoProcessManager threeDMigtoProcessManager, UpdateChecker updateChecker,
         IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
         ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService,
-        ModUpdateAvailableChecker modUpdateAvailableChecker, ILogger logger)
+        ModUpdateAvailableChecker modUpdateAvailableChecker, ILogger logger,
+        ModNotificationManager modNotificationManager)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -66,6 +68,7 @@ public class ActivationService : IActivationService
         _languageLocalizer = languageLocalizer;
         _selectedGameService = selectedGameService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
+        _modNotificationManager = modNotificationManager;
         _logger = logger.ForContext<ActivationService>();
     }
 
@@ -199,6 +202,7 @@ public class ActivationService : IActivationService
         else
             return;
 
+        var notificationCleanup = Task.Run(_modNotificationManager.CleanupAsync).ConfigureAwait(false);
         var saveSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
 
         _logger.Debug("JASM shutting down...");
@@ -214,6 +218,7 @@ public class ActivationService : IActivationService
         }
 
         await saveSettingsTask;
+        await notificationCleanup;
         _logger.Debug("JASM shutdown complete.");
 
         // Call the handler again, this time it will exit.

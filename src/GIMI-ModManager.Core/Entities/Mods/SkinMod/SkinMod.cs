@@ -59,7 +59,8 @@ public class SkinMod : Mod, ISkinMod
 
         if (!forceGenerateNewId) return skinMod;
 
-
+        // TODO: Redo cached settings, as the way it's done now is a bit of a mess.
+        // settings was lazy loaded before, but now it's not. This leads to unnecessary complexity and code checks.
         var settings = await skinMod.Settings.ReadSettingsAsync().ConfigureAwait(false);
         settings.Id = Guid.NewGuid();
         skinMod.Id = settings.Id;
@@ -137,6 +138,11 @@ public class SkinMod : Mod, ISkinMod
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals(this, (SkinMod)obj);
+    }
+
+    public bool Equals(ISkinMod? other)
+    {
+        return Equals(this, other);
     }
 
     public override int GetHashCode()
