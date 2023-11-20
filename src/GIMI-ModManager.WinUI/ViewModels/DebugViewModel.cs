@@ -51,6 +51,20 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
         {
             await GetModInfo(ModUrl);
         }
+        else if (e.PropertyName == nameof(OverwriteExistingMod))
+        {
+            OnOverwriteExistingModChanged();
+        }
+        else if (e.PropertyName is nameof(ModFolderName) or
+                 nameof(DuplicateModFolderName) or
+                 nameof(CustomName) or
+                 nameof(DuplicateModCustomName))
+        {
+            if (!OverwriteExistingMod)
+                CanExecuteDialogCommand = canAddModAndRename();
+            else
+                CanExecuteDialogCommand = true;
+        }
     }
 
     public void OnNavigatedTo(object parameter)
@@ -154,6 +168,7 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
         _modInstallation.SetRootModFolder(new DirectoryInfo(fileSystemItem.Path));
         fileSystemItem.RightIcon = RootFolderIcon;
         LastSelectedRootFolder = fileSystemItem;
+        AddModCommand.NotifyCanExecuteChanged();
     }
 
     [ObservableProperty] private FileSystemItem? _lastSelectedRootFolder;
@@ -195,8 +210,16 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     {
     }
 
-    [RelayCommand]
-    private void AddMod()
+    private bool canAddMod()
+    {
+        if (_modInstallation is null)
+            return false;
+
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(canAddMod))]
+    private async Task AddModAsync()
     {
         if (_modInstallation is null)
             return;
@@ -204,7 +227,10 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
 
         if (skinModDupe is not null)
         {
+            _duplicateMod = skinModDupe;
             DuplicateModFolderName = skinModDupe.Name;
+            DuplicateModPath = new Uri(skinModDupe.FullPath);
+            OverwriteExistingMod = false;
             skinModDupe.Settings.TryGetSettings(out var skinSettings);
 
             if (skinSettings is not null)
@@ -215,9 +241,83 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
 
             ModFolderName = _modInstallation.ModFolder.Name;
 
+            AddModDialogCommand = new AsyncRelayCommand(AddModAndRenameAsync, canExecute: canAddModAndRename);
             DuplicateModDialog?.Invoke(this, EventArgs.Empty);
             return;
         }
+
+
+        await Task.Run(() => _modInstallation.AddModAsync(new AddModOptions
+        {
+            ModName = CustomName,
+            ModUrl = ModUrl,
+            Author = Author,
+            Description = Description,
+            ModImage = ModPreviewImagePath
+        })).ConfigureAwait(false);
+    }
+
+    private async Task AddModAndReplaceAsync()
+    {
+        if (_modInstallation is null)
+            return;
+
+        if (_duplicateMod is null)
+            return;
+
+        await Task.Run(() => _modInstallation.AddAndReplaceAsync(_duplicateMod, new AddModOptions()
+        {
+            ModUrl = ModUrl,
+            ModName = CustomName,
+            Author = Author,
+            Description = Description,
+            ModImage = ModPreviewImagePath
+        })).ConfigureAwait(false);
+    }
+
+    private bool canAddModAndRename()
+    {
+        if (_modInstallation is null)
+            return false;
+
+        if (ModFolderName.IsNullOrEmpty() || DuplicateModFolderName.IsNullOrEmpty())
+            return false;
+
+        if (ModFolderName == DuplicateModFolderName)
+            return false;
+
+        if (DuplicateModFolderName != _duplicateMod?.Name)
+            foreach (var skinEntry in CharacterModList.Mods)
+            {
+                if (ModFolderHelpers.FolderNameEquals(skinEntry.Mod.Name, DuplicateModFolderName))
+                    return false;
+            }
+
+        if (ModFolderName != _modInstallation.ModFolder.Name)
+            foreach (var skinEntry in CharacterModList.Mods)
+            {
+                if (ModFolderHelpers.FolderNameEquals(skinEntry.Mod.Name, ModFolderName))
+                    return false;
+            }
+
+
+        return true;
+    }
+
+    private async Task AddModAndRenameAsync()
+    {
+        if (_modInstallation is null || _duplicateMod is null || !canAddModAndRename())
+            return;
+
+        await Task.Run(() => _modInstallation.RenameAndAddAsync(new AddModOptions
+        {
+            NewModFolderName = ModFolderName,
+            ModName = CustomName,
+            ModUrl = ModUrl,
+            Author = Author,
+            Description = Description,
+            ModImage = ModPreviewImagePath
+        }, _duplicateMod, DuplicateModFolderName, DuplicateModCustomName)).ConfigureAwait(false);
     }
 
     private Dictionary<Uri, ModPageDataResult> _modPageDataCache = new();
@@ -253,9 +353,22 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
 
             if (ModPreviewImagePath == PlaceholderImageUri)
             {
-                var newImage = modInfo.PreviewImages?.FirstOrDefault();
-                if (newImage is not null)
-                    ModPreviewImagePath = newImage;
+                var newImageUrl = modInfo.PreviewImages?.FirstOrDefault();
+
+                try
+                {
+                    if (newImageUrl is not null)
+                    {
+                        var newImage = await Task.Run(() => _imageHandlerService.DownloadImageAsync(newImageUrl));
+                        ModPreviewImagePath = new Uri(newImage.Path);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Failed to download image");
+                    _notificationManager.ShowNotification("Failed to download image from modUrl", e.Message,
+                        TimeSpan.FromSeconds(5));
+                }
             }
         }
         catch (Exception e)
@@ -268,6 +381,30 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    private void OnOverwriteExistingModChanged()
+    {
+        if (OverwriteExistingMod)
+        {
+            PrimaryButtonText = AddReplaceText;
+            AddModDialogCommand = new AsyncRelayCommand(AddModAndReplaceAsync);
+            CanExecuteDialogCommand = true;
+        }
+        else
+        {
+            PrimaryButtonText = AddRenameText;
+            AddModDialogCommand = new AsyncRelayCommand(AddModAndRenameAsync, canExecute: canAddModAndRename);
+            CanExecuteDialogCommand = canAddModAndRename();
+        }
+    }
+
+
+    private IAsyncRelayCommand? _addModDialogCommand;
+
+    public IAsyncRelayCommand AddModDialogCommand
+    {
+        get => _addModDialogCommand ??= new AsyncRelayCommand(AddModAsync, canExecute: canAddMod);
+        set => SetProperty(ref _addModDialogCommand, value);
+    }
 
     public event EventHandler? DuplicateModDialog;
 
@@ -279,6 +416,10 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private string _modFolderName = string.Empty;
 
+    private ISkinMod? _duplicateMod;
+
+    [ObservableProperty] private Uri? _duplicateModPath;
+
     [ObservableProperty] private string _duplicateModFolderName = string.Empty;
     [ObservableProperty] private string _duplicateModCustomName = string.Empty;
 
@@ -289,6 +430,14 @@ public partial class DebugViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private string _description = string.Empty;
 
     [ObservableProperty] private ObservableCollection<RootFolder> _rootFolder = new();
+
+    private const string AddRenameText = "Rename and Add mod";
+    private const string AddReplaceText = "Overwrite old mod";
+    [ObservableProperty] private string _primaryButtonText = AddRenameText;
+
+    [ObservableProperty] private bool _overwriteExistingMod;
+
+    [ObservableProperty] private bool _canExecuteDialogCommand;
 }
 
 public partial class RootFolder : ObservableObject

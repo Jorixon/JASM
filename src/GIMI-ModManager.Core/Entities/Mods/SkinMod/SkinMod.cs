@@ -62,6 +62,7 @@ public class SkinMod : Mod, ISkinMod
 
         var settings = await skinMod.Settings.ReadSettingsAsync().ConfigureAwait(false);
         settings.Id = Guid.NewGuid();
+        skinMod.Id = settings.Id;
         await skinMod.Settings.SaveSettingsAsync(settings).ConfigureAwait(false);
 
 

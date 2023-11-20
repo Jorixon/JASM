@@ -59,6 +59,14 @@ public interface ISkinManagerService : IDisposable
     public Task EnableModListAsync(ICharacter moddableObject);
 
     public Task DisableModListAsync(IModdableObject moddableObject, bool deleteFolder = false);
+
+    /// <summary>
+    /// Copes/Moves the mod to the destination mod list. Will throw if the mod is already in the destination mod list or there are duplicate names.
+    /// </summary>
+    /// <param name="mod">The Mod to be copied/moved</param>
+    /// <param name="modList">The modList where the mod will be moved to</param>
+    /// <param name="move">If true, will move the mod instead of copying it</param>
+    public void AddMod(ISkinMod mod, ICharacterModList modList, bool move = false);
 }
 
 public enum SetModStatus

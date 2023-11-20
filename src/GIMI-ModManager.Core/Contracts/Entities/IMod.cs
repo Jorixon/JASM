@@ -31,10 +31,10 @@ public interface IMod : IEqualityComparer<IMod>
     public void MoveTo(string absPath);
 
     /// <summary>
-    /// Copies the mod to the specified folder. This does not change the folder name.
+    /// Copies the mod to the specified folder. This does not change the folder name. Returns a new IMod instance.
     /// </summary>
     /// <param name="absPath"></param>
-    /// <returns>The new copied IMod instance</returns>
+    /// <returns>A new copied IMod instance</returns>
     public IMod CopyTo(string absPath);
 
     /// <summary>

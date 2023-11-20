@@ -46,6 +46,14 @@ public partial class App : Application
         return service;
     }
 
+    public static DirectoryInfo GetUniqueTmpFolder()
+    {
+        var tmpFolder = new DirectoryInfo(Path.Combine(TMP_DIR, Guid.NewGuid().ToString()));
+        if (!tmpFolder.Exists)
+            tmpFolder.Create();
+        return tmpFolder;
+    }
+
     public static string TMP_DIR { get; } = Path.Combine(Path.GetTempPath(), "JASM_TMP");
     public static string ROOT_DIR { get; } = AppDomain.CurrentDomain.BaseDirectory;
     public static string ASSET_DIR { get; } = Path.Combine(ROOT_DIR, "Assets");

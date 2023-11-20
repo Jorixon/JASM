@@ -90,8 +90,9 @@
             Title="A folder with the same name exists"
             CloseButtonText="Cancel"
             DefaultButton="Primary"
-            PrimaryButtonText="Rename and Add mod"
-            SecondaryButtonText="Overwrite existing">
+            IsPrimaryButtonEnabled="{x:Bind ViewModel.CanExecuteDialogCommand, Mode=OneWay}"
+            PrimaryButtonCommand="{x:Bind ViewModel.AddModDialogCommand, Mode=OneWay}"
+            PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText, Mode=OneWay}">
             <ContentDialog.Content>
                 <Grid MinWidth="500">
                     <Grid.RowDefinitions>
@@ -118,13 +119,15 @@
                             <TextBox
                                 Margin="4"
                                 Header="Custom name"
+                                IsEnabled="{x:Bind ViewModel.OverwriteExistingMod, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                 PlaceholderText="CustomName"
-                                Text="{x:Bind ViewModel.CustomName, Mode=TwoWay}" />
+                                Text="{x:Bind ViewModel.CustomName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
                                 Margin="4"
                                 Header="Folder name"
+                                IsEnabled="{x:Bind ViewModel.OverwriteExistingMod, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                 PlaceholderText="FolderName"
-                                Text="{x:Bind ViewModel.ModFolderName, Mode=TwoWay}" />
+                                Text="{x:Bind ViewModel.ModFolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="4">
@@ -132,19 +135,25 @@
                             <TextBox
                                 Margin="4"
                                 Header="Custom name"
+                                IsEnabled="{x:Bind ViewModel.OverwriteExistingMod, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                 PlaceholderText="CustomName"
-                                Text="{x:Bind ViewModel.DuplicateModCustomName, Mode=TwoWay}" />
+                                Text="{x:Bind ViewModel.DuplicateModCustomName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
                                 Margin="4"
                                 Header="Folder name"
+                                IsEnabled="{x:Bind ViewModel.OverwriteExistingMod, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                                 PlaceholderText="FolderName"
-                                Text="{x:Bind ViewModel.DuplicateModFolderName, Mode=TwoWay}" />
-                            <controls:LinkButton Text="Open existing mod folder..." />
+                                Text="{x:Bind ViewModel.DuplicateModFolderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <controls:LinkButton Link="{x:Bind ViewModel.DuplicateModPath, Mode=OneWay}" Text="Open existing mod folder..." />
                         </StackPanel>
 
                     </Grid>
 
-
+                    <CheckBox
+                        Grid.Row="2"
+                        Margin="4"
+                        Content="Overwrite existing mod"
+                        IsChecked="{x:Bind ViewModel.OverwriteExistingMod, Mode=TwoWay}" />
                 </Grid>
 
             </ContentDialog.Content>
@@ -230,6 +239,8 @@
                             <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.RootFolderIcon}" />
                             <TextBlock Margin="4,0" Text="ModFolder:" />
                             <TextBlock Text="{x:Bind ViewModel.LastSelectedRootFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
+                            <FontIcon Margin="4,0" Glyph="&#xEA62;" />
+                            <TextBlock Text="{x:Bind ViewModel.CharacterModList.Character.DisplayName}" />
                         </StackPanel>
 
 

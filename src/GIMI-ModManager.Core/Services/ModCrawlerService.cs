@@ -100,9 +100,11 @@ public class ModCrawlerService
     }
 
 
-    public FileInfo? GetFirstJasmConfigFileAsync(DirectoryInfo directoryInfo)
+    public FileInfo? GetFirstJasmConfigFileAsync(DirectoryInfo directoryInfo, bool recursive = true)
     {
-        return directoryInfo.GetFiles(Constants.ModConfigFileName, SearchOption.AllDirectories).FirstOrDefault();
+        var searchOption = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+        return directoryInfo.GetFiles(Constants.ModConfigFileName, searchOption).FirstOrDefault();
     }
 
     public FileInfo? GetMergedIniFile(DirectoryInfo directoryInfo)

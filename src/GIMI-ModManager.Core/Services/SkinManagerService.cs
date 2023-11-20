@@ -257,6 +257,28 @@ public sealed class SkinManagerService : ISkinManagerService
         return Task.CompletedTask;
     }
 
+    public void AddMod(ISkinMod mod, ICharacterModList modList, bool move = false)
+    {
+        if (GetModById(mod.Id) is not null)
+            throw new InvalidOperationException($"Mod with id {mod.Id} is already tracked in a modList");
+
+        var existingMods = modList.Mods.Select(ske => ske.Mod).ToArray();
+
+        foreach (var existingMod in existingMods)
+        {
+            if (ModFolderHelpers.FolderNameEquals(mod.Name, existingMod.Name))
+                throw new InvalidOperationException(
+                    $"Mod with name {mod.Name} already exists in modList {modList.Character.DisplayName}");
+        }
+
+        using var disableWatcher = modList.DisableWatcher();
+        if (move)
+            mod.MoveTo(modList.AbsModsFolderPath);
+        else
+            mod.CopyTo(modList.AbsModsFolderPath);
+        modList.TrackMod(mod);
+    }
+
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,
         bool removeLocalJasmSettings = true, bool zip = true, bool keepCharacterFolderStructure = false,
         SetModStatus setModStatus = SetModStatus.KeepCurrent)
