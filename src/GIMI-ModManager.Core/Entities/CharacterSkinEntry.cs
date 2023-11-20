@@ -6,13 +6,12 @@ public class CharacterSkinEntry : IEqualityComparer<CharacterSkinEntry>
 {
     internal CharacterSkinEntry(ISkinMod mod, ICharacterModList modList, bool isEnabled)
     {
-        Id = mod.Id;
         Mod = mod;
         ModList = modList;
         IsEnabled = isEnabled;
     }
 
-    public Guid Id { get; }
+    public Guid Id => Mod.Id;
     public ISkinMod Mod { get; }
     public ICharacterModList ModList { get; }
     public bool IsEnabled { get; internal set; }

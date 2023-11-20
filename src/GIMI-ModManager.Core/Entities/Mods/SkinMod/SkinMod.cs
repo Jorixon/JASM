@@ -138,6 +138,11 @@ public class SkinMod : Mod, ISkinMod
         return Equals(this, (SkinMod)obj);
     }
 
+    public bool Equals(ISkinMod? other)
+    {
+        return Equals(this, other);
+    }
+
     public override int GetHashCode()
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode

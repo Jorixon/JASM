@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using Serilog;
@@ -9,6 +10,7 @@ public class ModNotificationManager
 {
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
+    private readonly ISkinManagerService _skinManagerService;
 
     private readonly List<ModNotification> _inMemoryModNotifications = new();
     private readonly List<ModNotification> _modNotifications = new();
@@ -27,10 +29,12 @@ public class ModNotificationManager
     };
 
 
-    public ModNotificationManager(ILogger logger, ILocalSettingsService localSettingsService)
+    public ModNotificationManager(ILogger logger, ILocalSettingsService localSettingsService,
+        ISkinManagerService skinManagerService)
     {
         _logger = logger;
         _localSettingsService = localSettingsService;
+        _skinManagerService = skinManagerService;
     }
 
     private async Task InitializeAsync()
@@ -212,6 +216,32 @@ public class ModNotificationManager
             NotificationType.All => _modNotifications.Concat(_inMemoryModNotifications).ToArray().AsReadOnly(),
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
+    }
+
+    /// <summary>
+    /// Removes all persistent mod notifications for mods that are not in the mod manager anymore
+    /// </summary>
+    public async Task CleanupAsync()
+    {
+        _logger.Debug("Cleaning up mod notifications");
+        var persistentNotifications =
+            new List<ModNotification>(await GetNotificationsAsync(NotificationType.Persistent));
+        var allMods = _skinManagerService.CharacterModLists.SelectMany(x => x.Mods);
+
+        foreach (var characterSkinEntry in allMods)
+        {
+            var notifications = persistentNotifications.FirstOrDefault(not => not.ModId == characterSkinEntry.Id);
+            if (notifications is null)
+                continue;
+            persistentNotifications.Remove(notifications);
+        }
+
+        if (persistentNotifications.Any())
+            _logger.Information("Removing {Count} mod notifications that are not in the mod manager anymore",
+                persistentNotifications.Count);
+
+        foreach (var notification in persistentNotifications)
+            await RemoveModNotificationAsync(notification.Id);
     }
 
     public class ModNotificationEvent : EventArgs
