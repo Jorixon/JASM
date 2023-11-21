@@ -68,7 +68,7 @@ public partial class ModUpdateVM : ObservableRecipient
             return;
         }
 
-        var modSettings = mod.Settings.GetSettings().TryPickT0(out var settings, out _) ? settings : null;
+        var modSettings = mod.Settings.GetSettingsLegacy().TryPickT0(out var settings, out _) ? settings : null;
 
         if (modSettings is null)
         {

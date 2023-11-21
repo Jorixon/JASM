@@ -64,7 +64,7 @@ public record ModSettings
     public DateTime? LastChecked { get; internal set; }
 
 
-    internal static ModSettings FromJsonSkinSettings(ISkinMod skinMod, JsonModSettings settings)
+    internal static ModSettings FromJsonSkinSettings(ISkinMod? skinMod, JsonModSettings settings)
     {
         return new ModSettings
         {
@@ -73,7 +73,9 @@ public record ModSettings
             Author = settings.Author,
             Version = settings.Version,
             ModUrl = SkinModHelpers.StringUrlToUri(settings.ModUrl),
-            ImagePath = SkinModHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath),
+            ImagePath = skinMod is not null
+                ? SkinModHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath)
+                : null,
             CharacterSkinOverride = settings.CharacterSkinOverride,
             Description = settings.Description,
             DateAdded = DateTime.TryParse(settings.DateAdded, out var dateAdded) ? dateAdded : null,

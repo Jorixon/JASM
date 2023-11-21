@@ -261,6 +261,7 @@
 		<None Remove="Views\DebugPage.xaml" />
 		<None Remove="Views\EasterEggPage.xaml" />
 		<None Remove="Views\ErrorWindow.xaml" />
+		<None Remove="Views\ModInstallerPage.xaml" />
 		<None Remove="Views\ModsOverviewPage.xaml" />
 		<None Remove="Views\ModUpdateAvailableWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
@@ -869,6 +870,9 @@
 		<None Update="Assets\ModPanePlaceholder.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\ModInstallerPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\ModsOverviewPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>

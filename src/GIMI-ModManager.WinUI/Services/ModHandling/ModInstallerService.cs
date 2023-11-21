@@ -5,35 +5,44 @@ using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
-using Serilog;
+using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Views;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Media;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
-// Start with installing (and unzipping) the mod to the temp folder, before this process starts
 
-// If a single folder
-// Check if the mod already exists in the mods folder
-// If yes -> Ask if the user wants to overwrite the mod or rename the mod or this mod
-
-// If multiple folders / files
-// show a dedicated window for the user to decide what to do with the files and folders, set mod name and so on
-
-// Then move the mod to the mods folder
-public class ModFolderManager
+public class ModInstallerService
 {
-    private readonly ILogger _logger;
-    private readonly ModDragAndDropService _modDragAndDropService;
+    private readonly IWindowManagerService _windowManagerService;
 
-    private DirectoryInfo _workFolder;
 
-    public ModFolderManager(ILogger logger, ModDragAndDropService modDragAndDropService)
+    public ModInstallerService(IWindowManagerService windowManagerService)
     {
-        _logger = logger;
-        _modDragAndDropService = modDragAndDropService;
+        _windowManagerService = windowManagerService;
     }
 
-    public Task StartModInstallationAsync(DirectoryInfo modFolder)
+    public Task StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList)
     {
-        throw new NotImplementedException();
+        var dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainWindow.DispatcherQueue;
+
+        dispatcherQueue.TryEnqueue(() => InternalStart(modFolder, modList));
+
+        return Task.CompletedTask;
+    }
+
+    private void InternalStart(DirectoryInfo modFolder, ICharacterModList modList)
+    {
+        var modInstallPage = new ModInstallerPage(modList, modFolder);
+        var modInstallWindow = new WindowEx()
+        {
+            SystemBackdrop = new MicaBackdrop(),
+            Title = "Mod Installer Helper",
+            Content = modInstallPage,
+            Width = 1200,
+            Height = 750
+        };
+        _windowManagerService.CreateWindow(modInstallWindow, modList);
     }
 }
 
@@ -45,7 +54,7 @@ public sealed class ModInstallation : IDisposable
     private readonly DirectoryInfo _originalModFolder;
     private readonly List<FileStream> _lockedFiles = new();
 
-    private FileInfo? _jasmConfigFile;
+    public FileInfo? _jasmConfigFile { get; private set; }
     public DirectoryInfo ModFolder { get; private set; }
     private DirectoryInfo? _shaderFixesFolder;
     private List<FileInfo> _shaderFixesFiles = new();
@@ -133,6 +142,24 @@ public sealed class ModInstallation : IDisposable
         return shaderFixesFolder;
     }
 
+    public async Task<ModSettings?> TryReadModSettingsAsync()
+    {
+        if (_jasmConfigFile is null)
+            return null;
+
+        await RemoveJasmConfigFileLockAsync().ConfigureAwait(false);
+        try
+        {
+            return await SkinModSettingsManager.ReadSettingsAsync(_jasmConfigFile.FullName);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+
+        LockJasmConfigFile();
+        return null;
+    }
 
     public ISkinMod? AnyDuplicateName()
     {
@@ -148,7 +175,7 @@ public sealed class ModInstallation : IDisposable
         return null;
     }
 
-    public async Task RenameAndAddAsync(AddModOptions options, ISkinMod dupeMod,
+    public async Task<ISkinMod> RenameAndAddAsync(AddModOptions options, ISkinMod dupeMod,
         string dupeModNewFolderName, string? dupeModNewCustomName = null)
     {
         if (dupeModNewFolderName.IsNullOrEmpty() && options.NewModFolderName.IsNullOrEmpty())
@@ -157,6 +184,7 @@ public sealed class ModInstallation : IDisposable
         if (dupeModNewFolderName == options.NewModFolderName)
             throw new ArgumentException("The new mod folder name and old folder name cannot be the same");
 
+        ReleaseLockedFiles();
 
         var skinMod = await CreateSkinModWithOptionsAsync(options);
         var newModRenamed = false;
@@ -184,11 +212,13 @@ public sealed class ModInstallation : IDisposable
         }
 
         _skinManagerService.AddMod(skinMod, _destinationModList, newModRenamed);
+        return skinMod;
     }
 
 
-    public async Task AddAndReplaceAsync(ISkinMod dupeMod, AddModOptions? options = null)
+    public async Task<ISkinMod> AddAndReplaceAsync(ISkinMod dupeMod, AddModOptions? options = null)
     {
+        ReleaseLockedFiles();
         var skinMod = await CreateSkinModWithOptionsAsync(options).ConfigureAwait(false);
         try
         {
@@ -199,16 +229,19 @@ public sealed class ModInstallation : IDisposable
         }
 
         _skinManagerService.AddMod(skinMod, _destinationModList);
+        return skinMod;
     }
 
-    public async Task AddModAsync(AddModOptions? options = null)
+    public async Task<ISkinMod> AddModAsync(AddModOptions? options = null)
     {
         if (AnyDuplicateName() is not null)
             throw new InvalidOperationException("There is already a mod with the same name");
 
+        ReleaseLockedFiles();
         var skinMod = await CreateSkinModWithOptionsAsync(options);
 
         _skinManagerService.AddMod(skinMod, _destinationModList);
+        return skinMod;
     }
 
     private async Task<ISkinMod> CreateSkinModWithOptionsAsync(AddModOptions? options = null)
@@ -229,7 +262,8 @@ public sealed class ModInstallation : IDisposable
             description: options.Description,
             dateAdded: DateTime.Now
         );
-        await skinMod.Settings.SaveSettingsAsync(settings).ConfigureAwait(false);
+        await skinMod.Settings.SaveSettingsAsync(settings, new SaveSettingsOptions { DeleteOldImage = false })
+            .ConfigureAwait(false);
         return skinMod;
     }
 
@@ -246,6 +280,18 @@ public sealed class ModInstallation : IDisposable
                 await jasmFs.DisposeAsync().ConfigureAwait(false);
                 _lockedFiles.Remove(jasmFs);
             }
+        }
+    }
+
+    private void LockJasmConfigFile()
+    {
+        if (_jasmConfigFile is not null)
+        {
+            _jasmConfigFile.Refresh();
+            if (!_jasmConfigFile.Exists) return;
+
+            var jasmFs = _jasmConfigFile.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            _lockedFiles.Add(jasmFs);
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Page
-    x:Class="GIMI_ModManager.WinUI.Views.DebugPage"
+    x:Class="GIMI_ModManager.WinUI.Views.ModInstallerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
@@ -8,14 +8,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:services="using:GIMI_ModManager.Core.Services"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     mc:Ignorable="d">
+
+
 
     <Page.Resources>
 
         <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
 
+        <MenuFlyout x:Name="ImageFlyout">
+            <MenuFlyoutItem
+                Command="{x:Bind ViewModel.ClearModPreviewImageCommand}"
+                Icon="Delete"
+                Text="Clear image" />
+        </MenuFlyout>
 
         <MenuFlyout x:Name="FileFlyout">
             <MenuFlyoutItem
@@ -50,6 +57,7 @@
         <DataTemplate x:Key="FileSystemItemTemplate" x:DataType="viewModels:FileSystemItem">
             <TreeViewItem
                 IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                IsSelected="{x:Bind IsSelected, Mode=TwoWay}"
                 ItemsSource="{x:Bind FileSystemItems, Mode=OneWay}"
                 Loaded="FrameworkElement_OnLoaded">
                 <Grid DoubleTapped="FileSystemItem_DoubleClicked">
@@ -83,10 +91,6 @@
 
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
         <ContentDialog
             x:Name="DuplicateModDialog"
             Title="A folder with the same name exists"
@@ -161,146 +165,152 @@
             </ContentDialog.Content>
         </ContentDialog>
 
-        <Button
-            Grid.Row="0"
-            Margin="0,8"
-            Command="{x:Bind ViewModel.SelectModDebugCommand}"
-            Content="Debug Select Mod Folder" />
 
-        <Grid x:Name="ModInstallRoot" Grid.Row="1">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <StackPanel>
-                <TextBlock Text="Mod install" />
-            </StackPanel>
-
-            <Grid Grid.Row="1">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+        <Grid x:Name="ModInstallRoot" Padding="8">
 
 
-                <ScrollViewer>
 
-                    <StackPanel MinWidth="350">
-                        <Image MinWidth="350" MaxHeight="800">
-                            <Image.Source>
-                                <BitmapImage UriSource="{x:Bind ViewModel.ModPreviewImagePath, Mode=OneWay}" />
-                            </Image.Source>
-                        </Image>
-                        <TextBox
-                            Header="Mod page url"
-                            IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
-                            KeyDown="UrlTextBox_KeyDown"
-                            PlaceholderText="Paste URL to auto populate fields (GameBanana only)"
-                            Text="{x:Bind ViewModel.ModUrl, Mode=TwoWay}" />
-                        <TextBox
-                            Header="Mod Custom Name"
-                            IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
-                            PlaceholderText="Custom Name display throughout JASM"
-                            Text="{x:Bind ViewModel.CustomName, Mode=TwoWay}" />
-                        <TextBox
-                            Header="Author"
-                            IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
-                            Text="{x:Bind ViewModel.Author, Mode=TwoWay}" />
-                        <RichEditBox MinHeight="100" Header="Description" />
-
-                    </StackPanel>
-                </ScrollViewer>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
 
-                <!--
-                    Folder overview
-                    Select Root Mod Folder
-                    Select ShaderFixes
-                    Select Image
-                -->
-                <Grid Grid.Column="1">
+            <!--<ScrollViewer Margin="0,0,4,0">-->
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+            <!--<StackPanel MinWidth="350">-->
 
-                    <TreeView
-                        CanDragItems="False"
-                        CanReorderItems="False"
-                        ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
-                        ItemsSource="{x:Bind ViewModel.RootFolder, Mode=OneWay}" />
+            <Grid Height="{x:Bind ModViewColumn.Height, Mode=OneWay}">
 
-                    <StackPanel Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                        <StackPanel Margin="0,8,0,12" Orientation="Horizontal">
-                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.RootFolderIcon}" />
-                            <TextBlock Margin="4,0" Text="ModFolder:" />
-                            <TextBlock Text="{x:Bind ViewModel.LastSelectedRootFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
-                            <FontIcon Margin="4,0" Glyph="&#xEA62;" />
-                            <TextBlock Text="{x:Bind ViewModel.CharacterModList.Character.DisplayName}" />
-                        </StackPanel>
+                <Image
+                    MinWidth="350"
+                    MaxHeight="800"
+                    ContextFlyout="{StaticResource ImageFlyout}">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind ViewModel.ModPreviewImagePath, Mode=OneWay}" />
+                    </Image.Source>
+                </Image>
+                <TextBox
+                    Grid.Row="1"
+                    Header="Mod page url"
+                    IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
+                    KeyDown="UrlTextBox_KeyDown"
+                    PlaceholderText="Paste URL to auto populate fields (GameBanana only)"
+                    Text="{x:Bind ViewModel.ModUrl, Mode=TwoWay}" />
+                <TextBox
+                    Grid.Row="2"
+                    Header="Mod Custom Name"
+                    IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
+                    PlaceholderText="Custom Name display throughout JASM"
+                    Text="{x:Bind ViewModel.CustomName, Mode=TwoWay}" />
+                <TextBox
+                    Grid.Row="3"
+                    Header="Author"
+                    IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.Author, Mode=TwoWay}" />
+                <RichEditBox
+                    Grid.Row="4"
+                    MinHeight="100"
+                    Header="Description"
+                    IsEnabled="False"
+                    PlaceholderText="Not functional yet :/" />
+            </Grid>
 
-
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedImageIcon}" />
-                            <TextBlock Margin="4,0" Text="PreviewImage:" />
-                            <TextBlock Text="Auto" />
-                        </StackPanel>
-                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                            <CheckBox
-                                Content="Auto"
-                                IsChecked="True"
-                                IsEnabled="False" />
-                            <CheckBox Content="Url" IsEnabled="False" />
-                            <CheckBox Content="Mod Files" IsEnabled="False" />
-                            <CheckBox Content="Ignore" IsEnabled="False" />
-                        </StackPanel>
-
-
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedMergeIniIcon}" />
-                            <TextBlock Margin="4,0" Text="MergedIniFile Folder:" />
-                            <TextBlock Text="Auto" />
-                        </StackPanel>
-
-                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                            <CheckBox
-                                Content="Auto"
-                                IsChecked="True"
-                                IsEnabled="False" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.ShaderFixesFolderIcon}" />
-                            <TextBlock Margin="4,0" Text="ShaderFixes Folder:" />
-                            <TextBlock Text="{x:Bind ViewModel.LastSelectedShaderFixesFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox Content="Auto" IsEnabled="False" />
-                            <CheckBox
-                                Content="Manual Select"
-                                IsChecked="True"
-                                IsEnabled="False" />
-                            <CheckBox Content="Ignore" IsEnabled="False" />
-                        </StackPanel>
+            <!--</StackPanel>-->
+            <!--</ScrollViewer>-->
 
 
+            <!--
+                Folder overview
+                Select Root Mod Folder
+                Select ShaderFixes
+                Select Image
+            -->
+            <Grid x:Name="ModViewColumn" Grid.Column="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TreeView
+                    CanDragItems="False"
+                    CanReorderItems="False"
+                    ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
+                    ItemsSource="{x:Bind ViewModel.RootFolder, Mode=OneWay}" />
+
+                <StackPanel Grid.Row="1">
+
+                    <StackPanel Margin="0,8,0,12" Orientation="Horizontal">
+                        <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.RootFolderIcon}" />
+                        <TextBlock Margin="4,0" Text="ModFolder:" />
+                        <TextBlock Text="{x:Bind ViewModel.LastSelectedRootFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
+                        <FontIcon Margin="4,0" Glyph="&#xEA62;" />
+                        <TextBlock Text="{x:Bind ViewModel.ModCharacterName, Mode=OneWay}" />
                     </StackPanel>
 
-                    <Button
-                        Grid.Row="2"
-                        HorizontalAlignment="Right"
-                        Command="{x:Bind ViewModel.AddModCommand}"
-                        Content="Add Mod" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedImageIcon}" />
+                        <TextBlock Margin="4,0" Text="PreviewImage:" />
+                        <TextBlock Text="Auto" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <CheckBox
+                            Content="Auto"
+                            IsChecked="True"
+                            IsEnabled="False" />
+                        <CheckBox Content="Url" IsEnabled="False" />
+                        <CheckBox Content="Mod Files" IsEnabled="False" />
+                        <CheckBox Content="Ignore" IsEnabled="False" />
+                    </StackPanel>
 
 
-                </Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedMergeIniIcon}" />
+                        <TextBlock Margin="4,0" Text="MergedIniFile Folder:" />
+                        <TextBlock Text="Auto" />
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <CheckBox
+                            Content="Auto"
+                            IsChecked="True"
+                            IsEnabled="False" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.ShaderFixesFolderIcon}" />
+                        <TextBlock Margin="4,0" Text="ShaderFixes Folder:" />
+                        <TextBlock Text="{x:Bind ViewModel.LastSelectedShaderFixesFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="Auto" IsEnabled="False" />
+                        <CheckBox
+                            Content="Manual Select"
+                            IsChecked="True"
+                            IsEnabled="False" />
+                        <CheckBox Content="Ignore" IsEnabled="False" />
+                    </StackPanel>
+
+
+                </StackPanel>
+
+                <Button
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Command="{x:Bind ViewModel.AddModCommand}"
+                    Content="Add Mod" />
 
 
             </Grid>
@@ -310,4 +320,5 @@
 
 
     </Grid>
+
 </Page>

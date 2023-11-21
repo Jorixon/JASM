@@ -13,6 +13,8 @@ public class WindowManagerService : IWindowManagerService
     private readonly List<Tuple<WindowEx, object>> _windows = new();
     private readonly List<WindowEx> _windowDialogOpen = new();
 
+    public IReadOnlyCollection<WindowEx> Windows => _windows.Select(x => x.Item1).ToArray().AsReadOnly();
+
     public WindowEx MainWindow => App.MainWindow;
 
     private void AddWindow(WindowEx window, object? identifier = null)
@@ -169,6 +171,7 @@ public class WindowManagerService : IWindowManagerService
 public interface IWindowManagerService
 {
     public WindowEx MainWindow { get; }
+    public IReadOnlyCollection<WindowEx> Windows { get; }
     void ShowWindow(WindowEx window);
     void ResizeWindow(WindowEx window, int width, int height);
     void ResizeWindow(WindowEx window, ScreenSizeSettings newSize);

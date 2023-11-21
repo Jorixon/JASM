@@ -714,22 +714,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         try
         {
             IsAddingMod = true;
-            var extractResults = await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
-
-            foreach (var extractResult in extractResults)
-            {
-                var notfiy = new ModNotification()
-                {
-                    CharacterInternalName = modList.Character.InternalName,
-                    AttentionType = AttentionType.Added,
-                    ModFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name,
-                    Message = "Mod added from character overview"
-                };
-                await _modNotificationManager.AddModNotification(notfiy);
-
-                characterGridItemModel.Notification = true;
-                characterGridItemModel.NotificationType = notfiy.AttentionType;
-            }
+            await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
         }
         catch (Exception e)
         {

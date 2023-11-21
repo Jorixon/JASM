@@ -71,7 +71,7 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
             IsEnabled = isEnabled
         };
 
-        if (skinMod.Settings.GetSettings().TryPickT0(out var settings, out _))
+        if (skinMod.Settings.GetSettingsLegacy().TryPickT0(out var settings, out _))
             modModel.WithModSettings(settings);
 
         if (skinMod.KeySwaps is not null && skinMod.KeySwaps.GetKeySwaps().TryPickT0(out var keySwaps, out _))
