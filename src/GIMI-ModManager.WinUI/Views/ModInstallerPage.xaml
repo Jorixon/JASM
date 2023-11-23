@@ -170,11 +170,9 @@
 
         <Grid x:Name="ModInstallRoot" Padding="8">
 
-
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
 
@@ -218,12 +216,13 @@
                     Header="Author"
                     IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
                     Text="{x:Bind ViewModel.Author, Mode=TwoWay}" />
-                <RichEditBox
+                <TextBox
                     Grid.Row="4"
-                    MinHeight="100"
+                    Height="100"
+                    AcceptsReturn="True"
                     Header="Description"
-                    IsEnabled="False"
-                    PlaceholderText="Not functional yet :/" />
+                    PlaceholderText="The description is currently not shown anywhere in JASM"
+                    Text="{x:Bind ViewModel.Description, Mode=TwoWay}" />
             </Grid>
 
             <!--</StackPanel>-->
@@ -253,10 +252,12 @@
                     CanReorderItems="False"
                     ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
                     ItemsSource="{x:Bind ViewModel.RootFolder, Mode=OneWay}" />
+                <!--  MinHeight="220"  -->
 
                 <StackPanel
+                    x:Name="ModFolderSelectionDetails"
                     Grid.Row="1"
-                    MinHeight="220"
+                    Width="{x:Bind ModViewColumn.Width, Mode=OneWay}"
                     VerticalAlignment="Top">
 
                     <StackPanel Margin="0,8,0,12" Orientation="Horizontal">
@@ -289,21 +290,21 @@
                     </StackPanel>
 
                     <TextBlock
-                        Width="{x:Bind ModFolderTree.ActualWidth, Mode=OneWay}"
                         Padding="8"
+                        HorizontalAlignment="Left"
                         Text="Here you can select the root of the mod folder."
                         TextWrapping="WrapWholeWords" />
 
                     <TextBlock
-                        Width="{x:Bind ModFolderTree.ActualWidth, Mode=OneWay}"
                         Padding="8"
+                        HorizontalAlignment="Left"
                         Text="This is usually the folder that contains the 'merged.ini' or '.JASM_ModConfig.json'.&#x0a;JASM will automatically detect the mod folder and the merged.ini file. If you want to manually select the mod folder, you can do so by right clicking the folder in the overview above. "
                         TextWrapping="WrapWholeWords" />
 
                     <TextBlock
-                        Width="{x:Bind ModFolderTree.ActualWidth, Mode=OneWay}"
                         Padding="8"
-                        Text="You can also manually select image file for the mod preview image."
+                        HorizontalAlignment="Left"
+                        Text="You can also manually select image file for the mod preview image. It's usually fine to just press 'Add Mod'"
                         TextWrapping="WrapWholeWords" />
 
 

@@ -34,15 +34,22 @@ public class ModInstallerService
 
     private void InternalStart(DirectoryInfo modFolder, ICharacterModList modList)
     {
+        var modTitle = Guid.TryParse(modFolder.Name, out _)
+            ? modFolder.EnumerateDirectories().FirstOrDefault()?.Name
+            : modFolder.Name;
+
+        modTitle ??= modFolder.Name;
+
         var modInstallPage = new ModInstallerPage(modList, modFolder);
         var modInstallWindow = new WindowEx()
         {
             SystemBackdrop = new MicaBackdrop(),
-            Title = "Mod Installer Helper",
+            Title = $"Mod Installer Helper: {modTitle}",
             Content = modInstallPage,
             Width = 1200,
             Height = 750
         };
+        modInstallPage.CloseRequested += (_, _) => { modInstallWindow.Close(); };
         _windowManagerService.CreateWindow(modInstallWindow, modList);
     }
 }
@@ -55,9 +62,11 @@ public sealed class ModInstallation : IDisposable
     private readonly DirectoryInfo _originalModFolder;
     private readonly List<FileStream> _lockedFiles = new();
 
-    public FileInfo? _jasmConfigFile { get; private set; }
+    private FileInfo? _jasmConfigFile;
     public DirectoryInfo ModFolder { get; private set; }
     private DirectoryInfo? _shaderFixesFolder;
+
+    // TODO: Enable later
     private List<FileInfo> _shaderFixesFiles = new();
 
 

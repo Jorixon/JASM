@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
@@ -8,12 +9,14 @@ using GIMI_ModManager.Core.Entities.Mods.Helpers;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Dispatching;
 using Serilog;
+using Constants = GIMI_ModManager.Core.Helpers.Constants;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -39,6 +42,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     public event EventHandler? DuplicateModDialog;
     public event EventHandler? InstallerFinished;
+    public event EventHandler? CloseRequested;
 
     [ObservableProperty] private string _modCharacterName = string.Empty;
     [ObservableProperty] private bool _isRetrievingModInfo;
@@ -330,6 +334,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         }
     }
 
+    [MemberNotNullWhen(true, nameof(_modInstallation))]
     private bool canAddMod()
     {
         if (_modInstallation is null)
@@ -341,7 +346,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [RelayCommand(CanExecute = nameof(canAddMod))]
     private async Task AddModAsync()
     {
-        if (_modInstallation is null)
+        if (!canAddMod())
             return;
 
         var skinModDupe = _modInstallation.AnyDuplicateName();
@@ -366,10 +371,16 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             return;
         }
 
-
-        var skinMod = await Task.Run(() => _modInstallation.AddModAsync(GetModOptions())).ConfigureAwait(false);
-
-        SuccessfulInstall(skinMod);
+        try
+        {
+            var skinMod = await Task.Run(() => _modInstallation.AddModAsync(GetModOptions()));
+            SuccessfulInstall(skinMod);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to add mod");
+            ErrorOccurred();
+        }
     }
 
     private async Task AddModAndReplaceAsync()
@@ -380,12 +391,19 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         if (_duplicateMod is null)
             return;
 
-        var skinMod = await Task.Run(() => _modInstallation.AddAndReplaceAsync(_duplicateMod, GetModOptions()))
-            .ConfigureAwait(false);
-
-        SuccessfulInstall(skinMod);
+        try
+        {
+            var skinMod = await Task.Run(() => _modInstallation.AddAndReplaceAsync(_duplicateMod, GetModOptions()));
+            SuccessfulInstall(skinMod);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to add mod");
+            ErrorOccurred();
+        }
     }
 
+    [MemberNotNullWhen(true, nameof(_modInstallation), nameof(_duplicateMod))]
     private bool canAddModAndRename()
     {
         if (_modInstallation is null)
@@ -395,6 +413,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             return false;
 
         if (ModFolderName == DuplicateModFolderName)
+            return false;
+
+        if (_duplicateMod is null)
             return false;
 
         if (DuplicateModFolderName != _duplicateMod?.Name)
@@ -417,12 +438,19 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     private async Task AddModAndRenameAsync()
     {
-        if (_modInstallation is null || _duplicateMod is null || !canAddModAndRename())
+        if (!canAddModAndRename())
             return;
-
-        var skinMod = await Task.Run(() => _modInstallation.RenameAndAddAsync(GetModOptions(ModFolderName),
-            _duplicateMod, DuplicateModFolderName, DuplicateModCustomName)).ConfigureAwait(false);
-        SuccessfulInstall(skinMod);
+        try
+        {
+            var skinMod = await Task.Run(() => _modInstallation.RenameAndAddAsync(GetModOptions(ModFolderName),
+                _duplicateMod, DuplicateModFolderName, DuplicateModCustomName));
+            SuccessfulInstall(skinMod);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to add mod");
+            ErrorOccurred();
+        }
     }
 
     private static readonly Dictionary<Uri, ModPageDataResult> _modPageDataCache = new();
@@ -519,6 +547,17 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     {
         _modInstallation?.Dispose();
         _modInstallation = null;
+    }
+
+    private void ErrorOccurred()
+    {
+        InstallerFinished?.Invoke(this, EventArgs.Empty);
+        Win32.PlaySound("SystemAsterisk", nuint.Zero,
+            (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
+        _notificationManager.ShowNotification("An error occurred",
+            "An error occurred while adding the mod. See logs for more details",
+            TimeSpan.FromSeconds(10));
+        CloseRequested?.Invoke(this, EventArgs.Empty);
     }
 }
 

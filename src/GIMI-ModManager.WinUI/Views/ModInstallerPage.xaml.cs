@@ -10,6 +10,7 @@ namespace GIMI_ModManager.WinUI.Views;
 
 public sealed partial class ModInstallerPage : Page, IDisposable
 {
+    public event EventHandler? CloseRequested;
     public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
     public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall)
@@ -18,6 +19,7 @@ public sealed partial class ModInstallerPage : Page, IDisposable
         ViewModel.DuplicateModDialog += OnDuplicateModFound;
         ViewModel.InstallerFinished += (_, _) => { DispatcherQueue.TryEnqueue(() => { IsEnabled = false; }); };
         Loading += (_, _) => { ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue); };
+        ViewModel.CloseRequested += (_, _) => { CloseRequested?.Invoke(this, EventArgs.Empty); };
     }
 
     private async void OnDuplicateModFound(object? sender, EventArgs e)
