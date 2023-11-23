@@ -1,12 +1,12 @@
 ﻿using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.AppManagment;
-using GIMI_ModManager.WinUI.Services.ModHandling;
 using Serilog;
-using static GIMI_ModManager.WinUI.Services.ModDragAndDropService.DragAndDropFinishedArgs;
+using static GIMI_ModManager.WinUI.Services.ModHandling.ModDragAndDropService.DragAndDropFinishedArgs;
 
-namespace GIMI_ModManager.WinUI.Services;
+namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
 public class ModDragAndDropService
 {
@@ -49,12 +49,15 @@ public class ModDragAndDropService
             return;
         }
 
-        if (_windowManagerService.GetWindow(modList) is not null)
+        if (_windowManagerService.GetWindow(modList) is { } window)
         {
             _notificationManager.ShowNotification(
                 $"Please finish adding the mod for '{modList.Character.DisplayName}' first",
                 $"JASM does not support multiple mod installs for the same character",
-                TimeSpan.FromSeconds(5));
+                TimeSpan.FromSeconds(8));
+            Win32.PlaySound("SystemAsterisk", nuint.Zero,
+                (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
+            App.MainWindow.DispatcherQueue.TryEnqueue(() => window.Activate());
             return;
         }
 

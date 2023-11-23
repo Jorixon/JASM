@@ -197,18 +197,21 @@ public class ActivationService : IActivationService
             return;
         }
 
-        if (!_isExiting)
-            args.Handled = true;
-        else
+        if (_isExiting)
             return;
 
+
+        args.Handled = true;
+
         var notificationCleanup = Task.Run(_modNotificationManager.CleanupAsync).ConfigureAwait(false);
-        var saveSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
+        var saveWindowSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
 
         _logger.Debug("JASM shutting down...");
         _modUpdateAvailableChecker.CancelAndStop();
         _updateChecker.CancelAndStop();
 
+
+        await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);
 
         var tmpDir = new DirectoryInfo(App.TMP_DIR);
         if (tmpDir.Exists)
@@ -217,7 +220,7 @@ public class ActivationService : IActivationService
             tmpDir.Delete(true);
         }
 
-        await saveSettingsTask;
+        await saveWindowSettingsTask;
         await notificationCleanup;
         _logger.Debug("JASM shutdown complete.");
 

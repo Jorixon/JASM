@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Input;
 
 namespace GIMI_ModManager.WinUI.Views;
 
-public sealed partial class ModInstallerPage : Page
+public sealed partial class ModInstallerPage : Page, IDisposable
 {
     public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
@@ -18,7 +18,6 @@ public sealed partial class ModInstallerPage : Page
         ViewModel.DuplicateModDialog += OnDuplicateModFound;
         ViewModel.InstallerFinished += (_, _) => { DispatcherQueue.TryEnqueue(() => { IsEnabled = false; }); };
         Loading += (_, _) => { ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue); };
-        Unloaded += (_, _) => { ViewModel.OnNavigatedFrom(); };
     }
 
     private async void OnDuplicateModFound(object? sender, EventArgs e)
@@ -65,6 +64,11 @@ public sealed partial class ModInstallerPage : Page
             if (sender is not TextBox textBox) return;
             ViewModel.ModUrl = textBox.Text.Trim();
         }
+    }
+
+    public void Dispose()
+    {
+        ViewModel.Dispose();
     }
 }
 

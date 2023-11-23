@@ -17,7 +17,7 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
-public partial class ModInstallerVM : ObservableRecipient, INavigationAware
+public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDisposable
 {
     private readonly ILogger _logger;
     private readonly ImageHandlerService _imageHandlerService;
@@ -173,11 +173,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware
 
     public void OnNavigatedFrom()
     {
-        if (_modInstallation is not null)
-        {
-            _modInstallation.Dispose();
-            _modInstallation = null;
-        }
+        _modInstallation?.Dispose();
     }
 
 
@@ -342,6 +338,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware
     {
         if (_modInstallation is null)
             return;
+
+        throw new InvalidOperationException();
         var skinModDupe = _modInstallation.AnyDuplicateName();
 
         if (skinModDupe is not null)
@@ -512,6 +510,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware
             Description = Description,
             ModImage = ModPreviewImagePath == _placeholderImageUri ? null : ModPreviewImagePath
         };
+    }
+
+    public void Dispose()
+    {
+        _modInstallation?.Dispose();
+        _modInstallation = null;
     }
 }
 

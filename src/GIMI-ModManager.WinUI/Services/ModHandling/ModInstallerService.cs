@@ -9,6 +9,7 @@ using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
@@ -302,6 +303,8 @@ public sealed class ModInstallation : IDisposable
             fileStream.Dispose();
             _lockedFiles.Remove(fileStream);
         }
+
+        Log.Debug("Released locked files, {time}", DateTime.Now);
     }
 
     public void Dispose()

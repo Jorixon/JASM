@@ -1,9 +1,9 @@
 ﻿using GIMI_ModManager.WinUI.Models.Settings;
-using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.AppManagment;
 
@@ -13,45 +13,38 @@ public class WindowManagerService : IWindowManagerService
     private readonly List<Tuple<WindowEx, object>> _windows = new();
     private readonly List<WindowEx> _windowDialogOpen = new();
 
+    private object _windowLock = new();
+
     public IReadOnlyCollection<WindowEx> Windows => _windows.Select(x => x.Item1).ToArray().AsReadOnly();
 
     public WindowEx MainWindow => App.MainWindow;
 
     private void AddWindow(WindowEx window, object? identifier = null)
     {
-        _windows.Add(new Tuple<WindowEx, object>(window, identifier ?? window));
+        lock (_windowLock)
+        {
+            window.Closed += (_, _) => { RemoveWindow(window); };
+            _windows.Add(new Tuple<WindowEx, object>(window, identifier ?? window));
+        }
     }
 
     private void RemoveWindow(WindowEx window)
     {
-        _windows.RemoveAll(x => x.Item1.Equals(window));
-    }
-
-    private void RemoveWindow(object identifier)
-    {
-        _windows.RemoveAll(x => x.Item2.Equals(identifier));
-    }
-
-    public WindowManagerService(ILogger? logger = null)
-    {
-        _logger = logger;
-        AddWindow(App.MainWindow);
-        App.MainWindow.Closed += (sender, args) =>
+        lock (_windowLock)
         {
-            RemoveWindow(App.MainWindow);
-            var window = new List<WindowEx>(_windows.Select(tup => tup.Item1));
-            foreach (var windowEx in window)
-                try
-                {
-                    windowEx.Close();
-                }
-                catch (Exception e)
-                {
-                    _logger?.LogError(e, "Could not close window.");
-                }
+            _windows.RemoveAll(x =>
+            {
+                if (!x.Item1.Equals(window)) return false;
 
-            Application.Current.Exit();
-        };
+                DisposeWindow(window);
+                return true;
+            });
+        }
+    }
+
+    public WindowManagerService(ILogger logger)
+    {
+        _logger = logger.ForContext<WindowManagerService>();
     }
 
     public void ShowWindow(WindowEx window)
@@ -81,7 +74,7 @@ public class WindowManagerService : IWindowManagerService
         var display = WindowsDisplayAPI.Display.GetDisplays().FirstOrDefault(d => d.IsGDIPrimary)?.CurrentSetting;
         if (display is null)
         {
-            _logger?.LogError("Could not get display information.");
+            _logger?.Error("Could not get display information.");
             return;
         }
 
@@ -100,7 +93,7 @@ public class WindowManagerService : IWindowManagerService
         }
         catch (Exception e)
         {
-            _logger?.LogError(e, "Could not close window.");
+            _logger?.Error(e, "Could not close window.");
         }
     }
 
@@ -109,7 +102,6 @@ public class WindowManagerService : IWindowManagerService
     {
         var window = new WindowEx();
         AddWindow(window);
-        window.Closed += (sender, args) => { RemoveWindow(window); };
         window.Content = windowContent;
         if (activate)
             window.Activate();
@@ -119,12 +111,6 @@ public class WindowManagerService : IWindowManagerService
     public void CreateWindow(WindowEx window, object? identifier, bool activate = true)
     {
         AddWindow(window, identifier);
-        window.Closed += (sender, args) =>
-        {
-            RemoveWindow(window);
-            if (identifier is not null)
-                RemoveWindow(identifier);
-        };
         window.Show();
         if (activate)
         {
@@ -161,10 +147,48 @@ public class WindowManagerService : IWindowManagerService
         return result;
     }
 
+    public Task CloseWindowsAsync()
+    {
+        var task = new TaskCompletionSource();
+        lock (_windowLock)
+        {
+            var window = new List<WindowEx>(_windows.Select(tup => tup.Item1)).ToArray();
+
+            foreach (var windowEx in window)
+                try
+                {
+                    DisposeWindow(windowEx);
+                    windowEx.Close();
+                    _windows.RemoveAll(x => x.Item1.Equals(windowEx));
+                }
+                catch (Exception e)
+                {
+                    _logger?.Error(e, "Could not close window.");
+                }
+        }
+
+        task.TrySetResult();
+        return task.Task;
+    }
+
     private WindowEx GetWindow(WindowEx window)
     {
-        return _windows.Find(x => x.Item1.Equals(window))?.Item1 ??
-               throw new ArgumentException("Window not found.", nameof(window));
+        lock (_windowLock)
+        {
+            return _windows.Find(x => x.Item1.Equals(window))?.Item1 ??
+                   throw new ArgumentException("Window not found.", nameof(window));
+        }
+    }
+
+    private void DisposeWindow(WindowEx window)
+    {
+        lock (_windowLock)
+        {
+            if (window.Content is IDisposable disposable)
+                disposable.Dispose();
+            if (window is IDisposable disposableWindow)
+                disposableWindow.Dispose();
+        }
     }
 }
 
@@ -181,4 +205,6 @@ public interface IWindowManagerService
     void CreateWindow(WindowEx window, object? identifier, bool activate = true);
     WindowEx? GetWindow(object identifier);
     Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null);
+
+    Task CloseWindowsAsync();
 }
