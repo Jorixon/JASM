@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -76,7 +77,7 @@ public sealed class SkinManagerService : ISkinManagerService
             {
                 try
                 {
-                    var mod = await SkinMod.CreateModAsync(modFolder.FullName).ConfigureAwait(false);
+                    var mod = await CreateModAsync(modFolder).ConfigureAwait(false);
 
                     if (GetModById(mod.Id) is not null)
                         mod = await SkinMod.CreateModAsync(modFolder.FullName, true).ConfigureAwait(false);
@@ -89,6 +90,32 @@ public sealed class SkinManagerService : ISkinManagerService
                     _logger.Error(e, "Failed to initialize mod '{ModFolder}'", modFolder.FullName);
                 }
             }
+        }
+    }
+
+    private async Task<ISkinMod> CreateModAsync(DirectoryInfo modFolder)
+    {
+        try
+        {
+            return await SkinMod.CreateModAsync(modFolder.FullName).ConfigureAwait(false);
+        }
+        catch (JsonException e)
+        {
+            modFolder.Refresh();
+
+            var invalidJasmConfigFile = modFolder.EnumerateFiles(Constants.ModConfigFileName).FirstOrDefault();
+            if (invalidJasmConfigFile is null)
+                throw new FileNotFoundException("Could not find JASM config file", Constants.ModConfigFileName, e);
+
+
+            _logger.Error(e, "Failed to initialize mod due to invalid config file'{ModFolder}'",
+                modFolder.FullName);
+            _logger.Information("Renaming invalid config file '{ConfigFile}' to {ConfigFile}.invalid",
+                invalidJasmConfigFile.FullName, invalidJasmConfigFile.FullName);
+            invalidJasmConfigFile.MoveTo(Path.Combine(modFolder.FullName,
+                invalidJasmConfigFile.Name + ".invalid"));
+
+            return await SkinMod.CreateModAsync(modFolder.FullName).ConfigureAwait(false);
         }
     }
 
@@ -764,6 +791,7 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         _userIniWatcher?.Dispose();
     }
+
 
 #if DEBUG
     [DoesNotReturn]

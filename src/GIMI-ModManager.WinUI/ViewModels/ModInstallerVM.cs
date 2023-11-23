@@ -339,7 +339,6 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         if (_modInstallation is null)
             return;
 
-        throw new InvalidOperationException();
         var skinModDupe = _modInstallation.AnyDuplicateName();
 
         if (skinModDupe is not null)
