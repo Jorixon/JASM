@@ -99,6 +99,9 @@ public sealed class ModInstallation : IDisposable
 
     public void SetShaderFixesFolder(DirectoryInfo shaderFixesFolder)
     {
+        // TODO: Enable later
+        return;
+
         if (shaderFixesFolder.FullName == ModFolder.FullName)
             throw new ArgumentException("The new shader fixes folder is the same as the current root folder");
 
@@ -125,6 +128,9 @@ public sealed class ModInstallation : IDisposable
             if (mergedIniFile is not null)
                 modRootFolder = new DirectoryInfo(mergedIniFile.DirectoryName!);
         }
+
+        modRootFolder ??= _originalModFolder.EnumerateDirectories().FirstOrDefault();
+
 
         if (modRootFolder is null)
             return null;
@@ -199,7 +205,7 @@ public sealed class ModInstallation : IDisposable
 
         if (!dupeModNewFolderName.IsNullOrEmpty() && dupeMod.Name != dupeModNewFolderName)
         {
-            dupeMod.Rename(dupeModNewFolderName);
+            _destinationModList.RenameMod(dupeMod, dupeModNewFolderName);
         }
 
         // Set new custom name for dupe mod

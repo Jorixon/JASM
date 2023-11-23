@@ -710,7 +710,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var errored = false;
         try
         {
             IsAddingMod = true;
@@ -718,7 +717,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
         catch (Exception e)
         {
-            errored = true;
             _logger.Error(e, "Error adding mod");
             NotificationManager.ShowNotification("Error adding mod", e.Message, TimeSpan.FromSeconds(10));
         }
@@ -726,11 +724,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             IsAddingMod = false;
         }
-
-        if (!errored)
-            NotificationManager.ShowNotification("Mod added",
-                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.InternalName}",
-                TimeSpan.FromSeconds(2));
     }
 
 

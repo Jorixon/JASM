@@ -36,10 +36,12 @@
                 Command="{x:Bind ViewModel.SetRootFolderCommand, Mode=OneWay}"
                 CommandParameter="{Binding}"
                 Text="Set Root Mod Folder" />
+            <!--  TODO: Enable Later  -->
             <MenuFlyoutItem
                 Command="{x:Bind ViewModel.SetShaderFixesFolderCommand}"
                 CommandParameter="{Binding}"
-                Text="Set ShaderFixes Folder" />
+                Text="Set ShaderFixes Folder"
+                Visibility="Collapsed" />
         </MenuFlyout>
 
         <DataTemplate x:Key="RootFolderTemplate" x:DataType="viewModels:RootFolder">
@@ -234,7 +236,10 @@
                 Select ShaderFixes
                 Select Image
             -->
-            <Grid x:Name="ModViewColumn" Grid.Column="1">
+            <Grid
+                x:Name="ModViewColumn"
+                Grid.Column="1"
+                MinWidth="500">
 
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -243,12 +248,16 @@
                 </Grid.RowDefinitions>
 
                 <TreeView
+                    x:Name="ModFolderTree"
                     CanDragItems="False"
                     CanReorderItems="False"
                     ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"
                     ItemsSource="{x:Bind ViewModel.RootFolder, Mode=OneWay}" />
 
-                <StackPanel Grid.Row="1">
+                <StackPanel
+                    Grid.Row="1"
+                    MinHeight="220"
+                    VerticalAlignment="Top">
 
                     <StackPanel Margin="0,8,0,12" Orientation="Horizontal">
                         <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.RootFolderIcon}" />
@@ -259,12 +268,17 @@
                     </StackPanel>
 
 
+
+
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedImageIcon}" />
                         <TextBlock Margin="4,0" Text="PreviewImage:" />
                         <TextBlock Text="Auto" />
                     </StackPanel>
-                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                    <StackPanel
+                        Margin="0,0,0,8"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
                         <CheckBox
                             Content="Auto"
                             IsChecked="True"
@@ -274,43 +288,71 @@
                         <CheckBox Content="Ignore" IsEnabled="False" />
                     </StackPanel>
 
+                    <TextBlock
+                        Width="{x:Bind ModFolderTree.ActualWidth, Mode=OneWay}"
+                        Padding="8"
+                        Text="Here you can select the root of the mod folder."
+                        TextWrapping="WrapWholeWords" />
 
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedMergeIniIcon}" />
-                        <TextBlock Margin="4,0" Text="MergedIniFile Folder:" />
-                        <TextBlock Text="Auto" />
+                    <TextBlock
+                        Width="{x:Bind ModFolderTree.ActualWidth, Mode=OneWay}"
+                        Padding="8"
+                        Text="This is usually the folder that contains the 'merged.ini' or '.JASM_ModConfig.json'.&#x0a;JASM will automatically detect the mod folder and the merged.ini file. If you want to manually select the mod folder, you can do so by right clicking the folder in the overview above. "
+                        TextWrapping="WrapWholeWords" />
+
+                    <TextBlock
+                        Width="{x:Bind ModFolderTree.ActualWidth, Mode=OneWay}"
+                        Padding="8"
+                        Text="You can also manually select image file for the mod preview image."
+                        TextWrapping="WrapWholeWords" />
+
+
+
+                    <StackPanel Visibility="Collapsed">
+
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedMergeIniIcon}" />
+                            <TextBlock Margin="4,0" Text="MergedIniFile Folder:" />
+                            <TextBlock Text="Auto" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <CheckBox
+                                Content="Auto"
+                                IsChecked="True"
+                                IsEnabled="False" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.ShaderFixesFolderIcon}" />
+                            <TextBlock Margin="4,0" Text="ShaderFixes Folder:" />
+                            <TextBlock Text="{x:Bind ViewModel.LastSelectedShaderFixesFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Content="Auto" IsEnabled="False" />
+                            <CheckBox
+                                Content="Manual Select"
+                                IsChecked="True"
+                                IsEnabled="False" />
+                            <CheckBox Content="Ignore" IsEnabled="False" />
+                        </StackPanel>
+
                     </StackPanel>
-
-                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                        <CheckBox
-                            Content="Auto"
-                            IsChecked="True"
-                            IsEnabled="False" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.ShaderFixesFolderIcon}" />
-                        <TextBlock Margin="4,0" Text="ShaderFixes Folder:" />
-                        <TextBlock Text="{x:Bind ViewModel.LastSelectedShaderFixesFolder.Name, Mode=OneWay, FallbackValue=Unknown}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox Content="Auto" IsEnabled="False" />
-                        <CheckBox
-                            Content="Manual Select"
-                            IsChecked="True"
-                            IsEnabled="False" />
-                        <CheckBox Content="Ignore" IsEnabled="False" />
-                    </StackPanel>
-
 
                 </StackPanel>
+
+
 
                 <Button
                     Grid.Row="2"
                     HorizontalAlignment="Right"
                     Command="{x:Bind ViewModel.AddModCommand}"
-                    Content="Add Mod" />
+                    Content="Add Mod">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="S" Modifiers="Control" />
+                    </Button.KeyboardAccelerators>
+                </Button>
 
 
             </Grid>

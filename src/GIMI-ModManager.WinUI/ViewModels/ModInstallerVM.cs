@@ -251,6 +251,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     private bool _canSetShaderFixesFolder(object? fileSystemObject)
     {
+        //TODO: Enable later
+        return false;
+
         if (fileSystemObject is not FileSystemItem fileSystemItem || _modInstallation is null)
             return false;
 
@@ -267,6 +270,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [RelayCommand(CanExecute = nameof(_canSetShaderFixesFolder))]
     private void SetShaderFixesFolder(object? fileSystemObject)
     {
+        //TODO: Enable later
+        return;
         if (fileSystemObject is not FileSystemItem fileSystemItem || _modInstallation is null)
             return;
 
@@ -344,15 +349,14 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         if (skinModDupe is not null)
         {
             _duplicateMod = skinModDupe;
-            DuplicateModFolderName = skinModDupe.Name;
+            DuplicateModFolderName = ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(skinModDupe.Name);
             DuplicateModPath = new Uri(skinModDupe.FullPath);
             OverwriteExistingMod = false;
             skinModDupe.Settings.TryGetSettings(out var skinSettings);
 
-            if (skinSettings is not null)
+            if (skinSettings is not null && !skinSettings.CustomName.IsNullOrEmpty())
             {
-                DuplicateModCustomName =
-                    skinSettings.CustomName.IsNullOrEmpty() ? skinModDupe.Name : skinSettings.CustomName;
+                DuplicateModCustomName = skinSettings.CustomName;
             }
 
             ModFolderName = _modInstallation.ModFolder.Name;
