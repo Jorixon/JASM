@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.8.0](https://github.com/Jorixon/JASM/compare/v1.7.0...v1.8.0) (2023-11-24)
+
+
+### Features
+
+* Mod install helper ([#89](https://github.com/Jorixon/JASM/issues/89)) ([7db7253](https://github.com/Jorixon/JASM/commit/7db725343b9cbe1021ec5984c822d8a7f974a3d8))
+
+
+### Bug Fixes
+
+* Bug where update notification was connected to character not the mod ([368ef77](https://github.com/Jorixon/JASM/commit/368ef77faa8732a06d0dc80c3470983bc0f0162e))
+
+
+### Miscellaneous
+
+* Added a simple mods overview page ([ee277e0](https://github.com/Jorixon/JASM/commit/ee277e0ba81bdb2c9fed306b0424f5e4b49505e3))
+* Added ModNotifications cleanup ([368ef77](https://github.com/Jorixon/JASM/commit/368ef77faa8732a06d0dc80c3470983bc0f0162e))
+* Better handling of invalid jasmConfig, invalid is renamed and new one is created ([7db7253](https://github.com/Jorixon/JASM/commit/7db725343b9cbe1021ec5984c822d8a7f974a3d8))
+* More redundant handling of Id in jasm_modconfig ([#88](https://github.com/Jorixon/JASM/issues/88)) ([368ef77](https://github.com/Jorixon/JASM/commit/368ef77faa8732a06d0dc80c3470983bc0f0162e))
+
+
+### Code Refactoring
+
+* Redid Mod update checker ([#86](https://github.com/Jorixon/JASM/issues/86)) ([ee277e0](https://github.com/Jorixon/JASM/commit/ee277e0ba81bdb2c9fed306b0424f5e4b49505e3))
+
 ## [1.7.0](https://github.com/Jorixon/JASM/compare/v1.6.3...v1.7.0) (2023-11-15)
 
 
