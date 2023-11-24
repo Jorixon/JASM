@@ -55,7 +55,7 @@ public class WindowManagerService : IWindowManagerService
 
     public void ResizeWindow(WindowEx window, int width, int height)
     {
-        var windowToResize = GetWindow(window);
+        var windowToResize = window;
         windowToResize.Width = width;
         windowToResize.Height = height;
     }
@@ -69,7 +69,7 @@ public class WindowManagerService : IWindowManagerService
     public void ResizeWindowPercent(WindowEx window, int widthPercent, int heightPercent)
     {
         var windowId =
-            Win32Interop.GetWindowIdFromWindow(WinRT.Interop.WindowNative.GetWindowHandle(GetWindow(window)));
+            Win32Interop.GetWindowIdFromWindow(WinRT.Interop.WindowNative.GetWindowHandle(window));
         var info = DisplayInformation.CreateForWindowId(windowId);
         var display = WindowsDisplayAPI.Display.GetDisplays().FirstOrDefault(d => d.IsGDIPrimary)?.CurrentSetting;
         if (display is null)
