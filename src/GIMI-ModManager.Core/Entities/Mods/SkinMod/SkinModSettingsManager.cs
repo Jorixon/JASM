@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
@@ -17,14 +18,14 @@ public class SkinModSettingsManager
 {
     private readonly ISkinMod _skinMod;
     private readonly IReadOnlyCollection<string> _supportedImageExtensions = Constants.SupportedImageExtensions;
-    private const string configFileName = ".JASM_ModConfig.json";
+    private readonly string configFileName = Constants.ModConfigFileName;
     private const string ImageName = ".JASM_Cover";
 
     private string _settingsFilePath => Path.Combine(_skinMod.FullPath, configFileName);
 
     private ModSettings? _settings;
 
-    private readonly JsonSerializerOptions _serializerOptions = new()
+    private static readonly JsonSerializerOptions _serializerOptions = new()
     {
         ReadCommentHandling = JsonCommentHandling.Skip,
         AllowTrailingCommas = true,
@@ -67,7 +68,7 @@ public class SkinModSettingsManager
 
             if (modSettings.ImagePath is null)
             {
-                var images = DetectImages();
+                var images = SkinModHelpers.DetectModPreviewImages(_skinMod.FullPath);
                 if (images.Any())
                 {
                     modSettings.ImagePath = images.FirstOrDefault();
@@ -84,7 +85,7 @@ public class SkinModSettingsManager
 
         var newId = Guid.NewGuid();
 
-        var image = DetectImages().FirstOrDefault();
+        var image = SkinModHelpers.DetectModPreviewImages(_skinMod.FullPath).FirstOrDefault();
 
         var settings = new JsonModSettings()
         {
@@ -102,6 +103,19 @@ public class SkinModSettingsManager
     internal void ClearSettings() => _settings = null;
 
 
+    public static async Task<ModSettings> ReadSettingsAsync(string fullPath)
+    {
+        if (!File.Exists(fullPath))
+            throw new ModSettingsNotFoundException($"Settings file not found. Path: {fullPath}");
+        if (Path.GetExtension(fullPath) != ".json")
+            throw new InvalidOperationException($"Settings file is not a json file. Path: {fullPath}");
+
+        var json = await File.ReadAllTextAsync(fullPath);
+
+        var settings = InternalReadSettings(null, json);
+        return settings;
+    }
+
     public async Task<ModSettings> ReadSettingsAsync()
     {
         if (!File.Exists(_settingsFilePath))
@@ -109,15 +123,20 @@ public class SkinModSettingsManager
 
         var json = await File.ReadAllTextAsync(_settingsFilePath);
 
+        var modSettings = InternalReadSettings(_skinMod, json);
+        _settings = modSettings;
+        return modSettings;
+    }
 
+    private static ModSettings InternalReadSettings(ISkinMod? skinMod, string json)
+    {
         var settings = JsonSerializer.Deserialize<JsonModSettings>(json, _serializerOptions);
-
 
         if (settings is null)
             throw new JsonSerializationException("Failed to deserialize settings file. Return value is null");
 
-        var modSettings = ModSettings.FromJsonSkinSettings(_skinMod, settings);
-        _settings = modSettings;
+        var modSettings = ModSettings.FromJsonSkinSettings(skinMod, settings);
+
         return modSettings;
     }
 
@@ -128,14 +147,20 @@ public class SkinModSettingsManager
     }
 
 
-    public async Task SaveSettingsAsync(ModSettings modSettings)
+    public async Task SaveSettingsAsync(ModSettings modSettings, SaveSettingsOptions? options = null)
     {
-        if (modSettings.ImagePath is not null && !ModsHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
-            await CopyAndSetModImage(modSettings, modSettings.ImagePath);
+        if (modSettings.ImagePath is not null && !SkinModHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
+        {
+            await CopyAndSetModImage(modSettings, modSettings.ImagePath, options?.DeleteOldImage ?? true);
+        }
 
 
         if (modSettings.ImagePath is null)
-            await ClearModImage();
+        {
+            var oldSettings = _settings ?? await ReadSettingsAsync();
+            if ((options?.DeleteOldImage ?? true) && IsJasmImageFile(oldSettings.ImagePath))
+                DeleteOldImage(oldSettings.ImagePath);
+        }
 
 
         var jsonSkinSettings = modSettings.ToJsonSkinSettings(_skinMod);
@@ -143,7 +168,7 @@ public class SkinModSettingsManager
         _settings = modSettings;
     }
 
-    public OneOf<ModSettings, SettingsNotLoaded> GetSettings()
+    public OneOf<ModSettings, SettingsNotLoaded> GetSettingsLegacy()
     {
         if (_settings is null)
             return new SettingsNotLoaded();
@@ -151,14 +176,14 @@ public class SkinModSettingsManager
         return _settings;
     }
 
-    private async Task CopyAndSetModImage(ModSettings modSettings, Uri imagePath)
+    private async Task CopyAndSetModImage(ModSettings modSettings, Uri imagePath, bool deleteOldImage = true)
     {
         var oldModSettings = _settings ?? await ReadSettingsAsync();
         if (!File.Exists(imagePath.LocalPath))
             throw new FileNotFoundException("Image file not found.", imagePath.LocalPath);
 
-
-        DeleteOldImage(oldModSettings.ImagePath);
+        if (deleteOldImage && IsJasmImageFile(oldModSettings.ImagePath))
+            DeleteOldImage(oldModSettings.ImagePath);
 
 
         var newImageFileName = ImageName + Path.GetExtension(imagePath.LocalPath);
@@ -168,12 +193,12 @@ public class SkinModSettingsManager
         modSettings.ImagePath = new Uri(newImagePath);
     }
 
-
-    public async Task ClearModImage()
+    private bool IsJasmImageFile(Uri? imagePath)
     {
-        var modSettings = _settings ?? await ReadSettingsAsync();
+        if (imagePath is null)
+            return false;
 
-        DeleteOldImage(modSettings.ImagePath);
+        return imagePath.LocalPath.StartsWith(ImageName, StringComparison.OrdinalIgnoreCase);
     }
 
     private static void DeleteOldImage(Uri? oldImageUri)
@@ -184,41 +209,6 @@ public class SkinModSettingsManager
         File.Delete(oldImageUri.LocalPath);
     }
 
-    private readonly string[] _imageNamePriority = new[] { ".jasm_cover", "preview", "cover" };
-
-    public Uri[] DetectImages()
-    {
-        var modDir = new DirectoryInfo(_skinMod.FullPath);
-        if (!modDir.Exists)
-            return Array.Empty<Uri>();
-
-        var images = new List<FileInfo>();
-        foreach (var file in modDir.EnumerateFiles())
-        {
-            if (!_imageNamePriority.Any(i => file.Name.ToLower().StartsWith(i)))
-                continue;
-
-
-            var extension = file.Extension.ToLower();
-            if (!_supportedImageExtensions.Contains(extension))
-                continue;
-
-            images.Add(file);
-        }
-
-        // Sort images by priority
-        foreach (var imageName in _imageNamePriority.Reverse())
-        {
-            var image = images.FirstOrDefault(x => x.Name.ToLower().StartsWith(imageName));
-            if (image is null)
-                continue;
-
-            images.Remove(image);
-            images.Insert(0, image);
-        }
-
-        return images.Select(x => new Uri(x.FullName)).ToArray();
-    }
 
     public async Task SetLastCheckedTimeAsync(DateTime dateTime)
     {
@@ -228,7 +218,7 @@ public class SkinModSettingsManager
         await SaveSettingsAsync(settings).ConfigureAwait(false);
     }
 
-    public bool TryGetSettings(out ModSettings? modSettings)
+    public bool TryGetSettings([NotNullWhen(true)] out ModSettings? modSettings)
     {
         modSettings = _settings;
         return modSettings is not null;
@@ -250,6 +240,11 @@ public class SkinModSettingsManager
 
         return null;
     }
+}
+
+public class SaveSettingsOptions
+{
+    public bool DeleteOldImage { get; set; } = true;
 }
 
 public struct SettingsNotLoaded

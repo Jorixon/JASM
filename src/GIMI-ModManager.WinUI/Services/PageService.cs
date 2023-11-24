@@ -23,6 +23,7 @@ public class PageService : IPageService
         Configure<EditCharacterViewModel, EditCharacterPage>();
         Configure<EasterEggVM, EasterEggPage>();
         Configure<ModsOverviewVM, ModsOverviewPage>();
+        Configure<ModInstallerVM, ModInstallerPage>();
     }
 
     public Type GetPageType(string key)

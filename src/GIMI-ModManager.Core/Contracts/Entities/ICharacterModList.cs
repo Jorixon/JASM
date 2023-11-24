@@ -42,6 +42,7 @@ public interface ICharacterModList : IDisposable
 
     public bool IsModEnabled(ISkinMod mod);
 
+    public void RenameMod(ISkinMod mod, string newName);
 
     public bool IsMultipleModsActive(bool perSkin = false);
 

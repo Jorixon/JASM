@@ -1,40 +1,43 @@
 ﻿using Windows.Storage;
 using GIMI_ModManager.Core.Contracts.Entities;
-using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Services.AppManagment;
 using Serilog;
-using static GIMI_ModManager.WinUI.Services.ModDragAndDropService.DragAndDropFinishedArgs;
+using static GIMI_ModManager.WinUI.Services.ModHandling.ModDragAndDropService.DragAndDropFinishedArgs;
 
-namespace GIMI_ModManager.WinUI.Services;
+namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
 public class ModDragAndDropService
 {
     private readonly ILogger _logger;
-    private readonly ISkinManagerService _skinManagerService;
+    private readonly ModInstallerService _modInstallerService;
+    private readonly IWindowManagerService _windowManagerService;
+
 
     private readonly NotificationManager _notificationManager;
 
     public event EventHandler<DragAndDropFinishedArgs>? DragAndDropFinished;
 
     public ModDragAndDropService(ILogger logger, NotificationManager notificationManager,
-        ISkinManagerService skinManagerService)
+        ModInstallerService modInstallerService, IWindowManagerService windowManagerService)
     {
         _notificationManager = notificationManager;
-        _skinManagerService = skinManagerService;
+        _modInstallerService = modInstallerService;
+        _windowManagerService = windowManagerService;
         _logger = logger.ForContext<ModDragAndDropService>();
     }
 
     // Drag and drop directly from 7zip is REALLY STRANGE, I don't know why 7zip 'usually' deletes the files before we can copy them
     // Sometimes only a few folders are copied, sometimes only a single file is copied, but usually 7zip removes them and the app just crashes
     // This code is a mess, but it works.
-    public async Task<IReadOnlyList<ExtractPaths>> AddStorageItemFoldersAsync(
+    public async Task AddStorageItemFoldersAsync(
         ICharacterModList modList, IReadOnlyList<IStorageItem>? storageItems)
     {
         if (storageItems is null || !storageItems.Any())
         {
             _logger.Warning("Drag and drop files called with null/0 storage items.");
-            return Array.Empty<ExtractPaths>();
+            return;
         }
 
 
@@ -43,46 +46,33 @@ public class ModDragAndDropService
             _notificationManager.ShowNotification(
                 "Drag and drop called with more than one storage item, this is currently not supported", "",
                 TimeSpan.FromSeconds(5));
-            return Array.Empty<ExtractPaths>();
+            return;
         }
 
-        var extractResults = new List<ExtractPaths>();
-        using var disableWatcher = modList.DisableWatcher();
+        if (_windowManagerService.GetWindow(modList) is { } window)
+        {
+            _notificationManager.ShowNotification(
+                $"Please finish adding the mod for '{modList.Character.DisplayName}' first",
+                $"JASM does not support multiple mod installs for the same character",
+                TimeSpan.FromSeconds(8));
+            Win32.PlaySound("SystemAsterisk", nuint.Zero,
+                (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
+            App.MainWindow.DispatcherQueue.TryEnqueue(() => window.Activate());
+            return;
+        }
 
         // Warning mess below
         foreach (var storageItem in storageItems)
         {
-            var destDirectoryInfo = new DirectoryInfo(modList.AbsModsFolderPath);
-            destDirectoryInfo.Create();
-
-            var destFolderPath = destDirectoryInfo.FullName;
-
-
             if (storageItem is StorageFile)
             {
-                using var scanner = new DragAndDropScanner();
+                var scanner = new DragAndDropScanner();
                 var extractResult = scanner.ScanAndGetContents(storageItem.Path);
 
-                destFolderPath = Path.Combine(destFolderPath, extractResult.ExtractedMod.Name);
 
-                if (Directory.Exists(destFolderPath))
-                    _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
-                        destFolderPath);
-                while (Directory.Exists(destFolderPath))
-                    destFolderPath = DuplicateModAffixHelper.AppendNumberAffix(destFolderPath);
+                await _modInstallerService.StartModInstallationAsync(
+                    new DirectoryInfo(extractResult.ExtractedFolder.FullPath), modList);
 
-                extractResult.ExtractedMod.Rename(new DirectoryInfo(destFolderPath).Name);
-
-                extractResult.ExtractedMod.MoveTo(destDirectoryInfo.FullName);
-                if (extractResult.IgnoredMods.Any())
-                    App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-                        _notificationManager.ShowNotification(
-                            "Multiple folders detected during extraction, first one was extracted",
-                            $"Ignored Folders: {string.Join(" | ", extractResult.IgnoredMods)}",
-                            TimeSpan.FromSeconds(7)));
-
-                extractResults.Add(new ExtractPaths(storageItem.Path,
-                    extractResult.ExtractedMod.FullPath));
                 continue;
             }
 
@@ -91,6 +81,10 @@ public class ModDragAndDropService
                 _logger.Information("Unknown storage item type from drop: {StorageItemType}", storageItem.GetType());
                 continue;
             }
+
+            var destDirectoryInfo = App.GetUniqueTmpFolder();
+            destDirectoryInfo.Create();
+            destDirectoryInfo = new DirectoryInfo(Path.Combine(destDirectoryInfo.FullName, storageItem.Name));
 
 
             _logger.Debug("Source destination folder for drag and drop: {Source}", sourceFolder.Path);
@@ -113,42 +107,33 @@ public class ModDragAndDropService
 
             if (sourceFolderPath.Contains(tmpFolder)) // Is 7zip
             {
+                destDirectoryInfo = new DirectoryInfo(Path.Combine(destDirectoryInfo.FullName, sourceFolder.Name));
                 recursiveCopy = RecursiveCopy7z;
             }
-            else // StorageFolder from explorer
+            else
             {
-                destDirectoryInfo = new DirectoryInfo(Path.Combine(modList.AbsModsFolderPath, sourceFolder.Name));
+                destDirectoryInfo = new DirectoryInfo(Path.Combine(destDirectoryInfo.FullName, sourceFolder.Name));
                 recursiveCopy = RecursiveCopy;
             }
 
-
-            if (destFolderPath.Equals(modList.AbsModsFolderPath, StringComparison.CurrentCultureIgnoreCase))
-                destFolderPath = Path.Combine(destFolderPath, sourceFolder.Name);
-
-            if (Directory.Exists(destFolderPath))
-                _logger.Warning("Destination folder {DestinationFolder} already exists, appending number",
-                    destDirectoryInfo.FullName);
-            while (Directory.Exists(destFolderPath))
-                destFolderPath = DuplicateModAffixHelper.AppendNumberAffix(destFolderPath);
-
-            Directory.CreateDirectory(destFolderPath);
+            destDirectoryInfo.Create();
 
             try
             {
                 recursiveCopy.Invoke(sourceFolder,
-                    await StorageFolder.GetFolderFromPathAsync(destFolderPath));
+                    await StorageFolder.GetFolderFromPathAsync(destDirectoryInfo.FullName));
             }
             catch (Exception)
             {
-                Directory.Delete(destFolderPath);
+                Directory.Delete(destDirectoryInfo.FullName);
                 throw;
             }
 
-            extractResults.Add(new ExtractPaths(storageItem.Path, destFolderPath));
+            await _modInstallerService.StartModInstallationAsync(destDirectoryInfo.Parent!, modList)
+                .ConfigureAwait(false);
         }
 
-        DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(extractResults));
-        return extractResults;
+        DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(new List<ExtractPaths>()));
     }
 
     // ReSharper disable once InconsistentNaming

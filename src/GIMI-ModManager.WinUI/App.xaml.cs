@@ -46,6 +46,14 @@ public partial class App : Application
         return service;
     }
 
+    public static DirectoryInfo GetUniqueTmpFolder()
+    {
+        var tmpFolder = new DirectoryInfo(Path.Combine(TMP_DIR, Guid.NewGuid().ToString()));
+        if (!tmpFolder.Exists)
+            tmpFolder.Create();
+        return tmpFolder;
+    }
+
     public static string TMP_DIR { get; } = Path.Combine(Path.GetTempPath(), "JASM_TMP");
     public static string ROOT_DIR { get; } = AppDomain.CurrentDomain.BaseDirectory;
     public static string ASSET_DIR { get; } = Path.Combine(ROOT_DIR, "Assets");
@@ -168,6 +176,7 @@ public partial class App : Application
                     });
                 });
                 services.AddSingleton<ModUpdateAvailableChecker>();
+                services.AddSingleton<ModInstallerService>();
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
@@ -192,6 +201,8 @@ public partial class App : Application
                 services.AddTransient<EasterEggPage>();
                 services.AddTransient<ModsOverviewVM>();
                 services.AddTransient<ModsOverviewPage>();
+                services.AddTransient<ModInstallerVM>();
+                services.AddTransient<ModInstallerPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(
@@ -208,6 +219,9 @@ public partial class App : Application
 
         if (UnhandledExceptionHandled)
             return;
+
+        await GetService<IWindowManagerService>().CloseWindowsAsync();
+
         // show error dialog
         var window = new ErrorWindow(e.Exception)
         {

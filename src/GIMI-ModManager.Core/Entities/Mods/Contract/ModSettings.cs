@@ -7,7 +7,8 @@ namespace GIMI_ModManager.Core.Entities.Mods.Contract;
 public record ModSettings
 {
     public ModSettings(Guid id, string? customName = null, string? author = null, string? version = null,
-        Uri? modUrl = null, Uri? imagePath = null, string? characterSkinOverride = null, DateTime? dateAdded = null,
+        Uri? modUrl = null, Uri? imagePath = null, string? characterSkinOverride = null, string? description = null,
+        DateTime? dateAdded = null,
         DateTime? lastChecked = null)
     {
         Id = id;
@@ -17,20 +18,23 @@ public record ModSettings
         ModUrl = modUrl;
         ImagePath = imagePath;
         CharacterSkinOverride = characterSkinOverride;
+        Description = description;
         DateAdded = dateAdded;
         LastChecked = lastChecked;
     }
 
-    public ModSettings DeepCopyWithProperties(string? newCharacterSkinOverride = null, DateTime? newLastChecked = null)
+    public ModSettings DeepCopyWithProperties(string? customName = null, string? newCharacterSkinOverride = null,
+        DateTime? newLastChecked = null)
     {
         return new ModSettings(
             Id,
-            CustomName,
+            customName ?? CustomName,
             Author,
             Version,
             ModUrl,
             ImagePath,
             newCharacterSkinOverride ?? CharacterSkinOverride,
+            Description,
             DateAdded,
             newLastChecked ?? LastChecked
         );
@@ -53,23 +57,27 @@ public record ModSettings
     public Uri? ImagePath { get; internal set; }
 
     public string? CharacterSkinOverride { get; internal set; }
+    public string? Description { get; internal set; }
 
     public DateTime? DateAdded { get; internal set; }
 
     public DateTime? LastChecked { get; internal set; }
 
 
-    internal static ModSettings FromJsonSkinSettings(ISkinMod skinMod, JsonModSettings settings)
+    internal static ModSettings FromJsonSkinSettings(ISkinMod? skinMod, JsonModSettings settings)
     {
         return new ModSettings
         {
-            Id = ModsHelpers.StringToGuid(settings.Id),
+            Id = SkinModHelpers.StringToGuid(settings.Id),
             CustomName = settings.CustomName,
             Author = settings.Author,
             Version = settings.Version,
-            ModUrl = ModsHelpers.StringUrlToUri(settings.ModUrl),
-            ImagePath = ModsHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath),
+            ModUrl = SkinModHelpers.StringUrlToUri(settings.ModUrl),
+            ImagePath = skinMod is not null
+                ? SkinModHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.ImagePath)
+                : null,
             CharacterSkinOverride = settings.CharacterSkinOverride,
+            Description = settings.Description,
             DateAdded = DateTime.TryParse(settings.DateAdded, out var dateAdded) ? dateAdded : null,
             LastChecked = DateTime.TryParse(settings.LastChecked, out var lastChecked) ? lastChecked : null
         };
@@ -84,8 +92,9 @@ public record ModSettings
             Author = Author,
             Version = Version,
             ModUrl = ModUrl?.ToString(),
-            ImagePath = ModsHelpers.UriPathToModRelativePath(skinMod, ImagePath?.LocalPath),
+            ImagePath = SkinModHelpers.UriPathToModRelativePath(skinMod, ImagePath?.LocalPath),
             CharacterSkinOverride = CharacterSkinOverride,
+            Description = Description,
             DateAdded = DateAdded?.ToString(),
             LastChecked = LastChecked?.ToString()
         };

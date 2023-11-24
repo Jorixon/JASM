@@ -168,7 +168,7 @@ public sealed class CharacterModList : ICharacterModList
 
             _mods.Remove(_mods.First(m => m.Mod.Equals(mod)));
 
-            _logger?.Debug("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.InternalName);
+            _logger?.Verbose("Stopped tracking {ModName} in {CharacterName} modList", mod.Name, Character.InternalName);
             Debug.Assert(_mods.DistinctBy(m => m.Id).Count() == _mods.Count);
         }
     }
@@ -236,6 +236,31 @@ public sealed class CharacterModList : ICharacterModList
             throw new InvalidOperationException("Mod not added");
 
         return _mods.First(m => m.Mod.Equals(mod)).IsEnabled;
+    }
+
+    public void RenameMod(ISkinMod mod, string newName)
+    {
+        lock (_modsLock)
+        {
+            if (!ModAlreadyAdded(mod))
+                throw new InvalidOperationException("Mod not tracked");
+
+            if (FolderAlreadyExists(newName))
+                throw new InvalidOperationException("Cannot rename mod to a name that already exists");
+
+            using var disableWatcher = DisableWatcher();
+
+            if (IsModEnabled(mod))
+            {
+                var newModName = ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(newName);
+                mod.Rename(newModName);
+            }
+            else
+            {
+                var newModName = ModFolderHelpers.GetFolderNameWithDisabledPrefix(newName);
+                mod.Rename(newModName);
+            }
+        }
     }
 
     private bool ModAlreadyAdded(ISkinMod mod)

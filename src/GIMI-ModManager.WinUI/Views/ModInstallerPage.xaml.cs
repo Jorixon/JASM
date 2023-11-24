@@ -1,5 +1,6 @@
 using Windows.Storage;
 using Windows.System;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -7,15 +8,18 @@ using Microsoft.UI.Xaml.Input;
 
 namespace GIMI_ModManager.WinUI.Views;
 
-public sealed partial class DebugPage : Page
+public sealed partial class ModInstallerPage : Page, IDisposable
 {
-    public DebugViewModel ViewModel { get; } = App.GetService<DebugViewModel>();
+    public event EventHandler? CloseRequested;
+    public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
-    public DebugPage()
+    public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall)
     {
         InitializeComponent();
         ViewModel.DuplicateModDialog += OnDuplicateModFound;
-        Unloaded += (_, _) => ViewModel.OnNavigatedFrom();
+        ViewModel.InstallerFinished += (_, _) => { DispatcherQueue.TryEnqueue(() => { IsEnabled = false; }); };
+        Loading += (_, _) => { ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue); };
+        ViewModel.CloseRequested += (_, _) => { CloseRequested?.Invoke(this, EventArgs.Empty); };
     }
 
     private async void OnDuplicateModFound(object? sender, EventArgs e)
@@ -62,5 +66,26 @@ public sealed partial class DebugPage : Page
             if (sender is not TextBox textBox) return;
             ViewModel.ModUrl = textBox.Text.Trim();
         }
+    }
+
+    public void Dispose()
+    {
+        ViewModel.Dispose();
+    }
+}
+
+class ExplorerItemTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate RootFolderTemplate { get; set; }
+    public DataTemplate FileSystemItem { get; set; }
+
+    protected override DataTemplate SelectTemplateCore(object item)
+    {
+        return item switch
+        {
+            RootFolder => RootFolderTemplate,
+            ViewModels.FileSystemItem => FileSystemItem,
+            _ => throw new ArgumentOutOfRangeException(nameof(item))
+        };
     }
 }

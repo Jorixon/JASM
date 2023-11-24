@@ -197,40 +197,47 @@ public class ActivationService : IActivationService
             return;
         }
 
-        if (!_isExiting)
-            args.Handled = true;
-        else
+        if (_isExiting)
             return;
 
-        var notificationCleanup = Task.Run(_modNotificationManager.CleanupAsync).ConfigureAwait(false);
-        var saveSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
-
-        _logger.Debug("JASM shutting down...");
-        _modUpdateAvailableChecker.CancelAndStop();
-        _updateChecker.CancelAndStop();
-
-
-        var tmpDir = new DirectoryInfo(App.TMP_DIR);
-        if (tmpDir.Exists)
+        try
         {
-            _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
-            tmpDir.Delete(true);
-        }
+            args.Handled = true;
 
-        await saveSettingsTask;
-        await notificationCleanup;
-        _logger.Debug("JASM shutdown complete.");
+            var notificationCleanup = Task.Run(_modNotificationManager.CleanupAsync).ConfigureAwait(false);
+            var saveWindowSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
 
-        // Call the handler again, this time it will exit.
-        await Task.Run(() =>
-        {
-            _isExiting = true;
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            _logger.Debug("JASM shutting down...");
+            _modUpdateAvailableChecker.CancelAndStop();
+            _updateChecker.CancelAndStop();
+
+
+            await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);
+
+            var tmpDir = new DirectoryInfo(App.TMP_DIR);
+            if (tmpDir.Exists)
             {
-                Application.Current.Exit();
-                App.MainWindow.Close();
-            });
-        }).ConfigureAwait(false);
+                _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
+                tmpDir.Delete(true);
+            }
+
+            await saveWindowSettingsTask;
+            await notificationCleanup;
+            _logger.Debug("JASM shutdown complete.");
+        }
+        finally
+        {
+            // Call the handler again, this time it will exit.
+            await Task.Run(() =>
+            {
+                _isExiting = true;
+                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    Application.Current.Exit();
+                    App.MainWindow.Close();
+                });
+            }).ConfigureAwait(false);
+        }
     }
 
     private async Task SaveWindowSettingsAsync()

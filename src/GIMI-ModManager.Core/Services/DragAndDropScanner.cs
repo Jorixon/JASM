@@ -15,12 +15,13 @@ namespace GIMI_ModManager.Core.Services;
 // 3. Move extracted files to work folder
 // 4. Delete copied archive
 
-public sealed class DragAndDropScanner : IDisposable
+public sealed class DragAndDropScanner
 {
     private readonly ILogger _logger = Log.ForContext<DragAndDropScanner>();
     private readonly string _tmpFolder = Path.Combine(Path.GetTempPath(), "JASM_TMP");
-    private readonly string _workFolder = Path.Combine(Path.GetTempPath(), "JASM_TMP", Guid.NewGuid().ToString("N"));
-    private string? tmpModFolder;
+
+    // Extracts files to this folder
+    private string _workFolder = Path.Combine(Path.GetTempPath(), "JASM_TMP", Guid.NewGuid().ToString("N"));
 
     private ExtractTool _extractTool;
 
@@ -33,41 +34,29 @@ public sealed class DragAndDropScanner : IDisposable
     {
         PrepareWorkFolder();
 
+        _workFolder = Path.Combine(_workFolder, Path.GetFileName(path));
+
         if (IsArchive(path))
         {
-            var copiedPath = Path.Combine(_workFolder, Path.GetFileName(path));
-            File.Copy(path, copiedPath);
-            var result = Extractor(copiedPath);
-            result?.Invoke(copiedPath);
+            var copiedArchive = new FileInfo(path);
+            copiedArchive = copiedArchive.CopyTo(Path.Combine(_tmpFolder, Path.GetFileName(path)), true);
+
+            var result = Extractor(copiedArchive.FullName);
+
+            result?.Invoke(copiedArchive.FullName);
         }
         else if (Directory.Exists(path)) // ModDragAndDropService handles loose folders, but this added just in case 
         {
             var modFolder = new Mod(new DirectoryInfo(path));
             modFolder.CopyTo(_workFolder);
-            tmpModFolder = modFolder.FullPath;
         }
         else
-        {
             throw new Exception("No valid mod folder or archive found");
-        }
 
-
-        var extractedDirs = new DirectoryInfo(_workFolder).EnumerateDirectories().ToArray();
-        if (extractedDirs is null || !extractedDirs.Any())
-            throw new DirectoryNotFoundException("No valid mod folder found in archive. Loose files are ignored");
-
-        var ignoredDirs = new List<DirectoryInfo>();
-        if (extractedDirs.Length > 1)
-            ignoredDirs.AddRange(extractedDirs.Skip(1));
-
-        var newMod = new Mod(extractedDirs.First());
-
-        //newMod.MoveTo(_tmpFolder);
 
         return new DragAndDropScanResult()
         {
-            ExtractedMod = newMod,
-            IgnoredMods = ignoredDirs.Select(dir => dir.Name).ToArray()
+            ExtractedFolder = new Mod(new DirectoryInfo(_workFolder).Parent!)
         };
     }
 
@@ -142,23 +131,6 @@ public sealed class DragAndDropScanner : IDisposable
         ExtractEntries(archive);
     }
 
-    private bool IsRootModFolder(DirectoryInfo folder)
-    {
-        foreach (var fileSystemInfo in folder.GetFileSystemInfos())
-        {
-            var extension = Path.GetExtension(fileSystemInfo.Name);
-            if (extension.Equals(".ini")) return true;
-        }
-
-        return false;
-    }
-
-    public void Dispose()
-    {
-        Directory.Delete(_workFolder, true);
-        if (tmpModFolder is not null && Path.Exists(tmpModFolder))
-            Directory.Delete(tmpModFolder, true);
-    }
 
     private enum ExtractTool
     {
@@ -205,8 +177,6 @@ public sealed class DragAndDropScanner : IDisposable
 
 public class DragAndDropScanResult
 {
-    public IMod ExtractedMod { get; init; } = null!;
+    public IMod ExtractedFolder { get; init; } = null!;
     public string[] IgnoredMods { get; init; } = Array.Empty<string>();
-    public string[] IgnoredFiles { get; init; } = Array.Empty<string>();
-    public string? ThumbnailPath { get; set; }
 }

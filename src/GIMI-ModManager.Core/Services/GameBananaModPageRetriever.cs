@@ -15,7 +15,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
     public const string HttpClientName = "GameBanana";
 
     private const string DownloadUrl = "https://gamebanana.com/dl/";
-    private const string DownloadsApiUrl = "https://gamebanana.com/apiv11/Mod/";
+    private const string ApiUrl = "https://gamebanana.com/apiv11/Mod/";
 
     public GameBananaModPageRetriever(ILogger logger, HttpClient httpClient,
         ResiliencePipelineProvider<string> resiliencePipelineProvider)
@@ -25,14 +25,14 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         _resiliencePipeline = resiliencePipelineProvider.GetPipeline(HttpClientName);
     }
 
+
     public async Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(url);
         ArgumentNullException.ThrowIfNull(lastCheck);
 
-        if (url.Scheme != "https" || url.Host != "gamebanana.com")
-            throw new ArgumentException($"Invalid GameBanana url: {url}", nameof(url));
+        ValidateGameBananaUrl(url);
 
         // Get DownloadsApiUrl
         var modId = GetModIdFromUrl(url);
@@ -46,6 +46,121 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         // Check if update is available
         var downloadsApiUrl = GetDownloadsApiUrl(modId);
 
+        var response = await SendRequest(cancellationToken, downloadsApiUrl);
+
+        _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
+        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+        var apiMods =
+            await JsonSerializer.DeserializeAsync<ApiRootResponse>(contentStream,
+                cancellationToken: cancellationToken);
+
+
+        if (apiMods == null)
+        {
+            _logger.Error("Failed to deserialize GameBanana response: {content}", contentStream);
+            throw new HttpRequestException(
+                $"Failed to deserialize GameBanana response. Reason: {response?.ReasonPhrase}");
+        }
+
+        return ApiToResultMapper.Map(apiMods, lastCheck, url);
+    }
+
+
+    public async Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(url);
+
+        ValidateGameBananaUrl(url);
+
+        // Get DownloadsApiUrl
+        var modId = GetModIdFromUrl(url);
+
+        if (modId == null)
+        {
+            _logger.Error("Failed to get modId from url: {url}", url);
+            throw new ArgumentException("Failed to get modId from url, invalid GameBanana url?", nameof(url));
+        }
+
+
+        var modPageApiUrl = GetModPageApiUrl(modId);
+
+        var response = await SendRequest(cancellationToken, modPageApiUrl);
+
+        _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
+        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+        var apiModPage =
+            await JsonSerializer.DeserializeAsync<ApiRootModPage>(contentStream,
+                cancellationToken: cancellationToken);
+
+
+        if (apiModPage == null)
+        {
+            _logger.Error("Failed to deserialize GameBanana response: {content}", contentStream);
+            throw new HttpRequestException(
+                $"Failed to deserialize GameBanana response. Reason: {response?.ReasonPhrase}");
+        }
+
+
+        List<Uri>? previewImageUrls = null;
+        if (apiModPage.PreviewMedia is not null)
+        {
+            foreach (var previewMediaImage in apiModPage.PreviewMedia.Images)
+            {
+                var imageUrl = Uri.TryCreate(previewMediaImage.BaseUrl + "/" + previewMediaImage.ImageId,
+                    UriKind.Absolute, out var uri)
+                    ? uri
+                    : null;
+
+
+                if (imageUrl is null ||
+                    imageUrl.Scheme != Uri.UriSchemeHttps ||
+                    !imageUrl.Host.Equals("images.gamebanana.com", StringComparison.OrdinalIgnoreCase)) continue;
+
+                previewImageUrls ??= new List<Uri>();
+
+                previewImageUrls.Add(imageUrl);
+            }
+        }
+
+
+        return new ModPageDataResult(url)
+        {
+            ModName = apiModPage.ModName?.Trim(),
+            AuthorName = apiModPage.Author?.ModName?.Trim(),
+            PreviewImages = previewImageUrls?.ToArray()
+        };
+    }
+
+    private static string? GetModIdFromUrl(Uri url)
+    {
+        var segments = url.Segments;
+        if (segments.Length < 2) return null;
+
+        var modId = segments.Last();
+        return modId;
+    }
+
+    private Uri GetDownloadsApiUrl(string modPageId)
+    {
+        return new Uri(ApiUrl + modPageId + "/DownloadPage");
+    }
+
+    private Uri GetModPageApiUrl(string modPageId)
+    {
+        return new Uri(ApiUrl + modPageId + "/ProfilePage");
+    }
+
+    private static void ValidateGameBananaUrl(Uri url)
+    {
+        if (!url.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) ||
+            !url.Host.Equals("gamebanana.com", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException($"Invalid GameBanana url: {url}", nameof(url));
+    }
+
+    private async Task<HttpResponseMessage?> SendRequest(CancellationToken cancellationToken, Uri downloadsApiUrl)
+    {
         HttpResponseMessage response;
         retry:
         try
@@ -74,55 +189,55 @@ public class GameBananaModPageRetriever : IModUpdateChecker
                 $"Failed to get mod info from GameBanana. Reason: {response?.ReasonPhrase ?? "Unknown"} | Url: {downloadsApiUrl}");
         }
 
-        _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
-        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-
-        var apiMods =
-            await JsonSerializer.DeserializeAsync<ApiRootResponse>(contentStream,
-                cancellationToken: cancellationToken);
-
-
-        if (apiMods == null)
-        {
-            _logger.Error("Failed to deserialize GameBanana response: {content}", contentStream);
-            throw new HttpRequestException(
-                $"Failed to deserialize GameBanana response. Reason: {response?.ReasonPhrase}");
-        }
-
-        return ApiToResultMapper.Map(apiMods, lastCheck, url);
-    }
-
-    public Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static string? GetModIdFromUrl(Uri url)
-    {
-        var segments = url.Segments;
-        if (segments.Length < 2) return null;
-
-        var modId = segments.Last();
-        return modId;
-    }
-
-    private Uri GetDownloadsApiUrl(string modPageId)
-    {
-        return new Uri(DownloadsApiUrl + modPageId + "/DownloadPage");
+        return response;
     }
 }
 
 public interface IModUpdateChecker
 {
     public Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
 
-    public Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken);
+    public Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken = default);
 }
 
 public class ModPageDataResult
 {
-    public DateTime CheckTime { get; init; }
+    public ModPageDataResult(Uri sitePageUrl)
+    {
+        SitePageUrl = sitePageUrl;
+    }
+
+    public DateTime CheckTime { get; init; } = DateTime.Now;
+    public Uri SitePageUrl { get; }
+
+    public string? ModName { get; init; }
+    public string? AuthorName { get; init; }
+    public Uri[]? PreviewImages { get; init; }
+}
+
+public sealed class ApiRootModPage
+{
+    [JsonPropertyName("_sName")] public string? ModName { get; set; }
+
+    [JsonPropertyName("_aSubmitter")] public ApiAuthor? Author { get; set; }
+    [JsonPropertyName("_aPreviewMedia")] public ApiImagesRoot? PreviewMedia { get; set; }
+}
+
+public sealed class ApiAuthor
+{
+    [JsonPropertyName("_sName")] public string? ModName { get; set; }
+}
+
+public sealed class ApiImagesRoot
+{
+    [JsonPropertyName("_aImages")] public ApiImageUrl[] Images { get; set; } = Array.Empty<ApiImageUrl>();
+}
+
+public sealed class ApiImageUrl
+{
+    [JsonPropertyName("_sFile")] public string? ImageId { get; set; }
+    [JsonPropertyName("_sBaseUrl")] public string? BaseUrl { get; set; }
 }
 
 public sealed class ApiRootResponse

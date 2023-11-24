@@ -301,7 +301,7 @@ public sealed class ModUpdateAvailableChecker
 
     private Task AddModNotifications(CharacterSkinEntry characterSkinEntry, ModsRetrievedResult result)
     {
-        var modSettingsResult = characterSkinEntry.Mod.Settings.GetSettings();
+        var modSettingsResult = characterSkinEntry.Mod.Settings.GetSettingsLegacy();
 
         if (!modSettingsResult.IsT0)
             throw new InvalidOperationException("Failed to get mod settings");

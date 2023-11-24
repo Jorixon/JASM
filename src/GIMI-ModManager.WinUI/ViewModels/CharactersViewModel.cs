@@ -710,30 +710,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var errored = false;
         try
         {
             IsAddingMod = true;
-            var extractResults = await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
-
-            foreach (var extractResult in extractResults)
-            {
-                var notfiy = new ModNotification()
-                {
-                    CharacterInternalName = modList.Character.InternalName,
-                    AttentionType = AttentionType.Added,
-                    ModFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name,
-                    Message = "Mod added from character overview"
-                };
-                await _modNotificationManager.AddModNotification(notfiy);
-
-                characterGridItemModel.Notification = true;
-                characterGridItemModel.NotificationType = notfiy.AttentionType;
-            }
+            await _modDragAndDropService.AddStorageItemFoldersAsync(modList, storageItems);
         }
         catch (Exception e)
         {
-            errored = true;
             _logger.Error(e, "Error adding mod");
             NotificationManager.ShowNotification("Error adding mod", e.Message, TimeSpan.FromSeconds(10));
         }
@@ -741,11 +724,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             IsAddingMod = false;
         }
-
-        if (!errored)
-            NotificationManager.ShowNotification("Mod added",
-                $"Added {storageItems.Count} mod to {characterGridItemModel.Character.InternalName}",
-                TimeSpan.FromSeconds(2));
     }
 
 

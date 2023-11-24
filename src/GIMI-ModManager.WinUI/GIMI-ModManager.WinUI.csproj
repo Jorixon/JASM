@@ -27,15 +27,19 @@
 	<ItemGroup>
 		<Compile Remove="Mappers\**" />
 		<Compile Remove="Views\Components\**" />
+		<Compile Remove="Views\ModInstaller\**" />
 		<Compile Remove="Views\SubPages\**" />
 		<EmbeddedResource Remove="Mappers\**" />
 		<EmbeddedResource Remove="Views\Components\**" />
+		<EmbeddedResource Remove="Views\ModInstaller\**" />
 		<EmbeddedResource Remove="Views\SubPages\**" />
 		<None Remove="Mappers\**" />
 		<None Remove="Views\Components\**" />
+		<None Remove="Views\ModInstaller\**" />
 		<None Remove="Views\SubPages\**" />
 		<Page Remove="Mappers\**" />
 		<Page Remove="Views\Components\**" />
+		<Page Remove="Views\ModInstaller\**" />
 		<Page Remove="Views\SubPages\**" />
 	</ItemGroup>
 	<ItemGroup>
@@ -257,6 +261,7 @@
 		<None Remove="Views\DebugPage.xaml" />
 		<None Remove="Views\EasterEggPage.xaml" />
 		<None Remove="Views\ErrorWindow.xaml" />
+		<None Remove="Views\ModInstallerPage.xaml" />
 		<None Remove="Views\ModsOverviewPage.xaml" />
 		<None Remove="Views\ModUpdateAvailableWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
@@ -865,6 +870,9 @@
 		<None Update="Assets\ModPanePlaceholder.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\ModInstallerPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\ModsOverviewPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -1122,5 +1130,9 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Assets\easterEgg.mp3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PRIResource Remove="Views\ModInstaller\**" />
 	</ItemGroup>
 </Project>
