@@ -2,7 +2,6 @@
 using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
-using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -221,17 +220,7 @@ public partial class App : Application
         if (UnhandledExceptionHandled)
             return;
 
-        GetService<IWindowManagerService>().Windows.ForEach(x =>
-        {
-            try
-            {
-                x.Close();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        });
+        await GetService<IWindowManagerService>().CloseWindowsAsync();
 
         // show error dialog
         var window = new ErrorWindow(e.Exception)
