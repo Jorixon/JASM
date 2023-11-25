@@ -17,13 +17,6 @@
         <xaml:BoolInverterConverter x:Name="BoolInverterConverter" />
         <xaml:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
     </Page.Resources>
-    <!--
-        DragEnter="Page_OnDragEnter"
-        DragLeave="Page_OnDragLeave"
-        Drop="Page_OnDrop"
-        AllowDrop="True"
-        On Grid below
-    -->
     <Grid Margin="0,-24,0,0" Background="Transparent">
         <Grid.Resources>
             <MenuFlyout x:Name="ImageCommandsFlyout" Opening="ImageCommandsFlyout_OnOpening">
@@ -170,15 +163,6 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-
-            <!--<StackPanel
-                x:Name="ElementFilter"
-                Padding="4"
-                VerticalAlignment="Bottom"
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                CornerRadius="10"
-                Orientation="Horizontal">-->
-
             <ScrollViewer HorizontalScrollBarVisibility="Auto">
 
                 <GridView
@@ -207,19 +191,8 @@
                             </ItemContainer>
                         </DataTemplate>
                     </GridView.ItemTemplate>
-                    <!--<GridView.Layout>
-                    <StackLayout Orientation="Horizontal" />
-                </GridView.Layout>-->
                 </GridView>
             </ScrollViewer>
-
-            <!--<Button>
-                    <Button.Content>
-                        <FontIcon Glyph="&#xE894;" />
-                    </Button.Content>
-                </Button>
-
-            </StackPanel>-->
 
 
             <Grid
@@ -371,46 +344,5 @@
                 </DataTemplate>
             </controls:AdaptiveGridView.ItemTemplate>
         </controls:AdaptiveGridView>
-        <!--<controls:DockPanel Grid.Row="2" HorizontalAlignment="Center">
-            <StackPanel
-                x:Name="ElementFilter"
-                Padding="4"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                controls:DockPanel.Dock="Bottom"
-                Background="{ThemeResource SmokeFillColorDefaultBrush}"
-                CornerRadius="10"
-                Orientation="Horizontal">
-                <GridView
-                    VerticalAlignment="Bottom"
-                    BorderThickness="0"
-                    IsItemClickEnabled="True"
-                    IsMultiSelectCheckBoxEnabled="False"
-                    ItemClick="ListViewBase_OnItemClick"
-                    ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=OneWay}"
-                    SelectedItem="{x:Bind ViewModel.DockPanelVM.SelectedElement, Mode=TwoWay}"
-                    SelectionMode="Single">
-
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="subVms:ElementIcon">
-                            <Grid
-                                Margin="8,0,8,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-                                <Image MaxWidth="40" Source="{x:Bind ImageUri}" />
-                            </Grid>
-
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-
-                <Button>
-                    <Button.Content>
-                        <FontIcon Glyph="&#xE894;" />
-                    </Button.Content>
-                </Button>
-
-            </StackPanel>
-        </controls:DockPanel>-->
     </Grid>
 </Page>
