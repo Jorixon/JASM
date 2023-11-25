@@ -27,6 +27,7 @@ public class GameService : IGameService
     public string GameShortName => GameInfo.GameShortName;
     public string GameIcon => GameInfo.GameIcon;
     public Uri GameBananaUrl => GameInfo.GameBananaUrl;
+    public event EventHandler? Initialized;
 
     private readonly List<ICharacter> _characters = new();
 
@@ -81,6 +82,7 @@ public class GameService : IGameService
         await InitializeCharactersAsync();
 
         _initialized = true;
+        Initialized?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -229,6 +231,15 @@ public class GameService : IGameService
     public List<ICharacter> GetCharacters() => _characters.ToList();
 
     public List<ICharacter> GetDisabledCharacters() => _disabledCharacters.ToList();
+
+    public List<ICategory> GetCategories()
+    {
+        return new List<ICategory>
+        {
+            Category.CreateForCharacter(),
+            Category.CreateForNpc()
+        };
+    }
 
 
     public bool IsMultiMod(IModdableObject moddableObject) =>

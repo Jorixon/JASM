@@ -14,8 +14,18 @@ public class NavigationHelper
 {
     public static string GetNavigateTo(NavigationViewItem item) => (string)item.GetValue(NavigateToProperty);
 
+    public static object GetNavigateToParameter(NavigationViewItem item) => item.GetValue(NavigateToParameterProperty);
+
     public static void SetNavigateTo(NavigationViewItem item, string value) => item.SetValue(NavigateToProperty, value);
 
+    public static void SetNavigateToParameter(NavigationViewItem item, object value) =>
+        item.SetValue(NavigateToParameterProperty, value);
+
     public static readonly DependencyProperty NavigateToProperty =
-        DependencyProperty.RegisterAttached("NavigateTo", typeof(string), typeof(NavigationHelper), new PropertyMetadata(null));
+        DependencyProperty.RegisterAttached("NavigateTo", typeof(string), typeof(NavigationHelper),
+            new PropertyMetadata(null));
+
+    public static readonly DependencyProperty NavigateToParameterProperty =
+        DependencyProperty.RegisterAttached("NavigateToParameter", typeof(object), typeof(NavigationHelper),
+            new PropertyMetadata(null));
 }

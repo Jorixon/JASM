@@ -58,4 +58,18 @@ public class CharacterSkin : ICharacterSkin
     {
         Character = character;
     }
+
+    public bool Equals(INameable? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return InternalName.Equals(other.InternalName);
+    }
+
+    public bool Equals(ICharacterSkin? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return InternalName.Equals(other.InternalName);
+    }
 }

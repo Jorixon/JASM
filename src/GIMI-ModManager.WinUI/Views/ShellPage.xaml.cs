@@ -1,4 +1,5 @@
 ﻿using Windows.System;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.ViewModels;
@@ -32,7 +33,7 @@ public sealed partial class ShellPage : Page
         App.MainWindow.ExtendsContentIntoTitleBar = true;
         App.MainWindow.SetTitleBar(AppTitleBar);
         App.MainWindow.Activated += MainWindow_Activated;
-        AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+        AppTitleBarText.Text = ResourceExtensions.GetLocalized("AppDisplayName");
 #if DEBUG
         AppTitleBarText.Text += " - DEBUG";
 #endif
@@ -58,12 +59,61 @@ public sealed partial class ShellPage : Page
             Bindings.Update();
         };
 
+        ViewModel.GameService.Initialized += GameServiceOnInitialized;
 
 #if RELEASE
 // Hide debug menu in release mode
 DebugItem.Visibility = Visibility.Collapsed;
 
 #endif
+    }
+
+    private void GameServiceOnInitialized(object? sender, EventArgs e)
+    {
+        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            var categories = ViewModel.GameService.GetCategories();
+            foreach (var category in categories)
+            {
+                var categoryViewItem = new NavigationViewItem()
+                {
+                    Content = category.DisplayNamePlural,
+                    Tag = category
+                };
+                NavigationHelper.SetNavigateToParameter(categoryViewItem, category);
+
+
+                if (category.ModCategory == ModCategory.Character)
+                {
+                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uE716" };
+
+                    NavigationHelper.SetNavigateTo(categoryViewItem, typeof(CharactersViewModel).FullName!);
+                    NavigationViewControl.MenuItems.Insert(0, categoryViewItem);
+                    continue;
+                }
+
+                const string menuName = "Categories";
+                if (NavigationViewControl.MenuItems[1] is NavigationViewItem { Tag: not null } menuItem &&
+                    menuItem.Tag.Equals(menuName))
+                {
+                    menuItem.MenuItems.Add(categoryViewItem);
+                }
+                else
+                {
+                    var categoriesItem = new NavigationViewItem()
+                    {
+                        Content = menuName,
+                        Icon = new FontIcon() { Glyph = "\uE712" },
+                        Tag = menuName,
+                        SelectsOnInvoked = false
+                    };
+                    categoriesItem.MenuItems.Add(categoryViewItem);
+
+                    NavigationViewControl.MenuItems.Insert(1, categoriesItem);
+                    categoriesItem.IsExpanded = true;
+                }
+            }
+        });
     }
 
     private void GlobalMouseHandler_Invoked(object sender, PointerRoutedEventArgs e)

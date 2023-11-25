@@ -38,4 +38,11 @@ public sealed class InternalName : IEquatable<InternalName>, IEquatable<string>
     public override string ToString() => Id;
 
     public static implicit operator string(InternalName internalName) => internalName.Id;
+
+    internal static bool DefaultEquatable(INameable @this, INameable? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(@this, other)) return true;
+        return @this.InternalNameEquals(other);
+    }
 }

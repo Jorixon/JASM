@@ -11,6 +11,8 @@ public interface IGameService
     public string GameIcon { get; }
     public Uri GameBananaUrl { get; }
 
+    public event EventHandler? Initialized;
+
     public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null);
 
@@ -48,6 +50,8 @@ public interface IGameService
     public List<ICharacter> GetCharacters();
     public List<ICharacter> GetDisabledCharacters();
 
+    public List<ICategory> GetCategories();
+
 
     public bool IsMultiMod(IModdableObject moddableObject);
     public bool IsMultiMod(string modInternalName);
@@ -56,38 +60,22 @@ public interface IGameService
     public string WeaponsCharacterInternalName { get; }
 }
 
-public interface IUi : INameable
-{
-    public IModdableObject? ModdableObject { get; }
-}
-
-public interface IGliders : INameable
-{
-    public IModdableObject? ModdableObject { get; }
-}
-
-public interface IWeapon : IRarity, INameable
-{
-    public IModdableObject? ModdableObject { get; }
-}
-
 // Genshin => weapon
 // Honkai => Path
 public interface IGameClass : IImageSupport, INameable
 {
-    //public int Id { get; }
 }
 
 // Genshin => Element
 // Honkai => Element
 public interface IGameElement : IImageSupport, INameable
 {
-    //public int Id { get; }
 }
 
+// Genshin => Mondstadt
+// Honkai => Belobog
 public interface IRegion : INameable
 {
-    //public int Id { get; }
 }
 
 public interface IRarity
@@ -109,7 +97,7 @@ public interface IImageSupport
 /// <summary>
 /// Base Interface that allows identification by internal name
 /// </summary>
-public interface INameable
+public interface INameable : IEquatable<INameable>
 {
     /// <summary>
     /// Can be customized by user
@@ -132,15 +120,26 @@ public interface INameable
     }
 }
 
-public interface ICategory
+public interface IUi : IModdableObject
 {
-    public ModCategory Category { get; }
-    public string InternalCategoryName { get; }
+}
+
+public interface IGliders : IModdableObject
+{
+}
+
+public interface IWeapon : IModdableObject
+{
+}
+
+public interface ICategory : INameable, IEquatable<ICategory>
+{
+    public string DisplayNamePlural { get; internal set; }
+    ModCategory ModCategory { get; init; }
 }
 
 public enum ModCategory
 {
-    None,
     Character,
     NPC,
     Object,

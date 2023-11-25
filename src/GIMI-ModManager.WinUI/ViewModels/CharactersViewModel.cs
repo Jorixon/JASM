@@ -274,8 +274,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    private ICategory? _category;
+
     public async void OnNavigatedTo(object parameter)
     {
+        if (parameter is ICategory category)
+        {
+            _category = category;
+        }
+
         await Task.Run(async () =>
         {
             var characters = _gameService.GetCharacters().ToList();

@@ -69,11 +69,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>-->
 
-                <NavigationViewItem helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.CharactersViewModel" Content="Characters">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE716;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
 
                 <NavigationViewItem helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModel" Content="Character Management">
                     <NavigationViewItem.Icon>

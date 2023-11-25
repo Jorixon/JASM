@@ -5,7 +5,7 @@ namespace GIMI_ModManager.Core.GamesService.Interfaces;
 /// <summary>
 /// In game playable character
 /// </summary>
-public interface ICharacter : IRarity, IImageSupport, IModdableObject, IEquatable<ICharacterSkin>
+public interface ICharacter : IRarity, IImageSupport, IModdableObject, IEquatable<ICharacter>
 {
     [Newtonsoft.Json.JsonIgnore]
     [JsonIgnore]

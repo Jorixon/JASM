@@ -9,8 +9,7 @@ namespace GIMI_ModManager.Core.GamesService.Models;
 [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
 public class Character : ICharacter, IEquatable<Character>
 {
-    //public int Id { get; internal set; }
-    public string? Category { get; internal set; }
+    public ICategory ModCategory { get; } = Category.CreateForCharacter();
     public InternalName InternalName { get; init; } = null!;
     public string ModFilesName { get; internal set; } = null!;
     public bool IsMultiMod { get; init; }
@@ -118,7 +117,7 @@ public class Character : ICharacter, IEquatable<Character>
         return string.Equals(InternalName, other.InternalName, StringComparison.OrdinalIgnoreCase);
     }
 
-    public bool Equals(ICharacterSkin? other)
+    public bool Equals(ICharacter? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -130,6 +129,11 @@ public class Character : ICharacter, IEquatable<Character>
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return string.Equals(InternalName, other.InternalName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public bool Equals(INameable? other)
+    {
+        throw new NotImplementedException();
     }
 
     public override bool Equals(object? obj)

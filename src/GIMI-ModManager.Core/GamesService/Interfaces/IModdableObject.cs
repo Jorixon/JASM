@@ -16,4 +16,9 @@ public interface IModdableObject : INameable, IEquatable<IModdableObject>
     /// If true => Multiple mods can be active at the same time
     /// </summary>
     public bool IsMultiMod { get; }
+
+    /// <summary>
+    /// What category this mod belongs to
+    /// </summary>
+    public ICategory ModCategory { get; }
 }
