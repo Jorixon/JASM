@@ -127,6 +127,14 @@ public class GameService : IGameService
         character.Keys = character.DefaultCharacter.Keys;
     }
 
+    public List<IModdableObject> GetModdableObjects(ICategory category)
+    {
+        if (category.ModCategory == ModCategory.Character)
+            return GetCharacters().Cast<IModdableObject>().ToList();
+
+        return new List<IModdableObject>();
+    }
+
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
         Uri? imageUri = null,
         IGameClass? gameClass = null, IGameElement? gameElement = null, ICollection<IRegion>? regions = null,

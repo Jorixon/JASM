@@ -31,7 +31,7 @@ public class Category : ICategory
         return InternalName.Equals(other.InternalName);
     }
 
-    internal static ICategory CreateForCharacter()
+    public static ICategory CreateForCharacter()
     {
         var internalName = new InternalName(ModCategory.Character.ToString());
 

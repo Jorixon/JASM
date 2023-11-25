@@ -5,9 +5,9 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 namespace GIMI_ModManager.WinUI.Models;
 
 public partial class CharacterGridItemModel : ObservableObject, IEquatable<CharacterGridItemModel>,
-    IEquatable<ICharacter>, IEquatable<IModdableObject>
+    IEquatable<IModdableObject>
 {
-    [ObservableProperty] private ICharacter _character;
+    [ObservableProperty] private IModdableObject _character;
 
 
     [ObservableProperty] private bool _isPinned;
@@ -17,7 +17,7 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     [ObservableProperty] private bool _notification;
     [ObservableProperty] private AttentionType _notificationType;
 
-    public CharacterGridItemModel(ICharacter character)
+    public CharacterGridItemModel(IModdableObject character)
     {
         Character = character;
     }
@@ -27,13 +27,6 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return Character.Equals(other.Character);
-    }
-
-    public bool Equals(ICharacter? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Character.InternalNameEquals(other.InternalName);
     }
 
     public bool Equals(IModdableObject? other)

@@ -107,8 +107,12 @@ DebugItem.Visibility = Visibility.Collapsed;
                         Tag = menuName,
                         SelectsOnInvoked = false
                     };
+
+
                     categoriesItem.MenuItems.Add(categoryViewItem);
 
+                    NavigationHelper.SetNavigateTo(categoryViewItem, typeof(CharactersViewModel).FullName!);
+                    NavigationHelper.SetNavigateToParameter(categoryViewItem, category);
                     NavigationViewControl.MenuItems.Insert(1, categoriesItem);
                     categoriesItem.IsExpanded = true;
                 }

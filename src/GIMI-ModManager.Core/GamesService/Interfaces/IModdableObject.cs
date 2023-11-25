@@ -4,7 +4,7 @@
 /// Base Interface for all categories.
 /// Each instance gets their own folder in the mods folder.
 /// </summary>
-public interface IModdableObject : INameable, IEquatable<IModdableObject>
+public interface IModdableObject : INameable, IEquatable<IModdableObject>, IImageSupport
 {
     /// <summary>
     /// Static should not be changed.
