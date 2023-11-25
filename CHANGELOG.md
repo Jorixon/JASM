@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/Jorixon/JASM/compare/v1.8.0...v1.8.1) (2023-11-24)
+
+
+### Bug Fixes
+
+* JASM crashing on first time startup ([c3048b4](https://github.com/Jorixon/JASM/commit/c3048b40faaf3cd2984884e44fcfd54392f7ee06))
+
 ## [1.8.0](https://github.com/Jorixon/JASM/compare/v1.7.0...v1.8.0) (2023-11-24)
 
 
