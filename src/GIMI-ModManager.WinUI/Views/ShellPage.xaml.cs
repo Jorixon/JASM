@@ -78,44 +78,51 @@ DebugItem.Visibility = Visibility.Collapsed;
                 var categoryViewItem = new NavigationViewItem()
                 {
                     Content = category.DisplayNamePlural,
-                    Tag = category
+                    Tag = category.InternalName.Id
                 };
                 NavigationHelper.SetNavigateToParameter(categoryViewItem, category);
+                NavigationHelper.SetNavigateTo(categoryViewItem, typeof(CharactersViewModel).FullName!);
 
 
                 if (category.ModCategory == ModCategory.Character)
                 {
                     categoryViewItem.Icon = new FontIcon() { Glyph = "\uE716" };
 
-                    NavigationHelper.SetNavigateTo(categoryViewItem, typeof(CharactersViewModel).FullName!);
-                    NavigationViewControl.MenuItems.Insert(0, categoryViewItem);
+                    ViewModel.NavigationViewService.MenuItems!.Insert(0, categoryViewItem);
                     continue;
                 }
 
-                const string menuName = "Categories";
-                if (NavigationViewControl.MenuItems[1] is NavigationViewItem { Tag: not null } menuItem &&
-                    menuItem.Tag.Equals(menuName))
+                if (category.ModCategory == ModCategory.NPC)
                 {
-                    menuItem.MenuItems.Add(categoryViewItem);
+                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uE8D5" };
+
+                    ViewModel.NavigationViewService.MenuItems!.Insert(1, categoryViewItem);
+                    continue;
                 }
-                else
-                {
-                    var categoriesItem = new NavigationViewItem()
-                    {
-                        Content = menuName,
-                        Icon = new FontIcon() { Glyph = "\uE712" },
-                        Tag = menuName,
-                        SelectsOnInvoked = false
-                    };
+
+                //const string menuName = "Categories";
+                //if (NavigationViewControl.MenuItems[1] is NavigationViewItem { Tag: not null } menuItem &&
+                //    menuItem.Tag.Equals(menuName))
+                //{
+                //    menuItem.MenuItems.Add(categoryViewItem);
+                //}
+                //else
+                //{
+                //    var categoriesItem = new NavigationViewItem()
+                //    {
+                //        Content = menuName,
+                //        Icon = new FontIcon() { Glyph = "\uE712" },
+                //        Tag = menuName,
+                //        SelectsOnInvoked = false
+                //    };
 
 
-                    categoriesItem.MenuItems.Add(categoryViewItem);
+                //    categoriesItem.MenuItems.Add(categoryViewItem);
 
-                    NavigationHelper.SetNavigateTo(categoryViewItem, typeof(CharactersViewModel).FullName!);
-                    NavigationHelper.SetNavigateToParameter(categoryViewItem, category);
-                    NavigationViewControl.MenuItems.Insert(1, categoriesItem);
-                    categoriesItem.IsExpanded = true;
-                }
+                //    NavigationHelper.SetNavigateToParameter(categoryViewItem, category);
+                //    NavigationViewControl.MenuItems.Insert(1, categoriesItem);
+                //    categoriesItem.IsExpanded = true;
+                //}
             }
         });
     }

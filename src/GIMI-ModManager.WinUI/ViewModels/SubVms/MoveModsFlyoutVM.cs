@@ -22,10 +22,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<MoveModsFlyoutVM>();
     private readonly ModSettingsService _modSettingsService = App.GetService<ModSettingsService>();
 
-    private ICharacter _shownCharacter = null!;
+    private IModdableObject _shownCharacter = null!;
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(MoveModsCommand))]
-    private ICharacter? _selectedCharacter = null;
+    private IModdableObject? _selectedCharacter = null;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(MoveModsCommand),
@@ -58,33 +58,40 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         _skinManagerService = skinManagerService;
     }
 
-    public void SetShownCharacter(CharacterVM selectedCharacter)
+    public void SetShownCharacter(IModdableObject selectedCharacter)
     {
         if (_shownCharacter is not null)
             throw new InvalidOperationException("Selected character is already set");
-        _shownCharacter = _gameService.GetCharacterByIdentifier(selectedCharacter.InternalName)!;
-        var skinVms = _shownCharacter.Skins.Select(SkinVM.FromSkin);
 
-        foreach (var skinVm in skinVms) SelectableCharacterSkins.Add(new SelectCharacterTemplate(skinVm));
+        _shownCharacter = selectedCharacter;
+
+        if (_shownCharacter is ICharacter character)
+        {
+            var characterSkins = character.Skins.Select(SkinVM.FromSkin);
+            foreach (var characterSkin in characterSkins)
+                SelectableCharacterSkins.Add(new SelectCharacterTemplate(characterSkin));
+        }
     }
 
-    public void SetActiveSkin(SkinVM characterSkinVmSkin)
+    public void SetActiveSkin(ICharacterSkin characterSkinVmSkin)
     {
+        if (_shownCharacter is not ICharacter character)
+            throw new InvalidOperationException("Cannot set active skin for non-character object");
+
         foreach (var selectableCharacterSkin in SelectableCharacterSkins)
             if (selectableCharacterSkin.InternalName == characterSkinVmSkin.InternalName)
             {
-                var characterSkin = _shownCharacter.Skins.FirstOrDefault(skin =>
+                var characterSkin = character.Skins.FirstOrDefault(skin =>
                     skin.InternalNameEquals(characterSkinVmSkin.InternalName));
-
-                if (characterSkin is null)
-                    throw new InvalidOperationException(
-                        $"Cannot find character skin with internal name {characterSkinVmSkin.InternalName}, when switching skin");
 
 
                 selectableCharacterSkin.IsSelected = true;
-                _backendSelectedCharacterSkin = characterSkin;
+
+                _backendSelectedCharacterSkin = characterSkin ?? throw new InvalidOperationException(
+                    $"Cannot find character skin with internal name {characterSkinVmSkin.InternalName}, when switching skin");
+
                 SelectedCharacterSkin =
-                    _shownCharacter.Skins.FirstOrDefault(skin =>
+                    character.Skins.FirstOrDefault(skin =>
                         skin.InternalNameEquals(characterSkin));
             }
             else
@@ -259,10 +266,10 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     [RelayCommand(CanExecute = nameof(CanOverrideModCharacterSkin))]
     private async Task OverrideModCharacterSkin()
     {
-        if (SelectedCharacterSkin == null) return;
+        if (SelectedCharacterSkin == null || _shownCharacter is not ICharacter character) return;
 
         var characterSkinToSet =
-            _shownCharacter.Skins.FirstOrDefault(charSkin =>
+            character.Skins.FirstOrDefault(charSkin =>
                 charSkin.InternalNameEquals(SelectedCharacterSkin));
 
         if (characterSkinToSet == null)
@@ -363,9 +370,9 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     [RelayCommand]
     private void SelectNewCharacterSkin(SelectCharacterTemplate? characterTemplate)
     {
-        if (characterTemplate == null) return;
+        if (characterTemplate == null || _shownCharacter is not ICharacter character) return;
 
-        var characterSkinToSet = _shownCharacter.Skins.FirstOrDefault(charSkin =>
+        var characterSkinToSet = character.Skins.FirstOrDefault(charSkin =>
             charSkin.InternalName.Equals(characterTemplate.InternalName));
 
         if (characterSkinToSet == null)

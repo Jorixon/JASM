@@ -67,7 +67,7 @@ public partial class ShellViewModel : ObservableRecipient
             return;
         }
 
-        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType, e.Parameter);
         if (selectedItem != null)
         {
             Selected = selectedItem;

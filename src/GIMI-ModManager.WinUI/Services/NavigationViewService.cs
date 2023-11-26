@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.ViewModels;
@@ -48,17 +49,19 @@ public class NavigationViewService : INavigationViewService
         }
     }
 
-    public NavigationViewItem? GetSelectedItem(Type pageType)
+    public NavigationViewItem? GetSelectedItem(Type pageType, object? parameter = null)
     {
         if (_navigationView != null)
         {
-            return GetSelectedItem(_navigationView.MenuItems, pageType) ?? GetSelectedItem(_navigationView.FooterMenuItems, pageType);
+            return GetSelectedItem(_navigationView.MenuItems, pageType, parameter) ??
+                   GetSelectedItem(_navigationView.FooterMenuItems, pageType);
         }
 
         return null;
     }
 
-    private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) => _navigationService.GoBack();
+    private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) =>
+        _navigationService.GoBack();
 
     private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
@@ -79,8 +82,22 @@ public class NavigationViewService : INavigationViewService
         }
     }
 
-    private NavigationViewItem? GetSelectedItem(IEnumerable<object> menuItems, Type pageType)
+    private NavigationViewItem? GetSelectedItem(IEnumerable<object> menuItemsObjects, Type pageType,
+        object? parameter = null)
     {
+        var menuItems = menuItemsObjects.OfType<NavigationViewItem>().ToList();
+
+        if (parameter is ICategory category)
+        {
+            var categoryViewItem =
+                menuItems.FirstOrDefault(item => category.InternalName.Equals(item.Tag));
+
+            if (categoryViewItem != null)
+            {
+                return categoryViewItem;
+            }
+        }
+
         foreach (var item in menuItems.OfType<NavigationViewItem>())
         {
             if (IsMenuItemForPageType(item, pageType))

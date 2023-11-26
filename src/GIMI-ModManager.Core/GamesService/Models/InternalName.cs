@@ -35,7 +35,8 @@ public sealed class InternalName : IEquatable<InternalName>, IEquatable<string>
     }
 
     public override bool Equals(object? obj) =>
-        ReferenceEquals(this, obj) || obj is InternalName other && Equals(other);
+        ReferenceEquals(this, obj) || obj is string stringOther && Equals(stringOther) ||
+        obj is InternalName other && Equals(other);
 
     public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Id);
 

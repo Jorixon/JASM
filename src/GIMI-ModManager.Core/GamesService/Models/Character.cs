@@ -9,13 +9,25 @@ namespace GIMI_ModManager.Core.GamesService.Models;
 [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
 public class Character : ICharacter, IEquatable<Character>
 {
+    private Uri? _imageUri;
     public ICategory ModCategory { get; } = Category.CreateForCharacter();
     public InternalName InternalName { get; init; } = null!;
     public string ModFilesName { get; internal set; } = null!;
     public bool IsMultiMod { get; init; }
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }
-    public Uri? ImageUri { get; set; }
+
+    public Uri? ImageUri
+    {
+        get => _imageUri;
+        set
+        {
+            _imageUri = value;
+            if (Skins.Count == 0) return;
+            Skins.First(sk => sk.IsDefault).ImageUri = value;
+        }
+    }
+
     public ICharacter DefaultCharacter { get; internal set; } = null!;
     public IGameClass Class { get; internal set; } = null!;
     public IGameElement Element { get; internal set; } = null!;
@@ -263,6 +275,8 @@ internal sealed class CharacterBuilder
         // Set images
         _character.ImageUri = GetImage(imageFolder, _jsonCharacter.Image);
 
+        _character.Skins.First().ImageUri = _character.ImageUri;
+
         foreach (var characterSkin in _character.Skins)
         {
             var jsonCharacterSkin = _jsonCharacter?.InGameSkins
@@ -275,6 +289,7 @@ internal sealed class CharacterBuilder
 
             characterSkin.ImageUri = GetImage(characterSkinImageFolder, jsonCharacterSkin.Image);
         }
+
 
         _character.DefaultCharacter = _character.Clone();
 
