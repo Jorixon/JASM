@@ -105,6 +105,11 @@ public interface IImageSupport
     public Uri? ImageUri { get; internal set; }
 }
 
+public interface IDateSupport
+{
+    public DateTime? ReleaseDate { get; internal set; }
+}
+
 /// <summary>
 /// Base Interface that allows identification by internal name
 /// </summary>

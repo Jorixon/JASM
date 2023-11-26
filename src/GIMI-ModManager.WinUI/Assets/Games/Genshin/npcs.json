@@ -1,7 +1,22 @@
 [
   {
-    "InternalName": "Npc_Others",
+    "InternalName": "Others_NPC",
     "DisplayName": "Others",
-    "IsMultiMod": true
+    "IsMultiMod": true,
+    "Image": "Npc_Others.png"
+  },
+  {
+    "InternalName": "Katheryne",
+    "DisplayName": "Katheryne",
+    "Image": "Npc_Katheryne.png"
+  },
+  {
+    "Image": "Npc_Clorinde_Thumb.png",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Clorinde",
+    "InternalName": "Clorinde",
+    "DisplayName": "Clorinde"
   }
 ]

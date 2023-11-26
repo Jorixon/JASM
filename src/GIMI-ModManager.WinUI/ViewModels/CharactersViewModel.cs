@@ -298,7 +298,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             throw new InvalidOperationException("Characters must be of the same type");
 
         var others =
-            characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.OtherCharacterInternalName));
+            characters.FirstOrDefault(ch =>
+                ch.InternalName.Id.Contains("Others", StringComparison.OrdinalIgnoreCase));
         if (others is not null) // Add to front
         {
             characters.Remove(others);
@@ -834,7 +835,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
         };
 
-        var othersCharacter = FindCharacterByInternalName(_gameService.OtherCharacterInternalName)!;
+        var othersCharacter = _backendCharacters.FirstOrDefault(ch =>
+            ch.Character.InternalName.Id.Contains("Others", StringComparison.OrdinalIgnoreCase));
 
         var alphabetical = new SortingMethod(Sorter.Alphabetical(), othersCharacter, lastCharacters);
         SortingMethods.Add(alphabetical);
