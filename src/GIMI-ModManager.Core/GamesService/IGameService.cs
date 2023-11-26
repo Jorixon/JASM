@@ -24,7 +24,6 @@ public interface IGameService
     public Task EnableCharacterAsync(ICharacter character);
     public Task ResetOverrideForCharacterAsync(ICharacter character);
 
-    public List<IModdableObject> GetModdableObjects(ICategory category);
 
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
         Uri? imageUri = null, IGameClass? gameClass = null, IGameElement? gameElement = null,
@@ -36,7 +35,6 @@ public interface IGameService
 
     public ICharacter? GetCharacterByIdentifier(string internalName, bool includeDisabledCharacters = false);
 
-    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName);
 
     public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100,
@@ -48,17 +46,29 @@ public interface IGameService
 
     public List<IRegion> GetRegions();
 
-    public List<ICharacter> GetCharacters();
+    public List<ICharacter> GetCharacters(bool includeDisabled = false);
     public List<ICharacter> GetDisabledCharacters();
 
     public List<ICategory> GetCategories();
+    public List<IModdableObject> GetModdableObjects(ICategory category, GetOnly getOnlyStatus = GetOnly.Enabled);
+    public List<IModdableObject> GetAllModdableObjects(GetOnly getOnlyStatus = GetOnly.Enabled);
+    public List<T> GetModdableObjectsByCategory<T>(GetOnly getOnlyStatus = GetOnly.Enabled) where T : IModdableObject;
 
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName,
+        GetOnly getOnlyStatus = GetOnly.Enabled);
 
     public bool IsMultiMod(IModdableObject moddableObject);
     public bool IsMultiMod(string modInternalName);
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }
     public string WeaponsCharacterInternalName { get; }
+}
+
+public enum GetOnly
+{
+    Enabled,
+    Disabled,
+    Both
 }
 
 // Genshin => weapon
@@ -137,6 +147,7 @@ public interface ICategory : INameable, IEquatable<ICategory>
 {
     public string DisplayNamePlural { get; internal set; }
     ModCategory ModCategory { get; init; }
+    public Type ModdableObjectType { get; }
 }
 
 public enum ModCategory

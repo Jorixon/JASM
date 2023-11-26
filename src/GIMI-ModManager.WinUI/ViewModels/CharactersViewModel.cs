@@ -62,7 +62,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<SortingMethod> SortingMethods { get; } =
         new() { };
 
-    private SortingMethod _sortingMethod = null!;
     [ObservableProperty] private SortingMethod _selectedSortingMethod;
     [ObservableProperty] private bool _sortByDescending;
 
@@ -70,9 +69,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private Uri? _gameBananaLink;
 
-    private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
+    [ObservableProperty] private string _categoryPageTitle = string.Empty;
+    [ObservableProperty] private string _modToggleText = string.Empty;
+    [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
-    private bool isNavigating = true;
+
+    private bool _isNavigating = true;
 
     public CharactersViewModel(IGameService gameService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
@@ -138,8 +140,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ResetContent();
     }
 
-    private readonly CharacterGridItemModel _noCharacterFound =
-        new(new Character("None", "No Characters Found..."));
+    private CharacterGridItemModel NoCharacterFound =>
+        new(new Character("None", $"No {_category.DisplayNamePlural} Found..."));
 
     public void AutoSuggestBox_TextChanged(string text)
     {
@@ -162,7 +164,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         if (!suitableItems.Any())
         {
-            SuggestionsBox.Add(_noCharacterFound);
+            SuggestionsBox.Add(NoCharacterFound);
             _filters.Remove(FilterType.Search);
             ResetContent();
             return;
@@ -177,7 +179,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
-        if (character == _noCharacterFound || character is null)
+        if (character == NoCharacterFound || character is null)
             return false;
 
 
@@ -188,10 +190,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ResetContent()
     {
-        if (isNavigating) return;
+        if (_isNavigating) return;
 
         var filteredCharacters = FilterCharacters(_backendCharacters);
-        var sortedCharacters = _sortingMethod.Sort(filteredCharacters, SortByDescending).ToList();
+        var sortedCharacters = SelectedSortingMethod.Sort(filteredCharacters, SortByDescending).ToList();
 
         var charactersToRemove = Characters.Except(sortedCharacters).ToArray();
 
@@ -280,11 +282,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         if (parameter is not ICategory category)
-        {
             throw new ArgumentException("Parameter is not a category", nameof(parameter));
-        }
+
 
         _category = category;
+        CategoryPageTitle = $"{category.DisplayName} Overview";
+        ModToggleText = $"Show only {category.DisplayNamePlural} with Mods";
+        SearchBoxPlaceHolder = $"Search {category.DisplayNamePlural}...";
 
 
         var characters = _gameService.GetModdableObjects(_category);
@@ -453,20 +457,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
         }
 
-        var lastCharacters = new List<CharacterGridItemModel>
-        {
-            FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
-            FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
-        };
-
-        _lastCharacters = lastCharacters.ToArray();
-
-        if (firstType == typeof(ICharacter))
-        {
-        }
-
-        _sortingMethod = new SortingMethod(Sorter.Alphabetical(),
-            FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters);
 
         // ShowOnlyModsCharacters
         var settings =
@@ -483,14 +473,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         var sorter = SortingMethods.FirstOrDefault(x => x.SortingMethodType == settings.SortingMethod);
 
-        if (sorter is not null)
-        {
-            _sortingMethod = sorter;
-            SelectedSortingMethod = sorter;
-        }
+        SelectedSortingMethod = sorter ?? SortingMethods.First();
 
 
-        isNavigating = false;
+        _isNavigating = false;
         ResetContent();
     }
 
@@ -800,10 +786,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task SortBy(IEnumerable<SortingMethod> methodTypes)
     {
-        if (isNavigating) return;
+        if (_isNavigating) return;
         var sortingMethodType = methodTypes.First();
 
-        _sortingMethod = sortingMethodType;
         ResetContent();
 
         var settings = await ReadCharacterSettings();
@@ -843,13 +828,22 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void InitializeSorters()
     {
-        var alphabetical = new SortingMethod(Sorter.Alphabetical());
+        var lastCharacters = new List<CharacterGridItemModel>
+        {
+            FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
+            FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
+        };
+
+        var othersCharacter = FindCharacterByInternalName(_gameService.OtherCharacterInternalName)!;
+
+        var alphabetical = new SortingMethod(Sorter.Alphabetical(), othersCharacter, lastCharacters);
         SortingMethods.Add(alphabetical);
 
         if (_category.ModCategory == ModCategory.Character)
-            SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate()));
-
-        SelectedSortingMethod = alphabetical;
+        {
+            SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate(), othersCharacter, lastCharacters));
+            SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
+        }
     }
 }
 
@@ -938,9 +932,8 @@ public sealed class SortingMethod
 }
 
 // I originally tried to do this with type support, but it turned into quite a 'generic' mess
-// So I decided to go with a more 'hardcoded' approach and using object type instead
-// And casting values when doing the comparison
-public class Sorter
+// So I decided to go with a more 'hardcoded' approach and casting values when doing the comparison
+public sealed class Sorter
 {
     public string SortingMethodType { get; }
     private readonly SortFunc _firstSortFunc;
@@ -1012,4 +1005,25 @@ public class Sorter
                 characters.ThenBy(x => (x.Character.DisplayName)
                 ));
     }
+
+    public const string RaritySortName = "Rarity";
+
+    public static Sorter Rarity()
+    {
+        return new Sorter
+        (
+            RaritySortName,
+            (characters, isDescending) =>
+                !isDescending
+                    ? characters.OrderByDescending(x => ((ICharacter)x.Character).Rarity)
+                    : characters.OrderBy(x => ((ICharacter)x.Character).Rarity),
+            (characters, _) =>
+                characters.ThenBy(x => (x.Character.DisplayName)
+                ));
+    }
+
+
+    //sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
+    //sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
+    //sortThirdBy: x => x.Character.DisplayName);
 }

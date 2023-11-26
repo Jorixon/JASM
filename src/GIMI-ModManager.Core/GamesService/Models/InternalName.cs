@@ -20,6 +20,14 @@ public sealed class InternalName : IEquatable<InternalName>, IEquatable<string>
         return string.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool Equals(InternalName? other, InternalName? other2)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(null, other2)) return false;
+        if (ReferenceEquals(other2, other)) return true;
+        return string.Equals(other2.Id, other.Id, StringComparison.OrdinalIgnoreCase);
+    }
+
     public bool Equals(string? other)
     {
         if (ReferenceEquals(null, other)) return false;

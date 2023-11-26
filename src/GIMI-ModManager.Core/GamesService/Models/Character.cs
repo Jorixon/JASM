@@ -133,7 +133,7 @@ public class Character : ICharacter, IEquatable<Character>
 
     public bool Equals(INameable? other)
     {
-        throw new NotImplementedException();
+        return InternalName.DefaultEquatable(this, other);
     }
 
     public override bool Equals(object? obj)

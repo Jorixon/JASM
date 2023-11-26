@@ -72,7 +72,7 @@
                     HorizontalAlignment="Center"
                     FontSize="28"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="Character Overview" />
+                    Text="{x:Bind ViewModel.CategoryPageTitle, Mode=OneWay}" />
 
                 <HyperlinkButton
                     VerticalAlignment="Bottom"
@@ -225,9 +225,8 @@
                 <ToggleButton
                     Margin="0,0,8,0"
                     Command="{x:Bind ViewModel.ShowCharactersWithModsCommand}"
-                    IsChecked="{x:Bind ViewModel.ShowOnlyCharactersWithMods, Mode=OneWay}">
-                    Show only characters with mods
-                </ToggleButton>
+                    Content="{x:Bind ViewModel.ModToggleText, Mode=OneWay}"
+                    IsChecked="{x:Bind ViewModel.ShowOnlyCharactersWithMods, Mode=OneWay}" />
 
                 <AutoSuggestBox
                     x:Name="SearchBox"
@@ -235,7 +234,7 @@
                     Margin="0,8,0,8"
                     HorizontalAlignment="Left"
                     ItemsSource="{x:Bind ViewModel.SuggestionsBox, Mode=OneWay}"
-                    PlaceholderText="Search Characters..."
+                    PlaceholderText="{x:Bind ViewModel.SearchBoxPlaceHolder, Mode=OneWay}"
                     QueryIcon="Find"
                     QuerySubmitted="SearchBox_OnQuerySubmitted"
                     SuggestionChosen="AutoSuggestBox_OnSuggestionChosen"

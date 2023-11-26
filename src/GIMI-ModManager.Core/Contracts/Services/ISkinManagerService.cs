@@ -1,5 +1,6 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Services;
 using OneOf;
 using OneOf.Types;
@@ -25,7 +26,7 @@ public interface ISkinManagerService : IDisposable
     /// <param name="characterFolderToReorganize">If null, reorganize all mods outside of characters mod folders</param>
     /// <param name="disableMods">If true will also disable the mods</param>
     /// <returns>Mods moved</returns>
-    public Task<int> ReorganizeModsAsync(string? characterFolderToReorganize = null,
+    public Task<int> ReorganizeModsAsync(InternalName? characterFolderToReorganize = null,
         bool disableMods = false);
 
     /// <summary>

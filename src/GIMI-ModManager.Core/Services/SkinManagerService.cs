@@ -7,6 +7,7 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using OneOf;
 using OneOf.Types;
@@ -60,7 +61,7 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         _activeModsFolder.Refresh();
 
-        var characters = _gameService.GetCharacters();
+        var characters = _gameService.GetAllModdableObjects();
         foreach (var character in characters)
         {
             var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
@@ -414,7 +415,7 @@ public sealed class SkinManagerService : ISkinManagerService
                 characterFolder.Create();
             }
 
-            if (characterToFolder.Count != _gameService.GetCharacters().Count() - emptyFoldersCount)
+            if (characterToFolder.Count != _gameService.GetAllModdableObjects().Count() - emptyFoldersCount)
                 throw new InvalidOperationException(
                     "Failed to create character folders in export folder, character mismatch");
 
@@ -581,7 +582,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     private void InitializeFolderStructure()
     {
-        var characters = _gameService.GetCharacters();
+        var characters = _gameService.GetAllModdableObjects();
         foreach (var character in characters)
             CreateModListFolder(character);
     }
@@ -592,14 +593,14 @@ public sealed class SkinManagerService : ISkinManagerService
         characterModFolder.Create();
     }
 
-    public async Task<int> ReorganizeModsAsync(string? characterFolderToReorganize = null,
+    public async Task<int> ReorganizeModsAsync(InternalName? characterFolderToReorganize = null,
         bool disableMods = false)
     {
         if (_activeModsFolder is null) throw new InvalidOperationException("ModManagerService is not initialized");
 
         var characterFolder = characterFolderToReorganize is null
             ? null
-            : _gameService.GetCharacterByIdentifier(characterFolderToReorganize);
+            : _gameService.GetModdableObjectByIdentifier(characterFolderToReorganize);
 
         if (characterFolderToReorganize is null)
             _logger.Information("Reorganizing mods");
@@ -607,9 +608,9 @@ public sealed class SkinManagerService : ISkinManagerService
             _logger.Information("Reorganizing mods for '{Character}'", characterFolder?.InternalName);
 
         _activeModsFolder.Refresh();
-        var characters = _gameService.GetCharacters().ToArray();
+        var characters = _gameService.GetAllModdableObjects();
 
-        var disabledCharacters = _gameService.GetDisabledCharacters();
+        var disabledCharacters = _gameService.GetAllModdableObjects(GetOnly.Disabled);
 
         var othersCharacter = _gameService.GetCharacterByIdentifier("Others");
         if (othersCharacter is null)
@@ -634,7 +635,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
 
             var closestMatchCharacter =
-                _modCrawlerService.GetFirstSubSkinRecursive(folder.FullName)?.Character ??
+                _modCrawlerService.GetMatchingModdableObjects(folder.FullName).FirstOrDefault() ??
                 _gameService.QueryCharacter(ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(folder.Name),
                     minScore: 150);
 
