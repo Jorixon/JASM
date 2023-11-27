@@ -88,6 +88,8 @@ public class GameService : IGameService
 
         await InitializeObjectsAsync().ConfigureAwait(false);
 
+        CheckIfDuplicateInternalNameExists();
+
         _initialized = true;
         Initialized?.Invoke(this, EventArgs.Empty);
     }
@@ -731,6 +733,21 @@ public class GameService : IGameService
         }
 
         return list.ToArray();
+    }
+
+    private void CheckIfDuplicateInternalNameExists()
+    {
+        var allNameables = GetAllModdableObjects(GetOnly.Both);
+
+        var duplicates = allNameables
+            .GroupBy(x => x.InternalName)
+            .Where(g => g.Count() > 1)
+            .Select(y => y.Key)
+            .ToList();
+
+        if (duplicates.Any())
+            throw new InvalidOperationException(
+                $"Duplicate internal names found: {string.Join(", ", duplicates)}");
     }
 }
 

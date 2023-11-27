@@ -11,13 +11,13 @@ using ErrorOr;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
-using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
@@ -542,7 +542,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         dialog.ContentTemplate = contentDialog.ContentTemplate;
 
-        var model = new ExportModsDialogModel(CharacterVM.FromCharacters(_gameService.GetCharacters()));
+        var model = new ExportModsDialogModel(_gameService.GetAllModdableObjects());
         dialog.DataContext = model;
         var result = await _windowManagerService.ShowDialogAsync(dialog);
 
@@ -734,7 +734,7 @@ public partial class ExportModsDialogModel : ObservableObject
 
     [ObservableProperty] private SetModStatus _setModStatus = SetModStatus.KeepCurrent;
 
-    public ExportModsDialogModel(IEnumerable<CharacterVM> characters)
+    public ExportModsDialogModel(IEnumerable<IModdableObject> characters)
     {
         SetModStatus = SetModStatus.KeepCurrent;
         foreach (var character in characters) CharacterModsToBackup.Add(new CharacterCheckboxModel(character));
@@ -744,9 +744,9 @@ public partial class ExportModsDialogModel : ObservableObject
 public partial class CharacterCheckboxModel : ObservableObject
 {
     [ObservableProperty] private bool _isChecked = true;
-    [ObservableProperty] private CharacterVM _character;
+    [ObservableProperty] private IModdableObject _character;
 
-    public CharacterCheckboxModel(CharacterVM character)
+    public CharacterCheckboxModel(IModdableObject character)
     {
         _character = character;
     }

@@ -417,7 +417,7 @@ public sealed class SkinManagerService : ISkinManagerService
                 characterFolder.Create();
             }
 
-            if (characterToFolder.Count != _gameService.GetAllModdableObjects().Count() - emptyFoldersCount)
+            if (characterToFolder.Count != _gameService.GetAllModdableObjects().Count - emptyFoldersCount)
                 throw new InvalidOperationException(
                     "Failed to create character folders in export folder, character mismatch");
 
@@ -522,7 +522,7 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         if (removeLocalJasmSettings)
             foreach (var file in exportedMods.Select(mod => new DirectoryInfo(mod.FullPath))
-                         .SelectMany(folder => folder.EnumerateFileSystemInfos(".JASM_*")))
+                         .SelectMany(folder => folder.EnumerateFileSystemInfos(".JASM_*", SearchOption.AllDirectories)))
             {
                 _logger.Debug("Deleting local jasm file '{JasmFile}' in modFolder", file.FullName);
                 file.Delete();

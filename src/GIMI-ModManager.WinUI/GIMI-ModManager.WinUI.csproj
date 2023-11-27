@@ -186,6 +186,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\Character_Weapons_Thumb.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Start_Game.webp" />
+		<Content Remove="Assets\Games\Honkai\objects.json" />
     
     <Content Remove="Assets\Games\Honkai\regions.json" />
     <Content Remove="Assets\Games\Honkai\weaponClasses.json" />
@@ -730,6 +731,9 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Start_Game.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\objects.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
     <None Update="Assets\Games\Honkai\regions.json">

@@ -40,19 +40,28 @@
                             IsTextSelectionEnabled="True"
                             TextWrapping="WrapWholeWords" />
 
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <StackPanel
+                            Grid.Row="1"
+                            Orientation="Horizontal"
+                            ToolTipService.ToolTip="Keeps the jasm mod folder structure. I.e. Diluc/SomeDilucSkinMod">
                             <CheckBox IsChecked="{x:Bind KeepFolderStructure, Mode=TwoWay}" />
                             <TextBlock
                                 l:Uids.Uid="Settings_ExportDialog_KeepStructure"
                                 IsTextSelectionEnabled="True"
                                 TextWrapping="WrapWholeWords" />
                         </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <StackPanel
+                            Grid.Row="2"
+                            Orientation="Horizontal"
+                            ToolTipService.ToolTip="This is recursive and removes all files AND folders starting with .JASM_">
                             <CheckBox IsChecked="{x:Bind RemoveJasmSettings, Mode=TwoWay}" />
                             <TextBlock l:Uids.Uid="Settings_ExportDialog_RemoveJasm" IsTextSelectionEnabled="True" />
                         </StackPanel>
 
-                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <StackPanel
+                            Grid.Row="3"
+                            Orientation="Horizontal"
+                            ToolTipService.ToolTip="Whether to prepend or remove the 'DISABLED_' prefix from the exported mods">
                             <ComboBox ItemsSource="{x:Bind SetModStatuses, Mode=TwoWay}" SelectedItem="{x:Bind SetModStatus, Mode=TwoWay}" />
                             <TextBlock
                                 VerticalAlignment="Center"
