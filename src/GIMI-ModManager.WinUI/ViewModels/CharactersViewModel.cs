@@ -283,7 +283,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public async void OnNavigatedTo(object parameter)
     {
         if (parameter is not ICategory category)
-            throw new ArgumentException("Parameter is not a category", nameof(parameter));
+        {
+            _logger.Error("Invalid parameter type {ParameterType}", parameter?.GetType().FullName);
+            category = _gameService.GetCategories().First();
+        }
 
 
         _category = category;
