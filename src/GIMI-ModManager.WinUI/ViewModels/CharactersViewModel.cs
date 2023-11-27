@@ -156,7 +156,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _gameService.QueryCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
+        var suitableItems = _gameService.QueryModdableObjects(text, category: _category, minScore: 100)
+            .OrderByDescending(kv => kv.Value)
             .Take(5)
             .Select(x => new CharacterGridItemModel(x.Key))
             .ToList();
@@ -393,12 +394,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             if (_gameService.IsMultiMod(modList.Character))
                 continue;
 
-
-            if (modList.Mods.Count(modEntry => modEntry.IsEnabled) > 2)
-            {
-                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
-            }
-            else if (modList.Character is ICharacter character)
+            if (modList.Character is ICharacter character)
             {
                 var addWarning = false;
                 var subSkinsFound = new List<ICharacterSkin>();
@@ -439,6 +435,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
                     charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
             }
+            else if (modList.Mods.Count(modEntry => modEntry.IsEnabled) >= 2)
+            {
+                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+            }
         }
 
 
@@ -462,7 +462,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         // ShowOnlyModsCharacters
         var settings =
             await _localSettingsService
-                .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key);
+                .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.GetKey(_category));
         if (settings.ShowOnlyCharactersWithMods)
         {
             ShowOnlyCharactersWithMods = true;
@@ -642,16 +642,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         NotImplemented.Show("Hiding characters is not implemented yet");
     }
 
-    private async Task<CharacterOverviewSettings> ReadCharacterSettings()
-    {
-        return await _localSettingsService.ReadSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key) ??
-               new CharacterOverviewSettings();
-    }
+    private Task<CharacterOverviewSettings> ReadCharacterSettings() =>
+        _localSettingsService
+            .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.GetKey(_category));
 
-    private async Task SaveCharacterSettings(CharacterOverviewSettings settings)
-    {
-        await _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.Key, settings);
-    }
+    private Task SaveCharacterSettings(CharacterOverviewSettings settings) =>
+        _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.GetKey(_category), settings);
 
 
     [RelayCommand]

@@ -32,7 +32,7 @@ public class Character : ICharacter, IEquatable<Character>
     public IGameClass Class { get; internal set; } = null!;
     public IGameElement Element { get; internal set; } = null!;
     public ICollection<string> Keys { get; set; } = Array.Empty<string>();
-    public DateTime ReleaseDate { get; internal set; }
+    public DateTime? ReleaseDate { get; set; }
     public ICollection<IRegion> Regions { get; internal set; } = Array.Empty<IRegion>();
     public ICollection<ICharacterSkin> Skins { get; internal set; } = new List<ICharacterSkin>();
 

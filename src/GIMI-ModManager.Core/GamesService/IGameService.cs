@@ -40,6 +40,9 @@ public interface IGameService
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100,
         bool includeDisabledCharacters = false);
 
+    public Dictionary<IModdableObject, int> QueryModdableObjects(string searchQuery,
+        ICategory? category = null, int minScore = 100);
+
     public List<IGameElement> GetElements();
 
     public List<IGameClass> GetClasses();
@@ -52,7 +55,9 @@ public interface IGameService
     public List<ICategory> GetCategories();
     public List<IModdableObject> GetModdableObjects(ICategory category, GetOnly getOnlyStatus = GetOnly.Enabled);
     public List<IModdableObject> GetAllModdableObjects(GetOnly getOnlyStatus = GetOnly.Enabled);
-    public List<T> GetModdableObjectsByCategory<T>(GetOnly getOnlyStatus = GetOnly.Enabled) where T : IModdableObject;
+
+    public List<T> GetAllModdableObjectsAsCategory<T>(GetOnly getOnlyStatus = GetOnly.Enabled)
+        where T : IModdableObject;
 
     public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName,
         GetOnly getOnlyStatus = GetOnly.Enabled);
@@ -116,7 +121,8 @@ public interface IDateSupport
 public interface INameable : IEquatable<INameable>
 {
     /// <summary>
-    /// Can be customized by user
+    /// Is displayed to the user.
+    /// Can also be customized by user
     /// </summary>
     public string DisplayName { get; internal set; }
 
@@ -125,15 +131,9 @@ public interface INameable : IEquatable<INameable>
     /// </summary>
     public InternalName InternalName { get; internal init; }
 
-    public bool InternalNameEquals(string other)
-    {
-        return InternalName.Equals(other);
-    }
+    public bool InternalNameEquals(string? other) => InternalName.Equals(other);
 
-    public bool InternalNameEquals(INameable other)
-    {
-        return InternalNameEquals(other.InternalName);
-    }
+    public bool InternalNameEquals(INameable other) => InternalNameEquals(other.InternalName);
 }
 
 public interface IUi : IModdableObject

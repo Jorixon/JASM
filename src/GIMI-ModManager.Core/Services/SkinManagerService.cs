@@ -306,7 +306,7 @@ public sealed class SkinManagerService : ISkinManagerService
         return Task.CompletedTask;
     }
 
-    public void AddMod(ISkinMod mod, ICharacterModList modList, bool move = false)
+    public ISkinMod AddMod(ISkinMod mod, ICharacterModList modList, bool move = false)
     {
         if (GetModById(mod.Id) is not null)
             throw new InvalidOperationException($"Mod with id {mod.Id} is already tracked in a modList");
@@ -324,8 +324,10 @@ public sealed class SkinManagerService : ISkinManagerService
         if (move)
             mod.MoveTo(modList.AbsModsFolderPath);
         else
-            mod.CopyTo(modList.AbsModsFolderPath);
+            mod = mod.CopyTo(modList.AbsModsFolderPath);
+
         modList.TrackMod(mod);
+        return mod;
     }
 
     public void ExportMods(ICollection<ICharacterModList> characterModLists, string exportPath,

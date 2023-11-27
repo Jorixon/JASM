@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.ViewModels;
@@ -47,7 +48,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
     [ObservableProperty] private string _selectedModCharacterSkinOverrideDisplayName = string.Empty;
 
     public event EventHandler? CloseFlyoutEvent;
-    public ObservableCollection<CharacterVM> SuggestedCharacters { get; init; } = new();
+    public ObservableCollection<IModdableObject> SuggestedCharacters { get; init; } = new();
     private List<ModModel> SelectedMods { get; init; } = new();
 
     public ObservableCollection<SelectCharacterTemplate> SelectableCharacterSkins { get; init; } = new();
@@ -307,8 +308,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         CloseFlyoutEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    private readonly CharacterVM
-        _noCharacterFound = new() { DisplayName = "No Characters Found..." };
+    private readonly IModdableObject
+        _noCharacterFound = new Character("None", "No Characters Found...");
 
     [RelayCommand]
     private async Task TextChanged(string searchString)
@@ -325,11 +326,12 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SuggestedCharacters.Clear();
         var searchResultKeyValue =
             await Task.Run(() =>
-                _gameService.QueryCharacters(searchString, minScore: 100).OrderByDescending(kv => kv.Value));
+                _gameService.QueryModdableObjects(searchString, minScore: 100).OrderByDescending(kv => kv.Value));
 
+        var exclude = new List<IModdableObject> { _shownCharacter };
 
         var eligibleCharacters =
-            CharacterVM.FromCharacters(searchResultKeyValue.Select(kv => kv.Key).Take(5));
+            searchResultKeyValue.Select(kv => kv.Key).Except(exclude).Take(5);
 
 
         foreach (var eligibleCharacter in eligibleCharacters)
@@ -349,20 +351,13 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         SearchText = string.Empty;
     }
 
-    public bool SelectCharacter(CharacterVM? character)
+    public bool SelectCharacter(IModdableObject? characterVM)
     {
-        if (character == _noCharacterFound) return false;
-        if (character is null)
-        {
-            if (SuggestedCharacters.Any(ch => ch != _noCharacterFound))
-                character = SuggestedCharacters.First(ch => ch != _noCharacterFound);
-            else
-                return false;
-        }
+        if (_noCharacterFound.Equals(characterVM) || characterVM is null) return false;
 
         SuggestedCharacters.Clear();
-        SelectedCharacter = _gameService.GetCharacterByIdentifier(character.InternalName);
-        SearchText = character.DisplayName;
+        SelectedCharacter = characterVM;
+        SearchText = characterVM.DisplayName;
         return true;
     }
 

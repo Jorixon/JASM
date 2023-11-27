@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 
@@ -38,27 +39,45 @@ public class Category : ICategory
 
     public static ICategory CreateForCharacter()
     {
-        var internalName = new InternalName(ModCategory.Character.ToString());
+        var internalName = new InternalName("Character");
 
         return new Category(internalName, ModCategory.Character, "Character", "Characters", typeof(ICharacter));
     }
 
     internal static ICategory CreateForNpc()
     {
-        var internalName = new InternalName(ModCategory.NPC.ToString());
+        var internalName = new InternalName("NPC");
 
         return new Category(internalName, ModCategory.NPC, "NPC", "NPCs", typeof(INpc));
     }
 
-    //internal static ICategory CreateCustom(string internalNameString, string displayName, string displayNamePlural)
-    //{
-    //    var internalName = new InternalName(internalNameString);
-    //    var categories = Enum.GetValues<ModCategory>().Select(categoryEnum => categoryEnum.ToString().ToLower());
+    internal static ICategory CreateForObjects()
+    {
+        var internalName = new InternalName("Object");
 
-    //    if (categories.Contains(internalName.Id))
-    //        throw new ArgumentException($"The internal name '{internalName}' is already used by a default category");
+        return new Category(internalName, ModCategory.Object, "Object", "Objects", typeof(IGameObject));
+    }
+
+    internal static ICategory CreateDefaultCustom()
+    {
+        var internalName = new InternalName("Custom");
+
+        return new Category(internalName, ModCategory.Custom, "Custom", "Custom", typeof(IModdableObject));
+    }
+
+    internal static ICategory CreateCustom(string internalNameString, string displayName, string displayNamePlural)
+    {
+        var internalName = new InternalName(internalNameString);
+        displayName = displayName.IsNullOrEmpty() ? internalNameString : displayName;
+        displayNamePlural = displayNamePlural.IsNullOrEmpty() ? displayName : displayNamePlural;
+
+        var categories = Enum.GetValues<ModCategory>().Select(categoryEnum => categoryEnum.ToString().ToLower());
+
+        if (categories.Contains(internalName.Id))
+            throw new ArgumentException($"The internal name '{internalName}' is already used internally in JASM");
 
 
-    //    return new Category(internalName, ModCategory.Custom, displayName, displayNamePlural, typeof(ICharacter));
-    //}
+        return new Category(internalName, ModCategory.Custom, displayName, displayNamePlural,
+            typeof(IModdableObject));
+    }
 }

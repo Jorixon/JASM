@@ -183,9 +183,15 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     private void SuccessfulInstall(ISkinMod newMod)
     {
+        var modName = newMod.GetDisplayName();
+
         InstallerFinished?.Invoke(this, EventArgs.Empty);
-        _notificationManager.ShowNotification("Mod installed", "Mod was successfully added",
+        _logger.Debug("Mod {newModPath} was added to {modListPath}", newMod.FullPath,
+            _characterModList.AbsModsFolderPath);
+        _notificationManager.ShowNotification($"Mod '{modName}' installed",
+            $"Mod '{modName}' ({newMod.Name}), was successfully added to {_characterModList.Character.DisplayName} ModList",
             TimeSpan.FromSeconds(5));
+
         _dispatcherQueue?.TryEnqueue(() => { _windowManagerService.GetWindow(_characterModList)?.Close(); });
 
         App.MainWindow.DispatcherQueue.EnqueueAsync(() =>

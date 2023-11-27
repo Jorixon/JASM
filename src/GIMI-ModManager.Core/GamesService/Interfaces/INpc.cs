@@ -2,7 +2,7 @@
 
 namespace GIMI_ModManager.Core.GamesService.Interfaces;
 
-public interface INpc : IModdableObject, IEquatable<INpc>
+public interface INpc : IModdableObject, IEquatable<INpc>, IDateSupport
 {
     [Newtonsoft.Json.JsonIgnore]
     [JsonIgnore]

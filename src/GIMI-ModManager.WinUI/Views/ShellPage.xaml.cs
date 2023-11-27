@@ -73,6 +73,7 @@ DebugItem.Visibility = Visibility.Collapsed;
         App.MainWindow.DispatcherQueue.TryEnqueue(() =>
         {
             var categories = ViewModel.GameService.GetCategories();
+            var index = 0;
             foreach (var category in categories)
             {
                 var categoryViewItem = new NavigationViewItem()
@@ -88,17 +89,28 @@ DebugItem.Visibility = Visibility.Collapsed;
                 {
                     categoryViewItem.Icon = new FontIcon() { Glyph = "\uE716" };
 
-                    ViewModel.NavigationViewService.MenuItems!.Insert(0, categoryViewItem);
-                    continue;
+                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
                 }
-
-                if (category.ModCategory == ModCategory.NPC)
+                else if (category.ModCategory == ModCategory.NPC)
                 {
                     categoryViewItem.Icon = new FontIcon() { Glyph = "\uE8D5" };
 
-                    ViewModel.NavigationViewService.MenuItems!.Insert(1, categoryViewItem);
-                    continue;
+                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
                 }
+                else if (category.ModCategory == ModCategory.Object)
+                {
+                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uE8FC" };
+
+                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                }
+                else
+                {
+                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uF142" };
+                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                }
+
+                index++;
+
 
                 //const string menuName = "Categories";
                 //if (NavigationViewControl.MenuItems[1] is NavigationViewItem { Tag: not null } menuItem &&

@@ -11,6 +11,7 @@ public class Npc : INpc
     public Uri? ImageUri { get; set; }
     public string ModFilesName { get; internal set; } = string.Empty;
     public bool IsMultiMod { get; internal set; }
+    public DateTime? ReleaseDate { get; set; } = DateTime.MinValue;
     public ICategory ModCategory { get; internal init; } = Category.CreateForNpc();
     public INpc DefaultNPC { get; internal init; } = null!;
     public ICollection<IRegion> Regions { get; internal set; } = Array.Empty<IRegion>();
@@ -41,12 +42,12 @@ public class Npc : INpc
     }
 
 
-    internal void SetImageUri(string imageFolder, string? image)
+    internal void SetImageUri(string imageFolder, string? jsonImagePath)
     {
-        if (string.IsNullOrWhiteSpace(imageFolder) || string.IsNullOrWhiteSpace(image))
+        if (string.IsNullOrWhiteSpace(imageFolder) || string.IsNullOrWhiteSpace(jsonImagePath))
             return;
 
-        var imagePath = Path.Combine(imageFolder, image);
+        var imagePath = Path.Combine(imageFolder, jsonImagePath);
 
         var imageUri = Uri.TryCreate(imagePath, UriKind.Absolute, out var uriResult)
             ? uriResult

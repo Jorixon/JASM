@@ -244,8 +244,7 @@ public sealed class ModInstallation : IDisposable
         {
         }
 
-        _skinManagerService.AddMod(skinMod, _destinationModList);
-        return skinMod;
+        return _skinManagerService.AddMod(skinMod, _destinationModList);
     }
 
     public async Task<ISkinMod> AddModAsync(AddModOptions? options = null)
@@ -256,8 +255,7 @@ public sealed class ModInstallation : IDisposable
         ReleaseLockedFiles();
         var skinMod = await CreateSkinModWithOptionsAsync(options);
 
-        _skinManagerService.AddMod(skinMod, _destinationModList);
-        return skinMod;
+        return _skinManagerService.AddMod(skinMod, _destinationModList);
     }
 
     private async Task<ISkinMod> CreateSkinModWithOptionsAsync(AddModOptions? options = null)

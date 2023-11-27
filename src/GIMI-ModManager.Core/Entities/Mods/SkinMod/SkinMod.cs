@@ -16,6 +16,15 @@ public class SkinMod : Mod, ISkinMod
     public SkinModKeySwapManager? KeySwaps { get; private set; }
 
 
+    public string GetDisplayName()
+    {
+        var displayName = Settings.TryGetSettings(out var settings) && !settings.CustomName.IsNullOrEmpty()
+            ? settings.CustomName
+            : GetNameWithoutDisabledPrefix();
+
+        return displayName;
+    }
+
     public bool HasMergedInI => KeySwaps is not null;
 
 
@@ -104,6 +113,12 @@ public class SkinMod : Mod, ISkinMod
         return modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
             .FirstOrDefault(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase))
             ?.FullName;
+    }
+
+    public override ISkinMod CopyTo(string absPath)
+    {
+        var newModFolder = base.CopyTo(absPath);
+        return CreateModAsync(newModFolder.FullPath).GetAwaiter().GetResult();
     }
 
     public string? GetModIniPath() => HasMergedInIFile(_modDirectory);

@@ -48,6 +48,7 @@
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
             IsPaneVisible="{x:Bind ViewModel.IsNotFirstTimeStartupPage, Mode=OneWay}"
             IsSettingsVisible="True"
+            OpenPaneLength="220"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <!--<NavigationView.KeyboardAccelerators>
                 <KeyboardAccelerator
