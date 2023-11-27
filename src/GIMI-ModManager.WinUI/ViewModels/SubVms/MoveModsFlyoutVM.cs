@@ -155,8 +155,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             return;
         }
 
-        notificationManager.ShowNotification("Mods Moved",
-            $"Successfully moved {selectedModsCount} mods to {selectedCharacterName}",
+        notificationManager.ShowNotification($"{selectedModsCount} Mods Moved",
+            $"Successfully moved {string.Join(",", SelectedMods.Select(m => m.Name))} mods to {selectedCharacterName}",
             TimeSpan.FromSeconds(5));
 
         ModsMoved?.Invoke(this, EventArgs.Empty);

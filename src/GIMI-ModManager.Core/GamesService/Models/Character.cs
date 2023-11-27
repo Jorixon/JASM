@@ -12,7 +12,7 @@ public class Character : ICharacter, IEquatable<Character>
     private Uri? _imageUri;
     public ICategory ModCategory { get; } = Category.CreateForCharacter();
     public InternalName InternalName { get; init; } = null!;
-    public string ModFilesName { get; internal set; } = null!;
+    public string ModFilesName { get; internal set; } = string.Empty;
     public bool IsMultiMod { get; init; }
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }

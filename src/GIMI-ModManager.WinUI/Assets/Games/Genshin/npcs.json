@@ -18,5 +18,10 @@
     "ModFilesName": "Clorinde",
     "InternalName": "Clorinde",
     "DisplayName": "Clorinde"
+  },
+  {
+    "ModFilesName": "Hilichurl",
+    "InternalName": "Hilichurl",
+    "DisplayName": "Hilichurl"
   }
 ]

@@ -104,6 +104,8 @@ public class ModCrawlerService
 
     private bool StartsWithModFilesName(FileInfo file, string modFilesName)
     {
+        if (modFilesName.IsNullOrEmpty()) return false;
+
         var fileExtensionMatch = ModExtensions.Any(extension =>
             file.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase));
 

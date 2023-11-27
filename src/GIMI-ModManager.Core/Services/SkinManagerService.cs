@@ -614,7 +614,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         var disabledCharacters = _gameService.GetAllModdableObjects(GetOnly.Disabled);
 
-        var othersCharacter = _gameService.GetCharacterByIdentifier("Others");
+        var othersCharacter = _gameService.GetModdableObjectByIdentifier(new InternalName("Others"));
         if (othersCharacter is null)
         {
             _logger.Error("Failed to get 'Others' character");
@@ -637,10 +637,15 @@ public sealed class SkinManagerService : ISkinManagerService
 
 
             var closestMatchCharacter =
-                _modCrawlerService.GetMatchingModdableObjects(folder.FullName).FirstOrDefault() ??
-                _gameService.QueryCharacter(ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(folder.Name),
-                    minScore: 150);
+                _modCrawlerService.GetMatchingModdableObjects(folder.FullName).FirstOrDefault();
 
+
+            if (closestMatchCharacter is null)
+            {
+                closestMatchCharacter = _gameService.QueryModdableObjects(
+                    ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(folder.Name),
+                    minScore: 150).OrderByDescending(x => x.Value).FirstOrDefault().Key;
+            }
 
             switch (closestMatchCharacter)
             {

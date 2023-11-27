@@ -17,12 +17,14 @@ public class ModsOverviewVM : ObservableRecipient, INavigationAware
 {
     private readonly ILogger _logger;
     private readonly ISkinManagerService _skinManagerService;
+    private readonly IGameService _gameService;
 
     public ObservableCollection<CategoryNode> Categories { get; } = new();
 
-    public ModsOverviewVM(ILogger logger, ISkinManagerService skinManagerService)
+    public ModsOverviewVM(ILogger logger, ISkinManagerService skinManagerService, IGameService gameService)
     {
         _skinManagerService = skinManagerService;
+        _gameService = gameService;
         _logger = logger.ForContext<ModsOverviewVM>();
     }
 
@@ -35,46 +37,50 @@ public class ModsOverviewVM : ObservableRecipient, INavigationAware
     {
     }
 
-    private const string CharactersCategoryName = "Characters";
 
     private async Task Refresh()
     {
         Categories.Clear();
-        var modLists = _skinManagerService.CharacterModLists.ToArray();
 
-        var charactersCategory = new CategoryNode(CharactersCategoryName);
+        var categories = _gameService.GetCategories();
 
-
-        foreach (var characterModList in modLists)
+        foreach (var category in categories)
         {
-            var moddableObjectNode = new ModdableObjectNode(characterModList.Character);
+            var modObjects = _gameService.GetModdableObjects(category);
+            var categoryNode = new CategoryNode(category.DisplayNamePlural);
 
-            var mods = new List<ModModel>();
-            foreach (var skinEntry in characterModList.Mods)
+            foreach (var moddableObject in modObjects)
             {
-                var modModel = ModModel.FromMod(skinEntry);
+                var modList = _skinManagerService.GetCharacterModList(moddableObject);
+                var moddableObjectNode = new ModdableObjectNode(moddableObject);
 
-                var mod = skinEntry.Mod;
+                var mods = new List<ModModel>();
+                foreach (var skinEntry in modList.Mods)
+                {
+                    var modModel = ModModel.FromMod(skinEntry);
 
-                var skinSettings = mod.Settings.TryGetSettings(out var settings)
-                    ? settings
-                    : await mod.Settings.TryReadSettingsAsync();
+                    var mod = skinEntry.Mod;
 
-                if (skinSettings is not null)
-                    modModel.WithModSettings(skinSettings);
+                    var skinSettings = mod.Settings.TryGetSettings(out var settings)
+                        ? settings
+                        : await mod.Settings.TryReadSettingsAsync();
 
-                mods.Add(modModel);
+                    if (skinSettings is not null)
+                        modModel.WithModSettings(skinSettings);
+
+                    mods.Add(modModel);
+                }
+
+                foreach (var modModel in mods.OrderByDescending(mod => mod.DateAdded))
+                    moddableObjectNode.Mods.Add(modModel);
+
+
+                if (moddableObjectNode.Mods.Count > 0)
+                    categoryNode.ModdableObjects.Add(moddableObjectNode);
             }
 
-            foreach (var modModel in mods.OrderByDescending(mod => mod.DateAdded))
-                moddableObjectNode.Mods.Add(modModel);
-
-
-            if (moddableObjectNode.Mods.Count > 0)
-                charactersCategory.ModdableObjects.Add(moddableObjectNode);
+            Categories.Add(categoryNode);
         }
-
-        Categories.Add(charactersCategory);
     }
 }
 
