@@ -33,6 +33,7 @@ public class GameService : IGameService
 
     private readonly EnableableList<INpc> _npcs = new();
     private readonly EnableableList<IGameObject> _gameObjects = new();
+    private readonly EnableableList<IWeapon> _weapons = new();
 
     private readonly List<ICategory> _categories = new();
 
@@ -87,6 +88,8 @@ public class GameService : IGameService
         await InitializeNpcsAsync().ConfigureAwait(false);
 
         await InitializeObjectsAsync().ConfigureAwait(false);
+
+        await InitializeWeaponsAsync().ConfigureAwait(false);
 
         CheckIfDuplicateInternalNameExists();
 
@@ -157,6 +160,9 @@ public class GameService : IGameService
         if (category.ModCategory == ModCategory.Object)
             return _gameObjects.GetOfType(getOnlyStatus).Cast<IModdableObject>().ToList();
 
+        if (category.ModCategory == ModCategory.Weapons)
+            return _weapons.GetOfType(getOnlyStatus).Cast<IModdableObject>().ToList();
+
         throw new ArgumentException($"Category {category.InternalName} is not supported");
     }
 
@@ -168,6 +174,7 @@ public class GameService : IGameService
         moddableObjects.AddRange(_characters.GetOfType(getOnlyStatus));
         moddableObjects.AddRange(_npcs.GetOfType(getOnlyStatus));
         moddableObjects.AddRange(_gameObjects.GetOfType(getOnlyStatus));
+        moddableObjects.AddRange(_weapons.GetOfType(getOnlyStatus));
 
         return moddableObjects;
     }
@@ -182,6 +189,9 @@ public class GameService : IGameService
 
         if (typeof(T) == typeof(IGameObject))
             return _gameObjects.GetOfType(getOnlyStatus).Cast<T>().ToList();
+
+        if (typeof(T) == typeof(IWeapon))
+            return _weapons.GetOfType(getOnlyStatus).Cast<T>().ToList();
 
 
         throw new ArgumentException($"Type {typeof(T)} is not supported");
@@ -460,8 +470,30 @@ public class GameService : IGameService
         else
             _logger.Warning("No gameObjects found in {ObjectFileName}", objectFileName);
     }
+
     //private async Task InitializeGlidersAsync()
-    //private async Task InitializeWeaponsAsync()
+    private async Task InitializeWeaponsAsync()
+    {
+        if (!Classes.AllClasses.Any())
+            throw new InvalidOperationException("Classes must be initialized before weapons");
+
+        const string weaponFileName = "weapons.json";
+        var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Weapons");
+        var jsonWeapons = await SerializeAsync<JsonWeapon>(weaponFileName);
+
+        foreach (var jsonWeapon in jsonWeapons)
+        {
+            var weapon = Weapon.FromJson(jsonWeapon, imageFolderName, jsonWeapon.Rarity, Classes.AllClasses);
+
+            _weapons.Add(new Enableable<IWeapon>(weapon));
+        }
+
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(weaponFileName, _weapons.ToEnumerable());
+
+        if (_weapons.Any())
+            _categories.Add(Category.CreateForWeapons());
+    }
     //private async Task InitializeCustomAsync()
 
 

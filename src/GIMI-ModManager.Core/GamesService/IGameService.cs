@@ -143,8 +143,9 @@ public interface IGliders : IModdableObject
 {
 }
 
-public interface IWeapon : IModdableObject
+public interface IWeapon : IModdableObject, IRarity
 {
+    public IGameClass GameClass { get; }
 }
 
 public interface ICategory : INameable, IEquatable<ICategory>

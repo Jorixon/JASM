@@ -58,6 +58,13 @@ public class Category : ICategory
         return new Category(internalName, ModCategory.Object, "Object", "Objects", typeof(IGameObject));
     }
 
+    internal static ICategory CreateForWeapons()
+    {
+        var internalName = new InternalName("Weapon");
+
+        return new Category(internalName, ModCategory.Weapons, "Weapon", "Weapons", typeof(IWeapon));
+    }
+
     internal static ICategory CreateDefaultCustom()
     {
         var internalName = new InternalName("Custom");

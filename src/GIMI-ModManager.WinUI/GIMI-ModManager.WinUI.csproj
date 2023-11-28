@@ -177,74 +177,253 @@
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Others.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Akuoumaru.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Alley_Hunter.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Amber_Catalyst.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Amenoma_Kageuchi.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Amos%27_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Apprentice%27s_Notes.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Aqua_Simulacra.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Aquila_Favonia.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_A_Thousand_Floating_Dreams.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Ballad_of_the_Boundless_Blue.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Ballad_of_the_Fjords.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Beacon_of_the_Reed_Sea.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Beginner%27s_Protector.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Blackcliff_Agate.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Blackcliff_Longsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Blackcliff_Pole.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Blackcliff_Slasher.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Blackcliff_Warbow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Black_Tassel.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Bloodtainted_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Calamity_Queller.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Cashflow_Supervision.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Cinnabar_Spindle.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Compound_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Cool_Steel.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Crescent_Pike.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Dark_Iron_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Deathmatch.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Debate_Club.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Dodoco_Tales.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Dragon%27s_Bane.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Dragonspine_Spear.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Dull_Blade.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Ebony_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Elegy_for_the_End.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Emerald_Orb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_End_of_the_Line.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Engulfing_Lightning.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Everlasting_Moonglow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Eye_of_Perception.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Fading_Twilight.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Favonius_Codex.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Favonius_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Favonius_Lance.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Favonius_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Favonius_Warbow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Ferrous_Shadow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Festering_Desire.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Fillet_Blade.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Finale_of_the_Deep.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Fleuve_Cendre_Ferryman.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Flowing_Purity.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Forest_Regalia.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Freedom-Sworn.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Frostbearer.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Fruit_of_Fulfillment.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Hakushin_Ring.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Halberd.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Hamayumi.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Haran_Geppaku_Futsu.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Harbinger_of_Dawn.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Hunter%27s_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Hunter%27s_Path.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Iron_Point.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Iron_Sting.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Jadefall%27s_Splendor.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Kagotsurube_Isshin.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Kagura%27s_Verity.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Katsuragikiri_Nagamasa.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Key_of_Khaj-Nisut.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_King%27s_Squire.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Kitain_Cross_Spear.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Light_of_Foliar_Incision.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Lion%27s_Roar.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Lithic_Blade.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Lithic_Spear.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Lost_Prayer_to_the_Sacred_Winds.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Luxurious_Sea-Lord.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Magic_Guide.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Mailed_Flower.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Makhaira_Aquamarine.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Mappa_Mare.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Memory_of_Dust.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Messenger.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Missive_Windspear.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Mistsplitter_Reforged.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Mitternachts_Waltz.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Moonpiercer.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Mouun%27s_Moon.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Oathsworn_Eye.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Old_Merc%27s_Pal.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Otherworldly_Story.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Pocket_Grimoire.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Polar_Star.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Portable_Power_Saw.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Predator.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Primordial_Jade_Cutter.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Primordial_Jade_Winged-Spear.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Prospector%27s_Drill.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Prototype_Amber.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Prototype_Archaic.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Prototype_Crescent.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Prototype_Rancour.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Prototype_Starglitter.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Quartz.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Rainslasher.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Range_Gauge.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Raven_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Recurve_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Redhorn_Stonethresher.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Rightful_Reward.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Royal_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Royal_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Royal_Grimoire.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Royal_Longsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Royal_Spear.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Rust.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sacrificial_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sacrificial_Fragments.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sacrificial_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sacrificial_Jade.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sacrificial_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sapwood_Blade.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Scion_of_the_Blazing_Sun.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Seasoned_Hunter%27s_Bow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Serpent_Spine.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sharpshooter%27s_Oath.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Silver_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyrider_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyrider_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyward_Atlas.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyward_Blade.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyward_Harp.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyward_Pride.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Skyward_Spine.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Slingshot.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Snow-Tombed_Starsilver.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Solar_Pearl.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Song_of_Broken_Pines.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Song_of_Stillness.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Splendor_of_Tranquil_Waters.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Staff_of_Homa.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Staff_of_the_Scarlet_Sands.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Summit_Shaper.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sword_of_Descension.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Sword_of_Narzissenkreuz.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Talking_Stick.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Alley_Flash.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Bell.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Black_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Catch.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Dockhand%27s_Assistant.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_First_Great_Magic.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Flute.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Stringless.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Unforged.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Viridescent_Hunt.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_The_Widsith.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Thrilling_Tales_of_Dragon_Slayers.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Thundering_Pulse.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Tidal_Shadow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Tome_of_the_Eternal_Flow.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Toukabou_Shigure.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Traveler%27s_Handy_Sword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Tulaytullah%27s_Remembrance.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Twin_Nephrite.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Vortex_Vanquisher.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wandering_Evenstar.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Waster_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wavebreaker%27s_Fin.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Whiteblind.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_White_Iron_Greatsword.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_White_Tassel.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Windblume_Ode.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wine_and_Song.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wolf%27s_Gravestone.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wolf-Fang.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Xiphos%27_Moonlight.png" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\characters.json" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\elements.json" />
 		<Content Remove="Assets\Games\Genshin\objects.json" />
 		<Content Remove="Assets\Games\Genshin\regions.json" />
 		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
+		<Content Remove="Assets\Games\Genshin\weapons.json" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\Character_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\Character_Weapons_Thumb.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Start_Game.webp" />
 		<Content Remove="Assets\Games\Honkai\objects.json" />
-    
-    <Content Remove="Assets\Games\Honkai\regions.json" />
-    <Content Remove="Assets\Games\Honkai\weaponClasses.json" />
-    <Content Remove="Assets\Games\Honkai\characters.json" />
-    <Content Remove="Assets\Games\Honkai\elements.json" />
-    <Content Remove="Assets\Games\Honkai\game.json" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Adaptive.svg" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Fire.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Ice.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Imaginary.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Lightning.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Physical.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Pyro.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Quantum.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Elements\Wind.webp" />
-     
-    <Content Remove="Assets\Games\Honkai\Images\Characters\argenti.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\arlan.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\asta.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\bailu.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\blade.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\bronya.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\clara.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\dangheng.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\DHIL.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\drratio.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\fuxuan.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\gepard.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\guinafen.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\hanya.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\herta.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\himeko.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\hook.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\huohuo.png" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\jingliu.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\jingyuan.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\kafka.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\luka.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\luocha.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\lynx.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\march7.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\natasha.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\pela.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\qingque.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\ruanmei.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\sampo.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\seele.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\serval.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\silverwolf.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\sushang.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\tingyun.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\topaz.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\trailblazer.gif" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\welt.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\xueyi.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
-    <Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
-		
+
+		<Content Remove="Assets\Games\Honkai\regions.json" />
+		<Content Remove="Assets\Games\Honkai\weaponClasses.json" />
+		<Content Remove="Assets\Games\Honkai\characters.json" />
+		<Content Remove="Assets\Games\Honkai\elements.json" />
+		<Content Remove="Assets\Games\Honkai\game.json" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Adaptive.svg" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Fire.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Ice.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Imaginary.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Lightning.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Physical.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Pyro.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Quantum.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Elements\Wind.webp" />
+
+		<Content Remove="Assets\Games\Honkai\Images\Characters\argenti.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\arlan.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\asta.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\bailu.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\blade.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\bronya.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\clara.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\dangheng.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\DHIL.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\drratio.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\fuxuan.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\gepard.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\guinafen.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\hanya.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\herta.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\himeko.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\hook.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\huohuo.png" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\jingliu.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\jingyuan.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\kafka.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\luka.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\luocha.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\lynx.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\march7.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\natasha.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\pela.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\qingque.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\ruanmei.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\sampo.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\seele.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\serval.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\silverwolf.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\sushang.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\tingyun.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\topaz.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\trailblazer.gif" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\welt.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\xueyi.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
+
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 	</ItemGroup>
 	<ItemGroup>
@@ -317,619 +496,622 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\characters.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_AmberCN_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_AyakaSpringbloom_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_BarbaraSummertime_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_DilucFlamme_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanSea_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KaeyaSailwind_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KleeBlossoming_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Charlotte_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Clorinde_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Furina_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Navia_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Neuvillette_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Traveler_%28Female%29_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Traveler_%28Male%29_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Wriothesley_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Others.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Languages\zh-cn\characters.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Languages\zh-cn\elements.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\npcs.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\elements.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\game.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_AmberCN_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_AyakaSpringbloom_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_BarbaraSummertime_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_DilucFlamme_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanSea_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KaeyaSailwind_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KleeBlossoming_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Albedo_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Alhaitham_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Aloy_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Amber_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Arataki_Itto_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Baizhu_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Barbara_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Beidou_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Bennett_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Candace_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Chongyun_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Collei_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Cyno_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Dehya_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Diluc_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Diona_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Dori_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Eula_Card.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Eula_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Faruzan_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Fischl_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Freminet_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Ganyu_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Gliders_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Gorou_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Hu_Tao_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Jean_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kaedehara_Kazuha_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kaeya_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kamisato_Ayaka_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kamisato_Ayato_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kaveh_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kazuha_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Keqing_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kirara_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Klee_Card.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Klee_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kujou_Sara_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Kuki_Shinobu_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Layla_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Lisa_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Lynette_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Lyney_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Mika_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Mona_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Nahida_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Nilou_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Ningguang_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Noelle_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Qiqi_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Raiden_Shogun_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Razor_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Rosaria_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Sangonomiya_Kokomi_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Sayu_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Shenhe_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Shikanoin_Heizou_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Sucrose_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Tartaglia_Card.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Tartaglia_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Thoma_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Tighnari_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Traveler_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Venti_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Wanderer_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Weapons_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Xiangling_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Xiao_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Xingqiu_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Xinyan_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Yae_Miko_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Yanfei_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Yaoyao_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Yelan_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Yoimiya_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Yun_Jin_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Zhongli_Card.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Zhongli_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Anemo.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Cryo.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Dendro.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Electro.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Geo.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Hydro.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Elements\Pyro.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\objects.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\regions.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\weaponClasses.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\weapons.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\characters.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\elements.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\game.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Characters\Character_Others.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Characters\Character_Weapons_Thumb.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Npcs\Npc_Others.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Start_Game.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\objects.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-    <None Update="Assets\Games\Honkai\regions.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\weaponClasses.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+		<None Update="Assets\Games\Honkai\regions.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\weaponClasses.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Adaptive.svg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Ice.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Fire.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Imaginary.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Lightning.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Physical.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Honkai\Images\Elements\Quantum.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-    <None Update="Assets\Games\Honkai\Images\Elements\Wind.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\argenti.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\arlan.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\asta.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\bailu.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\blade.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\bronya.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\clara.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\dangheng.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\DHIL.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\drratio.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\fuxuan.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\gepard.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\guinafen.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\hanya.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\herta.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\himeko.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\hook.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\huohuo.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\jingliu.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\jingyuan.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\kafka.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\luka.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\luocha.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\lynx.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\march7.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\natasha.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\pela.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\qingque.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\ruanmei.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\sampo.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\seele.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\serval.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\silverwolf.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\sushang.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\tingyun.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\topaz.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\trailblazer.gif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\welt.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\xueyi.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\yanqing.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Games\Honkai\Images\Characters\yukong.webp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+		<None Update="Assets\Games\Honkai\Images\Elements\Wind.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\argenti.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\arlan.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\asta.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\bailu.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\blade.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\bronya.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\clara.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\dangheng.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\DHIL.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\drratio.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\fuxuan.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\gepard.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\guinafen.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\hanya.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\herta.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\himeko.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\hook.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\huohuo.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\jingliu.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\jingyuan.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\kafka.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\luka.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\luocha.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\lynx.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\march7.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\natasha.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\pela.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\qingque.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\ruanmei.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\sampo.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\seele.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\serval.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\silverwolf.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\sushang.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\tingyun.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\topaz.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\trailblazer.gif">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\welt.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\xueyi.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\yanqing.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\Images\Characters\yukong.webp">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\ModPanePlaceholder.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<Page Update="Views\ModInstallerPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\ModsOverviewPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\EasterEggPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\BoolBorder.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\ModUpdateAvailableWindow.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\CustomImage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\CharacterManager\EditCharacterPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\CharacterManagerPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\LinkButton.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\ErrorWindow.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Styles\FontTypes.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\SelectCharacterFromGrid.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\EditableTextBlock.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\ModListOverview.xaml">
 			<Generator>MSBuild:Compile</Generator>
@@ -957,166 +1139,166 @@
 
 	<ItemGroup>
 		<Content Update="Assets\7z\7-zip.dll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\7z\7z.dll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\7z\7z.exe">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Fonts\zh-cn2.ttf">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\npcs.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Others.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Others_Unused.webp">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Paimon_Thumb.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<Content Update="Assets\Games\Genshin\Images\Start_Game.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Genshin\npcs.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\argenti.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\arlan.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\asta.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\bailu.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\blade.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\bronya.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\clara.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\convert.py">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\dangheng.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\DHIL.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\drratio.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\fuxuan.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\gepard.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\guinafen.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\hanya.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\herta.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\himeko.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\hook.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\jingliu.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\jingyuan.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\kafka.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\luka.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\luocha.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\lynx.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\march7.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\natasha.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\pela.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\qingque.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\ruanmei.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\sampo.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\seele.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\serval.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\silverwolf.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\sushang.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\tingyun.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\topaz.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\trailblazer.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\welt.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\xueyi.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\yanqing.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\yukong.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Characters\_SOURCE.txt">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\Games\Honkai\Images\Start_Game.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Assets\WindowIcon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1136,10 +1318,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Assets\7z\" />
-	  <Folder Include="Assets\Games\Genshin\custom\" />
-	  <Folder Include="Assets\Games\Genshin\Images\custom\" />
-	  <Folder Include="Assets\Games\Genshin\Template\[LangCode]\" />
+		<Folder Include="Assets\7z\" />
+		<Folder Include="Assets\Games\Genshin\custom\" />
+		<Folder Include="Assets\Games\Genshin\Images\custom\" />
+		<Folder Include="Assets\Games\Genshin\Template\[LangCode]\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -1149,18 +1331,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PRIResource Remove="Strings\en-us\Resources.resw" />
+		<PRIResource Remove="Strings\en-us\Resources.resw" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PRIResource Remove="Mappers\**" />
+		<PRIResource Remove="Mappers\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="Assets\easterEgg.mp3" />
+		<EmbeddedResource Include="Assets\easterEgg.mp3" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PRIResource Remove="Views\ModInstaller\**" />
+		<PRIResource Remove="Views\ModInstaller\**" />
 	</ItemGroup>
 </Project>
