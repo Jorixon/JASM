@@ -2,8 +2,10 @@
 using System.Diagnostics;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Services.AppManagment;
 using Microsoft.UI.Xaml;
 using Serilog;
 
@@ -14,13 +16,14 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
 {
     private protected readonly ILogger _logger;
     private protected readonly ILocalSettingsService _localSettingsService;
+    private readonly SelectedGameService _selectedGameService;
     private readonly NotificationManager _notificationManager = new();
 
     private Process? _process;
     private protected string _prcoessPath = null!;
     private protected string _workingDirectory = string.Empty;
 
-    private protected bool _isGenshinClass;
+    private protected bool runAsAdmin;
 
     public string ProcessName { get; protected set; } = string.Empty;
 
@@ -41,10 +44,12 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     [ObservableProperty] private ProcessStatus _processStatus = ProcessStatus.NotInitialized;
 
 
-    protected BaseProcessManager(ILogger logger, ILocalSettingsService localSettingsService)
+    protected BaseProcessManager(ILogger logger, ILocalSettingsService localSettingsService,
+        SelectedGameService selectedGameService)
     {
         _logger = logger;
         _localSettingsService = localSettingsService;
+        _selectedGameService = selectedGameService;
     }
 
     // Runs on JASM startup
@@ -52,7 +57,11 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     {
         var processOptions = await ReadProcessOptions();
 
-        if (processOptions.GetType() == typeof(GenshinProcessOptions)) _isGenshinClass = true;
+        if (processOptions.GetType() == typeof(GenshinProcessOptions) ||
+            await _selectedGameService.GetSelectedGameAsync() == SupportedGames.Honkai.ToString())
+        {
+            runAsAdmin = true;
+        }
 
         if (!File.Exists(processOptions.ProcessPath)) return false;
 
@@ -121,8 +130,8 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
                 WorkingDirectory = _workingDirectory == string.Empty
                     ? Path.GetDirectoryName(ProcessPath) ?? ""
                     : _workingDirectory,
-                Arguments = _isGenshinClass ? "runas" : "",
-                UseShellExecute = _isGenshinClass
+                Arguments = runAsAdmin ? "runas" : "",
+                UseShellExecute = runAsAdmin
             });
         }
         catch (Win32Exception e)
@@ -242,18 +251,20 @@ public enum ProcessStatus
 
 public class GenshinProcessManager : BaseProcessManager<GenshinProcessOptions>
 {
-    public GenshinProcessManager(ILogger logger, ILocalSettingsService localSettingsService) : base(
+    public GenshinProcessManager(ILogger logger, ILocalSettingsService localSettingsService,
+        SelectedGameService selectedGameService) : base(
         logger.ForContext<GenshinProcessManager>(),
-        localSettingsService)
+        localSettingsService, selectedGameService)
     {
     }
 }
 
 public class ThreeDMigtoProcessManager : BaseProcessManager<MigotoProcessOptions>
 {
-    public ThreeDMigtoProcessManager(ILogger logger, ILocalSettingsService localSettingsService) : base(
+    public ThreeDMigtoProcessManager(ILogger logger, ILocalSettingsService localSettingsService,
+        SelectedGameService selectedGameService) : base(
         logger.ForContext<ThreeDMigtoProcessManager>(),
-        localSettingsService)
+        localSettingsService, selectedGameService)
     {
     }
 }
