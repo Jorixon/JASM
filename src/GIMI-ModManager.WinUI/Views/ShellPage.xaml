@@ -48,6 +48,7 @@
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
             IsPaneVisible="{x:Bind ViewModel.IsNotFirstTimeStartupPage, Mode=OneWay}"
             IsSettingsVisible="True"
+            OpenPaneLength="220"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <!--<NavigationView.KeyboardAccelerators>
                 <KeyboardAccelerator
@@ -69,11 +70,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>-->
 
-                <NavigationViewItem helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.CharactersViewModel" Content="Characters">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE716;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
 
                 <NavigationViewItem helpers:NavigationHelper.NavigateTo="GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModel" Content="Character Management">
                     <NavigationViewItem.Icon>

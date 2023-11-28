@@ -5,6 +5,11 @@ using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
 
+/// <summary>
+/// This service is used to detect what mod is for what moddable object
+/// It does this by "crawling" the mod folder and comparing the file names to the moddable object's ModFilesName
+/// Though a better approach would be to read the mod files for hashes to be completely certain.
+/// </summary>
 public class ModCrawlerService
 {
     private readonly IGameService _gameService;
@@ -14,6 +19,27 @@ public class ModCrawlerService
     {
         _gameService = gameService;
         _logger = logger.ForContext<ModCrawlerService>();
+    }
+
+
+    public IEnumerable<IModdableObject> GetMatchingModdableObjects(
+        string absPath, ICollection<IModdableObject>? searchOnlyModdableObjects = null)
+    {
+        var folder = new DirectoryInfo(absPath);
+        if (!folder.Exists) throw new DirectoryNotFoundException($"Could not find folder {folder.FullName}");
+
+        var moddableObjects = searchOnlyModdableObjects ?? _gameService.GetAllModdableObjects();
+
+        foreach (var file in folder.EnumerateFiles("*", SearchOption.AllDirectories))
+        {
+            var moddableObject = moddableObjects.FirstOrDefault(mo => IsOfModType(file, mo));
+            if (moddableObject is null) continue;
+
+            _logger.Verbose("Detected moddableObject {moddableObject} for file {file}", moddableObject.InternalName,
+                file.FullName);
+
+            yield return moddableObject;
+        }
     }
 
     public IEnumerable<ICharacterSkin> GetSubSkinsRecursive(string absPath)
@@ -67,21 +93,28 @@ public class ModCrawlerService
         return null;
     }
 
-    private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
 
     private bool IsOfSkinType(FileInfo file, ICharacterSkin skin)
+        => StartsWithModFilesName(file, skin.ModFilesName);
+
+    private bool IsOfModType(FileInfo file, IModdableObject moddableObject)
+        => StartsWithModFilesName(file, moddableObject.ModFilesName);
+
+    private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
+
+    private bool StartsWithModFilesName(FileInfo file, string modFilesName)
     {
+        if (modFilesName.IsNullOrEmpty()) return false;
+
         var fileExtensionMatch = ModExtensions.Any(extension =>
             file.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase));
 
-        if (skin.ModFilesName.IsNullOrEmpty())
-            return false;
 
         var isMatch = fileExtensionMatch &&
-                      file.Name.Trim().StartsWith(skin.ModFilesName, StringComparison.OrdinalIgnoreCase);
+                      file.Name.Trim().StartsWith(modFilesName, StringComparison.OrdinalIgnoreCase);
 
         if (isMatch)
-            _logger.Verbose("Skin Match: {FileName} ~= {ModFilesName}", file.Name, skin.ModFilesName);
+            _logger.Verbose("Mod Match: {FileName} ~= {ModFilesName}", file.Name, modFilesName);
 
         return isMatch;
     }

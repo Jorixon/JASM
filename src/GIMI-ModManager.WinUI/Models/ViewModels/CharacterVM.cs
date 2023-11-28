@@ -32,7 +32,7 @@ public partial class CharacterVM : ObservableObject, IEquatable<CharacterVM>
         {
             InternalName = character.InternalName,
             DisplayName = character.DisplayName,
-            ReleaseDate = character.ReleaseDate,
+            ReleaseDate = character.ReleaseDate ?? DateTime.MaxValue,
             ImageUri = character.ImageUri ?? PlaceholderImagePath,
             Rarity = character.Rarity,
             Element = character.Element.DisplayName,

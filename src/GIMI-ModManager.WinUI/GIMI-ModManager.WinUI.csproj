@@ -174,13 +174,19 @@
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Geo.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Hydro.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Pyro.svg" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\characters.json" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\elements.json" />
+		<Content Remove="Assets\Games\Genshin\objects.json" />
 		<Content Remove="Assets\Games\Genshin\regions.json" />
 		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\Character_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\Character_Weapons_Thumb.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Start_Game.webp" />
+		<Content Remove="Assets\Games\Honkai\objects.json" />
     
     <Content Remove="Assets\Games\Honkai\regions.json" />
     <Content Remove="Assets\Games\Honkai\weaponClasses.json" />
@@ -246,6 +252,7 @@
 		<None Remove="Assets\Fonts\zh-cn2.ttf" />
 		<None Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<None Remove="Assets\Games\Honkai\Images\Start_Game.png" />
+		<None Remove="Assets\Games\Honkai\npcs.json" />
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
@@ -376,6 +383,12 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Wriothesley_Thumb.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Others.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\Games\Genshin\Languages\zh-cn\characters.json">
@@ -690,6 +703,9 @@
 		<None Update="Assets\Games\Genshin\Images\Elements\Pyro.svg">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Assets\Games\Genshin\objects.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\Games\Genshin\regions.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -711,7 +727,13 @@
 		<None Update="Assets\Games\Honkai\Images\Characters\Character_Weapons_Thumb.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Assets\Games\Honkai\Images\Npcs\Npc_Others.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\Games\Honkai\Images\Start_Game.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Honkai\objects.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
     <None Update="Assets\Games\Honkai\regions.json">
@@ -946,6 +968,12 @@
 		<Content Update="Assets\Fonts\zh-cn2.ttf">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Update="Assets\Games\Honkai\npcs.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\Games\Genshin\Images\Characters\Character_Others.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -1110,7 +1138,7 @@
 	<ItemGroup>
 	  <Folder Include="Assets\7z\" />
 	  <Folder Include="Assets\Games\Genshin\custom\" />
-	  <Folder Include="Assets\Games\Genshin\Images\Npcs\" />
+	  <Folder Include="Assets\Games\Genshin\Images\custom\" />
 	  <Folder Include="Assets\Games\Genshin\Template\[LangCode]\" />
 	</ItemGroup>
 

@@ -5,7 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interfaces="using:GIMI_ModManager.Core.GamesService.Interfaces"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
@@ -19,6 +21,7 @@
         <xaml:ValueToBoolConverter x:Name="ValueToBoolConverter" />
         <xaml:StringToUri x:Name="StringToUri" />
         <xaml:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <Storyboard x:Name="PulsingIcon">
             <DoubleAnimation
                 AutoReverse="True"
@@ -87,7 +90,7 @@
                                 Text="{x:Bind ViewModel.MoveModsFlyoutVM.SearchText, Mode=TwoWay}"
                                 TextChanged="MoveModSearch_OnTextChanged">
                                 <AutoSuggestBox.ItemTemplate>
-                                    <DataTemplate x:DataType="viewModels:CharacterVM">
+                                    <DataTemplate x:DataType="interfaces:IModdableObject">
                                         <TextBlock Text="{x:Bind DisplayName}" />
                                     </DataTemplate>
                                 </AutoSuggestBox.ItemTemplate>
@@ -211,10 +214,13 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         CornerRadius="10">
-                        <Image HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            ImageFailed="Image_OnImageFailed">
 
                             <Image.Source>
-                                <BitmapImage UriSource="{x:Bind ViewModel.SelectedInGameSkin.ImageUri, Mode=OneWay}" />
+                                <BitmapImage DecodePixelHeight="200" UriSource="{x:Bind ViewModel.ModdableObjectImage, Mode=OneWay}" />
                             </Image.Source>
 
                         </Image>
@@ -245,7 +251,10 @@
                         <TextBlock Style="{ThemeResource BodyTextStyle}" Text="{x:Bind ViewModel.ModListVM.Mods.Count, Mode=OneWay}" />
                     </StackPanel>
 
-                    <StackPanel Padding="8" Background="{ThemeResource ControlFillColorDefaultBrush}">
+                    <StackPanel
+                        Padding="8"
+                        Background="{ThemeResource ControlFillColorDefaultBrush}"
+                        Visibility="{x:Bind ViewModel.IsICharacter, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock
                             Padding="0,0,0,16"
                             HorizontalAlignment="Center"

@@ -1,7 +1,12 @@
-﻿namespace GIMI_ModManager.Core.GamesService.Interfaces;
+﻿using System.Text.Json.Serialization;
 
-public interface INpc : IModdableObject
+namespace GIMI_ModManager.Core.GamesService.Interfaces;
+
+public interface INpc : IModdableObject, IEquatable<INpc>, IDateSupport
 {
-    public DateTime? ReleaseDate { get; }
-    public ICollection<string> Keys { get; }
+    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
+    public INpc DefaultNPC { get; }
+
+    public ICollection<IRegion> Regions { get; }
 }

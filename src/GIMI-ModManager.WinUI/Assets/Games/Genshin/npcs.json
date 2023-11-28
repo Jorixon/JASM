@@ -1,7 +1,27 @@
 [
   {
-    "InternalName": "Npc_Others",
-    "DisplayName": "Others",
-    "IsMultiMod": true
+    "InternalName": "Others_NPC",
+    "DisplayName": "Other NPCs",
+    "IsMultiMod": true,
+    "Image": "Npc_Others.png"
+  },
+  {
+    "InternalName": "Katheryne",
+    "DisplayName": "Katheryne",
+    "Image": "Npc_Katheryne.png"
+  },
+  {
+    "Image": "Npc_Clorinde_Thumb.png",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Clorinde",
+    "InternalName": "Clorinde",
+    "DisplayName": "Clorinde"
+  },
+  {
+    "ModFilesName": "Hilichurl",
+    "InternalName": "Hilichurl",
+    "DisplayName": "Hilichurl"
   }
 ]

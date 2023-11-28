@@ -11,6 +11,8 @@ public interface IGameService
     public string GameIcon { get; }
     public Uri GameBananaUrl { get; }
 
+    public event EventHandler? Initialized;
+
     public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null);
 
@@ -33,11 +35,13 @@ public interface IGameService
 
     public ICharacter? GetCharacterByIdentifier(string internalName, bool includeDisabledCharacters = false);
 
-    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName);
 
     public Dictionary<ICharacter, int> QueryCharacters(string searchQuery,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100,
         bool includeDisabledCharacters = false);
+
+    public Dictionary<IModdableObject, int> QueryModdableObjects(string searchQuery,
+        ICategory? category = null, int minScore = 100);
 
     public List<IGameElement> GetElements();
 
@@ -45,49 +49,48 @@ public interface IGameService
 
     public List<IRegion> GetRegions();
 
-    public List<ICharacter> GetCharacters();
+    public List<ICharacter> GetCharacters(bool includeDisabled = false);
     public List<ICharacter> GetDisabledCharacters();
 
+    public List<ICategory> GetCategories();
+    public List<IModdableObject> GetModdableObjects(ICategory category, GetOnly getOnlyStatus = GetOnly.Enabled);
+    public List<IModdableObject> GetAllModdableObjects(GetOnly getOnlyStatus = GetOnly.Enabled);
+
+    public List<T> GetAllModdableObjectsAsCategory<T>(GetOnly getOnlyStatus = GetOnly.Enabled)
+        where T : IModdableObject;
+
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName,
+        GetOnly getOnlyStatus = GetOnly.Enabled);
 
     public bool IsMultiMod(IModdableObject moddableObject);
-    public bool IsMultiMod(string modInternalName);
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }
     public string WeaponsCharacterInternalName { get; }
 }
 
-public interface IUi : INameable
+public enum GetOnly
 {
-    public IModdableObject? ModdableObject { get; }
-}
-
-public interface IGliders : INameable
-{
-    public IModdableObject? ModdableObject { get; }
-}
-
-public interface IWeapon : IRarity, INameable
-{
-    public IModdableObject? ModdableObject { get; }
+    Enabled,
+    Disabled,
+    Both
 }
 
 // Genshin => weapon
 // Honkai => Path
 public interface IGameClass : IImageSupport, INameable
 {
-    //public int Id { get; }
 }
 
 // Genshin => Element
 // Honkai => Element
 public interface IGameElement : IImageSupport, INameable
 {
-    //public int Id { get; }
 }
 
+// Genshin => Mondstadt
+// Honkai => Belobog
 public interface IRegion : INameable
 {
-    //public int Id { get; }
 }
 
 public interface IRarity
@@ -106,13 +109,19 @@ public interface IImageSupport
     public Uri? ImageUri { get; internal set; }
 }
 
+public interface IDateSupport
+{
+    public DateTime? ReleaseDate { get; internal set; }
+}
+
 /// <summary>
 /// Base Interface that allows identification by internal name
 /// </summary>
-public interface INameable
+public interface INameable : IEquatable<INameable>
 {
     /// <summary>
-    /// Can be customized by user
+    /// Is displayed to the user.
+    /// Can also be customized by user
     /// </summary>
     public string DisplayName { get; internal set; }
 
@@ -121,26 +130,32 @@ public interface INameable
     /// </summary>
     public InternalName InternalName { get; internal init; }
 
-    public bool InternalNameEquals(string other)
-    {
-        return InternalName.Equals(other);
-    }
+    public bool InternalNameEquals(string? other) => InternalName.Equals(other);
 
-    public bool InternalNameEquals(INameable other)
-    {
-        return InternalNameEquals(other.InternalName);
-    }
+    public bool InternalNameEquals(INameable other) => InternalNameEquals(other.InternalName);
 }
 
-public interface ICategory
+public interface IUi : IModdableObject
 {
-    public ModCategory Category { get; }
-    public string InternalCategoryName { get; }
+}
+
+public interface IGliders : IModdableObject
+{
+}
+
+public interface IWeapon : IModdableObject
+{
+}
+
+public interface ICategory : INameable, IEquatable<ICategory>
+{
+    public string DisplayNamePlural { get; internal set; }
+    ModCategory ModCategory { get; init; }
+    public Type ModdableObjectType { get; }
 }
 
 public enum ModCategory
 {
-    None,
     Character,
     NPC,
     Object,

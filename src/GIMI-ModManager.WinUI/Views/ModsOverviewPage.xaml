@@ -16,10 +16,7 @@
 
 
         <DataTemplate x:Key="CategoryTemplate" x:DataType="viewModels:CategoryNode">
-            <TreeViewItem
-                IsEnabled="False"
-                IsExpanded="True"
-                ItemsSource="{x:Bind ModdableObjects}">
+            <TreeViewItem IsExpanded="False" ItemsSource="{x:Bind ModdableObjects}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,10,0" />
                     <TextBlock Text="{x:Bind DisplayName}" />
@@ -29,7 +26,7 @@
 
 
         <DataTemplate x:Key="CharacterTemplate" x:DataType="viewModels:ModdableObjectNode">
-            <TreeViewItem IsExpanded="True" ItemsSource="{x:Bind Mods}">
+            <TreeViewItem IsExpanded="False" ItemsSource="{x:Bind Mods}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>

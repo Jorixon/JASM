@@ -1,13 +1,10 @@
 ﻿namespace GIMI_ModManager.Core.GamesService.JsonModels;
 
-internal class JsonCustom : JsonBaseNameable
+internal class JsonCustom
 {
-    public JsonModDefinition[]? Mods { get; set; }
+    public string? CategoryInternalName { get; set; }
+    public string? CategoryName { get; set; }
+    public string? CategoryNamePlural { get; set; }
 
-    public class JsonModDefinition : JsonBaseNameable
-    {
-        public string? Image { get; set; }
-        public string? ModFilesName { get; set; }
-        public int? Rarity { get; set; }
-    }
+    public JsonBaseModdableObject[]? Items { get; set; } = Array.Empty<JsonBaseModdableObject>();
 }

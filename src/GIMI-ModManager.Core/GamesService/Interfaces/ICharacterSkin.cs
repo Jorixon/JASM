@@ -2,7 +2,7 @@
 
 namespace GIMI_ModManager.Core.GamesService.Interfaces;
 
-public interface ICharacterSkin : IRarity, IImageSupport, INameable
+public interface ICharacterSkin : IRarity, IImageSupport, INameable, IEquatable<ICharacterSkin>
 {
     /// <summary>
     /// Character this skin belongs to

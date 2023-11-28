@@ -140,7 +140,6 @@ public class ActivationService : IActivationService
     private async Task StartupAsync()
     {
         await _themeSelectorService.SetRequestedThemeAsync();
-        await InitCharacterOverviewSettings();
         await _genshinProcessManager.TryInitialize();
         await _threeDMigtoProcessManager.TryInitialize();
         await _updateChecker.InitializeAsync();
@@ -166,15 +165,6 @@ public class ActivationService : IActivationService
             if (screenSize.IsFullScreen)
                 App.MainWindow.Maximize();
         }
-    }
-
-    private async Task InitCharacterOverviewSettings()
-    {
-        var characterOverviewSettings =
-            await _localSettingsService.ReadSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key);
-        if (characterOverviewSettings == null)
-            await _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.Key,
-                new CharacterOverviewSettings());
     }
 
 // To allow jasm to save settings before exiting, we need to handle the first close event.

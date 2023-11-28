@@ -16,6 +16,7 @@ public partial class OverviewDockPanelVM : ObservableRecipient
 
     public ObservableCollection<ElementIcon> SelectedElements { get; set; } = new();
 
+    [ObservableProperty] private bool _isInitialized;
 
     public void Initialize()
     {
@@ -25,6 +26,8 @@ public partial class OverviewDockPanelVM : ObservableRecipient
         {
             Elements.Add(new ElementIcon(element.DisplayName, element.ImageUri!.ToString(), element.InternalName));
         }
+
+        IsInitialized = true;
     }
 
 

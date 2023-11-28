@@ -22,21 +22,25 @@ public class GameService : IGameService
     private GameSettingsManager _gameSettingsManager = null!;
 
 
-    public GameInfo GameInfo { get; private set; }
+    public GameInfo GameInfo { get; private set; } = null!;
     public string GameName => GameInfo.GameName;
     public string GameShortName => GameInfo.GameShortName;
     public string GameIcon => GameInfo.GameIcon;
     public Uri GameBananaUrl => GameInfo.GameBananaUrl;
+    public event EventHandler? Initialized;
 
-    private readonly List<ICharacter> _characters = new();
+    private readonly EnableableList<ICharacter> _characters = new();
 
-    private readonly List<ICharacter> _disabledCharacters = new();
+    private readonly EnableableList<INpc> _npcs = new();
+    private readonly EnableableList<IGameObject> _gameObjects = new();
 
-    internal Elements Elements { get; private set; } = null!;
+    private readonly List<ICategory> _categories = new();
 
-    internal Classes Classes { get; private set; } = null!;
+    private Elements Elements { get; set; } = null!;
 
-    internal Regions Regions { get; private set; } = null!;
+    private Classes Classes { get; set; } = null!;
+
+    private Regions Regions { get; set; } = null!;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -70,17 +74,24 @@ public class GameService : IGameService
 
         _gameSettingsManager = new GameSettingsManager(settingsDirectory);
 
-        await InitializeGameInfoAsync();
+        await InitializeGameInfoAsync().ConfigureAwait(false);
 
-        await InitializeRegionsAsync();
+        await InitializeRegionsAsync().ConfigureAwait(false);
 
-        await InitializeElementsAsync();
+        await InitializeElementsAsync().ConfigureAwait(false);
 
-        await InitializeClassesAsync();
+        await InitializeClassesAsync().ConfigureAwait(false);
 
-        await InitializeCharactersAsync();
+        await InitializeCharactersAsync().ConfigureAwait(false);
+
+        await InitializeNpcsAsync().ConfigureAwait(false);
+
+        await InitializeObjectsAsync().ConfigureAwait(false);
+
+        CheckIfDuplicateInternalNameExists();
 
         _initialized = true;
+        Initialized?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -106,15 +117,25 @@ public class GameService : IGameService
     public async Task DisableCharacterAsync(ICharacter character)
     {
         await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, true);
-        _characters.Remove(character);
-        _disabledCharacters.Add(character);
+        var internalCharacter =
+            _characters.FirstOrDefault(x => x.ModdableObject.InternalName == character.InternalName);
+
+        if (internalCharacter is not null)
+            internalCharacter.IsEnabled = false;
+        else
+            throw new InvalidOperationException($"Character with internal name {character?.InternalName} not found");
     }
 
     public async Task EnableCharacterAsync(ICharacter character)
     {
         await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, false);
-        _disabledCharacters.Remove(character);
-        _characters.Add(character);
+        var internalCharacter =
+            _characters.FirstOrDefault(x => x.ModdableObject.InternalName == character.InternalName);
+
+        if (internalCharacter is not null)
+            internalCharacter.IsEnabled = true;
+        else
+            throw new InvalidOperationException($"Character with internal name {character?.InternalName} not found");
     }
 
     public async Task ResetOverrideForCharacterAsync(ICharacter character)
@@ -123,6 +144,47 @@ public class GameService : IGameService
         character.DisplayName = character.DefaultCharacter.DisplayName;
         character.ImageUri = character.DefaultCharacter.ImageUri;
         character.Keys = character.DefaultCharacter.Keys;
+    }
+
+    public List<IModdableObject> GetModdableObjects(ICategory category, GetOnly getOnlyStatus = GetOnly.Enabled)
+    {
+        if (category.ModCategory == ModCategory.Character)
+            return _characters.GetOfType(getOnlyStatus).Cast<IModdableObject>().ToList();
+
+        if (category.ModCategory == ModCategory.NPC)
+            return _npcs.GetOfType(getOnlyStatus).Cast<IModdableObject>().ToList();
+
+        if (category.ModCategory == ModCategory.Object)
+            return _gameObjects.GetOfType(getOnlyStatus).Cast<IModdableObject>().ToList();
+
+        throw new ArgumentException($"Category {category.InternalName} is not supported");
+    }
+
+
+    public List<IModdableObject> GetAllModdableObjects(GetOnly getOnlyStatus = GetOnly.Enabled)
+    {
+        var moddableObjects = new List<IModdableObject>();
+
+        moddableObjects.AddRange(_characters.GetOfType(getOnlyStatus));
+        moddableObjects.AddRange(_npcs.GetOfType(getOnlyStatus));
+        moddableObjects.AddRange(_gameObjects.GetOfType(getOnlyStatus));
+
+        return moddableObjects;
+    }
+
+    public List<T> GetAllModdableObjectsAsCategory<T>(GetOnly getOnlyStatus = GetOnly.Enabled) where T : IModdableObject
+    {
+        if (typeof(T) == typeof(ICharacter))
+            return _characters.GetOfType(getOnlyStatus).Cast<T>().ToList();
+
+        if (typeof(T) == typeof(INpc))
+            return _npcs.GetOfType(getOnlyStatus).Cast<T>().ToList();
+
+        if (typeof(T) == typeof(IGameObject))
+            return _gameObjects.GetOfType(getOnlyStatus).Cast<T>().ToList();
+
+
+        throw new ArgumentException($"Type {typeof(T)} is not supported");
     }
 
     public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
@@ -142,19 +204,15 @@ public class GameService : IGameService
     public ICharacter? GetCharacterByIdentifier(string internalName, bool includeDisabledCharacters = false)
     {
         var characters =
-            GetCharacters().AsEnumerable();
-
-        if (includeDisabledCharacters)
-            characters = characters.Concat(GetDisabledCharacters());
+            GetAllModdableObjectsAsCategory<ICharacter>(includeDisabledCharacters ? GetOnly.Both : GetOnly.Enabled);
 
         return characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
     }
 
-    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName)
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName,
+        GetOnly getOnlyStatus = GetOnly.Enabled)
     {
-        // Might want to use reflection to get all properties that are of type IModdableObject
-        // For now we just check _characters
-        return GetCharacterByIdentifier(internalName);
+        return GetAllModdableObjects(getOnlyStatus).FirstOrDefault(x => x.InternalNameEquals(internalName));
     }
 
 
@@ -166,19 +224,12 @@ public class GameService : IGameService
         searchQuery = searchQuery.ToLower().Trim();
 
         var charactersToSearch = restrictToCharacters ?? (includeDisabledCharacters
-            ? GetCharacters().Concat(GetDisabledCharacters())
-            : GetCharacters()).AsEnumerable();
+            ? GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both)
+            : GetAllModdableObjectsAsCategory<ICharacter>());
 
         foreach (var character in charactersToSearch)
         {
-            var loweredDisplayName = character.DisplayName.ToLower();
-
-            var result = 0;
-
-            // If the search query contains the display name, we give it a lot of points
-            var sameChars = loweredDisplayName.Split().Count(searchQuery.Contains);
-            result += sameChars * 50;
-
+            var result = GetBaseSearchResult(searchQuery, character);
 
             // A character can have multiple keys, so we take the best one. The keys are only used to help with searching
             var bestKeyMatch = character.Keys.Max(key => Fuzz.Ratio(key, searchQuery));
@@ -186,31 +237,6 @@ public class GameService : IGameService
 
             if (character.Keys.Any(key => key.Equals(searchQuery, StringComparison.CurrentCultureIgnoreCase)))
                 result += 100;
-
-
-            var splitNames = loweredDisplayName.Split();
-            var sameStartChars = 0;
-            var bestResultOfNames = 0;
-            // This loop will give points for each name that starts with the same chars as the search query
-            foreach (var name in splitNames)
-            {
-                sameStartChars = 0;
-                foreach (var @char in searchQuery)
-                {
-                    if (name.ElementAtOrDefault(sameStartChars) == default(char)) continue;
-
-                    if (name[sameStartChars] != @char) continue;
-
-                    sameStartChars++;
-                    if (sameStartChars > bestResultOfNames)
-                        bestResultOfNames = sameStartChars;
-                }
-            }
-
-            result += sameStartChars * 5; // Give more points for same start chars
-
-            result += loweredDisplayName.Split()
-                .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name
 
             if (result < minScore) continue;
 
@@ -220,25 +246,97 @@ public class GameService : IGameService
         return searchResult;
     }
 
+
+    public Dictionary<IModdableObject, int> QueryModdableObjects(string searchQuery, ICategory? category = null,
+        int minScore = 100)
+    {
+        var searchResult = new Dictionary<IModdableObject, int>();
+        searchQuery = searchQuery.ToLower().Trim();
+
+
+        if (category?.ModCategory == ModCategory.Character)
+            return QueryCharacters(searchQuery, GetAllModdableObjectsAsCategory<ICharacter>(), minScore)
+                .ToDictionary(x => x.Key as IModdableObject, x => x.Value);
+
+
+        var charactersToSearch = category is null
+            ? GetAllModdableObjects()
+            : GetModdableObjects(category);
+
+
+        foreach (var moddableObject in charactersToSearch)
+        {
+            var result = GetBaseSearchResult(searchQuery, moddableObject);
+
+            if (result < minScore) continue;
+
+            searchResult.Add(moddableObject, result);
+        }
+
+        return searchResult;
+    }
+
+    private static int GetBaseSearchResult(string searchQuery, INameable character)
+    {
+        var loweredDisplayName = character.DisplayName.ToLower();
+
+        var result = 0;
+
+        // If the search query contains the display name, we give it a lot of points
+        var sameChars = loweredDisplayName.Split().Count(searchQuery.Contains);
+        result += sameChars * 50;
+
+        var splitNames = loweredDisplayName.Split();
+        var sameStartChars = 0;
+        var bestResultOfNames = 0;
+        // This loop will give points for each name that starts with the same chars as the search query
+        foreach (var name in splitNames)
+        {
+            sameStartChars = 0;
+            foreach (var @char in searchQuery)
+            {
+                if (name.ElementAtOrDefault(sameStartChars) == default(char)) continue;
+
+                if (name[sameStartChars] != @char) continue;
+
+                sameStartChars++;
+                if (sameStartChars > bestResultOfNames)
+                    bestResultOfNames = sameStartChars;
+            }
+        }
+
+        result += sameStartChars * 5; // Give more points for same start chars
+
+        result += loweredDisplayName.Split()
+            .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name
+        return result;
+    }
+
+
     public List<IGameElement> GetElements() => Elements.AllElements.ToList();
 
     public List<IGameClass> GetClasses() => Classes.AllClasses.ToList();
 
     public List<IRegion> GetRegions() => Regions.AllRegions.ToList();
 
-    public List<ICharacter> GetCharacters() => _characters.ToList();
+    [Obsolete($"Use {nameof(GetAllModdableObjectsAsCategory)} instead")]
+    public List<ICharacter> GetCharacters(bool includeDisabled = false) =>
+        includeDisabled ? _characters.GetOfType(GetOnly.Both).ToList() : _characters.WhereEnabled().ToList();
 
-    public List<ICharacter> GetDisabledCharacters() => _disabledCharacters.ToList();
+    [Obsolete($"Use {nameof(GetAllModdableObjectsAsCategory)} instead")]
+    public List<ICharacter> GetDisabledCharacters() => _characters.WhereDisabled().ToList();
+
+    public List<ICategory> GetCategories() => new(_categories);
 
 
     public bool IsMultiMod(IModdableObject moddableObject) =>
-        IsMultiMod(moddableObject.InternalName) || moddableObject.IsMultiMod;
+        moddableObject.IsMultiMod || IsMultiMod(moddableObject.InternalName);
 
-    public bool IsMultiMod(string modInternalName)
+    private static bool IsMultiMod(string modInternalName)
     {
-        var multiMod = new List<string> { "Gliders", "Weapons", "Others" };
+        var legacyPredefinedMultiMod = new List<string> { "gliders", "weapons", "others" };
 
-        return multiMod.Any(name => name.Equals(modInternalName, StringComparison.OrdinalIgnoreCase));
+        return legacyPredefinedMultiMod.Any(name => name.Equals(modInternalName, StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task InitializeGameInfoAsync()
@@ -300,11 +398,11 @@ public class GameService : IGameService
         _characters.Add(getWeaponsCharacter());
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(characterFileName, _characters);
+            await MapDisplayNames(characterFileName, _characters.ToEnumerable());
 
-        var disabledCharacters = new List<ICharacter>();
-        foreach (var character in _characters)
+        foreach (var enableableCharacter in _characters)
         {
+            var character = enableableCharacter.ModdableObject;
             var characterOverride = overrideSettings.CharacterOverrides.FirstOrDefault(x =>
                 x.Key.Equals(character.InternalName.Id, StringComparison.OrdinalIgnoreCase)).Value;
 
@@ -314,16 +412,58 @@ public class GameService : IGameService
 
             if (characterOverride?.IsDisabled is not null && characterOverride.IsDisabled.Value)
             {
-                disabledCharacters.Add(character);
+                enableableCharacter.IsEnabled = false;
             }
         }
 
-        foreach (var disabledCharacter in disabledCharacters)
-        {
-            _characters.Remove(disabledCharacter);
-            _disabledCharacters.Add(disabledCharacter);
-        }
+        _categories.Add(Category.CreateForCharacter());
     }
+
+    private async Task InitializeNpcsAsync()
+    {
+        var npcFileName = "npcs.json";
+        var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Npcs");
+
+        var jsonNpcs = await SerializeAsync<JsonNpc>(npcFileName);
+
+        foreach (var jsonNpc in jsonNpcs)
+        {
+            var npc = Npc.FromJson(jsonNpc, imageFolderName);
+
+            _npcs.Add(npc);
+        }
+
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(npcFileName, _npcs.ToEnumerable());
+
+        if (_npcs.Any())
+            _categories.Add(Category.CreateForNpc());
+    }
+
+    private async Task InitializeObjectsAsync()
+    {
+        var objectFileName = "objects.json";
+        var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images",
+            Path.GetFileNameWithoutExtension(objectFileName));
+
+        var objects = await BaseModdableObjectMapper(objectFileName, imageFolderName, Category.CreateForObjects());
+
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(objectFileName, objects);
+
+        if (objects.Any())
+        {
+            _categories.Add(Category.CreateForObjects());
+            foreach (var moddableObject in objects)
+                _gameObjects.Add(new GameObject(moddableObject));
+        }
+        else
+            _logger.Warning("No gameObjects found in {ObjectFileName}", objectFileName);
+    }
+    //private async Task InitializeGlidersAsync()
+    //private async Task InitializeWeaponsAsync()
+    //private async Task InitializeCustomAsync()
+
 
     private async Task InitializeClassesAsync()
     {
@@ -369,13 +509,18 @@ public class GameService : IGameService
     }
 
 
-    private async Task<IEnumerable<T>> SerializeAsync<T>(string fileName)
+    private async Task<IEnumerable<T>> SerializeAsync<T>(string fileName, bool throwIfNotFound = true)
     {
         var objFileName = fileName;
         var objFilePath = Path.Combine(_assetsDirectory.FullName, objFileName);
 
         if (!File.Exists(objFilePath))
-            throw new FileNotFoundException($"{objFileName} File not found at path: {objFilePath}");
+        {
+            if (throwIfNotFound)
+                throw new FileNotFoundException($"{objFileName} File not found at path: {objFilePath}");
+            else
+                return Array.Empty<T>();
+        }
 
         return JsonSerializer.Deserialize<IEnumerable<T>>(await File.ReadAllTextAsync(objFilePath),
             _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
@@ -491,9 +636,11 @@ public class GameService : IGameService
                 continue;
             }
 
-            if (jsonOverride.DisplayName.IsNullOrEmpty()) continue;
+            if (!jsonOverride.DisplayName.IsNullOrEmpty())
+            {
+                nameable.DisplayName = jsonOverride.DisplayName;
+            }
 
-            nameable.DisplayName = jsonOverride.DisplayName;
 
             if (nameable is IImageSupport imageSupportedValue && !jsonOverride.Image.IsNullOrEmpty())
                 _logger.Debug("Image override is not implemented");
@@ -563,13 +710,44 @@ public class GameService : IGameService
         }
 
 
-        await MapDisplayNames("characters.json", _characters);
-
+        await MapDisplayNames("characters.json", _characters.ToEnumerable());
+        await MapDisplayNames("npcs.json", _npcs.ToEnumerable());
         await MapDisplayNames("elements.json", Elements.AllElements);
-
         await MapDisplayNames("weaponClasses.json", Classes.AllClasses);
-
         await MapDisplayNames("regions.json", Regions.AllRegions);
+    }
+
+    private async Task<IModdableObject[]> BaseModdableObjectMapper(string jsonFileName, string imageFolder,
+        ICategory category)
+    {
+        var jsonBaseModdableObjects = await SerializeAsync<JsonBaseModdableObject>(jsonFileName);
+
+        var list = new List<IModdableObject>();
+
+        foreach (var jsonBaseModdableObject in jsonBaseModdableObjects)
+        {
+            var moddableObject = BaseModdableObject
+                .FromJson(jsonBaseModdableObject, category, imageFolder);
+
+            list.Add(moddableObject);
+        }
+
+        return list.ToArray();
+    }
+
+    private void CheckIfDuplicateInternalNameExists()
+    {
+        var allNameables = GetAllModdableObjects(GetOnly.Both);
+
+        var duplicates = allNameables
+            .GroupBy(x => x.InternalName)
+            .Where(g => g.Count() > 1)
+            .Select(y => y.Key)
+            .ToList();
+
+        if (duplicates.Any())
+            throw new InvalidOperationException(
+                $"Duplicate internal names found: {string.Join(", ", duplicates)}");
     }
 }
 
@@ -721,3 +899,52 @@ internal abstract class BaseMapper<T> where T : class, INameable, new()
     }
 }
 
+internal sealed class Enableable<T> where T : IModdableObject
+{
+    public Enableable(T moddableObject, bool isEnabled = true)
+    {
+        ModdableObject = moddableObject;
+        IsEnabled = isEnabled;
+    }
+
+    public bool IsEnabled { get; internal set; }
+    public T ModdableObject { get; init; }
+
+    public static implicit operator T(Enableable<T> enableable) => enableable.ModdableObject;
+
+    public static implicit operator Enableable<T>(T moddableObject) => new(moddableObject);
+}
+
+internal sealed class EnableableList<T> : List<Enableable<T>> where T : IModdableObject
+{
+    public EnableableList(IEnumerable<Enableable<T>> enableables) : base(enableables)
+    {
+    }
+
+    public EnableableList()
+    {
+    }
+
+    public static implicit operator List<T>(EnableableList<T> enableableList) =>
+        enableableList.Select(x => x.ModdableObject).ToList();
+
+    public static implicit operator EnableableList<T>(List<T> moddableObjects) =>
+        new(moddableObjects.Select(x => new Enableable<T>(x)));
+
+    public IEnumerable<T> ToEnumerable() => this.Select(x => x.ModdableObject);
+
+    public IEnumerable<T> WhereEnabled() => this.Where(x => x.IsEnabled).Select(x => x.ModdableObject);
+
+    public IEnumerable<T> WhereDisabled() => this.Where(x => !x.IsEnabled).Select(x => x.ModdableObject);
+
+    public IEnumerable<T> GetOfType(GetOnly type) => type switch
+    {
+        GetOnly.Enabled => WhereEnabled(),
+        GetOnly.Disabled => WhereDisabled(),
+        _ => ToEnumerable()
+    };
+
+
+    /// <inheritdoc cref="List{T}.Add"/>
+    public bool Remove(T moddableObject) => base.Remove(moddableObject);
+}

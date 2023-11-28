@@ -47,7 +47,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     public OverviewDockPanelVM DockPanelVM { get; }
 
 
-    private IReadOnlyList<ICharacter> _characters = new List<ICharacter>();
+    private IReadOnlyList<IModdableObject> _characters = new List<IModdableObject>();
 
     private IReadOnlyList<CharacterGridItemModel> _backendCharacters = new List<CharacterGridItemModel>();
     public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
@@ -56,23 +56,25 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private string _searchText = string.Empty;
 
-    private Dictionary<FilterType, GridFilter> _filters = new();
+    private readonly Dictionary<FilterType, GridFilter> _filters = new();
 
 
-    public ObservableCollection<SortingMethodType> SortingMethods { get; } =
-        new() { SortingMethodType.Alphabetical, SortingMethodType.ReleaseDate, SortingMethodType.Rarity };
+    public ObservableCollection<SortingMethod> SortingMethods { get; } =
+        new() { };
 
-    private SortingMethod _sortingMethod = null!;
-    [ObservableProperty] private SortingMethodType _selectedSortingMethod = SortingMethodType.Alphabetical;
+    [ObservableProperty] private SortingMethod _selectedSortingMethod;
     [ObservableProperty] private bool _sortByDescending;
 
     [ObservableProperty] private bool _canCheckForUpdates = false;
 
     [ObservableProperty] private Uri? _gameBananaLink;
 
-    private CharacterGridItemModel[] _lastCharacters = Array.Empty<CharacterGridItemModel>();
+    [ObservableProperty] private string _categoryPageTitle = string.Empty;
+    [ObservableProperty] private string _modToggleText = string.Empty;
+    [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
-    private bool isNavigating = true;
+
+    private bool _isNavigating = true;
 
     public CharactersViewModel(IGameService gameService, ILogger logger, INavigationService navigationService,
         ISkinManagerService skinManagerService, ILocalSettingsService localSettingsService,
@@ -107,8 +109,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             App.MainWindow.DispatcherQueue.EnqueueAsync(RefreshNotificationsAsync);
 
         DockPanelVM = new OverviewDockPanelVM();
-        DockPanelVM.FilterElementSelected += FilterElementSelected;
-        DockPanelVM.Initialize();
         StartGameIcon = _gameService.GameIcon;
         ShortGameName = "Start " + _gameService.GameShortName;
         GameBananaLink = _gameService.GameBananaUrl;
@@ -125,6 +125,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
     {
+        if (_category.ModCategory != ModCategory.Character)
+            return;
+
         if (e.InternalElementNames.Length == 0)
         {
             _filters.Remove(FilterType.Element);
@@ -133,12 +136,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
 
         _filters[FilterType.Element] = new GridFilter(character =>
-            e.InternalElementNames.Contains(character.Character.Element.InternalName));
+            e.InternalElementNames.Contains(((ICharacter)character.Character).Element.InternalName));
         ResetContent();
     }
 
-    private readonly CharacterGridItemModel _noCharacterFound =
-        new(new Character("None", "No Characters Found..."));
+    private CharacterGridItemModel NoCharacterFound =>
+        new(new Character("None", $"No {_category.DisplayNamePlural} Found..."));
 
     public void AutoSuggestBox_TextChanged(string text)
     {
@@ -153,7 +156,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _gameService.QueryCharacters(text, minScore: 100).OrderByDescending(kv => kv.Value)
+        var suitableItems = _gameService.QueryModdableObjects(text, category: _category, minScore: 100)
+            .OrderByDescending(kv => kv.Value)
             .Take(5)
             .Select(x => new CharacterGridItemModel(x.Key))
             .ToList();
@@ -161,7 +165,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         if (!suitableItems.Any())
         {
-            SuggestionsBox.Add(_noCharacterFound);
+            SuggestionsBox.Add(NoCharacterFound);
             _filters.Remove(FilterType.Search);
             ResetContent();
             return;
@@ -176,7 +180,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
-        if (character == _noCharacterFound || character is null)
+        if (character == NoCharacterFound || character is null)
             return false;
 
 
@@ -187,10 +191,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private void ResetContent()
     {
-        if (isNavigating) return;
+        if (_isNavigating) return;
 
         var filteredCharacters = FilterCharacters(_backendCharacters);
-        var sortedCharacters = _sortingMethod.Sort(filteredCharacters).ToList();
+        var sortedCharacters = SelectedSortingMethod.Sort(filteredCharacters, SortByDescending).ToList();
 
         var charactersToRemove = Characters.Except(sortedCharacters).ToArray();
 
@@ -274,174 +278,194 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    private ICategory _category = null!;
+
     public async void OnNavigatedTo(object parameter)
     {
-        await Task.Run(async () =>
+        if (parameter is not ICategory category)
         {
-            var characters = _gameService.GetCharacters().ToList();
-            var others =
-                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.OtherCharacterInternalName));
-            if (others is not null) // Add to front
+            _logger.Error("Invalid parameter type {ParameterType}", parameter?.GetType().FullName);
+            category = _gameService.GetCategories().First();
+        }
+
+
+        _category = category;
+        CategoryPageTitle = $"{category.DisplayName} Overview";
+        ModToggleText = $"Show only {category.DisplayNamePlural} with Mods";
+        SearchBoxPlaceHolder = $"Search {category.DisplayNamePlural}...";
+
+
+        var characters = _gameService.GetModdableObjects(_category);
+
+        var firstType = characters.FirstOrDefault()?.GetType();
+        if (characters.Any(ch => ch.GetType() != firstType))
+            throw new InvalidOperationException("Characters must be of the same type");
+
+        var others =
+            characters.FirstOrDefault(ch =>
+                ch.InternalName.Id.Contains("Others", StringComparison.OrdinalIgnoreCase));
+        if (others is not null) // Add to front
+        {
+            characters.Remove(others);
+            characters.Insert(0, others);
+        }
+
+        var gliders =
+            characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.GlidersCharacterInternalName));
+        if (gliders is not null) // Add to end
+        {
+            characters.Remove(gliders);
+            characters.Add(gliders);
+        }
+
+        var weapons =
+            characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.WeaponsCharacterInternalName));
+        if (weapons is not null) // Add to end
+        {
+            characters.Remove(weapons);
+            characters.Add(weapons);
+        }
+
+
+        _characters = characters;
+
+        characters = new List<IModdableObject>(_characters);
+
+        var pinnedCharactersOptions = await ReadCharacterSettings();
+
+        var backendCharacters = new List<CharacterGridItemModel>();
+        foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
+        {
+            var character = characters.FirstOrDefault(x => x.InternalNameEquals(pinedCharacterId));
+            if (character is not null)
             {
-                characters.Remove(others);
-                characters.Insert(0, others);
+                backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
+                characters.Remove(character);
             }
+        }
 
-            var gliders =
-                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.GlidersCharacterInternalName));
-            if (gliders is not null) // Add to end
+        foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
+        {
+            var character = characters.FirstOrDefault(x => x.InternalNameEquals(hiddenCharacterId));
+            if (character is not null)
             {
-                characters.Remove(gliders);
-                characters.Add(gliders);
+                backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
+                characters.Remove(character);
             }
+        }
 
-            var weapons =
-                characters.FirstOrDefault(ch => ch.InternalNameEquals(_gameService.WeaponsCharacterInternalName));
-            if (weapons is not null) // Add to end
-            {
-                characters.Remove(weapons);
-                characters.Add(weapons);
-            }
+        // Add rest of characters
+        foreach (var character in characters)
+        {
+            backendCharacters.Add(new CharacterGridItemModel(character));
+        }
 
+        _backendCharacters = backendCharacters;
 
-            _characters = characters;
+        InitializeSorters();
 
-            characters = new List<ICharacter>(_characters);
-
-            var pinnedCharactersOptions = await ReadCharacterSettings();
-
-            var backendCharacters = new List<CharacterGridItemModel>();
-            foreach (var pinedCharacterId in pinnedCharactersOptions.PinedCharacters)
-            {
-                var character = characters.FirstOrDefault(x => x.InternalNameEquals(pinedCharacterId));
-                if (character is not null)
-                {
-                    backendCharacters.Add(new CharacterGridItemModel(character) { IsPinned = true });
-                    characters.Remove(character);
-                }
-            }
-
-            foreach (var hiddenCharacterId in pinnedCharactersOptions.HiddenCharacters)
-            {
-                var character = characters.FirstOrDefault(x => x.InternalNameEquals(hiddenCharacterId));
-                if (character is not null)
-                {
-                    backendCharacters.Add(new CharacterGridItemModel(character) { IsHidden = true });
-                    characters.Remove(character);
-                }
-            }
-
-            // Add rest of characters
-            foreach (var character in characters)
-            {
-                backendCharacters.Add(new CharacterGridItemModel(character));
-            }
-
-            _backendCharacters = backendCharacters;
-
-            var distinctReleaseDates = _backendCharacters
-                .Where(ch => ch.Character.ReleaseDate != default)
-                .DistinctBy(ch => ch.Character.ReleaseDate)
+        if (typeof(ICharacter).IsAssignableFrom(firstType))
+        {
+            var backendCharactersList = _backendCharacters.Select(x => x.Character).Cast<ICharacter>().ToList();
+            var distinctReleaseDates = backendCharactersList
+                .Where(ch => ch.ReleaseDate != default)
+                .DistinctBy(ch => ch.ReleaseDate)
                 .Count();
 
-            if (distinctReleaseDates == 1)
-                SortingMethods.Remove(SortingMethodType.ReleaseDate);
-
-
-            // Add notifications
-            await RefreshNotificationsAsync();
-
-            // Character Ids where more than 1 skin is enabled
-            var charactersWithMultipleMods = _skinManagerService.CharacterModLists
-                .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
-
-            var charactersWithMultipleActiveSkins = new List<string>();
-            foreach (var modList in charactersWithMultipleMods)
+            if (distinctReleaseDates == 1 &&
+                SortingMethods.FirstOrDefault(x => x.SortingMethodType == Sorter.ReleaseDateSortName) is
+                    { } releaseDateSortingMethod)
             {
-                if (_gameService.IsMultiMod(modList.Character))
-                    continue;
+                SortingMethods.Remove(releaseDateSortingMethod);
+            }
+
+            DockPanelVM.Initialize();
+            DockPanelVM.FilterElementSelected += FilterElementSelected;
+        }
 
 
-                if (modList.Mods.Count(modEntry => modEntry.IsEnabled) > 2)
+        // Add notifications
+        await RefreshNotificationsAsync();
+
+        // Character Ids where more than 1 skin is enabled
+        var charactersWithMultipleMods = _skinManagerService.CharacterModLists
+            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
+
+        var charactersWithMultipleActiveSkins = new List<string>();
+        foreach (var modList in charactersWithMultipleMods)
+        {
+            if (_gameService.IsMultiMod(modList.Character))
+                continue;
+
+            if (modList.Character is ICharacter character)
+            {
+                var addWarning = false;
+                var subSkinsFound = new List<ICharacterSkin>();
+                foreach (var characterSkinEntry in modList.Mods)
                 {
-                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
-                }
-                else if (modList.Character is ICharacter character)
-                {
-                    var addWarning = false;
-                    var subSkinsFound = new List<ICharacterSkin>();
-                    foreach (var characterSkinEntry in modList.Mods)
+                    if (!characterSkinEntry.IsEnabled) continue;
+
+                    var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
+                    var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
+
+
+                    var mod = ModModel.FromMod(characterSkinEntry);
+
+
+                    if (modSettingsResult.IsT0)
+                        mod.WithModSettings(modSettingsResult.AsT0);
+
+                    if (!mod.CharacterSkinOverride.IsNullOrEmpty())
+                        subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
+                            .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
+
+                    if (subSkin is null)
+                        continue;
+
+
+                    if (subSkinsFound.All(foundSubSkin =>
+                            !subSkin.InternalNameEquals(foundSubSkin)))
                     {
-                        if (!characterSkinEntry.IsEnabled) continue;
-
-                        var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
-                        var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
-
-
-                        var mod = ModModel.FromMod(characterSkinEntry);
-
-
-                        if (modSettingsResult.IsT0)
-                            mod.WithModSettings(modSettingsResult.AsT0);
-
-                        if (!mod.CharacterSkinOverride.IsNullOrEmpty())
-                            subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
-                                .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
-
-                        if (subSkin is null)
-                            continue;
-
-
-                        if (subSkinsFound.All(foundSubSkin =>
-                                !subSkin.InternalNameEquals(foundSubSkin)))
-                        {
-                            subSkinsFound.Add(subSkin);
-                            continue;
-                        }
-
-
-                        addWarning = true;
-                        break;
+                        subSkinsFound.Add(subSkin);
+                        continue;
                     }
 
-                    if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
-                        charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+
+                    addWarning = true;
+                    break;
                 }
+
+                if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
             }
-
-
-            foreach (var characterGridItemModel in _backendCharacters.Where(x =>
-                         charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
+            else if (modList.Mods.Count(modEntry => modEntry.IsEnabled) >= 2)
             {
-                if (_gameService.IsMultiMod(characterGridItemModel.Character))
-                    continue;
-
-                characterGridItemModel.Warning = true;
+                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
             }
+        }
 
 
-            if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
-            {
-                _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
-                    _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
-            }
+        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
+                     charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
+        {
+            if (_gameService.IsMultiMod(characterGridItemModel.Character))
+                continue;
 
-            var lastCharacters = new List<CharacterGridItemModel>
-            {
-                FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
-                FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
-            };
+            characterGridItemModel.Warning = true;
+        }
 
-            _lastCharacters = lastCharacters.ToArray();
 
-            _sortingMethod = new SortingMethod(SortingMethodType.Alphabetical,
-                FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters);
-        });
+        if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
+        {
+            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
+                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+        }
+
 
         // ShowOnlyModsCharacters
         var settings =
             await _localSettingsService
-                .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key);
+                .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.GetKey(_category));
         if (settings.ShowOnlyCharactersWithMods)
         {
             ShowOnlyCharactersWithMods = true;
@@ -451,11 +475,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         SortByDescending = settings.SortByDescending;
 
-        _sortingMethod = new SortingMethod(settings.SortingMethod,
-            FindCharacterByInternalName(_gameService.OtherCharacterInternalName), _lastCharacters, SortByDescending);
-        SelectedSortingMethod = settings.SortingMethod;
+        var sorter = SortingMethods.FirstOrDefault(x => x.SortingMethodType == settings.SortingMethod);
 
-        isNavigating = false;
+        SelectedSortingMethod = sorter ?? SortingMethods.First();
+
+
+        _isNavigating = false;
         ResetContent();
     }
 
@@ -620,16 +645,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         NotImplemented.Show("Hiding characters is not implemented yet");
     }
 
-    private async Task<CharacterOverviewSettings> ReadCharacterSettings()
-    {
-        return await _localSettingsService.ReadSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.Key) ??
-               new CharacterOverviewSettings();
-    }
+    private Task<CharacterOverviewSettings> ReadCharacterSettings() =>
+        _localSettingsService
+            .ReadOrCreateSettingAsync<CharacterOverviewSettings>(CharacterOverviewSettings.GetKey(_category));
 
-    private async Task SaveCharacterSettings(CharacterOverviewSettings settings)
-    {
-        await _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.Key, settings);
-    }
+    private Task SaveCharacterSettings(CharacterOverviewSettings settings) =>
+        _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.GetKey(_category), settings);
 
 
     [RelayCommand]
@@ -727,59 +748,23 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
-    {
-        var modNameToCharacter = new Dictionary<IStorageItem, ICharacter>();
-        var othersCharacter = _gameService.GetCharacters()
-            .First(x => x.InternalName == _gameService.OtherCharacterInternalName);
-
-        foreach (var storageItem in storageItems)
-        {
-            var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
-            var result = _gameService.QueryCharacters(modName, minScore: 100);
-
-            var character = result.FirstOrDefault().Key;
-            if (character is not null)
-            {
-                _logger.Debug("Mod {ModName} was detected as {Character}", modName,
-                    character.InternalName);
-                modNameToCharacter.Add(storageItem, character);
-            }
-            else
-            {
-                _logger.Debug("Mod {ModName} was not detected as any character", modName);
-                modNameToCharacter.Add(storageItem, othersCharacter);
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
     private CharacterGridItemModel? FindCharacterByInternalName(string internalName)
     {
         return _backendCharacters.FirstOrDefault(x =>
             x.Character.InternalNameEquals(internalName));
     }
 
-    private CharacterGridItemModel? FindCharacter(ICharacter character)
-    {
-        return FindCharacterByInternalName(character.InternalName);
-    }
-
 
     [RelayCommand]
-    private async Task SortBy(IEnumerable<SortingMethodType> methodTypes)
+    private async Task SortBy(IEnumerable<SortingMethod> methodTypes)
     {
-        if (isNavigating) return;
+        if (_isNavigating) return;
         var sortingMethodType = methodTypes.First();
 
-        _sortingMethod = new SortingMethod(sortingMethodType,
-            FindCharacterByInternalName(_gameService.OtherCharacterInternalName),
-            _lastCharacters, isDescending: SortByDescending);
         ResetContent();
 
         var settings = await ReadCharacterSettings();
-        settings.SortingMethod = sortingMethodType;
+        settings.SortingMethod = sortingMethodType.SortingMethodType;
         await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 
@@ -787,7 +772,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private async Task InvertSorting()
     {
-        _sortingMethod.IsDescending = SortByDescending;
         ResetContent();
 
         var settings = await ReadCharacterSettings();
@@ -811,6 +795,28 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var check = ModCheckRequest.ForCharacter(character.Character);
 
         _modUpdateAvailableChecker.CheckNow(check.WithIgnoreLastChecked());
+    }
+
+
+    private void InitializeSorters()
+    {
+        var lastCharacters = new List<CharacterGridItemModel>
+        {
+            FindCharacterByInternalName(_gameService.GlidersCharacterInternalName)!,
+            FindCharacterByInternalName(_gameService.WeaponsCharacterInternalName)!
+        };
+
+        var othersCharacter = _backendCharacters.FirstOrDefault(ch =>
+            ch.Character.InternalName.Id.Contains("Others", StringComparison.OrdinalIgnoreCase));
+
+        var alphabetical = new SortingMethod(Sorter.Alphabetical(), othersCharacter, lastCharacters);
+        SortingMethods.Add(alphabetical);
+
+        if (_category.ModCategory == ModCategory.Character)
+        {
+            SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate(), othersCharacter, lastCharacters));
+            SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
+        }
     }
 }
 
@@ -836,80 +842,33 @@ public sealed class GridFilter
 
 public enum FilterType
 {
-    NotSet,
     Element,
-    WeaponType,
     Search,
     HasMods
 }
 
 public sealed class SortingMethod
 {
-    public SortingMethodType SortingMethodType { get; }
-    public bool IsDescending { get; set; }
+    public string SortingMethodType => _sorter.SortingMethodType;
+
+    private readonly Sorter _sorter;
 
     private readonly CharacterGridItemModel[] _lastCharacters;
     private readonly CharacterGridItemModel? _firstCharacter;
 
-    public SortingMethod(SortingMethodType sortingMethodType, CharacterGridItemModel? firstCharacter = null,
-        ICollection<CharacterGridItemModel>? lastCharacters = null, bool isDescending = false)
+    public SortingMethod(Sorter sortingMethodType, CharacterGridItemModel? firstCharacter = null,
+        ICollection<CharacterGridItemModel>? lastCharacters = null)
     {
-        SortingMethodType = sortingMethodType;
-        IsDescending = isDescending;
+        _sorter = sortingMethodType;
         _lastCharacters = lastCharacters?.ToArray() ?? Array.Empty<CharacterGridItemModel>();
         _firstCharacter = firstCharacter;
     }
 
-    private static IEnumerable<CharacterGridItemModel> Sort<T, T1, T2>(
-        IEnumerable<CharacterGridItemModel> characters,
-        Func<CharacterGridItemModel, T> sortFirstBy, bool firstByDescending = false,
-        Func<CharacterGridItemModel, T1>? sortSecondBy = null, bool secondByDescending = false,
-        Func<CharacterGridItemModel, T2>? sortThirdBy = null, bool thirdByDescending = false
-    )
-    {
-        var charactersList = firstByDescending
-            ? characters.OrderByDescending(sortFirstBy)
-            : characters.OrderBy(sortFirstBy);
-
-        if (sortSecondBy is not null)
-        {
-            charactersList = secondByDescending
-                ? charactersList.ThenByDescending(sortSecondBy)
-                : charactersList.ThenBy(sortSecondBy);
-        }
-
-        if (sortThirdBy is not null)
-        {
-            charactersList = thirdByDescending
-                ? charactersList.ThenByDescending(sortThirdBy)
-                : charactersList.ThenBy(sortThirdBy);
-        }
-
-        return charactersList;
-    }
-
-    public IEnumerable<CharacterGridItemModel> Sort(IEnumerable<CharacterGridItemModel> characters)
+    public IEnumerable<CharacterGridItemModel> Sort(IEnumerable<CharacterGridItemModel> characters, bool isDescending)
     {
         IEnumerable<CharacterGridItemModel> sortedCharacters = null!;
-        switch (SortingMethodType)
-        {
-            case SortingMethodType.Alphabetical:
-                sortedCharacters = Sort<string, string, string>(characters, x => x.Character.DisplayName, IsDescending);
-                break;
-            case SortingMethodType.ReleaseDate:
-                sortedCharacters = Sort<DateTime, string, string>(characters, x => x.Character.ReleaseDate,
-                    !IsDescending,
-                    sortSecondBy: x => x.Character.DisplayName);
-                break;
-            case SortingMethodType.Rarity:
-                sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
-                    sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
-                    sortThirdBy: x => x.Character.DisplayName);
 
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(SortingMethodType));
-        }
+        sortedCharacters = _sorter.Sort(characters, isDescending).Cast<CharacterGridItemModel>();
 
         var returnCharactersList = sortedCharacters.ToList();
 
@@ -938,11 +897,106 @@ public sealed class SortingMethod
 
         return returnCharactersList;
     }
+
+    public override string ToString()
+    {
+        return SortingMethodType;
+    }
 }
 
-public enum SortingMethodType
+// I originally tried to do this with type support, but it turned into quite a 'generic' mess
+// So I decided to go with a more 'hardcoded' approach and casting values when doing the comparison
+public sealed class Sorter
 {
-    Alphabetical,
-    ReleaseDate,
-    Rarity
+    public string SortingMethodType { get; }
+    private readonly SortFunc _firstSortFunc;
+
+    private readonly AdditionalSortFunc? _secondSortFunc;
+
+    private readonly AdditionalSortFunc? _thirdSortFunc;
+
+
+    private delegate IOrderedEnumerable<CharacterGridItemModel> SortFunc(IEnumerable<CharacterGridItemModel> characters,
+        bool isDescending);
+
+    private delegate IOrderedEnumerable<CharacterGridItemModel> AdditionalSortFunc(
+        IOrderedEnumerable<CharacterGridItemModel> characters,
+        bool isDescending);
+
+    private Sorter(string sortingMethodType, SortFunc firstSortFunc, AdditionalSortFunc? secondSortFunc = null,
+        AdditionalSortFunc? thirdSortFunc = null)
+    {
+        SortingMethodType = sortingMethodType;
+        _firstSortFunc = firstSortFunc;
+        _secondSortFunc = secondSortFunc;
+        _thirdSortFunc = thirdSortFunc;
+    }
+
+    public IEnumerable<CharacterGridItemModel> Sort(IEnumerable<CharacterGridItemModel> characters, bool isDescending)
+    {
+        var sorted = _firstSortFunc(characters, isDescending);
+
+        if (_secondSortFunc is not null)
+            sorted = _secondSortFunc(sorted, isDescending);
+
+        if (_thirdSortFunc is not null)
+            sorted = _thirdSortFunc(sorted, isDescending);
+
+        return sorted;
+    }
+
+
+    public const string AlphabeticalSortName = "Alphabetical";
+
+    // TODO: These can be a static property
+    public static Sorter Alphabetical()
+    {
+        return new Sorter
+        (
+            AlphabeticalSortName,
+            (characters, isDescending) =>
+                isDescending
+                    ? characters.OrderByDescending(x => (x.Character.DisplayName))
+                    : characters.OrderBy(x => (x.Character.DisplayName)
+                    ));
+    }
+
+
+    public const string ReleaseDateSortName = "Release Date";
+
+    // TODO: IDateSupport interface
+    public static Sorter ReleaseDate()
+    {
+        return new Sorter
+        (
+            ReleaseDateSortName,
+            (characters, isDescending) =>
+                !isDescending
+                    ? characters.OrderByDescending(x => ((ICharacter)x.Character).ReleaseDate)
+                    : characters.OrderBy(x => ((ICharacter)x.Character).ReleaseDate),
+            (characters, _) =>
+                characters.ThenBy(x => (x.Character.DisplayName)
+                ));
+    }
+
+    public const string RaritySortName = "Rarity";
+
+    public static Sorter Rarity()
+    {
+        return new Sorter
+        (
+            RaritySortName,
+            (characters, isDescending) =>
+                !isDescending
+                    ? characters.OrderByDescending(x => ((ICharacter)x.Character).Rarity)
+                    : characters.OrderBy(x => ((ICharacter)x.Character).Rarity),
+            (characters, _) =>
+                characters.ThenBy(x => (x.Character.DisplayName)
+                ));
+    }
+
+
+    //sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
+    //sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
+    //sortThirdBy: x => x.Character.DisplayName);
 }

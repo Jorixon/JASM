@@ -5,7 +5,7 @@ namespace GIMI_ModManager.Core.GamesService.Interfaces;
 /// <summary>
 /// In game playable character
 /// </summary>
-public interface ICharacter : IRarity, IImageSupport, IModdableObject, IEquatable<ICharacterSkin>
+public interface ICharacter : IRarity, IDateSupport, IModdableObject, IEquatable<ICharacter>
 {
     [Newtonsoft.Json.JsonIgnore]
     [JsonIgnore]
@@ -15,7 +15,6 @@ public interface ICharacter : IRarity, IImageSupport, IModdableObject, IEquatabl
     public IGameElement Element { get; }
     public ICollection<string> Keys { get; internal set; }
 
-    public DateTime ReleaseDate { get; }
     public ICollection<IRegion> Regions { get; }
     public ICollection<ICharacterSkin> Skins { get; }
 }

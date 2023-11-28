@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
@@ -71,7 +72,7 @@
                     HorizontalAlignment="Center"
                     FontSize="28"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="Character Overview" />
+                    Text="{x:Bind ViewModel.CategoryPageTitle, Mode=OneWay}" />
 
                 <HyperlinkButton
                     VerticalAlignment="Bottom"
@@ -173,7 +174,8 @@
                     IsMultiSelectCheckBoxEnabled="False"
                     ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=TwoWay}"
                     SelectionChanged="Selector_OnSelectionChanged"
-                    SelectionMode="Multiple">
+                    SelectionMode="Multiple"
+                    Visibility="{x:Bind ViewModel.DockPanelVM.IsInitialized, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="subVms:ElementIcon">
                             <ItemContainer
@@ -223,9 +225,8 @@
                 <ToggleButton
                     Margin="0,0,8,0"
                     Command="{x:Bind ViewModel.ShowCharactersWithModsCommand}"
-                    IsChecked="{x:Bind ViewModel.ShowOnlyCharactersWithMods, Mode=OneWay}">
-                    Show only characters with mods
-                </ToggleButton>
+                    Content="{x:Bind ViewModel.ModToggleText, Mode=OneWay}"
+                    IsChecked="{x:Bind ViewModel.ShowOnlyCharactersWithMods, Mode=OneWay}" />
 
                 <AutoSuggestBox
                     x:Name="SearchBox"
@@ -233,7 +234,7 @@
                     Margin="0,8,0,8"
                     HorizontalAlignment="Left"
                     ItemsSource="{x:Bind ViewModel.SuggestionsBox, Mode=OneWay}"
-                    PlaceholderText="Search Characters..."
+                    PlaceholderText="{x:Bind ViewModel.SearchBoxPlaceHolder, Mode=OneWay}"
                     QueryIcon="Find"
                     QuerySubmitted="SearchBox_OnQuerySubmitted"
                     SuggestionChosen="AutoSuggestBox_OnSuggestionChosen"

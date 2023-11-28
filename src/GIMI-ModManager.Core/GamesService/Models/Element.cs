@@ -23,4 +23,6 @@ internal class Element : IGameElement
             ImageUri = null
         };
     }
+
+    public bool Equals(INameable? other) => InternalName.DefaultEquatable(this, other);
 }

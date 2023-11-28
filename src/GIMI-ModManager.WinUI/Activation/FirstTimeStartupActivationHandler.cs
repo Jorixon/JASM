@@ -1,5 +1,6 @@
 ﻿using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services.AppManagment;
@@ -52,6 +53,6 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
         await _skinManagerService.InitializeAsync(modManagerOptions!.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);
 
-        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, args.Arguments, true);
+        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, Category.CreateForCharacter(), true);
     }
 }

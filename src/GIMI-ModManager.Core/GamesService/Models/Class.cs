@@ -22,4 +22,6 @@ internal class Class : IGameClass
             ImageUri = null
         };
     }
+
+    public bool Equals(INameable? other) => InternalName.DefaultEquatable(this, other);
 }

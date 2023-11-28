@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
@@ -18,7 +19,6 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.Options;
-using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.ModHandling;
@@ -42,6 +42,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ModCrawlerService _modCrawlerService;
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ModSettingsService _modSettingsService;
+    private readonly ImageHandlerService _imageHandlerService;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -49,17 +50,21 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     public MoveModsFlyoutVM MoveModsFlyoutVM { get; private set; }
 
-    [ObservableProperty] private CharacterVM _shownCharacter = null!;
+    [ObservableProperty] private IModdableObject _shownCharacter = null!;
 
     public readonly ObservableCollection<SelectCharacterTemplate> SelectableInGameSkins = new();
 
     [ObservableProperty] public bool _multipleInGameSkins = false;
 
-    [ObservableProperty] private SkinVM _selectedInGameSkin = new();
+    [ObservableProperty] private ICharacterSkin? _selectedInGameSkin;
 
-    private static readonly Dictionary<CharacterVM, string> _lastSelectedSkin = new();
+    [ObservableProperty] private Uri _moddableObjectImage;
+
+    private static readonly Dictionary<ICharacter, string> _lastSelectedSkin = new();
 
     public ModListVM.SortMethod? SortMethod { get; set; }
+
+    [ObservableProperty] private bool _isICharacter = false;
 
 
     public CharacterDetailsViewModel(IGameService gameService, ILogger logger,
@@ -67,7 +72,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
         ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
         ModNotificationManager modNotificationManager, ModSettingsService modSettingsService,
-        IWindowManagerService windowManagerService)
+        IWindowManagerService windowManagerService, ImageHandlerService imageHandlerService)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -80,6 +85,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _modNotificationManager = modNotificationManager;
         _modSettingsService = modSettingsService;
         _windowManagerService = windowManagerService;
+        _imageHandlerService = imageHandlerService;
 
         _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
         {
@@ -93,6 +99,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             await App.MainWindow.DispatcherQueue.EnqueueAsync(
                 async () => { await RefreshMods(); }).ConfigureAwait(false);
         };
+
+        ModdableObjectImage = _imageHandlerService.PlaceholderImageUri;
 
         MoveModsFlyoutVM = new MoveModsFlyoutVM(_gameService, _skinManagerService);
         MoveModsFlyoutVM.ModsMoved += async (sender, args) => await RefreshMods().ConfigureAwait(false);
@@ -202,34 +210,49 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
 
-        var character = _gameService.GetCharacterByIdentifier(internalName);
-        if (character is null)
+        var moddableObject = _gameService.GetModdableObjectByIdentifier(internalName);
+
+        if (moddableObject is null)
         {
             ErrorNavigateBack();
             return;
         }
 
-        ShownCharacter = CharacterVM.FromCharacter(character);
-        MoveModsFlyoutVM.SetShownCharacter(ShownCharacter);
-        _modList = _skinManagerService.GetCharacterModList(character.InternalName);
+        if (moddableObject.ImageUri is not null)
+            ModdableObjectImage = moddableObject.ImageUri;
 
-        if (_gameService.IsMultiMod(character))
+
+        ShownCharacter = moddableObject;
+        MoveModsFlyoutVM.SetShownCharacter(moddableObject);
+
+        _modList = _skinManagerService.GetCharacterModList(moddableObject.InternalName);
+
+        if (_gameService.IsMultiMod(moddableObject))
             ModListVM.DisableInfoBar = true;
 
-        var skins = character.Skins.Select(SkinVM.FromSkin).ToArray();
+        if (moddableObject is ICharacter character)
+        {
+            IsICharacter = true;
+            var skins = character.Skins.ToArray();
 
-        foreach (var characterInGameSkin in skins)
-            SelectableInGameSkins.Add(
-                new SelectCharacterTemplate(characterInGameSkin.DisplayName, characterInGameSkin.InternalName,
-                    characterInGameSkin.ImageUri.ToString())
-            );
+            foreach (var characterInGameSkin in skins)
+            {
+                var skinImage = characterInGameSkin.ImageUri ?? _imageHandlerService.PlaceholderImageUri;
+                SelectableInGameSkins.Add(
+                    new SelectCharacterTemplate(characterInGameSkin.DisplayName, characterInGameSkin.InternalName,
+                        skinImage.ToString())
+                );
+            }
 
+            SelectedInGameSkin = skins.First(skinVm => skinVm.IsDefault);
 
-        SelectedInGameSkin = skins.First(skinVm => skinVm.IsDefault);
-        MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
+            if (SelectedInGameSkin.ImageUri is not null)
+                ModdableObjectImage = SelectedInGameSkin.ImageUri;
 
+            MoveModsFlyoutVM.SetActiveSkin(SelectedInGameSkin);
 
-        MultipleInGameSkins = character.Skins.Count > 1;
+            MultipleInGameSkins = character.Skins.Count > 1;
+        }
 
 
         try
@@ -246,12 +269,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             ErrorNavigateBack();
         }
 
-        var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(selectCharacterTemplate =>
-            selectCharacterTemplate.InternalName.Equals(
-                _lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
-                StringComparison.CurrentCultureIgnoreCase));
+        if (IsICharacter)
+        {
+            var lastSelectedSkin = SelectableInGameSkins.FirstOrDefault(selectCharacterTemplate =>
+                selectCharacterTemplate.InternalName.Equals(
+                    _lastSelectedSkin.FirstOrDefault(kv => kv.Key == ShownCharacter).Value,
+                    StringComparison.CurrentCultureIgnoreCase));
 
-        if (lastSelectedSkin is not null) await SwitchCharacterSkin(lastSelectedSkin);
+            if (lastSelectedSkin is not null) await SwitchCharacterSkin(lastSelectedSkin);
+        }
     }
 
     // This function is called from the ModModel _toggleMod delegate.
@@ -402,13 +428,18 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (characterTemplate is null)
             return;
 
+        if (ShownCharacter is not ICharacter character || SelectedInGameSkin is null)
+        {
+            return;
+        }
+
         if (characterTemplate.InternalName.Equals(
                 SelectedInGameSkin.InternalName,
                 StringComparison.OrdinalIgnoreCase))
-            return;
+                return;
 
-        var characterSkin = ShownCharacter.InGameSkins.FirstOrDefault(skin =>
-            skin.InternalName.Equals(characterTemplate.InternalName, StringComparison.OrdinalIgnoreCase));
+        var characterSkin = character.Skins.FirstOrDefault(skin =>
+            skin.InternalName.Equals(characterTemplate.InternalName));
 
 
         if (characterSkin is null)
@@ -420,6 +451,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         }
 
         SelectedInGameSkin = characterSkin;
+        ModdableObjectImage = SelectedInGameSkin.ImageUri ?? _imageHandlerService.PlaceholderImageUri;
+
         MoveModsFlyoutVM.SetActiveSkin(characterSkin);
 
 
@@ -427,13 +460,16 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             selectableInGameSkin.IsSelected = selectableInGameSkin.InternalName.Equals(characterTemplate.InternalName,
                 StringComparison.CurrentCultureIgnoreCase);
 
-        _lastSelectedSkin[ShownCharacter] = SelectedInGameSkin.InternalName;
+        _lastSelectedSkin[character] = SelectedInGameSkin.InternalName;
         await RefreshMods().ConfigureAwait(false);
     }
 
     private async Task<IReadOnlyCollection<CharacterSkinEntry>> FilterModsToSkin(IEnumerable<CharacterSkinEntry> mods,
-        SkinVM skin)
+        ICharacterSkin skin)
     {
+        if (ShownCharacter is not ICharacter character)
+            return mods.ToList();
+
         var filteredMods = new List<CharacterSkinEntry>();
         foreach (var mod in mods)
         {
@@ -447,7 +483,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             }
 
             // Has override skin, but does not match any of the characters skins
-            if (modSkin is not null && !ShownCharacter.InGameSkins.Any(skinVm =>
+            if (modSkin is not null && !character.Skins.Any(skinVm =>
                     skinVm.InternalNameEquals(modSkin)))
             {
                 // In this case, the override skin is not a valid skin for this character, so we just add it.
@@ -652,8 +688,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     private void ErrorNavigateBack()
     {
-        SelectedInGameSkin = new SkinVM();
-
         Task.Run(async () =>
         {
             await Task.Delay(500);

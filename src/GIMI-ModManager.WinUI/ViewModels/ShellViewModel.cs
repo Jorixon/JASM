@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
@@ -15,13 +16,16 @@ public partial class ShellViewModel : ObservableRecipient
     [ObservableProperty] private bool isNotFirstTimeStartupPage = true;
     [ObservableProperty] private object? selected;
     [ObservableProperty] private int settingsInfoBadgeOpacity = 0;
+    public readonly IGameService GameService;
+
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
     public NotificationManager NotificationManager { get; }
     public ElevatorService ElevatorService { get; }
 
     public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService,
-        NotificationManager notificationManager, ElevatorService elevatorService, UpdateChecker updateChecker)
+        NotificationManager notificationManager, ElevatorService elevatorService, UpdateChecker updateChecker,
+        IGameService gameService)
     {
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
@@ -29,6 +33,7 @@ public partial class ShellViewModel : ObservableRecipient
         NotificationManager = notificationManager;
         ElevatorService = elevatorService;
         _updateChecker = updateChecker;
+        GameService = gameService;
         _updateChecker.NewVersionAvailable += OnNewVersionAvailable;
     }
 
@@ -62,7 +67,7 @@ public partial class ShellViewModel : ObservableRecipient
             return;
         }
 
-        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType, e.Parameter);
         if (selectedItem != null)
         {
             Selected = selectedItem;

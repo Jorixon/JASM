@@ -231,24 +231,6 @@
     "DisplayName": "Chongyun"
   },
   {
-    "Id": 72,
-    "Keys": [
-      "clorinde"
-    ],
-    "ReleaseDate": "2024-01-01T00:00:00",
-    "Image": "Character_Clorinde_Thumb.png",
-    "Rarity": 0,
-    "Element": "Electro",
-    "Class": "",
-    "Region": [
-      "Fontaine"
-    ],
-    "ModFilesName": "Clorinde",
-    "InGameSkins": [],
-    "InternalName": "Clorinde",
-    "DisplayName": "Clorinde"
-  },
-  {
     "Id": 11,
     "Keys": [
       "collei"
