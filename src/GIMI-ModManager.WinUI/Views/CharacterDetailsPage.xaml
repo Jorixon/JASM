@@ -252,6 +252,7 @@
                     </StackPanel>
 
                     <StackPanel
+                        x:Name="SelectSkinBox"
                         Padding="8"
                         Background="{ThemeResource ControlFillColorDefaultBrush}"
                         Visibility="{x:Bind ViewModel.IsICharacter, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -271,6 +272,7 @@
                             Content="Select Skin"
                             Flyout="{StaticResource SelectInGameSkin}"
                             IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}">
+
                             <Button.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="F1" />
                             </Button.KeyboardAccelerators>
@@ -307,9 +309,15 @@
                         <MenuBar>
                             <MenuBarItem Title="Mods">
                                 <MenuBarItem.Items>
-                                    <MenuFlyoutItem Command="{x:Bind ViewModel.AddModFolderCommand}" Text="Add Mod..." />
+                                    <MenuFlyoutItem
+                                        Command="{x:Bind ViewModel.AddModFolderCommand}"
+                                        Text="Add Mod..."
+                                        ToolTipService.ToolTip="Add a mod folder" />
 
-                                    <MenuFlyoutItem Command="{x:Bind ViewModel.AddModArchiveCommand}" Text="Add Archive...">
+                                    <MenuFlyoutItem
+                                        Command="{x:Bind ViewModel.AddModArchiveCommand}"
+                                        Text="Add Archive..."
+                                        ToolTipService.ToolTip="Add a mod inside a compressed archive">
                                         <MenuFlyoutItem.KeyboardAccelerators>
                                             <KeyboardAccelerator Key="O" Modifiers="Control" />
                                         </MenuFlyoutItem.KeyboardAccelerators>

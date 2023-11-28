@@ -14,6 +14,7 @@ using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
@@ -36,6 +37,9 @@ public sealed partial class CharacterDetailsPage : Page
             if (args.PropertyName == nameof(ViewModel.IsAddingModFolder)) IsEnabled = !ViewModel.IsAddingModFolder;
 
             if (args.PropertyName == nameof(ViewModel.ModListVM.Mods)) CheckIfAnyMods();
+
+            if (args.PropertyName == nameof(ViewModel.SelectedInGameSkin))
+                ShowOnlyOneSkinTooltip(!ViewModel.MultipleInGameSkins);
         };
 
         ViewModel.ModListVM.SelectedMods.CollectionChanged += (sender, args) =>
@@ -472,5 +476,21 @@ public sealed partial class CharacterDetailsPage : Page
         if (modNotification.AttentionType != AttentionType.UpdateAvailable) return;
 
         await ViewModel.OpenNewModsWindowCommand.ExecuteAsync(modNotification).ConfigureAwait(false);
+    }
+
+    private void ShowOnlyOneSkinTooltip(bool showTooltip)
+    {
+        var button = SelectSkinBox;
+        if (!showTooltip) return;
+
+        var tooltip = ToolTipService.GetToolTip(button);
+        if (tooltip is ToolTip) return;
+        var toolTip = new ToolTip
+        {
+            Content = "This character only has one default in-game skin, so you can't change it.",
+            Placement = PlacementMode.Bottom
+        };
+
+        ToolTipService.SetToolTip(button, toolTip);
     }
 }
