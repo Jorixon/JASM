@@ -330,13 +330,13 @@ public class GameService : IGameService
 
 
     public bool IsMultiMod(IModdableObject moddableObject) =>
-        IsMultiMod(moddableObject.InternalName) || moddableObject.IsMultiMod;
+        moddableObject.IsMultiMod || IsMultiMod(moddableObject.InternalName);
 
-    public bool IsMultiMod(string modInternalName)
+    private static bool IsMultiMod(string modInternalName)
     {
-        var multiMod = new List<string> { "Gliders", "Weapons", "Others" };
+        var legacyPredefinedMultiMod = new List<string> { "gliders", "weapons", "others" };
 
-        return multiMod.Any(name => name.Equals(modInternalName, StringComparison.OrdinalIgnoreCase));
+        return legacyPredefinedMultiMod.Any(name => name.Equals(modInternalName, StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task InitializeGameInfoAsync()

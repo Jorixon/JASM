@@ -63,7 +63,6 @@ public interface IGameService
         GetOnly getOnlyStatus = GetOnly.Enabled);
 
     public bool IsMultiMod(IModdableObject moddableObject);
-    public bool IsMultiMod(string modInternalName);
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }
     public string WeaponsCharacterInternalName { get; }

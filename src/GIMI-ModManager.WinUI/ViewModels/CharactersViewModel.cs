@@ -748,34 +748,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public Task ModDroppedOnAutoDetect(IReadOnlyList<IStorageItem> storageItems)
-    {
-        var modNameToCharacter = new Dictionary<IStorageItem, ICharacter>();
-        var othersCharacter = _gameService.GetCharacters()
-            .First(x => x.InternalName == _gameService.OtherCharacterInternalName);
-
-        foreach (var storageItem in storageItems)
-        {
-            var modName = Path.GetFileNameWithoutExtension(storageItem.Name);
-            var result = _gameService.QueryCharacters(modName, minScore: 100);
-
-            var character = result.FirstOrDefault().Key;
-            if (character is not null)
-            {
-                _logger.Debug("Mod {ModName} was detected as {Character}", modName,
-                    character.InternalName);
-                modNameToCharacter.Add(storageItem, character);
-            }
-            else
-            {
-                _logger.Debug("Mod {ModName} was not detected as any character", modName);
-                modNameToCharacter.Add(storageItem, othersCharacter);
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
     private CharacterGridItemModel? FindCharacterByInternalName(string internalName)
     {
         return _backendCharacters.FirstOrDefault(x =>

@@ -106,23 +106,6 @@ public sealed partial class CharactersPage : Page
         Log.Information("Drop_DragAndDropArea_OnDrop");
     }
 
-    private void Page_OnDragEnter(object sender, DragEventArgs e)
-    {
-        e.AcceptedOperation = DataPackageOperation.Copy;
-        DragAndDropArea.Visibility = Visibility.Visible;
-    }
-
-    private void Page_OnDragLeave(object sender, DragEventArgs e)
-    {
-        DragAndDropArea.Visibility = Visibility.Collapsed;
-    }
-
-    private async void Page_OnDrop(object sender, DragEventArgs e)
-    {
-        await ViewModel.ModDroppedOnAutoDetect(await e.DataView.GetStorageItemsAsync());
-        DragAndDropArea.Visibility = Visibility.Collapsed;
-    }
-
     private void BitmapImage_OnImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
         Log.Error("Failed to load dock panel element icon. Reason: {e}", e.ErrorMessage);
