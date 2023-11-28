@@ -1,5 +1,5 @@
 ﻿// This is used to generate the weapon assets for the Genshin Impact mod.
-// This website was used to generate the weapon assets: https://genshinlist.com/weapons (https://genshinlist.com/api/weapons)
+// This github repo was used: https://raw.githubusercontent.com/tokafew420/genshin-impact-tools)
 
 
 using System.Text.Json;
