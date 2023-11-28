@@ -20,7 +20,7 @@ Unhandled exceptions are written to the Logs file as well. Debug logging can be 
 - Automatically sort unsorted mods into respective character's folders
 - Move Mods between characters
 - Start a 3Dmigto launcher and/or a certain game straight from the app
-- The app watches character folders and automaticly updates if skins are added or removed from folders.
+- The app watches character folders and automatically updates if skins are added or removed from folders.
 - Edit merged.ini keys
 - Export (copy) all mods managed by JASM to a user specified folder
 - Refresh mods using F10 or the refresh button in app. (Requires an elevated side process, see description bellow)
@@ -52,15 +52,15 @@ If you don't have these downloaded the application will prompt you to download n
 
 ### Elevator process
 The elevator process is a small program that can be started as an elevated process from the app. It is completely optional and is kind of a niche feature.
-It is used to send the F10 key to the game to refresh the mods. This is done trough named pipes. 
+It is used to send the F10 key to the game to refresh the mods. Enabling and disabling mods in JASM will also automatically refresh the mods. This is done through named pipes. 
 The process does not listen for keybinds it only waits for a simple "1" command from the app. This makes it send the F10 key to the game.
 
 The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is used to send keyboard input.
 
 
 ### Limitations and Acknowledgements
-- The Json file that stores the genshin characters is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and some of the images are also from the same repository.
-- The Json file that stores the genshin weapons is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/94d55e8b88d5580d84e6b0991ce82e2798220d44/data/weapons.json) and the weapon images are also from the same repository.
+- The Json file that stores the Genshin characters is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and some of the images are also from the same repository.
+- The Json file that stores the Genshin weapons is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/94d55e8b88d5580d84e6b0991ce82e2798220d44/data/weapons.json) and the weapon images are also from the same repository.
 - 7-Zip is bundled with the app, 7-Zip is licensed under the GNU Lesser General Public License (LGPL). You can find the full license details and source code at [www.7-zip.org](https://www.7-zip.org/).
 - SharpCompress is used if the bundled 7-zip is not found. SharpCompress is licensed under the MIT license. You can find the full license details and source code at [SharpCompress's GitHub Page](https://github.com/adamhathcock/sharpcompress)
 - WinUI3Localizer is used for localization. WinUI3Localizer is licensed under the MIT license. You can find the full license details and source code at [WinUI3Localizer's GitHub Page](https://github.com/AndrewKeepCoding/WinUI3Localizer)

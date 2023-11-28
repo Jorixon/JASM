@@ -43,6 +43,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ModSettingsService _modSettingsService;
     private readonly ImageHandlerService _imageHandlerService;
+    private readonly ElevatorService _elevatorService;
 
     private ICharacterModList _modList = null!;
     public ModListVM ModListVM { get; } = null!;
@@ -72,7 +73,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         NotificationManager notificationService, ILocalSettingsService localSettingsService,
         ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
         ModNotificationManager modNotificationManager, ModSettingsService modSettingsService,
-        IWindowManagerService windowManagerService, ImageHandlerService imageHandlerService)
+        IWindowManagerService windowManagerService, ImageHandlerService imageHandlerService,
+        ElevatorService elevatorService)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -86,6 +88,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _modSettingsService = modSettingsService;
         _windowManagerService = windowManagerService;
         _imageHandlerService = imageHandlerService;
+        _elevatorService = elevatorService;
 
         _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
         {
@@ -292,6 +295,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
         thisMod.IsEnabled = !thisMod.IsEnabled;
         thisMod.FolderName = _modList.Mods.First(mod => mod.Id == thisMod.Id).Mod.Name;
+        _elevatorService.RefreshGenshinMods();
     }
 
     [ObservableProperty] private bool _isAddingModFolder = false;
