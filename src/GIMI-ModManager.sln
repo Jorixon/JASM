@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinGenerator", "Genshin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{22904DAB-4694-4115-B76D-9029CCADB992}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JASM.AutoUpdater", "JASM.AutoUpdater\JASM.AutoUpdater.csproj", "{5B68851F-C6D2-4103-89A8-B8794BB11FF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JASM.AutoUpdater", "JASM.AutoUpdater\JASM.AutoUpdater.csproj", "{5B68851F-C6D2-4103-89A8-B8794BB11FF3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdateWeaponAssets", "UpdateGenshinAssets\UpdateWeaponAssets.csproj", "{13E3036A-1746-4164-A43F-090EC954E8FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +139,22 @@ Global
 		{5B68851F-C6D2-4103-89A8-B8794BB11FF3}.Release|x86.ActiveCfg = Release|x86
 		{5B68851F-C6D2-4103-89A8-B8794BB11FF3}.Release|x86.Build.0 = Release|x86
 		{5B68851F-C6D2-4103-89A8-B8794BB11FF3}.Release|x86.Deploy.0 = Release|x86
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|arm64.Build.0 = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|arm64.ActiveCfg = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|arm64.Build.0 = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|x64.Build.0 = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{13E3036A-1746-4164-A43F-090EC954E8FA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +162,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{992DF5F9-CBB9-4483-A71D-C0083C173B1C} = {4E3DE2B1-EF6D-4E01-BCAB-3505C3B9E365}
 		{9058F3A2-BA4C-47B2-B4E2-26928CBD2793} = {22904DAB-4694-4115-B76D-9029CCADB992}
+		{13E3036A-1746-4164-A43F-090EC954E8FA} = {22904DAB-4694-4115-B76D-9029CCADB992}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E01F4EA5-3B64-4C68-9474-CB87A51AF7D9}

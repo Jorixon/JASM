@@ -817,6 +817,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate(), othersCharacter, lastCharacters));
             SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
         }
+
+        if (_category.ModCategory == ModCategory.Weapons)
+        {
+            SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
+        }
     }
 }
 
@@ -988,8 +993,8 @@ public sealed class Sorter
             RaritySortName,
             (characters, isDescending) =>
                 !isDescending
-                    ? characters.OrderByDescending(x => ((ICharacter)x.Character).Rarity)
-                    : characters.OrderBy(x => ((ICharacter)x.Character).Rarity),
+                    ? characters.OrderByDescending(x => ((IRarity)x.Character).Rarity)
+                    : characters.OrderBy(x => ((IRarity)x.Character).Rarity),
             (characters, _) =>
                 characters.ThenBy(x => (x.Character.DisplayName)
                 ));

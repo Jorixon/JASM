@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Serilog;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Pipes;
-using Microsoft.UI.Xaml;
 using System.Security.Principal;
-using Windows.System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI;
+using Microsoft.UI.Xaml;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services;
 
@@ -13,6 +13,8 @@ public partial class ElevatorService : ObservableRecipient
     public const string ElevatorPipeName = "MyPipess";
     public const string ElevatorProcessName = "Elevator.exe";
     private readonly ILogger _logger;
+    private Task? _refreshTask;
+    private readonly object _refreshLock = new();
 
     [ObservableProperty] private ElevatorStatus _elevatorStatus = ElevatorStatus.NotRunning;
     private Process? _elevatorProcess;
@@ -36,6 +38,7 @@ public partial class ElevatorService : ObservableRecipient
         if (Path.Exists(elevatorPath))
         {
             _logger.Debug(ElevatorProcessName + " found at: " + elevatorPath);
+            _IsInitialized = true;
             return;
         }
 
@@ -98,17 +101,48 @@ public partial class ElevatorService : ObservableRecipient
         }
     }
 
-    public async Task RefreshGenshinMods()
+    public Task RefreshGenshinMods()
+    {
+        if (_elevatorProcess is null || _elevatorProcess.HasExited)
+        {
+            _logger.Debug("Elevator.exe is not running");
+            return Task.CompletedTask;
+        }
+
+        lock (_refreshLock)
+        {
+            if (_refreshTask is { IsCompleted: false })
+            {
+                return _refreshTask;
+            }
+
+            _refreshTask = Task.Run(async () =>
+            {
+                await InternalRefreshGenshinMods().ConfigureAwait(false);
+                await Task.Delay(500).ConfigureAwait(false); // Debounce
+            });
+
+            return _refreshTask;
+        }
+    }
+
+    private async Task InternalRefreshGenshinMods()
     {
         try
         {
             await using var pipeClient = new NamedPipeClientStream(".", ElevatorPipeName, PipeDirection.Out);
             await pipeClient.ConnectAsync(TimeSpan.FromSeconds(5), default);
             await using var writer = new StreamWriter(pipeClient);
-            _logger.Debug("Sending command: {Command}", nameof(RefreshGenshinMods));
+            _logger.Debug("Sending command: {Command}", nameof(InternalRefreshGenshinMods));
             await writer.WriteLineAsync("0");
             await writer.FlushAsync();
             _logger.Debug("Done");
+            App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+            {
+                await Task.Delay(500);
+                App.MainWindow.SetForegroundWindow();
+                App.MainWindow.Activate();
+            });
         }
         catch (TimeoutException e)
         {

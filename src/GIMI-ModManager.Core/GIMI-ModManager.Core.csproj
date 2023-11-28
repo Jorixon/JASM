@@ -21,7 +21,11 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 
-
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>UpdateGenshinAssets</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
   <ItemGroup>
     <PackageReference Include="ErrorOr" Version="1.2.1" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />

@@ -419,7 +419,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             TextWrapping = TextWrapping.WrapWholeWords,
             Text =
                 "Press Start to launch the Elevator. The Elevator is an elevated (admin) process that is used for communication with the Genshin game process.\n\n" +
-                "While the Elevator is active, you can press F10 within this App to refresh active mods in Genshin. " +
+                "While the Elevator is active, you can press F10 within this App to refresh active mods in Genshin.\n\n" +
+                "Enabling and disabling mods will also automatically refresh active mods in Genshin " +
                 "The Elevator process should automatically close when this program is closed.\n\n" +
                 "After pressing Start, a User Account Control (UAC) prompt will appear to confirm the elevation.\n\n" +
                 "(This requires that Genshin and that 3Dmigoto is running, when pressing F10",
