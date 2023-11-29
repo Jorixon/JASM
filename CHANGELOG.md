@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.9.0](https://github.com/Jorixon/JASM/compare/v1.8.1...v1.9.0) (2023-11-29)
+
+
+### Features
+
+* Added Weapons category([#95](https://github.com/Jorixon/JASM/issues/95)) ([6c55bf3](https://github.com/Jorixon/JASM/commit/6c55bf36b1d2492537ff4661b8a76b1d85497547))
+* Category support. Added empty objects and minimal npcs categories. ([#93](https://github.com/Jorixon/JASM/issues/93)) ([7349b41](https://github.com/Jorixon/JASM/commit/7349b41347ddc1d9c843afdabed4f71ddfd26035))
+* The Elevator process will now automatically refresh mods in game when enabling/disabling mods in JASM ([6c55bf3](https://github.com/Jorixon/JASM/commit/6c55bf36b1d2492537ff4661b8a76b1d85497547))
+
+
+### Bug Fixes
+
+* Honkai star rail 3DMigotoLoader not starting as admin. Now checking the "run this program as an administrator" on the file "3DMigotoLoader.exe" should start it as admin, this worked for me at least ([7349b41](https://github.com/Jorixon/JASM/commit/7349b41347ddc1d9c843afdabed4f71ddfd26035))
+
+
+### Tweaks
+
+* Added some more info to the "mod added" notification and "mod moved" notification. ([7349b41](https://github.com/Jorixon/JASM/commit/7349b41347ddc1d9c843afdabed4f71ddfd26035))
+
+
+### Miscellaneous
+
+* Added more tooltips around the app and some minor text changes ([6c55bf3](https://github.com/Jorixon/JASM/commit/6c55bf36b1d2492537ff4661b8a76b1d85497547))
+* Minor improvements to the underlying code of the Mod installer helper ([7349b41](https://github.com/Jorixon/JASM/commit/7349b41347ddc1d9c843afdabed4f71ddfd26035))
+
 ## [1.8.1](https://github.com/Jorixon/JASM/compare/v1.8.0...v1.8.1) (2023-11-24)
 
 
