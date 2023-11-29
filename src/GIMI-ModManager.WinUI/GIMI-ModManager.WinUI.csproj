@@ -177,6 +177,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Others.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Akuoumaru.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Alley_Hunter.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Amber_Catalyst.png" />
@@ -470,7 +471,6 @@
 	<ItemGroup>
 		<None Remove="Assets\easterEgg.mp3" />
 		<None Remove="Assets\Fonts\zh-cn2.ttf" />
-		<None Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<None Remove="Assets\Games\Honkai\Images\Start_Game.png" />
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
