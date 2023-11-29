@@ -249,8 +249,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
             return;
         }
 
-        notificationManager.ShowNotification("Mods Moved",
-            $"Successfully deleted {modsDeleted} mods in {shownCharacterName} Mods Folder",
+        notificationManager.ShowNotification($"{modsDeleted} Mods Deleted",
+            $"Successfully deleted {string.Join(", ", modEntryNames)} in {shownCharacterName} Mods Folder",
             TimeSpan.FromSeconds(5));
 
         ModsDeleted?.Invoke(this, EventArgs.Empty);

@@ -397,7 +397,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             var notifications = await _modNotificationManager.GetNotificationsAsync();
 
             var modNotifications = notifications.Where(x =>
-                    x.ModId == skinEntry.Id || ModFolderHelpers.FolderNameEquals(x.ModFolderName, skinEntry.Mod.Name))
+                    x.ModId == skinEntry.Id)
                 .ToArray();
 
             modNotifications.ForEach(newModModel.ModNotifications.Add);

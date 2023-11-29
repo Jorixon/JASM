@@ -421,6 +421,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\xueyi.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
+		<Content Remove="Assets\Games\Honkai\weapons.json" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 	</ItemGroup>
