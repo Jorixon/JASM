@@ -20,9 +20,9 @@
     "DisplayName": "Clorinde"
   },
   {
-    "ModFilesName": "Siegwinne",
-    "InternalName": "Siegwinne",
-    "DisplayName": "Siegwinne"
+    "ModFilesName": "Sigewinne",
+    "InternalName": "Sigewinne",
+    "DisplayName": "Sigewinne"
   },
   {
     "IsMultiMod": true,
@@ -39,8 +39,8 @@
   {
     "IsMultiMod": true,
     "ModFilesName": "",
-    "InternalName": "Fungi",
-    "DisplayName": "Fungi"
+    "InternalName": "Fungus",
+    "DisplayName": "Fungus"
   },
   {
     "IsMultiMod": true,
@@ -59,11 +59,5 @@
     "ModFilesName": "",
     "InternalName": "Ruin Machines",
     "DisplayName": "Ruin Machines"
-  },
-  {
-    "IsMultiMod": true,
-    "ModFilesName": "",
-    "InternalName": "Fontainian Automata",
-    "DisplayName": "Fontainian Automata"
   }
 ]
