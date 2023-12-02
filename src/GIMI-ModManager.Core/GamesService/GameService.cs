@@ -60,6 +60,7 @@ public class GameService : IGameService
 
     private bool _initialized;
 
+
     public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null)
     {
@@ -95,6 +96,54 @@ public class GameService : IGameService
 
         _initialized = true;
         Initialized?.Invoke(this, EventArgs.Empty);
+    }
+
+    public async Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory)
+    {
+        if (_initialized)
+        {
+            _logger.Warning("GameService is already initialized");
+            return GetAllModdableObjects(GetOnly.Both).Select(x => x.InternalName).ToList();
+        }
+
+        _assetsDirectory = new DirectoryInfo(assetsDirectory);
+        if (!_assetsDirectory.Exists)
+            throw new DirectoryNotFoundException($"Directory not found at path: {_assetsDirectory.FullName}");
+
+        var modDirectories = new List<InternalName>();
+
+        foreach (var predefinedCategory in Category.GetAllPredefinedCategories())
+        {
+            var jsonFilePath = Path.Combine(_assetsDirectory.FullName, predefinedCategory.InternalName.Id + ".json");
+            if (!File.Exists(jsonFilePath))
+                continue;
+            try
+            {
+                var json = await File.ReadAllTextAsync(jsonFilePath);
+                var jsonBaseNameables = JsonSerializer.Deserialize<IEnumerable<JsonBaseNameable>>(json,
+                    _jsonSerializerOptions);
+
+                jsonBaseNameables ??= Array.Empty<JsonBaseNameable>();
+
+                foreach (var jsonBaseNameable in jsonBaseNameables)
+                {
+                    if (jsonBaseNameable.InternalName.IsNullOrEmpty())
+                        continue;
+
+                    var internalName = new InternalName(jsonBaseNameable.InternalName);
+                    if (modDirectories.Contains(internalName))
+                        continue;
+                    modDirectories.Add(internalName);
+                }
+            }
+            catch (Exception)
+            {
+                _logger.Warning("Error while reading {JsonFile} during PreInitializedReadModObjectsAsync",
+                    jsonFilePath);
+            }
+        }
+
+        return modDirectories;
     }
 
 
