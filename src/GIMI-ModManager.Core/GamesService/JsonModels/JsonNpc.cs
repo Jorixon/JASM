@@ -2,5 +2,4 @@
 
 internal class JsonNpc : JsonBaseModdableObject
 {
-    public string? Image { get; set; }
 }
