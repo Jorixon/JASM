@@ -11,7 +11,7 @@
     "Image": "Npc_Katheryne.png"
   },
   {
-    "Image": "Npc_Clorinde_Thumb.png",
+    "Image": "Npc_Clorinde.png",
     "Region": [
       "Fontaine"
     ],
@@ -20,8 +20,50 @@
     "DisplayName": "Clorinde"
   },
   {
-    "ModFilesName": "Hilichurl",
+    "ModFilesName": "Siegwinne",
+    "InternalName": "Siegwinne",
+    "DisplayName": "Siegwinne"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "Hilichurls",
     "InternalName": "Hilichurl",
-    "DisplayName": "Hilichurl"
+    "DisplayName": "Hilichurls"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "",
+    "InternalName": "Slimes",
+    "DisplayName": "Slimes"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "",
+    "InternalName": "Fungi",
+    "DisplayName": "Fungi"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "",
+    "InternalName": "Treasure Hoarders",
+    "DisplayName": "Treasure Hoarders"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "",
+    "InternalName": "Fatui",
+    "DisplayName": "Fatui"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "",
+    "InternalName": "Ruin Machines",
+    "DisplayName": "Ruin Machines"
+  },
+  {
+    "IsMultiMod": true,
+    "ModFilesName": "",
+    "InternalName": "Fontainian Automata",
+    "DisplayName": "Fontainian Automata"
   }
 ]

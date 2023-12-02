@@ -1,6 +1,5 @@
 ﻿using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.JsonModels;
-using Serilog;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 
@@ -35,31 +34,10 @@ public class Npc : INpc
             ModFilesName = jsonNpc.ModFilesName ?? string.Empty,
             IsMultiMod = jsonNpc.IsMultiMod ?? false
         };
-        npc.SetImageUri(imageFolder, jsonNpc.Image);
 
+        npc.ImageUri = MapperHelpers.GetImageUri(internalName, imageFolder, npc.ModCategory, jsonNpc.Image);
 
         return npc;
-    }
-
-
-    internal void SetImageUri(string imageFolder, string? jsonImagePath)
-    {
-        if (string.IsNullOrWhiteSpace(imageFolder) || string.IsNullOrWhiteSpace(jsonImagePath))
-            return;
-
-        var imagePath = Path.Combine(imageFolder, jsonImagePath);
-
-        var imageUri = Uri.TryCreate(imagePath, UriKind.Absolute, out var uriResult)
-            ? uriResult
-            : null;
-
-        if (imageUri is not null && File.Exists(imageUri.LocalPath))
-        {
-            ImageUri = imageUri;
-            return;
-        }
-
-        Log.Warning("Image for {InternalName} not found at {ImageUri}", InternalName, imageUri);
     }
 
 

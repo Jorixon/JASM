@@ -174,7 +174,8 @@
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Geo.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Hydro.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Pyro.svg" />
-		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Fatui.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Start_Game.png" />

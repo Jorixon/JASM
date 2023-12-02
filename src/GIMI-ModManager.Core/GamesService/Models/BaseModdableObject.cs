@@ -50,7 +50,7 @@ public class BaseModdableObject : IModdableObject
             category
         )
         {
-            ImageUri = MapperHelpers.GetImageUri(internalName, imageFolder, json.Image),
+            ImageUri = MapperHelpers.GetImageUri(internalName, imageFolder, category, jsonImageFileName: json.Image),
             ModFilesName = json.ModFilesName ?? string.Empty,
             IsMultiMod = json.IsMultiMod ?? false
         };
