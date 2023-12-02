@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.9.1](https://github.com/Jorixon/JASM/compare/v1.9.0...v1.9.1) (2023-12-02)
+
+
+### Bug Fixes
+
+* Possible fix for mod folder names containing " ä " or similar characters, causing mod preview image to fail to load ([d184123](https://github.com/Jorixon/JASM/commit/d184123bb158dbd5c805d31818657e5ff7817bbf))
+
+
+### Tweaks
+
+* Made automatic mod resorting a bit stricter when checking folder name and internal name ([d184123](https://github.com/Jorixon/JASM/commit/d184123bb158dbd5c805d31818657e5ff7817bbf))
+
+
+### Miscellaneous
+
+* Author now visibly in mod grid ([d184123](https://github.com/Jorixon/JASM/commit/d184123bb158dbd5c805d31818657e5ff7817bbf))
+* More npcs and images ([d184123](https://github.com/Jorixon/JASM/commit/d184123bb158dbd5c805d31818657e5ff7817bbf))
+* Updated WinAppSDK and a few other packages ([#102](https://github.com/Jorixon/JASM/issues/102)) ([d184123](https://github.com/Jorixon/JASM/commit/d184123bb158dbd5c805d31818657e5ff7817bbf))
+
 ## [1.9.0](https://github.com/Jorixon/JASM/compare/v1.8.1...v1.9.0) (2023-11-29)
 
 
