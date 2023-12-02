@@ -31,7 +31,7 @@ public static class SkinModHelpers
             if (string.IsNullOrWhiteSpace(modName))
                 modName = mod.Name;
 
-            var relativePath = relativeUri.ToString().Replace($"{modName}/", "");
+            var relativePath = relativeUri.OriginalString.Replace($"{modName}/", "");
 
             return relativePath;
         }
