@@ -8,10 +8,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+
+    <UserControl.Resources>
+        <MenuFlyout x:Key="Flyout">
+            <MenuFlyoutItem Click="MenuFlyoutItem_CopyLink" Text="Copy Link">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE8C8;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+    </UserControl.Resources>
+
+
     <Grid>
         <HyperlinkButton
             VerticalAlignment="Center"
             Click="ButtonBase_OnClick"
+            ContextFlyout="{StaticResource Flyout}"
             NavigateUri="{x:Bind Link, Mode=OneWay}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock

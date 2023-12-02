@@ -152,6 +152,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
         SelectedGame = await _selectedGameService.GetSelectedGameAsync();
         SetGameInfo(SelectedGame);
+        ReorganizeModsOnStartup = true;
     }
 
     [RelayCommand]

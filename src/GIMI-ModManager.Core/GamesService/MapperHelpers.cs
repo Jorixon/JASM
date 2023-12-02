@@ -1,20 +1,48 @@
 ﻿using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
 
 namespace GIMI_ModManager.Core.GamesService;
 
 internal static class MapperHelpers
 {
-    internal static Uri? GetImageUri(InternalName internalName, string? imageFolder, string? jsonImagePath)
+    private static Uri? CombinePaths(string path1, string path2)
     {
-        if (string.IsNullOrWhiteSpace(jsonImagePath) || string.IsNullOrWhiteSpace(imageFolder))
-            return null;
+        var imagePath = Path.Combine(path1, path2);
 
-        var imagePath = Path.Combine(imageFolder, jsonImagePath);
-
-        var imageUri = Uri.TryCreate(imagePath, UriKind.Absolute, out var uriResult)
+        var uri = Uri.TryCreate(imagePath, UriKind.Absolute, out var uriResult)
             ? uriResult
             : null;
+        return uri;
+    }
+
+    internal static Uri? GetImageUri(InternalName internalName, string? imageFolderPath,
+        ICategory? category = null, string? jsonImageFileName = null)
+    {
+        if (string.IsNullOrWhiteSpace(imageFolderPath))
+            return null;
+
+
+        if (string.IsNullOrWhiteSpace(jsonImageFileName) && category is not null)
+        {
+            var acceptedExtensions = Constants.SupportedImageExtensions;
+
+            foreach (var acceptedExtension in acceptedExtensions)
+            {
+                var imageName = $"{category.InternalName}_{internalName.Id}{acceptedExtension}";
+
+                if (!File.Exists(CombinePaths(imageFolderPath, imageName)?.LocalPath)) continue;
+
+                jsonImageFileName = imageName;
+                break;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(jsonImageFileName))
+            return null;
+
+
+        var imageUri = CombinePaths(imageFolderPath, jsonImageFileName);
 
         if (imageUri is not null && File.Exists(imageUri.LocalPath))
         {

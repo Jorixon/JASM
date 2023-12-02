@@ -13,6 +13,8 @@ public interface IGameService
 
     public event EventHandler? Initialized;
 
+    public Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory);
+
     public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
         ICollection<string>? disabledCharacters = null);
 

@@ -1,3 +1,4 @@
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -49,5 +50,14 @@ public sealed partial class LinkButton : UserControl
         {
             await Launcher.LaunchFolderPathAsync(Link.LocalPath);
         }
+    }
+
+    private void MenuFlyoutItem_CopyLink(object sender, RoutedEventArgs e)
+    {
+        if (Link is null) return;
+        var dataPackage = new DataPackage();
+        var linkText = Link.Scheme == Uri.UriSchemeFile ? Link.LocalPath : Link.ToString();
+        dataPackage.SetText(linkText);
+        Clipboard.SetContent(dataPackage);
     }
 }

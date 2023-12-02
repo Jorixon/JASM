@@ -260,6 +260,36 @@ public sealed partial class CharacterDetailsPage : Page
             }
         }
 
+        if (e.Column.Tag.ToString() == "Author Name")
+        {
+            //Implement sort on the column "Range" using LINQ
+            if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+            {
+                var sortedMods = ViewModel.ModListVM.BackendMods
+                    .OrderBy(m => string.IsNullOrWhiteSpace(m.Author))
+                    .ThenByDescending(modModel => modModel.Author);
+
+
+                ViewModel.ModListVM.ReplaceMods(sortedMods);
+
+
+                e.Column.SortDirection = DataGridSortDirection.Ascending;
+                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), false);
+            }
+            else
+            {
+                var sortedMods = ViewModel.ModListVM.BackendMods
+                    .OrderBy(m => string.IsNullOrWhiteSpace(m.Author))
+                    .ThenBy(modModel => modModel.Author);
+
+                ViewModel.ModListVM.ReplaceMods(sortedMods);
+
+
+                e.Column.SortDirection = DataGridSortDirection.Descending;
+                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), true);
+            }
+        }
+
 
         // Remove sorting indicators from other columns
         foreach (var dgColumn in ModListGrid.Columns)

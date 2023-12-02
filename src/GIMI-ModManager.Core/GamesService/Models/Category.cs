@@ -72,6 +72,17 @@ public class Category : ICategory
         return new Category(internalName, ModCategory.Custom, "Custom", "Custom", typeof(IModdableObject));
     }
 
+    internal static ICategory[] GetAllPredefinedCategories()
+    {
+        return new ICategory[]
+        {
+            CreateForCharacter(),
+            CreateForNpc(),
+            CreateForObjects(),
+            CreateForWeapons()
+        };
+    }
+
     internal static ICategory CreateCustom(string internalNameString, string displayName, string displayNamePlural)
     {
         var internalName = new InternalName(internalNameString);

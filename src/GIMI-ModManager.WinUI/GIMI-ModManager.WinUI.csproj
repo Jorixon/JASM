@@ -174,9 +174,15 @@
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Geo.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Hydro.svg" />
 		<Content Remove="Assets\Games\Genshin\Images\Elements\Pyro.svg" />
-		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Fatui.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Fungus.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Hilichurl.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Others.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Ruin Machines.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Sigewinne.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Slimes.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Akuoumaru.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Alley_Hunter.png" />
@@ -505,21 +511,21 @@
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Primitives" Version="7.1.2" />
 		<PackageReference Include="FluentValidation" Version="11.7.1" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.13" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.0" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
 		<PackageReference Include="OneOf" Version="3.0.263" />
-		<PackageReference Include="Polly" Version="8.1.0" />
+		<PackageReference Include="Polly" Version="8.2.0" />
 		<PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
-		<PackageReference Include="Polly.Extensions" Version="8.1.0" />
+		<PackageReference Include="Polly.Extensions" Version="8.2.0" />
 		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
-		<PackageReference Include="Polly.RateLimiting" Version="8.1.0" />
-		<PackageReference Include="Serilog" Version="3.0.1" />
-		<PackageReference Include="Serilog.Expressions" Version="3.4.1" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
+		<PackageReference Include="Polly.RateLimiting" Version="8.2.0" />
+		<PackageReference Include="Serilog" Version="3.1.1" />
+		<PackageReference Include="Serilog.Expressions" Version="4.0.0" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 		<PackageReference Include="Serilog.Sinks.EventLog" Version="3.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
@@ -617,6 +623,21 @@
 		<Content Update="Assets\Fonts\zh-cn2.ttf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Slimes.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Clorinde.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Fatui.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Others.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\Games\Honkai\npcs.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

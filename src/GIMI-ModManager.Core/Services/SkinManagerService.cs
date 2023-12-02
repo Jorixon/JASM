@@ -644,7 +644,7 @@ public sealed class SkinManagerService : ISkinManagerService
             {
                 closestMatchCharacter = _gameService.QueryModdableObjects(
                     ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(folder.Name),
-                    minScore: 150).OrderByDescending(x => x.Value).FirstOrDefault().Key;
+                    minScore: 200).OrderByDescending(x => x.Value).FirstOrDefault().Key;
             }
 
             switch (closestMatchCharacter)

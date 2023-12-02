@@ -482,6 +482,14 @@
                                         IsReadOnly="True"
                                         Tag="Folder Name" />
 
+                                    <controls:DataGridTextColumn
+                                        Width="SizeToCells"
+                                        Binding="{Binding Author, Mode=OneWay}"
+                                        CanUserSort="True"
+                                        Header="Author"
+                                        IsReadOnly="True"
+                                        Tag="Author Name" />
+
                                 </controls:DataGrid.Columns>
 
                             </controls:DataGrid>

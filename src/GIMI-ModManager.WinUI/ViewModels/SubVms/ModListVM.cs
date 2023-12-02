@@ -129,6 +129,14 @@ public partial class ModListVM : ObservableRecipient
                         : BackendMods.OrderBy(modModel => modModel.FolderName));
                     break;
 
+                case nameof(ModModel.Author):
+                    AddMods(sortMethod.IsDescending
+                        ? BackendMods.OrderBy(m => string.IsNullOrWhiteSpace(m.Author))
+                            .ThenByDescending(modModel => modModel.Author)
+                        : BackendMods.OrderBy(m => string.IsNullOrWhiteSpace(m.Author))
+                            .ThenByDescending(modModel => modModel.Author));
+                    break;
+
                 default:
                     Debug.Assert(false, "Unknown sort method");
                     AddMods(BackendMods.OrderBy(modModel => modModel.Name));
