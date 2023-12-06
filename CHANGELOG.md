@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/Jorixon/JASM/compare/v1.9.1...v1.9.2) (2023-12-06)
+
+
+### Bug Fixes
+
+* Crash window showing on shutdown ([88ab01b](https://github.com/Jorixon/JASM/commit/88ab01b7f52bc9903caae645deaa9a3669a15d9a))
+
 ## [1.9.1](https://github.com/Jorixon/JASM/compare/v1.9.0...v1.9.1) (2023-12-02)
 
 
