@@ -5,6 +5,7 @@ using Windows.Graphics;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
@@ -148,6 +149,7 @@ public class ActivationService : IActivationService
     }
 
     const int MinimizedPosition = -32000;
+
     private async Task SetWindowSettings()
     {
         var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
@@ -195,23 +197,34 @@ public class ActivationService : IActivationService
             args.Handled = true;
 
             var notificationCleanup = Task.Run(_modNotificationManager.CleanupAsync).ConfigureAwait(false);
-            var saveWindowSettingsTask = SaveWindowSettingsAsync().ConfigureAwait(false);
+            var saveWindowSettingsTask = SaveWindowSettingsAsync();
 
             _logger.Debug("JASM shutting down...");
             _modUpdateAvailableChecker.CancelAndStop();
             _updateChecker.CancelAndStop();
 
-
+            await saveWindowSettingsTask;
             await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);
 
             var tmpDir = new DirectoryInfo(App.TMP_DIR);
             if (tmpDir.Exists)
             {
+                tmpDir.Refresh();
                 _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
-                tmpDir.Delete(true);
+                try
+                {
+                    tmpDir.EnumerateFiles("*", SearchOption.AllDirectories)
+                        .ForEach(f => f.Attributes = FileAttributes.Normal);
+                    tmpDir.EnumerateDirectories("*", SearchOption.AllDirectories)
+                        .ForEach(d => d.Attributes = FileAttributes.Normal);
+                    tmpDir.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    _logger.Warning(e, "Failed to delete temporary directory: {Path}", tmpDir.FullName);
+                }
             }
 
-            await saveWindowSettingsTask;
             await notificationCleanup;
             _logger.Debug("JASM shutdown complete.");
         }

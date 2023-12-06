@@ -6,7 +6,7 @@ namespace GIMI_ModManager.WinUI.Services;
 
 public class ImageHandlerService
 {
-    private readonly DirectoryInfo _tmpFolder = new(Path.Combine(App.TMP_DIR, "Images"));
+    private readonly string _tmpFolder = Path.Combine(App.TMP_DIR, "Images");
 
     public readonly Uri PlaceholderImageUri =
         new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
@@ -60,13 +60,14 @@ public class ImageHandlerService
             throw new ArgumentException($"Url must be a valid image url. Invalid extension: {invalidExtension}");
         }
 
+        var tmpFolder = new DirectoryInfo(_tmpFolder);
 
-        var tmpFile = Path.Combine(_tmpFolder.FullName,
+        var tmpFile = Path.Combine(tmpFolder.FullName,
             $"WEB_DOWNLOAD_{Guid.NewGuid():N}{Path.GetExtension(url.ToString())}");
 
 
-        if (!_tmpFolder.Exists)
-            _tmpFolder.Create();
+        if (!tmpFolder.Exists)
+            tmpFolder.Create();
 
         var client = _httpClientFactory.CreateClient();
 
@@ -81,12 +82,14 @@ public class ImageHandlerService
 
     private async Task<StorageFile> CopyImageToTmpFolder(StorageFile file)
     {
-        if (!_tmpFolder.Exists) _tmpFolder.Create();
+        var tmpFolder = new DirectoryInfo(_tmpFolder);
 
-        var tmpFile = new FileInfo(Path.Combine(_tmpFolder.FullName, file.Name));
+        if (!tmpFolder.Exists) tmpFolder.Create();
+
+        var tmpFile = new FileInfo(Path.Combine(tmpFolder.FullName, file.Name));
         if (tmpFile.Exists) tmpFile.Delete();
 
-        var tmpImage = await file.CopyAsync(await StorageFolder.GetFolderFromPathAsync(_tmpFolder.FullName));
+        var tmpImage = await file.CopyAsync(await StorageFolder.GetFolderFromPathAsync(tmpFolder.FullName));
         var extension = tmpImage.FileType;
 
         var newFileName = $"{Path.GetFileNameWithoutExtension(tmpImage.Name)}_{Guid.NewGuid()}{extension}";
