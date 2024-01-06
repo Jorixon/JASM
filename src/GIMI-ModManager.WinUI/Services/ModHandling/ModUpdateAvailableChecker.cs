@@ -63,8 +63,13 @@ public sealed class ModUpdateAvailableChecker
 
         var stoppingToken = _stoppingCancellationTokenSource.Token;
 
-        Task.Run(() => StartBackgroundChecker(stoppingToken), CancellationToken.None);
-        Task.Run(() => AutoCheckerProducer(stoppingToken), CancellationToken.None);
+
+        Task.Factory.StartNew(() => StartBackgroundChecker(stoppingToken), stoppingToken,
+            TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+        Task.Factory.StartNew(() => AutoCheckerProducer(stoppingToken), stoppingToken, TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
+
         return Task.CompletedTask;
     }
 

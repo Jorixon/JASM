@@ -72,7 +72,7 @@ public sealed class UpdateChecker : IDisposable
 
     private void InitCheckerLoop(CancellationToken cancellationToken)
     {
-        Task.Run(async () =>
+        Task.Factory.StartNew(async () =>
         {
             while (!cancellationToken.IsCancellationRequested)
                 try
@@ -91,7 +91,7 @@ public sealed class UpdateChecker : IDisposable
                     _logger.Error(e, "Failed to check for updates. Stopping Update checker");
                     break;
                 }
-        }, CancellationToken.None);
+        }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
 

@@ -895,7 +895,7 @@
     "Keys": [
       "navia"
     ],
-    "ReleaseDate": "2024-01-01T00:00:00",
+    "ReleaseDate": "2023-12-20T00:00:00",
     "Image": "Character_Navia_Thumb.png",
     "Rarity": 0,
     "Element": "Geo",
@@ -1525,5 +1525,22 @@
     "InGameSkins": [],
     "InternalName": "Wriothesley",
     "DisplayName": "Wriothesley"
+  },
+  {
+    "Keys": [
+      "chevreuse"
+    ],
+    "ReleaseDate": "2025-01-01T00:00:00",
+    "Image": "Character_Chevreuse_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Polearm",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Chevreuse",
+    "InGameSkins": [],
+    "InternalName": "Chevreuse",
+    "DisplayName": "Chevreuse"
   }
 ]
