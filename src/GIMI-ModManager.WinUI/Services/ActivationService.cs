@@ -401,6 +401,7 @@ public class ActivationService : IActivationService
             Text = """
 
                    This popup will be shown until you chose an option below. You can also use the reorganize button on the settings page.
+                   Check the logs if you want to see what's happening.
                    """,
             IsTextSelectionEnabled = true,
             TextWrapping = TextWrapping.WrapWholeWords

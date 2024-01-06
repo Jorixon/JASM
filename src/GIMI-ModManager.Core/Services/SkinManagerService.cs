@@ -704,6 +704,8 @@ public sealed class SkinManagerService : ISkinManagerService
                     try
                     {
                         AddMod(await SkinMod.CreateModAsync(modFolder), existingModList, true);
+                        _logger.Information("Moved mod '{ModName}' to '{CharacterFolder}' mod folder",
+                            modFolder.Name, existingModList.Character.InternalName);
                         movedMods++;
                     }
                     catch (Exception e)
