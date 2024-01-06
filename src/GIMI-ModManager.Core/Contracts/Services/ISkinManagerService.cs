@@ -76,6 +76,8 @@ public interface ISkinManagerService : IDisposable
     /// <param name="modList">The modList where the mod will be moved to</param>
     /// <param name="move">If true, will move the mod instead of copying it</param>
     public ISkinMod AddMod(ISkinMod mod, ICharacterModList modList, bool move = false);
+
+    public ICollection<DirectoryInfo> CleanCharacterFolders();
 }
 
 public enum SetModStatus

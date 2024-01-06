@@ -61,6 +61,7 @@ public sealed class CharacterModList : ICharacterModList
 
         _selfWatcher = new FileSystemWatcher(Directory.GetParent(absPath)!.FullName);
         _selfWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+        _selfWatcher.Renamed += OnSelfFolderCreated;
         _selfWatcher.Created += OnSelfFolderCreated;
         _selfWatcher.Deleted += OnSelfFolderDeleted;
         _selfWatcher.Error += OnWatcherError;
@@ -87,6 +88,17 @@ public sealed class CharacterModList : ICharacterModList
         _watcher = CreateModWatcher();
     }
 
+    private void OnSelfFolderRenamed(object sender, FileSystemEventArgs e)
+    {
+        if (!Character.InternalNameEquals(e.Name))
+            return;
+
+        if (_watcher is not null)
+            throw new InvalidOperationException("Watcher is not null when mod folder is created");
+
+        _watcher = CreateModWatcher();
+    }
+
 
     private void OnSelfFolderDeleted(object sender, FileSystemEventArgs e)
     {
@@ -99,6 +111,11 @@ public sealed class CharacterModList : ICharacterModList
         var oldModWatcher = _watcher;
         _watcher = null;
         oldModWatcher?.Dispose();
+
+        lock (_modsLock)
+        {
+            _mods.Clear();
+        }
     }
 
 

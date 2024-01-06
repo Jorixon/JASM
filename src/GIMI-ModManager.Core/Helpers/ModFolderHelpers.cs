@@ -72,4 +72,15 @@ public static class ModFolderHelpers
         return folderName.StartsWith(DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase) ||
                folderName.StartsWith(ALT_DISABLED_PREFIX, StringComparison.CurrentCultureIgnoreCase);
     }
+
+
+    public static bool IsJASMFileEntry(string entry)
+    {
+        return entry.StartsWith(".JASM_", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool IsJASMFileEntry(FileSystemInfo entry)
+    {
+        return entry.Name.StartsWith(".JASM_", StringComparison.OrdinalIgnoreCase);
+    }
 }

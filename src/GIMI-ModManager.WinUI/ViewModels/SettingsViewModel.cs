@@ -23,6 +23,7 @@ using GIMI_ModManager.WinUI.Services.AppManagment;
 using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
+using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -710,6 +711,14 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 BackGroundModCheckerSettings.Key);
 
         IsModUpdateCheckerEnabled = modUpdateCheckerOptions.Enabled;
+    }
+
+
+    [RelayCommand]
+    private static Task ShowCleanModsFolderDialogAsync()
+    {
+        var dialog = new ClearEmptyFoldersDialog();
+        return dialog.ShowDialogAsync();
     }
 
     public void OnNavigatedFrom()

@@ -227,6 +227,10 @@
                             Margin="40,0,0,0"
                             Command="{x:Bind ViewModel.ReorganizeModsCommand}"
                             Content="Reorganize Mods" />
+                        <Button
+                            Margin="40,0,0,0"
+                            Command="{x:Bind ViewModel.ShowCleanModsFolderDialogCommand}"
+                            Content="Clean Mods folder" />
                     </StackPanel>
 
                     <StackPanel Margin="0,16,0,0" Orientation="Horizontal">

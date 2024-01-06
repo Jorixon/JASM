@@ -440,7 +440,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         if (characterTemplate.InternalName.Equals(
                 SelectedInGameSkin.InternalName,
                 StringComparison.OrdinalIgnoreCase))
-                return;
+            return;
 
         var characterSkin = character.Skins.FirstOrDefault(skin =>
             skin.InternalName.Equals(characterTemplate.InternalName));
@@ -561,8 +561,28 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private async Task OpenModsFolderAsync()
     {
+        var directoryToOpen = new DirectoryInfo(_modList.AbsModsFolderPath);
+        if (!directoryToOpen.Exists)
+        {
+            _modList.InstantiateCharacterFolder();
+            directoryToOpen.Refresh();
+
+            if (!directoryToOpen.Exists)
+            {
+                var parentDir = directoryToOpen.Parent;
+
+                if (parentDir is null)
+                {
+                    _logger.Error("Could not find parent directory of {Directory}", directoryToOpen.FullName);
+                    return;
+                }
+
+                directoryToOpen = parentDir;
+            }
+        }
+
         await Launcher.LaunchFolderAsync(
-            await StorageFolder.GetFolderFromPathAsync(_modList.AbsModsFolderPath));
+            await StorageFolder.GetFolderFromPathAsync(directoryToOpen.FullName));
     }
 
     [RelayCommand]

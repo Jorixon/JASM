@@ -690,8 +690,16 @@ public sealed class SkinManagerService : ISkinManagerService
                         continue;
                     }
 
-
-                    modFolder.MoveTo(GetCharacterModFolderPath(character));
+                    try
+                    {
+                        AddMod(await SkinMod.CreateModAsync(modFolder), existingModList, true);
+                        movedMods++;
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Failed to move mod '{ModName}' to '{CharacterFolder}'", modFolder.FullName,
+                            existingModList.Character.InternalName);
+                    }
                 }
 
 
@@ -818,6 +826,50 @@ public sealed class SkinManagerService : ISkinManagerService
         return Path.Combine(_activeModsFolder.FullName, category.InternalName, character.InternalName);
     }
 
+    public ICollection<DirectoryInfo> CleanCharacterFolders()
+    {
+        var deletedFolders = new List<DirectoryInfo>();
+        foreach (var characterModList in _characterModLists)
+        {
+            var characterFolder = new DirectoryInfo(characterModList.AbsModsFolderPath);
+            if (!characterFolder.Exists) continue;
+
+            var characterModFolders = characterFolder.EnumerateDirectories().ToArray();
+
+            foreach (var modFolder in characterModFolders)
+            {
+                var containsOnlyJasmFiles = modFolder.EnumerateFileSystemInfos().All(ModFolderHelpers.IsJASMFileEntry);
+
+                if (!containsOnlyJasmFiles) continue;
+
+                _logger.Information("Deleting mod folder, due to it only containing jasm files '{ModFolder}'",
+                    modFolder.FullName);
+
+                modFolder.Delete(true);
+                deletedFolders.Add(modFolder);
+            }
+
+            if (characterFolder.EnumerateFileSystemInfos().Any()) continue;
+
+            _logger.Information("Deleting empty character folder '{CharacterFolder}'", characterFolder.FullName);
+            characterFolder.Delete();
+            deletedFolders.Add(characterFolder);
+        }
+
+        var categories = _gameService.GetCategories();
+        foreach (var directory in _activeModsFolder.EnumerateDirectories())
+        {
+            if (categories.Any(x => x.InternalName.Equals(directory.Name))) continue;
+
+            if (directory.EnumerateFileSystemInfos().Any()) continue;
+
+            _logger.Information("Deleting unknown empty folder '{Folder}'", directory.FullName);
+            directory.Delete();
+            deletedFolders.Add(directory);
+        }
+
+        return deletedFolders;
+    }
 
     private void OnUserIniChanged(object sender, FileSystemEventArgs e)
     {
