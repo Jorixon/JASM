@@ -16,6 +16,7 @@ using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.Views;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
@@ -24,6 +25,9 @@ namespace GIMI_ModManager.WinUI.Services;
 
 public class ActivationService : IActivationService
 {
+    private readonly NotificationManager _notificationManager;
+    private readonly ISkinManagerService _skinManagerService;
+    private readonly INavigationViewService _navigationViewService;
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService;
@@ -53,7 +57,8 @@ public class ActivationService : IActivationService
         IWindowManagerService windowManagerService, AutoUpdaterService autoUpdaterService, IGameService gameService,
         ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService,
         ModUpdateAvailableChecker modUpdateAvailableChecker, ILogger logger,
-        ModNotificationManager modNotificationManager)
+        ModNotificationManager modNotificationManager, INavigationViewService navigationViewService,
+        ISkinManagerService skinManagerService, NotificationManager notificationManager)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -70,6 +75,9 @@ public class ActivationService : IActivationService
         _selectedGameService = selectedGameService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
         _modNotificationManager = modNotificationManager;
+        _navigationViewService = navigationViewService;
+        _skinManagerService = skinManagerService;
+        _notificationManager = notificationManager;
         _logger = logger.ForContext<ActivationService>();
     }
 
@@ -105,8 +113,8 @@ public class ActivationService : IActivationService
         // Execute tasks after activation.
         await StartupAsync();
 
-        // Show admin warning if running as admin.
-        AdminWarningPopup();
+        // Show popups
+        ShowStartupPopups();
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -284,61 +292,168 @@ public class ActivationService : IActivationService
     // Declared here for now, might move to a different class later.
     private const string IgnoreAdminWarningKey = "IgnoreAdminPrivelegesWarning";
 
-    private void AdminWarningPopup()
+
+    private void ShowStartupPopups()
+    {
+        App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+        {
+            await Task.Delay(2000);
+            await AdminWarningPopup();
+            await Task.Delay(1000);
+            await NewFolderStructurePopup();
+        });
+    }
+
+    private async Task AdminWarningPopup()
     {
         var identity = WindowsIdentity.GetCurrent();
         var principal = new WindowsPrincipal(identity);
 
         if (!principal.IsInRole(WindowsBuiltInRole.Administrator)) return;
 
-        App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+        var ignoreWarning = await _localSettingsService.ReadSettingAsync<bool>(IgnoreAdminWarningKey);
+
+        if (ignoreWarning) return;
+
+        var stackPanel = new StackPanel();
+        var textWarning = new TextBlock()
         {
-            await Task.Delay(1000);
+            Text = "You are running JASM as an administrator. This is not recommended.\n" +
+                   "JASM was NOT designed to run with administrator privileges.\n" +
+                   "Simple bugs, though unlikely, can potentially cause serious damage to your file system.\n\n" +
+                   "Please consider running JASM without administrator privileges.\n\n" +
+                   "Use at your own risk, you have been warned",
+            TextWrapping = TextWrapping.WrapWholeWords
+        };
+        stackPanel.Children.Add(textWarning);
 
-            var ignoreWarning = await _localSettingsService.ReadSettingAsync<bool>(IgnoreAdminWarningKey);
+        var doNotShowAgain = new CheckBox()
+        {
+            IsChecked = false,
+            Content = "Do not show this warning again",
+            Margin = new Thickness(0, 10, 0, 0)
+        };
 
-            if (ignoreWarning) return;
-
-            var stackPanel = new StackPanel();
-            var textWarning = new TextBlock()
-            {
-                Text = "You are running JASM as an administrator. This is not recommended.\n" +
-                       "JASM was NOT designed to run with administrator privileges.\n" +
-                       "Simple bugs, though unlikely, can potentially cause serious damage to your file system.\n\n" +
-                       "Please consider running JASM without administrator privileges.\n\n" +
-                       "Use at your own risk, you have been warned",
-                TextWrapping = TextWrapping.WrapWholeWords
-            };
-            stackPanel.Children.Add(textWarning);
-
-            var doNotShowAgain = new CheckBox()
-            {
-                IsChecked = false,
-                Content = "Do not show this warning again",
-                Margin = new Thickness(0, 10, 0, 0)
-            };
-
-            stackPanel.Children.Add(doNotShowAgain);
+        stackPanel.Children.Add(doNotShowAgain);
 
 
-            var dialog = new ContentDialog
-            {
-                Title = "Running as Administrator Warning",
-                Content = stackPanel,
-                PrimaryButtonText = "I understand",
-                SecondaryButtonText = "Exit",
-                DefaultButton = ContentDialogButton.Primary
-            };
+        var dialog = new ContentDialog
+        {
+            Title = "Running as Administrator Warning",
+            Content = stackPanel,
+            PrimaryButtonText = "I understand",
+            SecondaryButtonText = "Exit",
+            DefaultButton = ContentDialogButton.Primary
+        };
 
-            var result = await _windowManagerService.ShowDialogAsync(dialog);
+        var result = await _windowManagerService.ShowDialogAsync(dialog);
 
-            if (result == ContentDialogResult.Secondary) Application.Current.Exit();
+        if (result == ContentDialogResult.Secondary) Application.Current.Exit();
 
-            if (doNotShowAgain.IsChecked == true)
-                await _localSettingsService.SaveSettingAsync(IgnoreAdminWarningKey, true);
-        });
+        if (doNotShowAgain.IsChecked == true)
+            await _localSettingsService.SaveSettingAsync(IgnoreAdminWarningKey, true);
     }
 
+    public const string IgnoreNewFolderStructureKey = "IgnoreNewFolderStructureWarning";
+
+    private async Task NewFolderStructurePopup()
+    {
+        if (!_skinManagerService.IsInitialized)
+        {
+            await _localSettingsService.SaveSettingAsync(IgnoreNewFolderStructureKey, true);
+        }
+
+        var ignoreWarning = await _localSettingsService.ReadOrCreateSettingAsync<bool>(IgnoreNewFolderStructureKey);
+
+        if (ignoreWarning) return;
+
+        var stackPanel = new StackPanel();
+        var textWarning = new TextBlock()
+        {
+            Text = """
+                   This version of JASM has a new folder structure.
+
+                   Now Characters are organized by category, and each category has its own folder. So new format is as follows:
+                   Mods/Category/Character/<Mod Folders>
+                   Therefore, JASM won't see any of your mods until you reorganize them.
+                   This is a one time thing, and you can do it manually if you want.
+
+                   Also character folders are now created on demand and it is possible to clean up empty folders on the settings page.
+                   """,
+            IsTextSelectionEnabled = true,
+            TextWrapping = TextWrapping.WrapWholeWords
+        };
+        stackPanel.Children.Add(textWarning);
+
+        var textWarning2 = new TextBlock()
+        {
+            Text = "If you're uncertain about this then back up your mods first. I've tested this on my own mods.",
+            FontWeight = FontWeights.Bold,
+            IsTextSelectionEnabled = true,
+            TextWrapping = TextWrapping.WrapWholeWords
+        };
+
+        stackPanel.Children.Add(textWarning2);
+
+
+        var textWarning3 = new TextBlock()
+        {
+            Text = """
+
+                   This popup will be shown until you chose an option below. You can also use the reorganize button on the settings page.
+                   """,
+            IsTextSelectionEnabled = true,
+            TextWrapping = TextWrapping.WrapWholeWords
+        };
+
+        stackPanel.Children.Add(textWarning3);
+
+
+        var dialog = new ContentDialog
+        {
+            Title = "New Folder structure",
+            Content = stackPanel,
+            PrimaryButtonText = "Reorganize my mods",
+            SecondaryButtonText = "I will do it myself",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        var result = await _windowManagerService.ShowDialogAsync(dialog);
+
+        if (result == ContentDialogResult.Primary)
+        {
+            _navigationViewService.IsEnabled = false;
+
+            try
+            {
+                var movedModsCount = await Task.Run(() =>
+                    _skinManagerService.ReorganizeModsAsync()); // Mods folder
+
+                await _skinManagerService.RefreshModsAsync();
+
+                if (movedModsCount == -1)
+                    _notificationManager.ShowNotification("Mods reorganization failed.",
+                        "See logs for more details.", TimeSpan.FromSeconds(5));
+
+                else
+                    _notificationManager.ShowNotification("Mods reorganized.",
+                        $"Moved {movedModsCount} mods to new character folders", TimeSpan.FromSeconds(5));
+            }
+            finally
+            {
+                _navigationViewService.IsEnabled = true;
+                await _localSettingsService.SaveSettingAsync(IgnoreNewFolderStructureKey, true);
+            }
+        }
+        else if (result == ContentDialogResult.Secondary)
+        {
+            await _localSettingsService.SaveSettingAsync(IgnoreNewFolderStructureKey, true);
+        }
+        else
+        {
+        }
+    }
 
     private async Task CheckIfAlreadyRunningAsync()
     {

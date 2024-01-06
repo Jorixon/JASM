@@ -100,7 +100,7 @@ public class ModCrawlerService
     private bool IsOfModType(FileInfo file, IModdableObject moddableObject)
         => StartsWithModFilesName(file, moddableObject.ModFilesName);
 
-    private static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
+    public static readonly string[] ModExtensions = { ".buf", ".dds", ".ib" };
 
     private bool StartsWithModFilesName(FileInfo file, string modFilesName)
     {

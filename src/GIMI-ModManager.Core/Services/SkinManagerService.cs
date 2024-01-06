@@ -669,7 +669,7 @@ public sealed class SkinManagerService : ISkinManagerService
             {
                 var existingModList = GetCharacterModList(character.InternalName);
 
-                if (folder.EnumerateDirectories().Any())
+                if (folder.EnumerateFileSystemInfos().Any())
                     _logger.Warning($"""
                                      During mod reorganization, a moddableObject (Navia, Ayaka... etc) folder was found in root mods folder.
                                      But should be in the their respective category folder. example: Mods/Character/Ayaka/<mod folders>
@@ -678,6 +678,17 @@ public sealed class SkinManagerService : ISkinManagerService
                                      If there any loose files they will be ignored in the root of the moddableObject, but will not be deleted.
                                      => Mods in the folder {folder.FullName} will be moved to {existingModList.AbsModsFolderPath} folder.
                                      """);
+
+                if (HasFilesWithModExtensionsInRoot(folder, character))
+                {
+                    _logger.Warning($"""
+                                     Found files that are usually at the root of a mod in a character folder. Therefore, JASM will ignore this folder:
+                                     {folder.Name} - {folder.FullName}
+                                     {character.InternalName} is a reserved name for a character folder. It is suggested to avoid naming a mod folder the same as a character. JASM uses internal names stored in the Assets folder to determine chracter folder names.
+                                     JASM will ignore this folder and continue.
+                                     """);
+                    continue;
+                }
 
 
                 foreach (var modFolder in folder.EnumerateDirectories())
@@ -715,7 +726,11 @@ public sealed class SkinManagerService : ISkinManagerService
 
             // Is a category folder => ignore
             if (_gameService.GetCategories().Any(x => x.InternalName.Equals(folder.Name)))
+            {
+                _logger.Debug("Found category folder '{CategoryFolder}' in root mods folder, ignoring",
+                    folder.FullName);
                 continue;
+            }
 
 
             var closestMatchCharacter =
@@ -812,6 +827,31 @@ public sealed class SkinManagerService : ISkinManagerService
         }
 
         return movedMods;
+    }
+
+    private bool HasFilesWithModExtensionsInRoot(DirectoryInfo directoryInfo, IModdableObject? moddableObject = null)
+    {
+        foreach (var file in directoryInfo.EnumerateFiles())
+        {
+            if (file.Name.Equals("merged.ini", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (file.Name.StartsWith("cover", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (file.Name.StartsWith("preview", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (moddableObject is not null &&
+                file.Name.Equals($"{moddableObject.InternalName}.ini", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (ModCrawlerService.ModExtensions.Any(ext =>
+                    ext.Equals(file.Extension, StringComparison.OrdinalIgnoreCase)))
+                return true;
+        }
+
+        return false;
     }
 
     private string GetCharacterModFolderPath(IModdableObject character)

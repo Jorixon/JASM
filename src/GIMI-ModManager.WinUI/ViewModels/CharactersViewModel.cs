@@ -362,6 +362,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _backendCharacters = backendCharacters;
 
+        foreach (var characterGridItemModel in _backendCharacters)
+        {
+            var modList = _skinManagerService.GetCharacterModList(characterGridItemModel.Character);
+            characterGridItemModel.ModCount = modList.Mods.Count;
+            characterGridItemModel.HasMods = characterGridItemModel.ModCount > 0;
+        }
+
         InitializeSorters();
 
         if (typeof(ICharacter).IsAssignableFrom(firstType))
