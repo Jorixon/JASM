@@ -819,6 +819,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var alphabetical = new SortingMethod(Sorter.Alphabetical(), othersCharacter, lastCharacters);
         SortingMethods.Add(alphabetical);
 
+        var byModCount = new SortingMethod(Sorter.ModCount(), othersCharacter, lastCharacters);
+        SortingMethods.Add(byModCount);
+
         if (_category.ModCategory == ModCategory.Character)
         {
             SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate(), othersCharacter, lastCharacters));
@@ -1002,6 +1005,22 @@ public sealed class Sorter
                 !isDescending
                     ? characters.OrderByDescending(x => ((IRarity)x.Character).Rarity)
                     : characters.OrderBy(x => ((IRarity)x.Character).Rarity),
+            (characters, _) =>
+                characters.ThenBy(x => (x.Character.DisplayName)
+                ));
+    }
+
+    public const string ModCountSortName = "Mod Count";
+
+    public static Sorter ModCount()
+    {
+        return new Sorter
+        (
+            ModCountSortName,
+            (characters, isDescending) =>
+                !isDescending
+                    ? characters.OrderByDescending(x => (x.ModCount))
+                    : characters.OrderBy(x => (x.ModCount)),
             (characters, _) =>
                 characters.ThenBy(x => (x.Character.DisplayName)
                 ));
