@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.0.0](https://github.com/Jorixon/JASM/compare/v1.9.2...v2.0.0) (2024-01-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Redid Folder structure ([#109](https://github.com/Jorixon/JASM/issues/109))
+
+### Features
+
+* Added Mod counter on overview and sort by mod count ([62622a6](https://github.com/Jorixon/JASM/commit/62622a6399dd3d595d6880e2902fdfb2945ee8b2))
+* Character/ModObject folders are now created on demand ([62622a6](https://github.com/Jorixon/JASM/commit/62622a6399dd3d595d6880e2902fdfb2945ee8b2))
+* Redid Folder structure ([#109](https://github.com/Jorixon/JASM/issues/109)) ([62622a6](https://github.com/Jorixon/JASM/commit/62622a6399dd3d595d6880e2902fdfb2945ee8b2))
+
+
+### Miscellaneous
+
+* Added "Date Added" to grid in CharacterDetails page ([62622a6](https://github.com/Jorixon/JASM/commit/62622a6399dd3d595d6880e2902fdfb2945ee8b2))
+* Added Chevreuse ([#110](https://github.com/Jorixon/JASM/issues/110)) ([4ee26d6](https://github.com/Jorixon/JASM/commit/4ee26d61ad622ba9e508b3c3396e13ffc39c2904))
+
+
+### Code Refactoring
+
+* Background tasks now use the LongRunning option ([4ee26d6](https://github.com/Jorixon/JASM/commit/4ee26d61ad622ba9e508b3c3396e13ffc39c2904))
+
 ## [1.9.2](https://github.com/Jorixon/JASM/compare/v1.9.1...v1.9.2) (2023-12-06)
 
 
