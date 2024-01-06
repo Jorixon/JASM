@@ -69,4 +69,12 @@ public interface ICharacterModList : IDisposable
     /// Deletes a mod from the mod list. This deletes entire mod from the mod folder.
     /// </summary>
     public void DeleteModBySkinEntryId(Guid skinEntryId, bool moveToRecycleBin = true);
+
+    /// <summary>
+    /// If true, then the the mod list folder has been created. If false, then the mod list folder has not been created.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsCharacterFolderCreated();
+
+    public void InstantiateCharacterFolder();
 }

@@ -343,7 +343,7 @@ public class GameService : IGameService
 
         // If the search query contains the display name, we give it a lot of points
         var sameChars = loweredDisplayName.Split().Count(searchQuery.Contains);
-        result += sameChars * 50;
+        result += sameChars * 60;
 
         var splitNames = loweredDisplayName.Split();
         var sameStartChars = 0;
@@ -364,7 +364,7 @@ public class GameService : IGameService
             }
         }
 
-        result += sameStartChars * 5; // Give more points for same start chars
+        result += sameStartChars * 10; // Give more points for same start chars
 
         result += loweredDisplayName.Split()
             .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name

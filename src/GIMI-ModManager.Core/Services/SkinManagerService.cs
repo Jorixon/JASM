@@ -57,6 +57,19 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public bool UnloadingModsEnabled { get; private set; }
 
+
+    private void AddNewModList(ICharacterModList newModList)
+    {
+        lock (_modListLock)
+        {
+            if (_characterModLists.Any(x => x.Character.InternalNameEquals(newModList.Character.InternalName)))
+                throw new InvalidOperationException(
+                    $"Mod list for character '{newModList.Character.DisplayName}' already exists");
+
+            _characterModLists.Add(newModList);
+        }
+    }
+
     public async Task ScanForModsAsync()
     {
         _activeModsFolder.Refresh();
@@ -65,14 +78,15 @@ public sealed class SkinManagerService : ISkinManagerService
         foreach (var character in characters)
         {
             var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
+
+            var characterModList = new CharacterModList(character, characterModFolder.FullName, logger: _logger);
+            AddNewModList(characterModList);
+
             if (!characterModFolder.Exists)
             {
                 _logger.Debug("Character mod folder for '{Character}' does not exist", character.DisplayName);
                 continue;
             }
-
-            var characterModList = new CharacterModList(character, characterModFolder.FullName, logger: _logger);
-            _characterModLists.Add(characterModList);
 
             foreach (var modFolder in characterModFolder.EnumerateDirectories())
             {
@@ -134,6 +148,18 @@ public sealed class SkinManagerService : ISkinManagerService
 
             var modsDirectory = new DirectoryInfo(characterModList.AbsModsFolderPath);
             modsDirectory.Refresh();
+
+            if (!modsDirectory.Exists)
+            {
+                _logger.Debug("RefreshModsAsync() Character mod folder for '{Character}' does not exist",
+                    characterModList.Character.DisplayName);
+
+                if (characterModList.IsCharacterFolderCreated())
+                    throw new InvalidOperationException(
+                        $"Character mod folder for '{characterModList.Character.DisplayName}' does not exist, but the character folder is created");
+
+                continue;
+            }
 
             var orphanedMods = new List<CharacterSkinEntry>(characterModList.Mods);
 
@@ -281,10 +307,9 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public Task EnableModListAsync(ICharacter moddableObject)
     {
-        CreateModListFolder(moddableObject);
         var modList = new CharacterModList(moddableObject, GetCharacterModFolderPath(moddableObject), logger: _logger);
 
-        _characterModLists.Add(modList);
+        AddNewModList(modList);
 
         return RefreshModsAsync(moddableObject.InternalName);
     }
@@ -293,9 +318,11 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         var modList = GetCharacterModList(moddableObject);
         var modFolder = new DirectoryInfo(modList.AbsModsFolderPath);
-
-        _characterModLists.Remove(modList);
-        modList.Dispose();
+        lock (_modListLock)
+        {
+            _characterModLists.Remove(modList);
+            modList.Dispose();
+        }
 
         if (deleteFolder && modFolder.Exists)
         {
@@ -319,6 +346,8 @@ public sealed class SkinManagerService : ISkinManagerService
                 throw new InvalidOperationException(
                     $"Mod with name {mod.Name} already exists in modList {modList.Character.DisplayName}");
         }
+
+        modList.InstantiateCharacterFolder();
 
         using var disableWatcher = modList.DisableWatcher();
         if (move)
@@ -411,7 +440,7 @@ public sealed class SkinManagerService : ISkinManagerService
                 }
 
                 var characterFolder = new DirectoryInfo(Path.Combine(exportFolder.FullName,
-                    characterModList.Character.InternalName));
+                    characterModList.Character.ModCategory.InternalName, characterModList.Character.InternalName));
 
                 characterToFolder.Add(characterModList.Character, characterFolder);
                 characterFolder.Create();
@@ -584,16 +613,15 @@ public sealed class SkinManagerService : ISkinManagerService
 
     private void InitializeFolderStructure()
     {
-        var characters = _gameService.GetAllModdableObjects();
-        foreach (var character in characters)
-            CreateModListFolder(character);
+        var categories = _gameService.GetCategories();
+
+        foreach (var category in categories)
+        {
+            var categoryFolder = new DirectoryInfo(Path.Combine(_activeModsFolder.FullName, category.InternalName));
+            categoryFolder.Create();
+        }
     }
 
-    private void CreateModListFolder(INameable character)
-    {
-        var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
-        characterModFolder.Create();
-    }
 
     public async Task<int> ReorganizeModsAsync(InternalName? characterFolderToReorganize = null,
         bool disableMods = false)
@@ -627,12 +655,58 @@ public sealed class SkinManagerService : ISkinManagerService
             ? _activeModsFolder
             : new DirectoryInfo(GetCharacterModFolderPath(characterFolder));
 
+        if (!folderToReorganize.Exists)
+            return movedMods;
+
         foreach (var folder in folderToReorganize.EnumerateDirectories())
         {
-            // Is a character folder continue
+            // Is a character folder in the root mods folder then move it into the category folder
             var character = characters.Concat(disabledCharacters).FirstOrDefault(x =>
                 x.InternalName.Equals(folder.Name));
+
+
             if (character is not null)
+            {
+                var existingModList = GetCharacterModList(character.InternalName);
+
+                if (folder.EnumerateDirectories().Any())
+                    _logger.Warning($"""
+                                     During mod reorganization, a moddableObject (Navia, Ayaka... etc) folder was found in root mods folder.
+                                     But should be in the their respective category folder. example: Mods/Character/Ayaka/<mod folders>
+                                     JASM will move the mod folders in the moddableObject folder to the moddableObject folder in the category folder.
+                                     Then delete the moddableObject folder in the root mods folder if it is empty.
+                                     If there any loose files they will be ignored in the root of the moddableObject, but will not be deleted.
+                                     => Mods in the folder {folder.FullName} will be moved to {existingModList.AbsModsFolderPath} folder.
+                                     """);
+
+
+                foreach (var modFolder in folder.EnumerateDirectories())
+                {
+                    if (existingModList.FolderAlreadyExists(modFolder.Name))
+                    {
+                        _logger.Warning(
+                            "Mod '{ModName}' already exists in '{CharacterFolder}', skipping mod",
+                            modFolder.Name, existingModList.Character.InternalName);
+                        continue;
+                    }
+
+
+                    modFolder.MoveTo(GetCharacterModFolderPath(character));
+                }
+
+
+                if (!folder.EnumerateFileSystemInfos().Any())
+                {
+                    _logger.Information("Deleting empty character folder '{CharacterFolder}'", folder.FullName);
+                    folder.Delete();
+                }
+
+                continue;
+            }
+
+
+            // Is a category folder => ignore
+            if (_gameService.GetCategories().Any(x => x.InternalName.Equals(folder.Name)))
                 continue;
 
 
@@ -677,6 +751,8 @@ public sealed class SkinManagerService : ISkinManagerService
                 _logger.Error(e, "Failed to initialize mod folder '{ModFolder}'", folder.FullName);
                 continue;
             }
+
+            modList.InstantiateCharacterFolder();
 
             try
             {
@@ -730,9 +806,16 @@ public sealed class SkinManagerService : ISkinManagerService
         return movedMods;
     }
 
-    private string GetCharacterModFolderPath(INameable character)
+    private string GetCharacterModFolderPath(IModdableObject character)
     {
-        return Path.Combine(_activeModsFolder.FullName, character.InternalName);
+        var category = _gameService.GetCategories()
+            .FirstOrDefault(c => c.InternalName.Equals(character.ModCategory.InternalName));
+
+        if (category is null)
+            throw new InvalidOperationException(
+                $"Failed to get category for character '{character.DisplayName}'");
+
+        return Path.Combine(_activeModsFolder.FullName, category.InternalName, character.InternalName);
     }
 
 
