@@ -274,7 +274,7 @@ public sealed partial class CharacterDetailsPage : Page
 
 
                 e.Column.SortDirection = DataGridSortDirection.Ascending;
-                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), false);
+                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), true);
             }
             else
             {
@@ -286,7 +286,36 @@ public sealed partial class CharacterDetailsPage : Page
 
 
                 e.Column.SortDirection = DataGridSortDirection.Descending;
-                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), true);
+                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), false);
+            }
+        }
+
+
+        if (e.Column.Tag.ToString() == "Date Added")
+        {
+            //Implement sort on the column "Range" using LINQ
+            if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+            {
+                var sortedMods = ViewModel.ModListVM.BackendMods
+                    .OrderByDescending(m => m.DateAdded);
+
+
+                ViewModel.ModListVM.ReplaceMods(sortedMods);
+
+
+                e.Column.SortDirection = DataGridSortDirection.Ascending;
+                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.DateAdded), true);
+            }
+            else
+            {
+                var sortedMods = ViewModel.ModListVM.BackendMods
+                    .OrderBy(m => m.DateAdded);
+
+                ViewModel.ModListVM.ReplaceMods(sortedMods);
+
+
+                e.Column.SortDirection = DataGridSortDirection.Descending;
+                ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.DateAdded), false);
             }
         }
 

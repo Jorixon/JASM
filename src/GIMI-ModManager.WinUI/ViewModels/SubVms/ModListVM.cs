@@ -134,7 +134,13 @@ public partial class ModListVM : ObservableRecipient
                         ? BackendMods.OrderBy(m => string.IsNullOrWhiteSpace(m.Author))
                             .ThenByDescending(modModel => modModel.Author)
                         : BackendMods.OrderBy(m => string.IsNullOrWhiteSpace(m.Author))
-                            .ThenByDescending(modModel => modModel.Author));
+                            .ThenBy(modModel => modModel.Author));
+                    break;
+
+                case nameof(ModModel.DateAdded):
+                    AddMods(sortMethod.IsDescending
+                        ? BackendMods.OrderByDescending(m => m.DateAdded)
+                        : BackendMods.OrderBy(m => m.DateAdded));
                     break;
 
                 default:

@@ -103,6 +103,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
         await _skinManagerService.InitializeAsync(modManagerOptions.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);
+        await _localSettingsService.SaveSettingAsync(ActivationService.IgnoreNewFolderStructureKey, true);
 
         if (ReorganizeModsOnStartup)
         {

@@ -490,6 +490,26 @@
                                         IsReadOnly="True"
                                         Tag="Author Name" />
 
+                                    <controls:DataGridTemplateColumn
+                                        Width="SizeToCells"
+                                        CanUserSort="True"
+                                        Header="Date Added"
+                                        IsReadOnly="True"
+                                        Tag="Date Added">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate x:DataType="models:ModModel">
+                                                <Grid
+                                                    Margin="8,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind DateAdded, Mode=OneWay}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
                                 </controls:DataGrid.Columns>
 
                             </controls:DataGrid>

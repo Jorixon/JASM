@@ -16,6 +16,7 @@ public interface ISkinManagerService : IDisposable
     public Task ScanForModsAsync();
     public ICharacterModList GetCharacterModList(string internalName);
     public ICharacterModList GetCharacterModList(IModdableObject character);
+    public ICharacterModList? GetCharacterModListOrDefault(string internalName);
 
     public Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath,
         string? threeMigotoRootfolder = null);
@@ -76,6 +77,8 @@ public interface ISkinManagerService : IDisposable
     /// <param name="modList">The modList where the mod will be moved to</param>
     /// <param name="move">If true, will move the mod instead of copying it</param>
     public ISkinMod AddMod(ISkinMod mod, ICharacterModList modList, bool move = false);
+
+    public ICollection<DirectoryInfo> CleanCharacterFolders();
 }
 
 public enum SetModStatus

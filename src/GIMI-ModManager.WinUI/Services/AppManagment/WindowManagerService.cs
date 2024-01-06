@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.WinUI.Models.Settings;
+﻿using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Models.Settings;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -9,7 +10,8 @@ namespace GIMI_ModManager.WinUI.Services.AppManagment;
 
 public class WindowManagerService : IWindowManagerService
 {
-    private readonly ILogger? _logger;
+    private readonly ILogger _logger;
+    private readonly IThemeSelectorService _themeSelectorService;
     private readonly List<Tuple<WindowEx, object>> _windows = new();
     private readonly List<WindowEx> _windowDialogOpen = new();
 
@@ -42,8 +44,9 @@ public class WindowManagerService : IWindowManagerService
         }
     }
 
-    public WindowManagerService(ILogger logger)
+    public WindowManagerService(ILogger logger, IThemeSelectorService themeSelectorService)
     {
+        _themeSelectorService = themeSelectorService;
         _logger = logger.ForContext<WindowManagerService>();
     }
 
@@ -137,6 +140,7 @@ public class WindowManagerService : IWindowManagerService
         try
         {
             dialog.XamlRoot = currentWindow.Content.XamlRoot;
+            dialog.RequestedTheme = _themeSelectorService.Theme;
             result = await dialog.ShowAsync();
         }
         finally

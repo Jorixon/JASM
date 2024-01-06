@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.GamesService.Interfaces;
@@ -26,28 +27,127 @@ public sealed class CharacterModList : ICharacterModList
     public const string DISABLED_PREFIX = ModFolderHelpers.DISABLED_PREFIX;
     public const string ALT_DISABLED_PREFIX = ModFolderHelpers.ALT_DISABLED_PREFIX;
     public string DisabledPrefix => DISABLED_PREFIX;
-    private readonly FileSystemWatcher _watcher;
+    private FileSystemWatcher? _watcher;
+
+    private readonly FileSystemWatcher _selfWatcher;
+
     public IModdableObject Character { get; }
 
     private readonly object _modsLock = new();
 
+    [MemberNotNullWhen(true, nameof(_watcher))]
+    public bool IsCharacterFolderCreated()
+    {
+        var modFolderExists = Directory.Exists(AbsModsFolderPath);
+
+        if (modFolderExists && _watcher is null)
+            throw new InvalidOperationException("mod Watcher is null when mod folder exists");
+
+        if (!modFolderExists && _watcher is not null)
+            throw new InvalidOperationException("mod Watcher is not null when mod folder does not exist");
+
+        return modFolderExists;
+    }
+
     internal CharacterModList(IModdableObject character, string absPath, ILogger? logger = null)
     {
+        ArgumentNullException.ThrowIfNull(character);
+        ArgumentNullException.ThrowIfNull(absPath);
+
+
         _logger = logger?.ForContext<CharacterModList>();
         Character = character;
         AbsModsFolderPath = absPath;
-        _watcher = new FileSystemWatcher(AbsModsFolderPath);
-        _watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.CreationTime;
-        _watcher.Renamed += OnModRenamed;
-        _watcher.Created += OnModCreated;
-        _watcher.Deleted += OnModDeleted;
-        _watcher.Error += OnWatcherError;
 
-        _watcher.IncludeSubdirectories = false;
-        _watcher.EnableRaisingEvents = true;
+        _selfWatcher = new FileSystemWatcher(Directory.GetParent(absPath)!.FullName);
+        _selfWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+        _selfWatcher.Renamed += OnSelfFolderCreated;
+        _selfWatcher.Created += OnSelfFolderCreated;
+        _selfWatcher.Deleted += OnSelfFolderDeleted;
+        _selfWatcher.Error += OnWatcherError;
+
+        _selfWatcher.EnableRaisingEvents = true;
+
+        if (!Directory.Exists(AbsModsFolderPath))
+            return;
+
+
+        _watcher = CreateModWatcher();
     }
 
     public event EventHandler<ModFolderChangedArgs>? ModsChanged;
+
+    private void OnSelfFolderCreated(object sender, FileSystemEventArgs e)
+    {
+        if (!Character.InternalNameEquals(e.Name))
+            return;
+
+        if (_watcher is not null)
+            throw new InvalidOperationException("Watcher is not null when mod folder is created");
+
+        _watcher = CreateModWatcher();
+    }
+
+    private void OnSelfFolderRenamed(object sender, FileSystemEventArgs e)
+    {
+        if (!Character.InternalNameEquals(e.Name))
+            return;
+
+        if (_watcher is not null)
+            throw new InvalidOperationException("Watcher is not null when mod folder is created");
+
+        _watcher = CreateModWatcher();
+    }
+
+
+    private void OnSelfFolderDeleted(object sender, FileSystemEventArgs e)
+    {
+        if (!Character.InternalNameEquals(e.Name))
+            return;
+
+        if (_watcher is null)
+            throw new InvalidOperationException("Self watcher is null when mod folder is deleted");
+
+        var oldModWatcher = _watcher;
+        _watcher = null;
+        oldModWatcher?.Dispose();
+
+        lock (_modsLock)
+        {
+            _mods.Clear();
+        }
+    }
+
+
+    private FileSystemWatcher CreateModWatcher()
+    {
+        var watcher = new FileSystemWatcher(AbsModsFolderPath);
+        watcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.CreationTime;
+        watcher.Renamed += OnModRenamed;
+        watcher.Created += OnModCreated;
+        watcher.Deleted += OnModDeleted;
+        watcher.Error += OnWatcherError;
+
+        watcher.IncludeSubdirectories = false;
+        watcher.EnableRaisingEvents = true;
+        return watcher;
+    }
+
+
+    public void InstantiateCharacterFolder()
+    {
+        lock (_modsLock)
+        {
+            if (IsCharacterFolderCreated())
+                return;
+
+            using var disableSelfWatcher = new DisableWatcher(_selfWatcher);
+            Directory.CreateDirectory(AbsModsFolderPath);
+            _watcher = CreateModWatcher();
+        }
+
+        _logger?.Debug("Created {CharacterName} mod folder", Character.InternalName);
+    }
 
     private void OnWatcherError(object sender, ErrorEventArgs e)
     {
@@ -270,7 +370,9 @@ public sealed class CharacterModList : ICharacterModList
 
     public void Dispose()
     {
-        _watcher.Dispose();
+        _watcher?.Dispose();
+        _selfWatcher.Dispose();
+        _watcher = null;
     }
 
     public override string ToString()
@@ -280,6 +382,7 @@ public sealed class CharacterModList : ICharacterModList
 
     public DisableWatcher DisableWatcher()
     {
+        InstantiateCharacterFolder();
         return new DisableWatcher(_watcher);
     }
 
@@ -363,6 +466,7 @@ public class DisableWatcher : IDisposable
 
     public DisableWatcher(FileSystemWatcher watcher)
     {
+        ArgumentNullException.ThrowIfNull(watcher);
         _watcher = watcher;
         _watcher.EnableRaisingEvents = false;
     }
