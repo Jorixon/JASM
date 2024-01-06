@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -571,6 +569,11 @@ public sealed class SkinManagerService : ISkinManagerService
     }
 
 
+    public ICharacterModList? GetCharacterModListOrDefault(string internalName)
+    {
+        return _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
+    }
+
     public async Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
     {
@@ -667,7 +670,14 @@ public sealed class SkinManagerService : ISkinManagerService
 
             if (character is not null)
             {
-                var existingModList = GetCharacterModList(character.InternalName);
+                var existingModList = GetCharacterModListOrDefault(character.InternalName);
+                if (existingModList is null)
+                {
+                    _logger.Information(
+                        "Character folder '{CharacterFolder}' does not have a mod list, disabled? Ignoring and continuing",
+                        folder.FullName);
+                    continue;
+                }
 
                 if (folder.EnumerateFileSystemInfos().Any())
                     _logger.Warning($"""
