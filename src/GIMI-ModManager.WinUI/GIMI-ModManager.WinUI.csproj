@@ -88,6 +88,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Bennett_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Candace_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Charlotte_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Chevreuse_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Chongyun_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Clorinde_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Collei_Thumb.png" />
