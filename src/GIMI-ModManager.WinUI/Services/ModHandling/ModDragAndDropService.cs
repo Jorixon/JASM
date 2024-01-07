@@ -2,7 +2,7 @@
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Helpers;
-using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using Serilog;
 using static GIMI_ModManager.WinUI.Services.ModHandling.ModDragAndDropService.DragAndDropFinishedArgs;
 

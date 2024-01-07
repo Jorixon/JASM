@@ -7,8 +7,8 @@ using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
-using GIMI_ModManager.WinUI.Services.AppManagment;
-using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+using GIMI_ModManager.WinUI.Services.AppManagement;
+using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
@@ -116,6 +116,8 @@ public partial class App : Application
 
                 services.AddSingleton<ImageHandlerService>();
                 services.AddSingleton<SelectedGameService>();
+
+                services.AddSingleton<LifeCycleService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();

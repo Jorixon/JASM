@@ -5,7 +5,7 @@ using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
-using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;

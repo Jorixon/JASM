@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.WinUI.Services;
-using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
