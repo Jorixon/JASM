@@ -3,7 +3,7 @@ using ErrorOr;
 using Microsoft.UI.Xaml;
 using Serilog;
 
-namespace GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+namespace GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 
 public class AutoUpdaterService
 {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using Windows.ApplicationModel;
@@ -19,8 +18,8 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
-using GIMI_ModManager.WinUI.Services.AppManagment;
-using GIMI_ModManager.WinUI.Services.AppManagment.Updating;
+using GIMI_ModManager.WinUI.Services.AppManagement;
+using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
@@ -44,6 +43,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly AutoUpdaterService _autoUpdaterService;
     private readonly SelectedGameService _selectedGameService;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
+    private readonly LifeCycleService _lifeCycleService;
 
 
     private readonly NotificationManager _notificationManager;
@@ -102,7 +102,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         ISkinManagerService skinManagerService, UpdateChecker updateChecker,
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
-        SelectedGameService selectedGameService, ModUpdateAvailableChecker modUpdateAvailableChecker)
+        SelectedGameService selectedGameService, ModUpdateAvailableChecker modUpdateAvailableChecker,
+        LifeCycleService lifeCycleService)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -117,6 +118,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _localizer = localizer;
         _selectedGameService = selectedGameService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
+        _lifeCycleService = lifeCycleService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -354,7 +356,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    private async Task RestartApp()
+    private async Task RestartApp(int delay = 2)
     {
         _navigationViewService.IsEnabled = false;
 
@@ -365,46 +367,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        await Task.Delay(TimeSpan.FromSeconds(2));
+        await Task.Delay(TimeSpan.FromSeconds(delay));
 
-
-        var exePath = Assembly.GetEntryAssembly()!.Location;
-        exePath = Path.ChangeExtension(exePath, ".exe");
-
-        if (exePath.IsNullOrEmpty() || !File.Exists(exePath))
-        {
-            exePath = Environment.ProcessPath;
-            exePath = Path.ChangeExtension(exePath, ".exe");
-            _logger.Debug("Restarting from process path: {ExePath}", exePath);
-        }
-
-        if (exePath.IsNullOrEmpty() || !File.Exists(exePath))
-        {
-            _logger.Error("Unable to find exe path at {ExePath}. Shutting down...", exePath);
-            Application.Current.Exit();
-            return;
-        }
-
-        try
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = exePath,
-                UseShellExecute = true
-            });
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Error restarting app");
-            _notificationManager.ShowNotification("Error restarting app", "Please restart manually",
-                TimeSpan.FromSeconds(4));
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            Application.Current.Exit();
-            return;
-        }
-
-
-        Application.Current.Exit();
+        await _lifeCycleService.RestartAsync(notifyOnError: true);
     }
 
     private bool CanStartElevator()
@@ -677,7 +642,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         }
 
         await _selectedGameService.SetSelectedGame(game);
-        await RestartApp().ConfigureAwait(false);
+        await RestartApp(0).ConfigureAwait(false);
     }
 
     [RelayCommand]

@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
 
-namespace GIMI_ModManager.WinUI.Services.AppManagment;
+namespace GIMI_ModManager.WinUI.Services.AppManagement;
 
 public class WindowManagerService : IWindowManagerService
 {

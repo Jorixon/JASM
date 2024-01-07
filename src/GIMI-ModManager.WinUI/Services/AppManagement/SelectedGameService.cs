@@ -4,7 +4,7 @@ using GIMI_ModManager.WinUI.Models.Options;
 using Newtonsoft.Json;
 using Serilog;
 
-namespace GIMI_ModManager.WinUI.Services.AppManagment;
+namespace GIMI_ModManager.WinUI.Services.AppManagement;
 
 public class SelectedGameService
 {

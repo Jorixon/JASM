@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
-using GIMI_ModManager.WinUI.Services.AppManagment;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using Microsoft.UI.Xaml;
 using Serilog;
 
