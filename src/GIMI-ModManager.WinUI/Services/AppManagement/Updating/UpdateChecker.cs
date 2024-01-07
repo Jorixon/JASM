@@ -6,7 +6,7 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 
-public sealed class UpdateChecker : IDisposable
+public sealed class UpdateChecker
 {
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
@@ -18,7 +18,7 @@ public sealed class UpdateChecker : IDisposable
     private Version? _ignoredVersion;
     public Version? IgnoredVersion => _ignoredVersion;
     private bool DisableChecker;
-    private readonly CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource _cancellationTokenSource;
 
     private const string ReleasesApiUrl = "https://api.github.com/repos/Jorixon/JASM/releases?per_page=2";
 
@@ -153,15 +153,15 @@ public sealed class UpdateChecker : IDisposable
         return httpClient;
     }
 
-    public void Dispose()
-    {
-        _cancellationTokenSource.Dispose();
-    }
 
     public void CancelAndStop()
     {
-        _cancellationTokenSource.Cancel();
-        Dispose();
+        if (_cancellationTokenSource is null || _cancellationTokenSource.IsCancellationRequested)
+            return;
+        var cts = _cancellationTokenSource;
+        _cancellationTokenSource = null!;
+        cts.Cancel();
+        cts.Dispose();
         _logger.Debug("JASM update checker stopped");
     }
 

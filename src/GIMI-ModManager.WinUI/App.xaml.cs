@@ -107,6 +107,7 @@ public partial class App : Application
                 services.AddSingleton<NotificationManager>();
                 services.AddSingleton<ModNotificationManager>();
                 services.AddTransient<ModDragAndDropService>();
+                services.AddSingleton<CharacterSkinService>();
 
                 services.AddSingleton<ElevatorService>();
                 services.AddSingleton<GenshinProcessManager>();
