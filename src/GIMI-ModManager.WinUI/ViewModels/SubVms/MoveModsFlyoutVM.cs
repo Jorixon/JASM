@@ -8,9 +8,9 @@ using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.ViewModels;
-using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using Serilog;
 

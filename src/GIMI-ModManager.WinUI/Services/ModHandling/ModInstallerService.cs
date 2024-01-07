@@ -3,6 +3,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.SkinMod;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
@@ -23,16 +24,24 @@ public class ModInstallerService
         _windowManagerService = windowManagerService;
     }
 
-    public Task StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList)
+    public Task StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList,
+        ICharacterSkin? inGameSkin = null)
     {
+        ArgumentNullException.ThrowIfNull(modFolder);
+        ArgumentNullException.ThrowIfNull(modList);
+
+
+        if (inGameSkin is not null && modList.Character is not ICharacter)
+            throw new ArgumentException("The mod list must be a character mod list if inGameSkin is not null");
+
         var dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainWindow.DispatcherQueue;
 
-        dispatcherQueue.TryEnqueue(() => InternalStart(modFolder, modList));
+        dispatcherQueue.TryEnqueue(() => InternalStart(modFolder, modList, inGameSkin));
 
         return Task.CompletedTask;
     }
 
-    private void InternalStart(DirectoryInfo modFolder, ICharacterModList modList)
+    private void InternalStart(DirectoryInfo modFolder, ICharacterModList modList, ICharacterSkin? inGameSkin = null)
     {
         var modTitle = Guid.TryParse(modFolder.Name, out _)
             ? modFolder.EnumerateDirectories().FirstOrDefault()?.Name
@@ -40,7 +49,7 @@ public class ModInstallerService
 
         modTitle ??= modFolder.Name;
 
-        var modInstallPage = new ModInstallerPage(modList, modFolder);
+        var modInstallPage = new ModInstallerPage(modList, modFolder, inGameSkin);
         var modInstallWindow = new WindowEx()
         {
             SystemBackdrop = new MicaBackdrop(),

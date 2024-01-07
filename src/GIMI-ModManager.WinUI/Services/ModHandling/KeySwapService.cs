@@ -11,10 +11,10 @@ public class KeySwapService
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILogger _logger;
-    private readonly NotificationManager _notificationManager;
+    private readonly Notifications.NotificationManager _notificationManager;
 
     public KeySwapService(ISkinManagerService skinManagerService, ILogger logger,
-        NotificationManager notificationManager)
+        Notifications.NotificationManager notificationManager)
     {
         _skinManagerService = skinManagerService;
         _notificationManager = notificationManager;

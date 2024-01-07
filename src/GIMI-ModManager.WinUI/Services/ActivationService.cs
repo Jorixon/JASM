@@ -143,6 +143,7 @@ public class ActivationService : IActivationService
         await SetLanguage();
         await SetWindowSettings();
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
+        _notificationManager.Initialize();
     }
 
 
@@ -210,6 +211,7 @@ public class ActivationService : IActivationService
             _logger.Debug("JASM shutting down...");
             _modUpdateAvailableChecker.CancelAndStop();
             _updateChecker.CancelAndStop();
+            _notificationManager.CancelAndStop();
 
             await saveWindowSettingsTask;
             await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);

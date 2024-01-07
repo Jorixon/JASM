@@ -6,8 +6,10 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services;
@@ -27,8 +29,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     private readonly NotificationManager _notificationManager;
     private readonly ModNotificationManager _modNotificationManager;
     private readonly IWindowManagerService _windowManagerService;
+    private readonly ILocalSettingsService _localSettingsService;
+    private readonly CharacterSkinService _characterSkinService;
+    private readonly ModSettingsService _modSettingsService;
     private readonly Uri _placeholderImageUri;
     private ICharacterModList _characterModList = null!;
+    private ICharacterSkin? _inGameSkin = null;
     private DispatcherQueue? _dispatcherQueue;
 
 
@@ -76,6 +82,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private bool _canExecuteDialogCommand;
 
+    [ObservableProperty] private bool _enableThisMod;
+
     public readonly string RootFolderIcon = "\uF89A";
     public readonly string ShaderFixesFolderIcon = "\uE710";
     public readonly string SelectedImageIcon = "\uE8B9";
@@ -85,10 +93,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private FileSystemItem? _lastSelectedImageFile;
 
+    const string EnableModOnInstallKey = "EnableModOnInstall";
 
     public ModInstallerVM(ILogger logger, ImageHandlerService imageHandlerService,
         NotificationManager notificationManager, IWindowManagerService windowManagerService,
-        ModNotificationManager modNotificationManager)
+        ModNotificationManager modNotificationManager, ILocalSettingsService localSettingsService,
+        CharacterSkinService characterSkinService, ModSettingsService modSettingsService)
     {
         _logger = logger;
         _imageHandlerService = imageHandlerService;
@@ -96,11 +106,14 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _notificationManager = notificationManager;
         _windowManagerService = windowManagerService;
         _modNotificationManager = modNotificationManager;
+        _localSettingsService = localSettingsService;
+        _characterSkinService = characterSkinService;
+        _modSettingsService = modSettingsService;
         PropertyChanged += OnPropertyChanged;
     }
 
-    public Task InitializeAsync(ICharacterModList characterModList, DirectoryInfo modToInstall,
-        DispatcherQueue dispatcherQueue)
+    public async Task InitializeAsync(ICharacterModList characterModList, DirectoryInfo modToInstall,
+        DispatcherQueue dispatcherQueue, ICharacterSkin? inGameSkin = null)
     {
         _characterModList = characterModList;
         ModCharacterName = characterModList.Character.DisplayName;
@@ -110,7 +123,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         RootFolder.Clear();
         RootFolder.Add(new RootFolder(modToInstall));
 
-        return Task.Run(() =>
+        EnableThisMod = await _localSettingsService.ReadOrCreateSettingAsync<bool>(EnableModOnInstallKey);
+
+        await Task.Run(() =>
         {
             var modDir = _modInstallation.AutoSetModRootFolder();
             if (modDir is not null)
@@ -191,6 +206,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _notificationManager.ShowNotification($"Mod '{modName}' installed",
             $"Mod '{modName}' ({newMod.Name}), was successfully added to {_characterModList.Character.DisplayName} ModList",
             TimeSpan.FromSeconds(5));
+
+        if (EnableThisMod)
+            Task.Run(() => EnableOnlyMod(newMod));
 
         _dispatcherQueue?.TryEnqueue(() => { _windowManagerService.GetWindow(_characterModList)?.Close(); });
 
@@ -387,6 +405,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             _logger.Error(e, "Failed to add mod");
             ErrorOccurred();
         }
+        finally
+        {
+            Finally();
+        }
     }
 
     private async Task AddModAndReplaceAsync()
@@ -406,6 +428,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             _logger.Error(e, "Failed to add mod");
             ErrorOccurred();
+        }
+        finally
+        {
+            Finally();
         }
     }
 
@@ -456,6 +482,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             _logger.Error(e, "Failed to add mod");
             ErrorOccurred();
+        }
+        finally
+        {
+            Finally();
         }
     }
 
@@ -564,6 +594,95 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             "An error occurred while adding the mod. See logs for more details",
             TimeSpan.FromSeconds(10));
         CloseRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+
+    [RelayCommand]
+    private async Task EnableOnlyToggleAsync()
+    {
+        await _localSettingsService.SaveSettingAsync(EnableModOnInstallKey, EnableThisMod).ConfigureAwait(false);
+    }
+
+    private async Task EnableOnlyMod(ISkinMod installedMod)
+    {
+        if (_characterModList.Character is ICharacter { Skins.Count: <= 1 } ||
+            _characterModList.Character is not ICharacter character)
+        {
+            var enabledMods = _characterModList.Mods
+                .Where(mod => mod.IsEnabled && mod.Mod.Id != installedMod.Id).ToArray();
+            foreach (var mod in enabledMods)
+            {
+                DisableMod(mod.Mod);
+            }
+
+            EnableMod(installedMod);
+
+            _logger.Debug("Disabled {disabledMods} and enabled {enabledMod}",
+                string.Join(',', enabledMods.Select(mod => mod.Mod.Name)),
+                installedMod.Name);
+            return;
+        }
+
+        var detectedSkin = await _characterSkinService.GetFirstSkinForMod(installedMod, character)
+            .ConfigureAwait(false);
+
+        if (_inGameSkin is null)
+        {
+            if (detectedSkin is not null)
+            {
+                _inGameSkin = detectedSkin;
+            }
+            else
+            {
+                _notificationManager.QueueNotification("Could not determine skin for new mod",
+                    "JASM could not determine what ingame skin this mod is for, therefore it can't determine what mods to disable.");
+                return;
+            }
+        }
+
+        var disabledMods = new List<ISkinMod>();
+        await foreach (var skinMod in _characterSkinService.GetModsForSkinAsync(_inGameSkin).ConfigureAwait(false))
+        {
+            if (skinMod.Id == installedMod.Id)
+                continue;
+            DisableMod(skinMod);
+            disabledMods.Add(skinMod);
+        }
+
+        if (detectedSkin is not null && !detectedSkin.InternalNameEquals(_inGameSkin.InternalName))
+        {
+            await _modSettingsService.SetCharacterSkinOverride(installedMod.Id, _inGameSkin.InternalName)
+                .ConfigureAwait(false);
+        }
+
+
+        EnableMod(installedMod);
+
+
+        _logger.Debug("Disabled {disabledMods} and enabled {enabledMod}, also set skin override for mod to {SkinName}",
+            string.Join(',', disabledMods.Select(mod => mod.Name)),
+            installedMod.Name, _inGameSkin.InternalName.Id);
+    }
+
+
+    private void DisableMod(ISkinMod mod)
+    {
+        if (_characterModList.IsModEnabled(mod))
+            _characterModList.DisableMod(mod.Id);
+    }
+
+    private void EnableMod(ISkinMod mod)
+    {
+        if (!_characterModList.IsModEnabled(mod))
+            _characterModList.EnableMod(mod.Id);
+    }
+
+    private void Finally()
+    {
+        _windowManagerService.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            _windowManagerService.MainWindow.BringToFront();
+        });
     }
 }
 

@@ -402,19 +402,21 @@ public sealed class CharacterModList : ICharacterModList
 
     public void DeleteModBySkinEntryId(Guid skinEntryId, bool moveToRecycleBin = true)
     {
+        ISkinMod? mod = null;
         lock (_modsLock)
         {
             var skinEntry = _mods.FirstOrDefault(modEntry => modEntry.Id == skinEntryId);
             if (skinEntry is null)
                 throw new InvalidOperationException("Skin entry not found");
             using var disableWatcher = DisableWatcher();
-            var mod = skinEntry.Mod;
-
+            mod = skinEntry.Mod;
             UnTrackMod(skinEntry.Mod);
-            mod.Delete(moveToRecycleBin);
-            _logger?.Information("{Operation} mod {ModName} from {CharacterName} modList",
-                moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.InternalName);
         }
+
+        using var disable = DisableWatcher();
+        mod.Delete(moveToRecycleBin);
+        _logger?.Information("{Operation} mod {ModName} from {CharacterName} modList",
+            moveToRecycleBin ? "Recycled" : "Deleted", mod.Name, Character.InternalName);
     }
 
     public bool IsMultipleModsActive(bool perSkin = false)

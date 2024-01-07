@@ -6,8 +6,8 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
-using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 
 namespace GIMI_ModManager.WinUI.Models;
 

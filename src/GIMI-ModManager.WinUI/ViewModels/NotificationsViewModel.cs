@@ -1,9 +1,8 @@
-﻿using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
+﻿using Windows.Storage;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GIMI_ModManager.WinUI.Services;
-using Windows.System;
+using GIMI_ModManager.WinUI.Services.Notifications;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 

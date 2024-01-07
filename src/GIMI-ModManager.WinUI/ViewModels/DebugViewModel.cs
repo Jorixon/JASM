@@ -6,6 +6,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using Serilog;
+using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 

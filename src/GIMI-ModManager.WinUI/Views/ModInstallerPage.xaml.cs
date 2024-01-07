@@ -1,6 +1,7 @@
 using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -13,12 +14,16 @@ public sealed partial class ModInstallerPage : Page, IDisposable
     public event EventHandler? CloseRequested;
     public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
-    public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall)
+    public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall,
+        ICharacterSkin? inGameSkin = null)
     {
         InitializeComponent();
         ViewModel.DuplicateModDialog += OnDuplicateModFound;
         ViewModel.InstallerFinished += (_, _) => { DispatcherQueue.TryEnqueue(() => { IsEnabled = false; }); };
-        Loading += (_, _) => { ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue); };
+        Loading += (_, _) =>
+        {
+            ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue, inGameSkin);
+        };
         ViewModel.CloseRequested += (_, _) => { CloseRequested?.Invoke(this, EventArgs.Empty); };
     }
 

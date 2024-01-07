@@ -127,8 +127,8 @@
             <Grid Margin="{StaticResource NavigationViewPageContentMargin}">
                 <TeachingTip
                     Title="{x:Bind ViewModel.NotificationManager.ActiveNotification.Title, Mode=OneWay}"
-                    IsOpen="{x:Bind ViewModel.NotificationManager.IsNotificationActive, Mode=OneWay}"
-                    Subtitle="{x:Bind ViewModel.NotificationManager.ActiveNotification.Message, Mode=OneWay}" />
+                    IsOpen="{x:Bind ViewModel.NotificationManager.IsNotificationActive, Mode=TwoWay}"
+                    Subtitle="{x:Bind ViewModel.NotificationManager.ActiveNotification.Subtitle, Mode=OneWay}" />
                 <Frame x:Name="NavigationFrame" />
             </Grid>
         </NavigationView>

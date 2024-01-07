@@ -21,6 +21,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.Validators.PreConfigured;
 using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;

@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 
