@@ -405,6 +405,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             _logger.Error(e, "Failed to add mod");
             ErrorOccurred();
         }
+        finally
+        {
+            Finally();
+        }
     }
 
     private async Task AddModAndReplaceAsync()
@@ -424,6 +428,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             _logger.Error(e, "Failed to add mod");
             ErrorOccurred();
+        }
+        finally
+        {
+            Finally();
         }
     }
 
@@ -474,6 +482,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             _logger.Error(e, "Failed to add mod");
             ErrorOccurred();
+        }
+        finally
+        {
+            Finally();
         }
     }
 
@@ -663,6 +675,14 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     {
         if (!_characterModList.IsModEnabled(mod))
             _characterModList.EnableMod(mod.Id);
+    }
+
+    private void Finally()
+    {
+        _windowManagerService.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            _windowManagerService.MainWindow.BringToFront();
+        });
     }
 }
 
