@@ -24,6 +24,7 @@ using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
+using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 
 namespace GIMI_ModManager.WinUI;
 

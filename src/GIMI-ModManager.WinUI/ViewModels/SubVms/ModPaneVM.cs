@@ -8,8 +8,8 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
-using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;

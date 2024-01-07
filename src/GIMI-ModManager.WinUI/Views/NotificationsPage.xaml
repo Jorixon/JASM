@@ -69,13 +69,13 @@
                             Grid.Row="1"
                             IsTextSelectionEnabled="True"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind Message}"
+                            Text="{x:Bind Subtitle}"
                             TextWrapping="WrapWholeWords" />
                         <TextBlock
                             Grid.Row="2"
                             HorizontalTextAlignment="Right"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="{x:Bind Timestamp}" />
+                            Text="{x:Bind ShowTime}" />
 
                     </Grid>
                 </DataTemplate>

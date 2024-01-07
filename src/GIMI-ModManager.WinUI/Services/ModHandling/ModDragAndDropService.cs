@@ -15,11 +15,11 @@ public class ModDragAndDropService
     private readonly IWindowManagerService _windowManagerService;
 
 
-    private readonly NotificationManager _notificationManager;
+    private readonly Notifications.NotificationManager _notificationManager;
 
     public event EventHandler<DragAndDropFinishedArgs>? DragAndDropFinished;
 
-    public ModDragAndDropService(ILogger logger, NotificationManager notificationManager,
+    public ModDragAndDropService(ILogger logger, Notifications.NotificationManager notificationManager,
         ModInstallerService modInstallerService, IWindowManagerService windowManagerService)
     {
         _notificationManager = notificationManager;

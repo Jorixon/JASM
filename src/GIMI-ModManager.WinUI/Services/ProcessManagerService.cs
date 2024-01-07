@@ -17,7 +17,6 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
     private protected readonly ILogger _logger;
     private protected readonly ILocalSettingsService _localSettingsService;
     private readonly SelectedGameService _selectedGameService;
-    private readonly NotificationManager _notificationManager = new();
 
     private Process? _process;
     private protected string _prcoessPath = null!;

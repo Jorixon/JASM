@@ -10,9 +10,9 @@ namespace GIMI_ModManager.WinUI.Services.AppManagement;
 public class LifeCycleService
 {
     private readonly ILogger _logger;
-    private readonly NotificationManager _notificationManager;
+    private readonly Notifications.NotificationManager _notificationManager;
 
-    public LifeCycleService(ILogger logger, NotificationManager notificationManager)
+    public LifeCycleService(ILogger logger, Notifications.NotificationManager notificationManager)
     {
         _notificationManager = notificationManager;
         _logger = logger.ForContext<LifeCycleService>();

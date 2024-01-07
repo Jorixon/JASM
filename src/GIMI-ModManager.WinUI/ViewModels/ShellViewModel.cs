@@ -4,6 +4,7 @@ using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml.Navigation;
 

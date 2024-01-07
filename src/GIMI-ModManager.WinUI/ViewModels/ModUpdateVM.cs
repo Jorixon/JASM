@@ -5,7 +5,6 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
-using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;

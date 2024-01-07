@@ -14,9 +14,10 @@ public class ModSettingsService
 {
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILogger _logger;
-    private readonly NotificationManager _notificationManager;
+    private readonly Notifications.NotificationManager _notificationManager;
 
-    public ModSettingsService(ISkinManagerService skinManagerService, NotificationManager notificationManager,
+    public ModSettingsService(ISkinManagerService skinManagerService,
+        Notifications.NotificationManager notificationManager,
         ILogger logger)
     {
         _skinManagerService = skinManagerService;

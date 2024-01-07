@@ -13,5 +13,10 @@
     mc:Ignorable="d">
 
 
-    <Grid />
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="ButtonBase_OnClick">Show now</Button>
+            <Button Click="ButtonBase_OnClick1">Show later</Button>
+        </StackPanel>
+    </Grid>
 </Page>

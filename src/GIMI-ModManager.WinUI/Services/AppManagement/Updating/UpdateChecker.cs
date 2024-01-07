@@ -10,7 +10,7 @@ public sealed class UpdateChecker : IDisposable
 {
     private readonly ILogger _logger;
     private readonly ILocalSettingsService _localSettingsService;
-    private readonly NotificationManager _notificationManager;
+    private readonly Notifications.NotificationManager _notificationManager;
 
     public Version CurrentVersion { get; private set; }
     public Version? LatestRetrievedVersion { get; private set; }
@@ -23,7 +23,7 @@ public sealed class UpdateChecker : IDisposable
     private const string ReleasesApiUrl = "https://api.github.com/repos/Jorixon/JASM/releases?per_page=2";
 
     public UpdateChecker(ILogger logger, ILocalSettingsService localSettingsService,
-        NotificationManager notificationManager, CancellationToken cancellationToken = default)
+        Notifications.NotificationManager notificationManager, CancellationToken cancellationToken = default)
     {
         _logger = logger.ForContext<UpdateChecker>();
         _localSettingsService = localSettingsService;
