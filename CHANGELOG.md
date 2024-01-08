@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.1.0](https://github.com/Jorixon/JASM/compare/v2.0.0...v2.1.0) (2024-01-08)
+
+
+### Features
+
+* Now possible to disable all other mods while activating the new mod when installing a new mod ([#116](https://github.com/Jorixon/JASM/issues/116))  ([9130f0c](https://github.com/Jorixon/JASM/commit/9130f0c15b75ac93bc96b0544ab9dfb24960b22e))
+
+
+### Bug Fixes
+
+* Potential fix for crash when JASM looks for other running instances of itself ([#118](https://github.com/Jorixon/JASM/issues/118)) ([20fafc1](https://github.com/Jorixon/JASM/commit/20fafc1b5480a7df39dce81bd99710da7e8ededd))
+* Potential fix for deleting mods freezing the app ([9130f0c](https://github.com/Jorixon/JASM/commit/9130f0c15b75ac93bc96b0544ab9dfb24960b22e))
+
+
+### Miscellaneous
+
+* Changed restart logic to use winappsdk to restart app. Should hopefully make it more stable ([#114](https://github.com/Jorixon/JASM/issues/114)) ([d7044dd](https://github.com/Jorixon/JASM/commit/d7044ddeb0fdff49762bc2e5ee3bd047c2b9e88e))
+
+
+### Code Refactoring
+
+* Fixed typo in App Management in folder name / namespace ([d7044dd](https://github.com/Jorixon/JASM/commit/d7044ddeb0fdff49762bc2e5ee3bd047c2b9e88e))
+* Redid notifications and updated namespaces ([9130f0c](https://github.com/Jorixon/JASM/commit/9130f0c15b75ac93bc96b0544ab9dfb24960b22e))
+
 ## [2.0.0](https://github.com/Jorixon/JASM/compare/v1.9.2...v2.0.0) (2024-01-06)
 
 
