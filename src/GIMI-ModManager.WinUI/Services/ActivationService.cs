@@ -44,6 +44,7 @@ public class ActivationService : IActivationService
     private readonly SelectedGameService _selectedGameService;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
     private readonly ModNotificationManager _modNotificationManager;
+    private readonly LifeCycleService _lifeCycleService;
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
@@ -58,7 +59,7 @@ public class ActivationService : IActivationService
         ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService,
         ModUpdateAvailableChecker modUpdateAvailableChecker, ILogger logger,
         ModNotificationManager modNotificationManager, INavigationViewService navigationViewService,
-        ISkinManagerService skinManagerService, NotificationManager notificationManager)
+        ISkinManagerService skinManagerService, NotificationManager notificationManager, LifeCycleService lifeCycleService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -78,6 +79,7 @@ public class ActivationService : IActivationService
         _navigationViewService = navigationViewService;
         _skinManagerService = skinManagerService;
         _notificationManager = notificationManager;
+        _lifeCycleService = lifeCycleService;
         _logger = logger.ForContext<ActivationService>();
     }
 
@@ -115,6 +117,40 @@ public class ActivationService : IActivationService
 
         // Show popups
         ShowStartupPopups();
+    }
+
+    private async Task CheckIfAlreadyRunningAsync()
+    {
+        nint? processHandle;
+        try
+        {
+             processHandle = await _lifeCycleService.CheckIfAlreadyRunningAsync();
+
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Could not determine if JASM is already running. Assuming not");
+            return;
+        }
+
+        if (processHandle == null) return;
+        var hWnd = processHandle.Value;
+        _logger.Information("JASM is already running, exiting...");
+        try
+        {
+            Win32.ShowWindowAsync(new HandleRef(null, hWnd), Win32.SW_RESTORE);
+            Win32.SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0, Win32.SWP_NOSIZE | Win32.SWP_NOZORDER);
+            Win32.SetForegroundWindow(hWnd);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Could not bring JASM to foreground");
+            return;
+        }
+
+        Application.Current.Exit();
+        await Task.Delay(-1);
+
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -458,38 +494,7 @@ public class ActivationService : IActivationService
         }
     }
 
-    private async Task CheckIfAlreadyRunningAsync()
-    {
-        var currentProcess = Process.GetCurrentProcess();
-        var processes = Process.GetProcessesByName(currentProcess.ProcessName);
 
-        if (processes.Length <= 1) return;
-
-        var currentProcessId = currentProcess.Id;
-        var currentProcessName = currentProcess.MainModule?.ModuleName;
-
-        foreach (var process in processes)
-        {
-            if (process.Id == currentProcessId) continue;
-
-            var processName = process.MainModule?.ModuleName;
-
-
-            if (currentProcessName!.Equals(processName, StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.Information("JASM is already running, exiting...");
-                var hWnd = process.MainWindowHandle;
-
-                Win32.ShowWindowAsync(new HandleRef(null, hWnd), Win32.SW_RESTORE);
-                Win32.SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0, Win32.SWP_NOSIZE | Win32.SWP_NOZORDER);
-                Win32.SetForegroundWindow(hWnd);
-
-
-                Application.Current.Exit();
-                await Task.Delay(-1);
-            }
-        }
-    }
 
     private async Task SetLanguage()
     {

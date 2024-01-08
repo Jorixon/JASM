@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
@@ -97,5 +99,29 @@ public class LifeCycleService
 
 
         Application.Current.Exit();
+    }
+
+    public Task<nint?> CheckIfAlreadyRunningAsync()
+    {
+        var currentProcess = Process.GetCurrentProcess();
+        var processes = Process.GetProcessesByName(currentProcess.ProcessName);
+
+        if (processes.Length <= 1) return Task.FromResult<IntPtr?>(null);
+
+        var currentProcessId = currentProcess.Id;
+        var currentProcessName = currentProcess.ProcessName;
+
+        foreach (var process in processes)
+        {
+            if (process.Id == currentProcessId) continue;
+
+            var processName = process.ProcessName;
+
+
+            if (currentProcessName!.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult<IntPtr?>(process.MainWindowHandle);
+        }
+
+        return Task.FromResult<IntPtr?>(null);
     }
 }
