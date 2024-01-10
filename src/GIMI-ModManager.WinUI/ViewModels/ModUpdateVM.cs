@@ -2,11 +2,13 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
@@ -21,6 +23,7 @@ public partial class ModUpdateVM : ObservableRecipient
     private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
     private readonly ModNotificationManager _modNotificationManager = App.GetService<ModNotificationManager>();
     private readonly ModInstallerService _modInstallerService = App.GetService<ModInstallerService>();
+    private readonly DownloadCacheService _downloadCacheService = App.GetService<DownloadCacheService>();
 
     private readonly Guid _notificationId;
     private readonly WindowEx _window;
@@ -50,8 +53,7 @@ public partial class ModUpdateVM : ObservableRecipient
         _cancellationToken = cancellationToken;
     }
 
-
-    private async void Initialize()
+    private async Task InternalInitialize()
     {
         ModsRetrievedResult? modResult = null;
         try
@@ -95,7 +97,27 @@ public partial class ModUpdateVM : ObservableRecipient
         if (!isAvailable) return;
 
         IsGameBananaOk = true;
-        Results.ForEach(x => x.IsDownloadButtonEnabled = true);
+
+
+        var availableMods = await _gameBananaService.GetAvailableMods(_notification.ModId, _cancellationToken);
+
+        Results.ForEach(x =>
+        {
+            if (availableMods.Mods.Any(y => y.FileId == x.UpdateCheckResult.FileId))
+                x.IsDownloadButtonEnabled = true;
+        });
+    }
+
+    private async void Initialize()
+    {
+        try
+        {
+            await InternalInitialize();
+        }
+        catch (Exception e)
+        {
+            LogErrorAndClose(e);
+        }
     }
 
     private void LogErrorAndClose(Exception e)
@@ -106,7 +128,7 @@ public partial class ModUpdateVM : ObservableRecipient
             App.GetService<NotificationManager>().ShowNotification("Failed to get mod update info",
                 $"Failed to get mod update info", TimeSpan.FromSeconds(10));
         });
-        _window.Close();
+        _window.DispatcherQueue.TryEnqueue(() => _window.Close());
     }
 
     [RelayCommand]
@@ -138,83 +160,118 @@ public partial class ModUpdateVM : ObservableRecipient
         var fileName = updateCheckResult.UpdateCheckResult.FileName;
         var fileId = updateCheckResult.UpdateCheckResult.FileId;
 
-        var tmpDir = App.GetUniqueTmpFolder();
+        if (_downloadCacheService.GetCachedArchive(fileId) is { } cachedEntry)
+        {
+            updateCheckResult.DownloadFilePath = cachedEntry.ArchivePath;
+            updateCheckResult.ShowDownloadButton = false;
+            updateCheckResult.CanInstall = true;
+            updateCheckResult.ShowInstallButton = true;
+            updateCheckResult.DownloadProgress = 100;
+            return;
+        }
 
-        var tmpFile = File.Create(Path.Combine(tmpDir.FullName, fileName));
+        var tmpFile = File.Create(Path.Combine(DownloadsFolder, fileName));
         updateCheckResult.DownloadFilePath = tmpFile.Name;
 
         try
         {
             updateCheckResult.IsDownloading = true;
-            await downloadClient.DownloadModAsync(fileId, tmpFile, updateCheckResult.Progress, _cancellationToken);
+            await Task.Run(
+                () => downloadClient.DownloadModAsync(fileId, tmpFile, updateCheckResult.Progress, _cancellationToken),
+                _cancellationToken);
             updateCheckResult.IsDownloading = false;
-            updateCheckResult.CanInstall = true;
-        }
-        catch (TaskCanceledException e)
-        {
-            await tmpFile.DisposeAsync();
-            File.Delete(tmpFile.Name);
-            Console.WriteLine(e);
-            throw;
-        }
-        catch (OperationCanceledException e)
-        {
-            await tmpFile.DisposeAsync();
-            File.Delete(tmpFile.Name);
-            Console.WriteLine(e);
-            throw;
         }
         catch (Exception e)
         {
+            _logger.Error(e, "Failed to download mod");
             await tmpFile.DisposeAsync();
             File.Delete(tmpFile.Name);
-            Console.WriteLine(e);
-            throw;
+            return;
         }
 
         await tmpFile.DisposeAsync();
 
+        await Task.Run(() => _downloadCacheService.CacheArchive(tmpFile.Name, fileId), _cancellationToken);
+
         updateCheckResult.ShowDownloadButton = false;
+        updateCheckResult.CanInstall = true;
         updateCheckResult.ShowInstallButton = true;
     }
 
 
-    private DirectoryInfo GetDownloadFolder(string newModName)
+    private DirectoryInfo GetDownloadFolder(UpdateCheckResultVm updateCheckResultVm)
     {
-        var downloadFolder = new DirectoryInfo(Path.Combine(DownloadsFolder, DateTime.Now.ToString("d")+"-"+ DateTime.Now.ToString("THH-m-s") + "_" + Path.GetFileNameWithoutExtension(newModName) ));
+        var apiResult = updateCheckResultVm.UpdateCheckResult;
+        var downloadFolder = new DirectoryInfo(Path.Combine(DownloadsFolder,
+            apiResult.FileName + "__" + apiResult.FileId + "__" + apiResult.Md5Checksum));
+
         if (!downloadFolder.Exists)
             downloadFolder.Create();
 
         return downloadFolder;
     }
+
+    private (string fileName, string fileId, string checksum)? GetDownloadInfo(DirectoryInfo directoryInfo)
+    {
+        try
+        {
+            var fileName = directoryInfo.Name.Split("__")[0];
+            var fileId = directoryInfo.Name.Split("__")[1];
+            var checksum = directoryInfo.Name.Split("__")[2];
+            return (fileName, fileId, checksum);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
     private async Task InstallAsync(UpdateCheckResultVm updateCheckResultVm)
     {
         var archivePath = updateCheckResultVm.DownloadFilePath!;
 
         var extractor = App.GetService<ArchiveService>();
 
-        var downloadFolder = GetDownloadFolder(updateCheckResultVm.UpdateCheckResult.FileName);
 
-        DirectoryInfo extractedFolder = null!;
-        if (downloadFolder.Exists && downloadFolder.EnumerateFileSystemInfos().Any())
+        var downloadedModCacheEntry =
+            _downloadCacheService.GetCachedArchive(updateCheckResultVm.UpdateCheckResult.FileId);
+
+        if (downloadedModCacheEntry is null)
         {
-            extractedFolder = downloadFolder;
+            updateCheckResultVm.CanInstall = false;
+            return;
+        }
+
+
+        DirectoryInfo? extractedFolder;
+
+        if (downloadedModCacheEntry.ExtractedFolder is { Exists: true } &&
+            downloadedModCacheEntry.ExtractedFolder.EnumerateFileSystemInfos().Any())
+        {
+            extractedFolder = downloadedModCacheEntry.ExtractedFolder;
         }
         else
         {
-            extractedFolder =
-                await Task.Run(() => extractor.ExtractArchive(archivePath, downloadFolder.FullName),
-                    _cancellationToken);
-        }
+            var downloadFolder = GetDownloadFolder(updateCheckResultVm);
 
+
+            if (!downloadFolder.Exists || !downloadFolder.EnumerateFileSystemInfos().Any())
+                    await Task.Run(() => extractor.ExtractArchive(archivePath, downloadFolder.FullName),
+                        _cancellationToken);
+
+
+            extractedFolder = downloadFolder;
+            downloadedModCacheEntry.SetExtractedFolder(extractedFolder.FullName);
+        }
 
 
         // TODO: Pass modlist when creating window instead
 
         var monitor = await Task.Run(() =>
         {
-            var characterModList = _skinManagerService.CharacterModLists.
-                First(modList => modList.Mods.Any(mod => mod.Id == _notification!.ModId));
+            var characterModList =
+                _skinManagerService.CharacterModLists.First(modList =>
+                    modList.Mods.Any(mod => mod.Id == _notification!.ModId));
 
             return _modInstallerService.StartModInstallationAsync(extractedFolder, characterModList);
         }, _cancellationToken);
@@ -225,16 +282,16 @@ public partial class ModUpdateVM : ObservableRecipient
             if (args is { IsFinished: true, Installed: true })
                 updateCheckResultVm.IsInstalled = true;
 
-            if (args is { IsFinished: true, Installed: false, IsFailed:false })
+            if (args is { IsFinished: true, Installed: false, IsFailed: false })
                 updateCheckResultVm.CanInstall = true;
         };
-
     }
 }
 
 public partial class UpdateCheckResultVm : ObservableObject
 {
-    public UpdateCheckResultVm(UpdateCheckResult updateCheckResult, Func<UpdateCheckResultVm, Task> downloadCommand, Func<UpdateCheckResultVm, Task> installCommand)
+    public UpdateCheckResultVm(UpdateCheckResult updateCheckResult, Func<UpdateCheckResultVm, Task> downloadCommand,
+        Func<UpdateCheckResultVm, Task> installCommand)
     {
         UpdateCheckResult = updateCheckResult;
         _downloadCommand = downloadCommand;

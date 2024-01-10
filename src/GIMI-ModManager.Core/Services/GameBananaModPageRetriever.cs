@@ -177,7 +177,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
             while (!cancellationToken.IsCancellationRequested && file.Length < totalSizeBytes)
             {
                 file.Refresh();
-                await Task.Delay(500, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(200, cancellationToken).ConfigureAwait(false);
                 var fileSize = file.Length;
                 progress.Report((int)Math.Round((decimal)fileSize / (decimal)totalSizeBytes * 100));
             }

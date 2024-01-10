@@ -7,6 +7,7 @@ using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
@@ -69,9 +70,10 @@ public class ModInstallerService
         };
         if (!_modInstallWindows.TryAdd(modList, modInstallWindow))
         {
-#if DEBUG
-            throw new InvalidOperationException("The mod install window already exists");
-#endif
+            var window = _modInstallWindows.FirstOrDefault(e => e.Key == modList).Value;
+            Win32.PlaySound("SystemAsterisk", nuint.Zero,
+                (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
+            App.MainWindow.DispatcherQueue.TryEnqueue(() => window?.Activate());
             return null;
         }
 

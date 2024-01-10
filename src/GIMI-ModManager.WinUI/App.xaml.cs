@@ -120,6 +120,8 @@ public partial class App : Application
                 services.AddSingleton<SelectedGameService>();
 
                 services.AddSingleton<LifeCycleService>();
+                services.AddSingleton<DownloadCacheService>();
+                
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();

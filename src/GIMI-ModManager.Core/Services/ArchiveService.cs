@@ -4,6 +4,8 @@ using SharpCompress.Archives.Rar;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GIMI_ModManager.Core.Services;
 
@@ -41,6 +43,43 @@ public class ArchiveService
         extractor?.Invoke(archive.FullName, extractedFolder);
 
         return new DirectoryInfo(extractedFolder);
+    }
+
+    // https://stackoverflow.com/a/31349703
+    public byte[] GetContentsHash(string path)
+    {
+
+        var filePaths = new List<string>();
+
+        if (File.Exists(path))
+            filePaths.Add(path);
+        else if (Directory.Exists(path))
+            filePaths.AddRange(Directory.GetFiles(path, "*", SearchOption.AllDirectories));
+        else
+            throw new FileNotFoundException("File or directory not found", path);
+
+
+        using var md5 = MD5.Create();
+        foreach (var filePath in filePaths)
+        {
+            // hash path
+            var pathBytes = Encoding.UTF8.GetBytes(filePath);
+            md5.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
+
+            // hash contents
+            var contentBytes = File.ReadAllBytes(filePath);
+
+            md5.TransformBlock(contentBytes, 0, contentBytes.Length, contentBytes, 0);
+        }
+
+        md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+
+        return md5.Hash ?? Array.Empty<byte>();
+    }
+
+    public bool IsHashEqual(byte[] hash1, byte[] hash2)
+    {
+        return hash1.SequenceEqual(hash2);
     }
 
     private bool IsArchive(string path)
