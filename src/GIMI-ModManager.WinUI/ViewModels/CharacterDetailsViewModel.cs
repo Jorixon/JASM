@@ -4,7 +4,6 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.WinUI;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -26,6 +25,7 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views;
 using Serilog;
+using CommunityToolkitWrapper;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -98,7 +98,6 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 await AddNewModAddedNotificationAsync(AttentionType.Added,
                     extractedFolderName, null);
             }
-
             await App.MainWindow.DispatcherQueue.EnqueueAsync(
                 async () => { await RefreshMods(); }).ConfigureAwait(false);
         };

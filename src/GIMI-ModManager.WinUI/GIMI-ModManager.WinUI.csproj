@@ -536,6 +536,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CommunityToolkitWrapper\CommunityToolkitWrapper.csproj" />
 		<ProjectReference Include="..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>

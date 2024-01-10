@@ -2,7 +2,7 @@
 using System.IO.Pipes;
 using System.Security.Principal;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.WinUI;
+using CommunityToolkitWrapper;
 using Microsoft.UI.Xaml;
 using Serilog;
 

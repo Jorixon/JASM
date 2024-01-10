@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.WinUI;
+using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
@@ -119,6 +119,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             App.MainWindow.DispatcherQueue.EnqueueAsync(() =>
             {
                 CanCheckForUpdates = _modUpdateAvailableChecker.IsReady;
+                return Task.CompletedTask;
             });
         };
     }
