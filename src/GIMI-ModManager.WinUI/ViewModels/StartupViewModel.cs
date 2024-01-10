@@ -144,7 +144,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 40, 50);
+        _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 45, 60);
         _windowManagerService.MainWindow.CenterOnScreen();
 
         var settings =

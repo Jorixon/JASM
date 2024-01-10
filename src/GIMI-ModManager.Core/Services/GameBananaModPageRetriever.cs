@@ -1,5 +1,9 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using GIMI_ModManager.Core.Helpers;
 using Polly;
 using Polly.RateLimiting;
 using Polly.Registry;
@@ -16,6 +20,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
 
     private const string DownloadUrl = "https://gamebanana.com/dl/";
     private const string ApiUrl = "https://gamebanana.com/apiv11/Mod/";
+    private const string HealthCheckUrl = "https://gamebanana.com/apiv11";
 
     public GameBananaModPageRetriever(ILogger logger, HttpClient httpClient,
         ResiliencePipelineProvider<string> resiliencePipelineProvider)
@@ -25,6 +30,12 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         _resiliencePipeline = resiliencePipelineProvider.GetPipeline(HttpClientName);
     }
 
+
+    public async Task<bool> CheckSiteStatusAsync(CancellationToken cancellationToken = default)
+    {
+         using var response = await _httpClient.GetAsync(HealthCheckUrl, cancellationToken).ConfigureAwait(false);
+         return response.StatusCode == HttpStatusCode.OK;
+    }
 
     public async Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
         CancellationToken cancellationToken = default)
@@ -133,6 +144,52 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         };
     }
 
+    public async Task DownloadModAsync(string fileId, FileStream destinationFile, IProgress<int> progress,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(fileId);
+        var downloadUrl = DownloadUrl + fileId;
+
+        if (fileId.IsNullOrEmpty())
+            throw new NotImplementedException();
+
+
+        using var response = await _httpClient
+            .GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+
+        var contentLength = response.Content.Headers.ContentLength;
+
+        await using var download = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        if (contentLength is not null)
+            Task.Run(
+                async () => DownloadMonitor(contentLength.Value, destinationFile.Name, progress, cancellationToken),
+                cancellationToken);
+
+        await download.CopyToAsync(destinationFile, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task DownloadMonitor(long totalSizeBytes, string downloadFilePath, IProgress<int> progress,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var file = new FileInfo(downloadFilePath);
+            while (!cancellationToken.IsCancellationRequested && file.Length < totalSizeBytes)
+            {
+                file.Refresh();
+                await Task.Delay(500, cancellationToken).ConfigureAwait(false);
+                var fileSize = file.Length;
+                progress.Report((int)Math.Round((decimal)fileSize / (decimal)totalSizeBytes * 100));
+            }
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+        }
+    }
+
     private static string? GetModIdFromUrl(Uri url)
     {
         var segments = url.Segments;
@@ -195,10 +252,14 @@ public class GameBananaModPageRetriever : IModUpdateChecker
 
 public interface IModUpdateChecker
 {
+    public Task<bool> CheckSiteStatusAsync(CancellationToken cancellationToken = default);
     public Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
         CancellationToken cancellationToken = default);
 
     public Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken = default);
+
+    public Task DownloadModAsync(string fileId, FileStream destinationFile, IProgress<int> progress,
+        CancellationToken cancellationToken = default);
 }
 
 public class ModPageDataResult
@@ -259,9 +320,10 @@ public sealed class ApiFiles
 
 public record UpdateCheckResult
 {
-    public UpdateCheckResult(bool isNewer, string fileName, string description, DateTime dateAdded,
+    public UpdateCheckResult(bool isNewer, string fileId, string fileName, string description, DateTime dateAdded,
         string md5Checksum)
     {
+        FileId = fileId;
         IsNewer = isNewer;
         FileName = fileName;
         Description = description;
@@ -270,6 +332,7 @@ public record UpdateCheckResult
     }
 
     public bool IsNewer { get; set; }
+    public string FileId { get; set; }
     public string FileName { get; }
     public string Description { get; }
     public DateTime DateAdded { get; }
@@ -292,6 +355,7 @@ internal static class ApiToResultMapper
     {
         var updateCheckResults = apiResponse.Files.Select(apiFile =>
         {
+            var fileId = apiFile.Id.ToString() ?? "";
             var fileName = apiFile.FileName ?? "";
             var description = apiFile.Description ?? "";
 
@@ -304,7 +368,7 @@ internal static class ApiToResultMapper
 
             var md5Checksum = apiFile.Md5Checksum ?? "";
 
-            return new UpdateCheckResult(isNewer, fileName, description, dateAdded, md5Checksum);
+            return new UpdateCheckResult(isNewer, fileId, fileName, description, dateAdded, md5Checksum);
         }).ToArray();
 
         var anyNewMods = updateCheckResults.Any(result => result.IsNewer);

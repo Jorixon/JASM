@@ -129,6 +129,7 @@ public partial class App : Application
                 services.AddSingleton<ModSettingsService>();
                 services.AddSingleton<KeySwapService>();
                 services.AddSingleton<ILanguageLocalizer, Localizer>();
+                services.AddSingleton<ArchiveService>();
 
                 services.AddSingleton<GameBananaService>();
                 services.AddTransient<IModUpdateChecker, GameBananaModPageRetriever>();

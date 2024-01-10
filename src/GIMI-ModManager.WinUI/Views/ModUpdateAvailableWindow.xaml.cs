@@ -10,14 +10,21 @@ namespace GIMI_ModManager.WinUI.Views;
 
 public sealed partial class ModUpdateAvailableWindow : WindowEx
 {
-    public readonly ModUpdateVM ViewModel;
+    public ModUpdateVM ViewModel { get; }
     public readonly IThemeSelectorService ThemeSelectorService = App.GetService<IThemeSelectorService>();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     //private bool _isFirstTimeNavigation = true;
 
     public ModUpdateAvailableWindow(Guid notificationId)
     {
-        ViewModel = new ModUpdateVM(notificationId, this);
+        ViewModel = new ModUpdateVM(notificationId, this, _cancellationTokenSource.Token);
+        Closed += async (_, _) =>
+        {
+            _cancellationTokenSource.Cancel();
+            await Task.Delay(1000);
+            _cancellationTokenSource.Dispose();
+        };
         InitializeComponent();
 
         if (Content is FrameworkElement rootElement)

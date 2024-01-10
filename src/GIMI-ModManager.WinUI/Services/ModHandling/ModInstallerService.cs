@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
@@ -18,13 +19,16 @@ public class ModInstallerService
 {
     private readonly IWindowManagerService _windowManagerService;
 
+    private readonly ConcurrentDictionary<ICharacterModList, WindowEx> _modInstallWindows = new();
+
 
     public ModInstallerService(IWindowManagerService windowManagerService)
     {
         _windowManagerService = windowManagerService;
     }
 
-    public Task StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList,
+    public async Task<InstallProgressMonitor?> StartModInstallationAsync(DirectoryInfo modFolder,
+        ICharacterModList modList,
         ICharacterSkin? inGameSkin = null)
     {
         ArgumentNullException.ThrowIfNull(modFolder);
@@ -36,12 +40,17 @@ public class ModInstallerService
 
         var dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainWindow.DispatcherQueue;
 
-        dispatcherQueue.TryEnqueue(() => InternalStart(modFolder, modList, inGameSkin));
-
-        return Task.CompletedTask;
+        var progressMonitorTask = new TaskCompletionSource<InstallProgressMonitor?>();
+        dispatcherQueue.TryEnqueue(() =>
+        {
+            var monitor = InternalStart(modFolder, modList, inGameSkin);
+            progressMonitorTask.SetResult(monitor);
+        });
+        return await progressMonitorTask.Task.ConfigureAwait(false);
     }
 
-    private void InternalStart(DirectoryInfo modFolder, ICharacterModList modList, ICharacterSkin? inGameSkin = null)
+    private InstallProgressMonitor? InternalStart(DirectoryInfo modFolder, ICharacterModList modList,
+        ICharacterSkin? inGameSkin)
     {
         var modTitle = Guid.TryParse(modFolder.Name, out _)
             ? modFolder.EnumerateDirectories().FirstOrDefault()?.Name
@@ -58,8 +67,106 @@ public class ModInstallerService
             Width = 1200,
             Height = 750
         };
+        if (!_modInstallWindows.TryAdd(modList, modInstallWindow))
+        {
+#if DEBUG
+            throw new InvalidOperationException("The mod install window already exists");
+#endif
+            return null;
+        }
+
         modInstallPage.CloseRequested += (_, _) => { modInstallWindow.Close(); };
+        modInstallWindow.Closed += (_, _) => { _modInstallWindows.TryRemove(modList, out _); };
         _windowManagerService.CreateWindow(modInstallWindow, modList);
+
+        return new InstallProgressMonitor(modInstallWindow, modList);
+    }
+
+
+    /// <summary>
+    /// This class is returned when an installation starts, it can be used to monitor the progress
+    /// of the installation from different parts of the application
+    /// </summary>
+    public class InstallProgressMonitor
+    {
+        private WindowEx? _installWindow;
+        private readonly ICharacterModList _modList;
+        private bool _initialized;
+
+        public bool InstallWindowOpen => _installWindow is not null;
+        public IModdableObject ModdableObject => _modList.Character;
+
+        public bool IsFinished { get; private set; }
+
+
+        public bool Installed { get; private set; }
+        public bool IsCanceled { get; private set; }
+        public bool IsFailed { get; private set; }
+
+        public event EventHandler<FinishedEventArgs>? Finished;
+
+        public InstallProgressMonitor(WindowEx installWindow, ICharacterModList modList)
+        {
+            _installWindow = installWindow;
+            _modList = modList;
+
+            _installWindow.Closed += (_, _) =>
+            {
+                _installWindow = null;
+                if (!IsFinished)
+                {
+                    IsCanceled = true;
+                    Finished?.Invoke(this, new FinishedEventArgs(false, true, false));
+                }
+            };
+        }
+
+
+        public void Initialize()
+        {
+            if (_initialized)
+                throw new InvalidOperationException("The progress monitor has already been initialized");
+
+            _initialized = true;
+        }
+
+        public void SuccessFullInstall()
+        {
+            if (!_initialized)
+                throw new InvalidOperationException("The progress monitor has not been initialized");
+
+            Installed = true;
+            IsFinished = true;
+
+            Finished?.Invoke(this, new FinishedEventArgs(true, true, false));
+        }
+
+        public void FailedInstall()
+        {
+            if (!_initialized)
+                throw new InvalidOperationException("The progress monitor has not been initialized");
+
+            IsFailed = true;
+            IsFinished = true;
+
+            Finished?.Invoke(this, new FinishedEventArgs(false, true, true));
+        }
+
+
+        public class FinishedEventArgs : EventArgs
+        {
+            public bool Installed { get; }
+            public bool IsFinished { get; }
+            public bool IsFailed { get; }
+
+
+            public FinishedEventArgs(bool installed, bool isFinished, bool isFailed)
+            {
+                Installed = installed;
+                IsFinished = isFinished;
+                IsFailed = isFailed;
+            }
+        }
     }
 }
 
