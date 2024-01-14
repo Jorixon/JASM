@@ -20,7 +20,7 @@ public class ArchiveService
         _extractTool = GetExtractTool();
     }
 
-    public DirectoryInfo ExtractArchive(string archivePath, string destinationPath)
+    public DirectoryInfo ExtractArchive(string archivePath, string destinationPath, bool overwritePath = false)
     {
         var archive = new FileInfo(archivePath);
         if (!archive.Exists)

@@ -96,6 +96,7 @@ public partial class ModUpdateVM : ObservableRecipient
 
         if (!isAvailable) return;
 
+        Directory.CreateDirectory(DownloadsFolder);
         IsGameBananaOk = true;
 
 
@@ -256,8 +257,8 @@ public partial class ModUpdateVM : ObservableRecipient
 
 
             if (!downloadFolder.Exists || !downloadFolder.EnumerateFileSystemInfos().Any())
-                    await Task.Run(() => extractor.ExtractArchive(archivePath, downloadFolder.FullName),
-                        _cancellationToken);
+                await Task.Run(() => extractor.ExtractArchive(archivePath, downloadFolder.FullName),
+                    _cancellationToken);
 
 
             extractedFolder = downloadFolder;
@@ -276,15 +277,23 @@ public partial class ModUpdateVM : ObservableRecipient
             return _modInstallerService.StartModInstallationAsync(extractedFolder, characterModList);
         }, _cancellationToken);
 
+        if (monitor is not null)
+            monitor.Finished += (_, args) =>
+            {
+                if (args is { IsFinished: true, Installed: true })
+                {
+                    updateCheckResultVm.IsInstalled = true;
+                    updateCheckResultVm.CanInstall = false;
 
-        monitor!.Finished += (_, args) =>
+                }
+
+                if (args is { IsFinished: true, Installed: false, IsFailed: false })
+                    updateCheckResultVm.CanInstall = true;
+            };
+        else
         {
-            if (args is { IsFinished: true, Installed: true })
-                updateCheckResultVm.IsInstalled = true;
-
-            if (args is { IsFinished: true, Installed: false, IsFailed: false })
-                updateCheckResultVm.CanInstall = true;
-        };
+            updateCheckResultVm.CanInstall = true;
+        }
     }
 }
 

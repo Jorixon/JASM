@@ -74,6 +74,7 @@ public class ModInstallerService
             Win32.PlaySound("SystemAsterisk", nuint.Zero,
                 (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
             App.MainWindow.DispatcherQueue.TryEnqueue(() => window?.Activate());
+            modInstallPage.Dispose();
             return null;
         }
 
