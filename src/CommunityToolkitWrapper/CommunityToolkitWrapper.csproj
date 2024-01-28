@@ -5,11 +5,11 @@
     <RootNamespace>CommunityToolkitWrapper</RootNamespace>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
+	<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+	<GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>
 
   <ItemGroup>
       <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.0.240109" />
-      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
-      <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
   </ItemGroup>
 </Project>
