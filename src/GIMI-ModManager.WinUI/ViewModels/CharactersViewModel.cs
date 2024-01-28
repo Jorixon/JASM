@@ -661,28 +661,46 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.GetKey(_category), settings);
 
 
-    [RelayCommand]
-    private async Task Start3DmigotoAsync()
+    private async Task InternalStartAsync(IProcessManager processManager)
     {
-        _logger.Debug("Starting 3Dmigoto");
-        ThreeDMigtoProcessManager.CheckStatus();
+        _logger.Debug("Starting {ProcessName}", processManager.ProcessName);
+        processManager.CheckStatus();
 
-        if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
+        if (processManager.ProcessStatus == ProcessStatus.NotInitialized)
         {
-            var processPath = await ThreeDMigtoProcessManager.PickProcessPathAsync(App.MainWindow);
+            string? processPath = null;
+            try
+            {
+                processPath = await processManager.PickProcessPathAsync(App.MainWindow);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error picking process path");
+                NotificationManager.ShowNotification($"Error picking process path, ErrorCode: {e.HResult}", e.Message,
+                    TimeSpan.FromSeconds(10));
+            }
+
             if (processPath is null) return;
-            await ThreeDMigtoProcessManager.SetPath(Path.GetFileName(processPath), processPath);
+            await processManager.SetPath(Path.GetFileName(processPath), processPath);
         }
 
-        if (ThreeDMigtoProcessManager.ProcessStatus == ProcessStatus.NotRunning)
+        if (processManager.ProcessStatus == ProcessStatus.NotRunning)
         {
-            ThreeDMigtoProcessManager.StartProcess();
-            if (ThreeDMigtoProcessManager.ErrorMessage is not null)
-                NotificationManager.ShowNotification($"Failed to start {ThreeDMigtoProcessManager.ProcessName}",
-                    ThreeDMigtoProcessManager.ErrorMessage,
+            processManager.StartProcess();
+            if (processManager.ErrorMessage is not null)
+                NotificationManager.ShowNotification($"Failed to start {processManager.ProcessName}",
+                    processManager.ErrorMessage,
                     TimeSpan.FromSeconds(5));
         }
     }
+
+
+    [RelayCommand]
+    private async Task Start3DmigotoAsync() => await InternalStartAsync(ThreeDMigtoProcessManager);
+
+
+    [RelayCommand]
+    private async Task StartGenshinAsync() => await InternalStartAsync(GenshinProcessManager);
 
     private bool CanRefreshModsInGame()
     {
@@ -694,28 +712,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     {
         _logger.Debug("Refreshing Mods In Game");
         await ElevatorService.RefreshGenshinMods();
-    }
-
-    [RelayCommand]
-    private async Task StartGenshinAsync()
-    {
-        _logger.Debug("Starting Genshin Impact");
-        GenshinProcessManager.CheckStatus();
-        if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotInitialized)
-        {
-            var processPath = await GenshinProcessManager.PickProcessPathAsync(App.MainWindow);
-            if (processPath is null) return;
-            await GenshinProcessManager.SetPath(Path.GetFileName(processPath), processPath);
-        }
-
-        if (GenshinProcessManager.ProcessStatus == ProcessStatus.NotRunning)
-        {
-            GenshinProcessManager.StartProcess();
-            if (GenshinProcessManager.ErrorMessage is not null)
-                NotificationManager.ShowNotification($"Failed to start {GenshinProcessManager.ProcessName}",
-                    GenshinProcessManager.ErrorMessage,
-                    TimeSpan.FromSeconds(5));
-        }
     }
 
     [ObservableProperty] private bool _isAddingMod = false;

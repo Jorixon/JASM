@@ -11,7 +11,7 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services;
 
-public abstract partial class BaseProcessManager<TProcessOptions> : ObservableObject
+public abstract partial class BaseProcessManager<TProcessOptions> : ObservableObject, IProcessManager
     where TProcessOptions : ProcessOptionsBase, new()
 {
     private protected readonly ILogger _logger;
@@ -159,6 +159,12 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
             ErrorMessage ??= $"Failed to start {ProcessName}";
             return;
         }
+        catch (Exception e)
+        {
+            _logger.Error(e, $"Failed to start {ProcessName}");
+            ErrorMessage = $"Failed to start {ProcessName} due to an unknown error, see logs for details";
+            return;
+        }
 
         if (_process == null || _process.HasExited)
         {
@@ -266,4 +272,20 @@ public class ThreeDMigtoProcessManager : BaseProcessManager<MigotoProcessOptions
         localSettingsService, selectedGameService)
     {
     }
+}
+
+public interface IProcessManager
+{
+    public string ProcessName { get; }
+    public string ProcessPath { get; }
+    public string? ErrorMessage { get; }
+    public ProcessStatus ProcessStatus { get; }
+
+    public Task<bool> TryInitialize();
+    public Task ResetProcessOptions();
+    public Task SetPath(string processName, string path, string? workingDirectory = null);
+    public void StartProcess();
+    public void CheckStatus();
+    public void StopProcess();
+    public Task<string?> PickProcessPathAsync(Window windowHandle);
 }
