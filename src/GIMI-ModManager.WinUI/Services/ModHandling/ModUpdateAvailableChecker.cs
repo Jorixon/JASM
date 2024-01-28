@@ -64,13 +64,33 @@ public sealed class ModUpdateAvailableChecker
         var stoppingToken = _stoppingCancellationTokenSource.Token;
 
 
-        Task.Factory.StartNew(() => StartBackgroundChecker(stoppingToken), stoppingToken,
+        Task.Factory.StartNew(
+            () => CatchAll(() => StartBackgroundChecker(stoppingToken), nameof(StartBackgroundChecker)), stoppingToken,
             TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-        Task.Factory.StartNew(() => AutoCheckerProducer(stoppingToken), stoppingToken, TaskCreationOptions.LongRunning,
+        Task.Factory.StartNew(() => CatchAll(() => AutoCheckerProducer(stoppingToken), nameof(AutoCheckerProducer)),
+            stoppingToken,
+            TaskCreationOptions.LongRunning,
             TaskScheduler.Default);
 
         return Task.CompletedTask;
+    }
+
+    private async Task CatchAll(Func<Task> func, string methodName)
+    {
+        try
+        {
+            await func();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "An error occurred while executing {FuncName}", methodName);
+            _notificationManager.ShowNotification(
+                $"An error occurred in the mod update background checker",
+                $"A fatal error occured in the background checker ({methodName} : {e.HResult}). This means that JASM can no longer check for mod updates in the background or manually. Error: {e}",
+                TimeSpan.FromSeconds(20));
+            Status = RunningState.Error;
+        }
     }
 
 
