@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.1](https://github.com/Jorixon/JASM/compare/v2.1.0...v2.1.1) (2024-01-28)
+
+
+### Miscellaneous
+
+* Added aditional error handling for mod update background checker ([74f3cc7](https://github.com/Jorixon/JASM/commit/74f3cc77e5a0522a4fdfba712cbb2874fb75aa6c))
+* Added some additional error handling when picking 3dmigoto/genshin process ([a940dc7](https://github.com/Jorixon/JASM/commit/a940dc75276bd45d3c9709fb42ea355c527745fb))
+* Updated readme and adjusted build settings ([b754ec2](https://github.com/Jorixon/JASM/commit/b754ec28d2b49fbd62bc513930b6457212077095))
+* Updated WinAppSDK ([39086ab](https://github.com/Jorixon/JASM/commit/39086ab23bc67f7eadf4b5e39cfcf2f64323644d))
+
 ## [2.1.0](https://github.com/Jorixon/JASM/compare/v2.0.0...v2.1.0) (2024-01-08)
 
 
