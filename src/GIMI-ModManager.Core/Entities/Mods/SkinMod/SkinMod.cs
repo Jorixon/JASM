@@ -5,7 +5,7 @@ namespace GIMI_ModManager.Core.Entities.Mods.SkinMod;
 
 public class SkinMod : Mod, ISkinMod
 {
-    private const string ModIniName = "merged.ini";
+    private const string MergeIniName = "merged.ini";
     private string _modIniPath = string.Empty;
     private readonly string configFileName = Constants.ModConfigFileName;
     private string _configFilePath = string.Empty;
@@ -24,9 +24,6 @@ public class SkinMod : Mod, ISkinMod
 
         return displayName;
     }
-
-    public bool HasMergedInI => KeySwaps is not null;
-
 
     public void ClearCache()
     {
@@ -60,11 +57,9 @@ public class SkinMod : Mod, ISkinMod
         var skinMod = new SkinMod(modFolder);
         skinMod.Settings = new SkinModSettingsManager(skinMod);
 
-        if (HasMergedInIFile(modFolder) is not null)
-            skinMod.KeySwaps = new SkinModKeySwapManager(skinMod);
+        skinMod.Id = await skinMod.Settings.InitializeAsync().ConfigureAwait(false);
 
-
-        skinMod.Id = await skinMod.Settings.InitializeAsync();
+        await skinMod.GetModIniPathAsync().ConfigureAwait(false);
 
         if (!forceGenerateNewId) return skinMod;
 
@@ -90,9 +85,8 @@ public class SkinMod : Mod, ISkinMod
     private void Refresh()
     {
         _modDirectory.Refresh();
-
         _configFilePath = Path.Combine(FullPath, configFileName);
-        _modIniPath = Path.Combine(FullPath, ModIniName);
+        _modIniPath = Path.Combine(FullPath, MergeIniName);
     }
 
     public bool ContainsOnlyJasmFiles()
@@ -103,15 +97,15 @@ public class SkinMod : Mod, ISkinMod
 
     private static string? HasMergedInIFile(DirectoryInfo modDirectory)
     {
-        var mergedIniPath = modDirectory.EnumerateFiles("merged.ini", SearchOption.TopDirectoryOnly)
-            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase))
+        var mergedIniPath = modDirectory.EnumerateFiles(MergeIniName, SearchOption.TopDirectoryOnly)
+            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(MergeIniName, StringComparison.CurrentCultureIgnoreCase))
             ?.FullName;
 
         if (mergedIniPath is not null)
             return mergedIniPath;
 
         return modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
-            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(ModIniName, StringComparison.CurrentCultureIgnoreCase))
+            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(MergeIniName, StringComparison.CurrentCultureIgnoreCase))
             ?.FullName;
     }
 
@@ -121,7 +115,49 @@ public class SkinMod : Mod, ISkinMod
         return CreateModAsync(newModFolder.FullPath).GetAwaiter().GetResult();
     }
 
-    public string? GetModIniPath() => HasMergedInIFile(_modDirectory);
+    public async Task<string?> GetModIniPathAsync()
+    {
+        var settings = await Settings.ReadSettingsAsync().ConfigureAwait(false);
+
+        var modIniPath = settings.MergedIniPath?.LocalPath;
+
+        // Empty string means that the user has disabled key swaps for this mod.
+        // Or that JASM should not touch the merged.ini file.
+        if (modIniPath == string.Empty)
+        {
+            KeySwaps = null;
+            return null;
+        }
+
+        if (modIniPath is null)
+        {
+            var iniPath = HasMergedInIFile(_modDirectory);
+
+            if (iniPath is null)
+            {
+                KeySwaps = null;
+                return null;
+            }
+
+
+            settings.MergedIniPath = new Uri(iniPath);
+            await Settings.SaveSettingsAsync(settings).ConfigureAwait(false);
+            modIniPath = iniPath;
+        }
+
+        if (!File.Exists(modIniPath))
+        {
+            settings.MergedIniPath = null;
+            await Settings.SaveSettingsAsync(settings).ConfigureAwait(false);
+            KeySwaps = null;
+            return null;
+        }
+
+        KeySwaps ??= new SkinModKeySwapManager(this);
+
+
+        return modIniPath;
+    }
 
     public string GetNameWithoutDisabledPrefix() =>
         ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(_modDirectory.Name);

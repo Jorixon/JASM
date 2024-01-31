@@ -9,7 +9,7 @@ public record ModSettings
     public ModSettings(Guid id, string? customName = null, string? author = null, string? version = null,
         Uri? modUrl = null, Uri? imagePath = null, string? characterSkinOverride = null, string? description = null,
         DateTime? dateAdded = null,
-        DateTime? lastChecked = null)
+        DateTime? lastChecked = null, Uri? mergedIniPath = null, bool ignoreMergedIni = false)
     {
         Id = id;
         CustomName = customName;
@@ -21,10 +21,12 @@ public record ModSettings
         Description = description;
         DateAdded = dateAdded;
         LastChecked = lastChecked;
+        MergedIniPath = mergedIniPath;
+        IgnoreMergedIni = ignoreMergedIni;
     }
 
     public ModSettings DeepCopyWithProperties(string? customName = null, string? newCharacterSkinOverride = null,
-        DateTime? newLastChecked = null)
+        DateTime? newLastChecked = null, Uri? mergedIniPath = null, bool? ignoreMergedIni = false)
     {
         return new ModSettings(
             Id,
@@ -36,7 +38,9 @@ public record ModSettings
             newCharacterSkinOverride ?? CharacterSkinOverride,
             Description,
             DateAdded,
-            newLastChecked ?? LastChecked
+            newLastChecked ?? LastChecked,
+            mergedIniPath ?? MergedIniPath,
+            ignoreMergedIni ?? IgnoreMergedIni
         );
     }
 
@@ -55,6 +59,10 @@ public record ModSettings
     public Uri? ModUrl { get; internal set; }
 
     public Uri? ImagePath { get; internal set; }
+
+    public Uri? MergedIniPath { get; internal set; }
+
+    public bool IgnoreMergedIni { get; internal set; }
 
     public string? CharacterSkinOverride { get; internal set; }
     public string? Description { get; internal set; }
@@ -79,7 +87,11 @@ public record ModSettings
             CharacterSkinOverride = settings.CharacterSkinOverride,
             Description = settings.Description,
             DateAdded = DateTime.TryParse(settings.DateAdded, out var dateAdded) ? dateAdded : null,
-            LastChecked = DateTime.TryParse(settings.LastChecked, out var lastChecked) ? lastChecked : null
+            LastChecked = DateTime.TryParse(settings.LastChecked, out var lastChecked) ? lastChecked : null,
+            MergedIniPath = skinMod is not null
+                ? SkinModHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.MergedIniPath)
+                : null,
+            IgnoreMergedIni = settings.MergedIniPath == string.Empty
         };
     }
 
@@ -96,7 +108,10 @@ public record ModSettings
             CharacterSkinOverride = CharacterSkinOverride,
             Description = Description,
             DateAdded = DateAdded?.ToString(),
-            LastChecked = LastChecked?.ToString()
+            LastChecked = LastChecked?.ToString(),
+            MergedIniPath = IgnoreMergedIni
+                ? ""
+                : SkinModHelpers.UriPathToModRelativePath(skinMod, MergedIniPath?.LocalPath)
         };
     }
 
@@ -113,6 +128,8 @@ public record ModSettings
         if (ModUrl != other.ModUrl) return false;
         if (ImagePath != other.ImagePath) return false;
         if (CharacterSkinOverride != other.CharacterSkinOverride) return false;
+        if (MergedIniPath != other.MergedIniPath) return false;
+        if (IgnoreMergedIni != other.IgnoreMergedIni) return false;
 
         return true;
     }

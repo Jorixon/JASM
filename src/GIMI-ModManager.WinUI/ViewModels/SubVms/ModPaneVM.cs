@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -38,7 +39,7 @@ public partial class ModPaneVM : ObservableRecipient
         if (modModel.Id == SelectedModModel?.Id) return;
         UnloadMod();
 
-        var mod = _skinManagerService.GetModById(modModel.Id);
+        var mod = await Task.Run(() => _skinManagerService.GetModById(modModel.Id), cancellationToken);
         if (mod == null)
         {
             UnloadMod();
@@ -58,7 +59,9 @@ public partial class ModPaneVM : ObservableRecipient
         if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
 
 
-        var readSettingsResult = await _modSettingsService.GetSettingsAsync(_backendModModel.Id);
+        var readSettingsResult =
+            await Task.Run(() => _modSettingsService.GetSettingsAsync(_backendModModel.Id),
+                cancellationToken);
 
 
         if (!readSettingsResult.TryPickT0(out var modSettings, out _))
@@ -74,17 +77,22 @@ public partial class ModPaneVM : ObservableRecipient
         Debug.Assert(_backendModModel.Equals(SelectedModModel));
 
 
-        if (!_selectedSkinMod.HasMergedInI)
+        if (!_selectedSkinMod.Settings.HasMergedIni)
         {
             IsReadOnlyMode = false;
+            SelectedModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
+            _backendModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
             return;
         }
 
-        var readKeySwapResult = await _keySwapService.GetKeySwapsAsync(_backendModModel.Id);
+        var readKeySwapResult =
+            await Task.Run(() => _keySwapService.GetKeySwapsAsync(_backendModModel.Id), cancellationToken);
 
         if (!readKeySwapResult.TryPickT0(out var keySwaps, out _))
         {
             IsReadOnlyMode = false;
+            SelectedModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
+            _backendModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
             return;
         }
 
@@ -124,6 +132,7 @@ public partial class ModPaneVM : ObservableRecipient
         foreach (var supportedImageExtension in _supportedImageExtensions)
             filePicker.FileTypeFilter.Add(supportedImageExtension);
 
+        filePicker.CommitButtonText = "Set Image";
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
 
@@ -252,6 +261,45 @@ public partial class ModPaneVM : ObservableRecipient
             await StorageFolder.GetFolderFromPathAsync(_selectedSkinMod.FullPath));
     }
 
+    [RelayCommand]
+    private async Task SetModIniFileAsync()
+    {
+        var filePicker = new FileOpenPicker();
+        filePicker.FileTypeFilter.Add(".ini");
+        filePicker.CommitButtonText = "Set";
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+        WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
+        var file = await filePicker.PickSingleFileAsync();
+
+        if (file is null)
+        {
+            _logger.Debug("User cancelled file picker.");
+            return;
+        }
+
+        var result = await Task.Run(() => _modSettingsService.SetModIniAsync(_selectedSkinMod.Id, file.Path));
+
+
+        if (result.Notification is not null)
+            _notificationManager.ShowNotification(result.Notification);
+
+        _selectedSkinMod.ClearCache();
+        await ReloadModSettings(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [RelayCommand]
+    private async Task ClearSetModIniFileAsync()
+    {
+        var result = await Task.Run(() => _modSettingsService.SetModIniAsync(_selectedSkinMod.Id, string.Empty));
+
+
+        if (result.Notification is not null)
+            _notificationManager.ShowNotification(result.Notification);
+
+        _selectedSkinMod.ClearCache();
+        await ReloadModSettings(CancellationToken.None).ConfigureAwait(false);
+    }
+
     private bool ModSettingsChanged()
     {
         return _backendModModel is not null && !_backendModModel.SettingsEquals(SelectedModModel);
@@ -264,7 +312,8 @@ public partial class ModPaneVM : ObservableRecipient
         var errored = false;
 
 
-        var saveResult = await _modSettingsService.SaveSettingsAsync(SelectedModModel);
+        var saveResult =
+            await Task.Run(() => _modSettingsService.SaveSettingsAsync(SelectedModModel), cancellationToken);
 
         if (saveResult.TryPickT2(out var error, out var notFoundOrSuccess))
         {
@@ -277,10 +326,10 @@ public partial class ModPaneVM : ObservableRecipient
                 TimeSpan.FromSeconds(5));
         }
 
-
-        if (_selectedSkinMod.HasMergedInI || SelectedModModel.SkinModKeySwaps.Any())
+        if (_selectedSkinMod.Settings.HasMergedIni || SelectedModModel.SkinModKeySwaps.Any())
         {
-            var saveKeySwapResult = await _keySwapService.SaveKeySwapsAsync(SelectedModModel);
+            var saveKeySwapResult = await Task.Run(() => _keySwapService.SaveKeySwapsAsync(SelectedModModel),
+                cancellationToken);
 
             saveKeySwapResult.Switch(
                 success => { },

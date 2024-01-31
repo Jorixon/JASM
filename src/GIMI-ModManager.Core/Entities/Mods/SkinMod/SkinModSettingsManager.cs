@@ -25,6 +25,8 @@ public class SkinModSettingsManager
 
     private ModSettings? _settings;
 
+    public bool HasMergedIni => _settings?.MergedIniPath is not null;
+
     private static readonly JsonSerializerOptions _serializerOptions = new()
     {
         ReadCommentHandling = JsonCommentHandling.Skip,
@@ -152,6 +154,13 @@ public class SkinModSettingsManager
         if (modSettings.ImagePath is not null && !SkinModHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
         {
             await CopyAndSetModImage(modSettings, modSettings.ImagePath, options?.DeleteOldImage ?? true);
+        }
+
+        if (modSettings.MergedIniPath is not null &&
+            (!SkinModHelpers.IsInModFolder(_skinMod, modSettings.MergedIniPath) ||
+             !File.Exists(modSettings.MergedIniPath.LocalPath)))
+        {
+            modSettings.MergedIniPath = null;
         }
 
 
