@@ -103,6 +103,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Fischl_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Freminet_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Furina_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Gaming_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Ganyu_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Gliders_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Gorou_Thumb.png" />
@@ -156,6 +157,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Weapons_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Wriothesley_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Xiangling_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Xianyun_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Xiao_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Xingqiu_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Xinyan_Thumb.png" />

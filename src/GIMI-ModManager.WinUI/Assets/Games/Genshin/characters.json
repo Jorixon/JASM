@@ -1530,7 +1530,7 @@
     "Keys": [
       "chevreuse"
     ],
-    "ReleaseDate": "2025-01-01T00:00:00",
+    "ReleaseDate": "2024-01-09T00:00:00",
     "Image": "Character_Chevreuse_Thumb.png",
     "Rarity": 4,
     "Element": "Pyro",
@@ -1542,5 +1542,39 @@
     "InGameSkins": [],
     "InternalName": "Chevreuse",
     "DisplayName": "Chevreuse"
+  },
+  {
+    "Keys": [
+      "xianyun"
+    ],
+    "ReleaseDate": "2024-01-31T00:00:00",
+    "Image": "Character_Xianyun_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Liyue"
+    ],
+    "ModFilesName": "Xianyun",
+    "InGameSkins": [],
+    "InternalName": "Xianyun",
+    "DisplayName": "Xianyun"
+  },
+  {
+    "Keys": [
+      "gaming"
+    ],
+    "ReleaseDate": "2024-01-31T00:00:00",
+    "Image": "Character_Gaming_Thumb.png",
+    "Rarity": 4,
+    "Element": "Pyro",
+    "Class": "Claymore",
+    "Region": [
+      "Liyue"
+    ],
+    "ModFilesName": "Gaming",
+    "InGameSkins": [],
+    "InternalName": "Gaming",
+    "DisplayName": "Gaming"
   }
 ]
