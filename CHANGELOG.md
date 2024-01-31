@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/Jorixon/JASM/compare/v2.1.1...v2.1.2) (2024-01-31)
+
+
+### Miscellaneous
+
+* Added characters Gaming and Xianyun ([0a41481](https://github.com/Jorixon/JASM/commit/0a41481b430584f4dd10a0a9241b5cd632b31ebb))
+
 ## [2.1.1](https://github.com/Jorixon/JASM/compare/v2.1.0...v2.1.1) (2024-01-28)
 
 
