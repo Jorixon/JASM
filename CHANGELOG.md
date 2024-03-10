@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.2.0](https://github.com/Jorixon/JASM/compare/v2.1.2...v2.2.0) (2024-03-10)
+
+
+### Reverts
+
+* No longer publish as single file due to new (WinAppSDK?) bug ([#136](https://github.com/Jorixon/JASM/issues/136)) ([634692a](https://github.com/Jorixon/JASM/commit/634692a1b9d26f84fb2792b53f1fda5585359c67))
+
+
+### Features
+
+* Ability to choose .ini file for mods or to ignore it ([#126](https://github.com/Jorixon/JASM/issues/126)) ([8401d7d](https://github.com/Jorixon/JASM/commit/8401d7d41d712e57c3e1fe684aad92031561698b))
+
+
+### Miscellaneous
+
+* Added Chiori, hsr 2.1 characters, hsr character info, typo fixes ([#134](https://github.com/Jorixon/JASM/issues/134)) ([6f05ee6](https://github.com/Jorixon/JASM/commit/6f05ee672987f4079fb61254f658e06e37bef136))
+* Introduce Penacony and its characters ([#132](https://github.com/Jorixon/JASM/issues/132)) ([b59e3d9](https://github.com/Jorixon/JASM/commit/b59e3d92ebb4fc8ad4ebe5c4d1cbdbb1d7d35a33))
+* Updated WinAppSdk to 1.5 and som other packages ([ae8947e](https://github.com/Jorixon/JASM/commit/ae8947e7a79cd2c204d7dd60e27eb33c7e082e9a))
+
 ## [2.1.2](https://github.com/Jorixon/JASM/compare/v2.1.1...v2.1.2) (2024-01-31)
 
 
