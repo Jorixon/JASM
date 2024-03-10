@@ -737,5 +737,59 @@
     "InGameSkins": [],
     "InternalName": "Xueyi",
     "DisplayName": "Xueyi"
+  },
+  {
+    "Id": 40,
+    "Keys": [
+      "blackswan"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "blackswan.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Nihility",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "BlackSwan",
+    "InGameSkins": [],
+    "InternalName": "BlackSwan",
+    "DisplayName": "Black Swan"
+  },
+  {
+    "Id": 41,
+    "Keys": [
+      "sparkle"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "sparkle.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Harmony",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Sparkle",
+    "InGameSkins": [],
+    "InternalName": "Sparkle",
+    "DisplayName": "Sparkle"
+  },
+  {
+    "Id": 42,
+    "Keys": [
+      "misha"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "misha.png",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Destruction",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Misha",
+    "InGameSkins": [],
+    "InternalName": "Misha",
+    "DisplayName": "Misha"
   }
 ]
