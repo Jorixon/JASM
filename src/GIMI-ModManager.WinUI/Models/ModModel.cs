@@ -28,6 +28,9 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
     [ObservableProperty] private Uri _imagePath = PlaceholderImagePath;
     [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private string _characterSkinOverride = string.Empty;
+    [ObservableProperty] private string? _modIniPath = null;
+    [ObservableProperty] private bool _ignoreMergedIni = true;
+
 
     [ObservableProperty] private ObservableCollection<ModNotification> _modNotifications = new();
 
@@ -92,6 +95,8 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
         Author = settings.Author ?? string.Empty;
         CharacterSkinOverride = settings.CharacterSkinOverride ?? string.Empty;
         DateAdded = settings.DateAdded ?? DateTime.MinValue;
+        ModIniPath = settings.MergedIniPath?.LocalPath;
+        IgnoreMergedIni = settings.IgnoreMergedIni;
         return this;
     }
 

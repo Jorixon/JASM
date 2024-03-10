@@ -82,6 +82,10 @@ public sealed class ModUpdateAvailableChecker
         {
             await func();
         }
+        catch (OperationCanceledException)
+        {
+            Status = RunningState.Error;
+        }
         catch (Exception e)
         {
             _logger.Error(e, "An error occurred while executing {FuncName}", methodName);

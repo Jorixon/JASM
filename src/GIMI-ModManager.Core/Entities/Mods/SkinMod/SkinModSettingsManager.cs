@@ -25,6 +25,8 @@ public class SkinModSettingsManager
 
     private ModSettings? _settings;
 
+    public bool HasMergedIni => _settings?.MergedIniPath is not null;
+
     private static readonly JsonSerializerOptions _serializerOptions = new()
     {
         ReadCommentHandling = JsonCommentHandling.Skip,
@@ -116,10 +118,13 @@ public class SkinModSettingsManager
         return settings;
     }
 
-    public async Task<ModSettings> ReadSettingsAsync()
+    public async Task<ModSettings> ReadSettingsAsync(bool useCache = false)
     {
         if (!File.Exists(_settingsFilePath))
             throw new ModSettingsNotFoundException($"Settings file not found. Path: {_settingsFilePath}");
+
+        if (useCache && _settings is not null)
+            return _settings;
 
         var json = await File.ReadAllTextAsync(_settingsFilePath);
 
@@ -152,6 +157,13 @@ public class SkinModSettingsManager
         if (modSettings.ImagePath is not null && !SkinModHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
         {
             await CopyAndSetModImage(modSettings, modSettings.ImagePath, options?.DeleteOldImage ?? true);
+        }
+
+        if (modSettings.MergedIniPath is not null &&
+            (!SkinModHelpers.IsInModFolder(_skinMod, modSettings.MergedIniPath) ||
+             !File.Exists(modSettings.MergedIniPath.LocalPath)))
+        {
+            modSettings.MergedIniPath = null;
         }
 
 
@@ -224,14 +236,15 @@ public class SkinModSettingsManager
         return modSettings is not null;
     }
 
-    public async Task<ModSettings?> TryReadSettingsAsync()
+    public async Task<ModSettings?> TryReadSettingsAsync(bool useCache = false)
     {
-        if (!File.Exists(_settingsFilePath))
-            return null;
-
         try
         {
-            return await ReadSettingsAsync().ConfigureAwait(false);
+            return await ReadSettingsAsync(useCache).ConfigureAwait(false);
+        }
+        catch (ModSettingsNotFoundException)
+        {
+            return null;
         }
         catch (Exception e)
         {

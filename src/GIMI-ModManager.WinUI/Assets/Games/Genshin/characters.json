@@ -1576,5 +1576,22 @@
     "InGameSkins": [],
     "InternalName": "Gaming",
     "DisplayName": "Gaming"
+  },
+  {
+    "Keys": [
+      "chiori"
+    ],
+    "ReleaseDate": "2024-03-11T00:00:00",
+    "Image": "Character_Chiori_Thumb.png",
+    "Rarity": 5,
+    "Element": "Geo",
+    "Class": "Sword",
+    "Region": [
+      "Inazuma"
+    ],
+    "ModFilesName": "Chiori",
+    "InGameSkins": [],
+    "InternalName": "Chiori",
+    "DisplayName": "Chiori"
   }
 ]
