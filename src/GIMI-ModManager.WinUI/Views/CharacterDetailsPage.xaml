@@ -740,6 +740,7 @@
                             </Grid>
                         </Grid>
                         <controls:GridSplitter
+                            x:Name="ModPaneSplitter"
                             Grid.Column="1"
                             Width="8"
                             Height="40"
