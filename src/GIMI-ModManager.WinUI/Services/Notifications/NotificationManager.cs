@@ -167,6 +167,13 @@ public partial class NotificationManager : ObservableObject
         QueueNotification(title, message, duration: duration);
     }
 
+    public void ShowNotification(SimpleNotification notification)
+    {
+        ArgumentNullException.ThrowIfNull(notification.Title);
+        ArgumentNullException.ThrowIfNull(notification.Message);
+        QueueNotification(notification.Title, notification.Message, duration: notification.Duration);
+    }
+
 
     public void QueueNotification(string title, string? subtitle = null, UIElement? content = null,
         TimeSpan? duration = null, FontIcon? icon = null, bool showNow = false,
@@ -213,3 +220,17 @@ public enum NotificationType
 
     public void ShowNotification(string title, string message, TimeSpan? duration);
 }*/
+
+public record SimpleNotification
+{
+    public SimpleNotification(string title, string message = "", TimeSpan? duration = null)
+    {
+        Title = title;
+        Message = message;
+        Duration = duration ?? TimeSpan.FromSeconds(3);
+    }
+
+    public string Title { get; set; }
+    public string Message { get; set; }
+    public TimeSpan Duration { get; set; }
+}

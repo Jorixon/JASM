@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.WinUI.Services.Notifications;
 
@@ -21,6 +22,8 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     private int _modCount;
 
     [ObservableProperty] private bool _hasMods;
+
+    [ObservableProperty] private ObservableCollection<CharacterModItem> _mods = new();
 
     public CharacterGridItemModel(IModdableObject character, int modCount = 0)
     {
@@ -54,3 +57,5 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
 
     public static bool operator !=(CharacterGridItemModel? left, CharacterGridItemModel? right) => !Equals(left, right);
 }
+
+public record CharacterModItem(string Name, DateTime DateAdded);

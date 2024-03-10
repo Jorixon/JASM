@@ -21,9 +21,9 @@ public class SkinModKeySwapManager
         _keySwaps = null;
     }
 
-    private string GetIniPath()
+    private async Task<string> GetIniPathAsync()
     {
-        var iniPath = _skinMod.GetModIniPath();
+        var iniPath = await _skinMod.GetModIniPathAsync().ConfigureAwait(false);
         if (iniPath is null)
             throw new InvalidOperationException("Mod ini could not be found");
 
@@ -37,7 +37,7 @@ public class SkinModKeySwapManager
         var keySwapBlockStarted = false;
         var currentLine = -1;
         var sectionLine = string.Empty;
-        await foreach (var line in File.ReadLinesAsync(GetIniPath(), cancellationToken))
+        await foreach (var line in File.ReadLinesAsync(await GetIniPathAsync(), cancellationToken))
         {
             currentLine++;
             if (line.Trim().StartsWith(";") || string.IsNullOrWhiteSpace(line))
@@ -108,7 +108,8 @@ public class SkinModKeySwapManager
 
         var fileLines = new List<string>();
 
-        await using var fileStream = new FileStream(GetIniPath(), FileMode.Open, FileAccess.Read, FileShare.None);
+        await using var fileStream =
+            new FileStream(await GetIniPathAsync(), FileMode.Open, FileAccess.Read, FileShare.None);
         using (var reader = new StreamReader(fileStream))
         {
             while (await reader.ReadLineAsync(cancellationToken) is { } line)
@@ -217,7 +218,8 @@ public class SkinModKeySwapManager
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        await using var writeStream = new FileStream(GetIniPath(), FileMode.Truncate, FileAccess.Write, FileShare.None);
+        await using var writeStream =
+            new FileStream(await GetIniPathAsync(), FileMode.Truncate, FileAccess.Write, FileShare.None);
 
         await using (var writer = new StreamWriter(writeStream))
         {

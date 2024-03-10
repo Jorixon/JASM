@@ -536,6 +536,7 @@
                                     HorizontalAlignment="Right"
                                     Content="Open In New Window"
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}"
+                                    ToolTipService.ToolTip="Set Mod preview image"
                                     Visibility="Collapsed" />
                             </Grid>
                             <Grid
@@ -575,15 +576,29 @@
                                     IsEditMode="{x:Bind ViewModel.ModPaneVM.IsEditingModName, Mode=OneWay}"
                                     Style="{ThemeResource SubtitleTextBlockStyle}"
                                     Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=TwoWay}"
-                                    TextAlignment="Center" />
+                                    TextAlignment="Center"
+                                    ToolTipService.ToolTip="Change mod display name" />
 
-                                <Button
+                                <SplitButton
                                     Grid.Column="1"
                                     Command="{x:Bind ViewModel.ModPaneVM.ToggleEditingModNameCommand}"
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}">
                                     <FontIcon Glyph="&#xE70F;" />
-                                </Button>
+                                    <SplitButton.Flyout>
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind ViewModel.ModPaneVM.SetModIniFileCommand}"
+                                                Text="Set mod .ini file"
+                                                ToolTipService.ToolTip="Set the mod .ini file to be read by JASM" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind ViewModel.ModPaneVM.ClearSetModIniFileCommand}"
+                                                Icon="Clear"
+                                                Text="Ignore .ini file for this mod"
+                                                ToolTipService.ToolTip="JASM will not look for merged.ini file and ignore keyswaps for this mod" />
+                                        </MenuFlyout>
+                                    </SplitButton.Flyout>
 
+                                </SplitButton>
                             </Grid>
 
                             <Grid Grid.Row="3">
@@ -620,41 +635,56 @@
                                 Padding="0,0,14,0"
                                 VerticalScrollBarVisibility="Auto">
 
-                                <StackPanel>
-                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.SkinModKeySwaps, Mode=OneWay}">
-                                        <ItemsRepeater.ItemTemplate>
-                                            <DataTemplate x:DataType="models:SkinModKeySwapModel">
-                                                <Grid Margin="0,0">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBox
-                                                        MinWidth="100"
-                                                        HorizontalAlignment="Left"
-                                                        Header="Forward Key"
-                                                        Text="{x:Bind ForwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <controls:SwitchPresenter Value="{x:Bind ViewModel.ModPaneVM.ShowKeySwapSection, Mode=OneWay}">
+                                    <controls:Case Value="true">
+                                        <StackPanel>
+                                            <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPaneVM.SelectedModModel.SkinModKeySwaps, Mode=OneWay}">
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:SkinModKeySwapModel">
+                                                        <Grid Margin="0,0">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox
+                                                                MinWidth="100"
+                                                                HorizontalAlignment="Left"
+                                                                Header="Forward Key"
+                                                                Text="{x:Bind ForwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                        <TextBlock HorizontalAlignment="Center" Text="{x:Bind SectionKey}" />
-                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                            <TextBlock Margin="0,0,4,0" Text="Variations: " />
-                                                            <TextBlock Text="{x:Bind VariationsCount, Mode=OneWay}" />
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                    <TextBox
-                                                        Grid.Column="2"
-                                                        MinWidth="100"
-                                                        HorizontalAlignment="Right"
-                                                        Header="Backward Key"
-                                                        Text="{x:Bind BackwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsRepeater.ItemTemplate>
-                                    </ItemsRepeater>
+                                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                <TextBlock HorizontalAlignment="Center" Text="{x:Bind SectionKey}" />
+                                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                                    <TextBlock Margin="0,0,4,0" Text="Variations: " />
+                                                                    <TextBlock Text="{x:Bind VariationsCount, Mode=OneWay}" />
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                            <TextBox
+                                                                Grid.Column="2"
+                                                                MinWidth="100"
+                                                                HorizontalAlignment="Right"
+                                                                Header="Backward Key"
+                                                                Text="{x:Bind BackwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
 
-                                </StackPanel>
+                                        </StackPanel>
+                                    </controls:Case>
+
+                                    <controls:Case Value="false">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Top"
+                                            Text="Key swap management is disabled for this mod"
+                                            TextWrapping="WrapWholeWords" />
+
+                                    </controls:Case>
+                                </controls:SwitchPresenter>
+
+
 
                             </ScrollViewer>
                             <Grid Grid.Row="6" Padding="0,12">
@@ -709,7 +739,18 @@
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}" />
                             </Grid>
                         </Grid>
-
+                        <controls:GridSplitter
+                            x:Name="ModPaneSplitter"
+                            Grid.Column="1"
+                            Width="8"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            ResizeBehavior="BasedOnAlignment"
+                            ResizeDirection="Auto">
+                            <controls:GridSplitter.RenderTransform>
+                                <TranslateTransform X="-10" />
+                            </controls:GridSplitter.RenderTransform>
+                        </controls:GridSplitter>
                     </Grid>
                 </Grid>
 
