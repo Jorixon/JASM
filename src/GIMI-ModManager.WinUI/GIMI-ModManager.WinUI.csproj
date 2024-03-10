@@ -376,6 +376,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\arlan.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\asta.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\bailu.png" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\blackswan.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\blade.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\bronya.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\Character_Others.png" />
@@ -398,6 +399,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\luocha.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\lynx.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\march7.png" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\misha.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\natasha.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\pela.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\qingque.png" />
@@ -406,6 +408,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\seele.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\serval.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\silverwolf.png" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\sparkle.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\sushang.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\tingyun.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\topaz.png" />
