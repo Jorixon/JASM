@@ -232,7 +232,8 @@ public sealed class ModInstallation : IDisposable
             var dupeModSettings = await dupeMod.Settings.ReadSettingsAsync().ConfigureAwait(false);
 
             await dupeMod.Settings
-                .SaveSettingsAsync(dupeModSettings.DeepCopyWithProperties(customName: dupeModNewCustomName))
+                .SaveSettingsAsync(
+                    dupeModSettings.DeepCopyWithProperties(customName: NewValue<string?>.Set(dupeModNewCustomName)))
                 .ConfigureAwait(false);
         }
 

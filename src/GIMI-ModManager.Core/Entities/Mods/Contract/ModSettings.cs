@@ -25,17 +25,20 @@ public record ModSettings
         IgnoreMergedIni = ignoreMergedIni;
     }
 
-    public ModSettings DeepCopyWithProperties(string? customName = null, string? newCharacterSkinOverride = null,
-        DateTime? newLastChecked = null, Uri? mergedIniPath = null, bool? ignoreMergedIni = false)
+    public ModSettings DeepCopyWithProperties(NewValue<string?>? customName = null,
+        NewValue<string?>? characterSkinOverride = null,
+        NewValue<DateTime?>? newLastChecked = null, NewValue<Uri?>? mergedIniPath = null,
+        NewValue<bool>? ignoreMergedIni = null,
+        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null)
     {
         return new ModSettings(
             Id,
             customName ?? CustomName,
-            Author,
+            author ?? Author,
             Version,
-            ModUrl,
-            ImagePath,
-            newCharacterSkinOverride ?? CharacterSkinOverride,
+            modUrl ?? ModUrl,
+            imagePath ?? ImagePath,
+            characterSkinOverride ?? CharacterSkinOverride,
             Description,
             DateAdded,
             newLastChecked ?? LastChecked,
@@ -133,4 +136,18 @@ public record ModSettings
 
         return true;
     }
+}
+
+public readonly struct NewValue<T>
+{
+    private NewValue(T value)
+    {
+        Value = value;
+    }
+
+    public T Value { get; }
+
+    public static implicit operator T(NewValue<T> newValue) => newValue.Value;
+
+    public static NewValue<T> Set(T value) => new(value);
 }

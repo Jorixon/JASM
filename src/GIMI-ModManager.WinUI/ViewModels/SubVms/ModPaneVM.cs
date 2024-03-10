@@ -33,6 +33,8 @@ public partial class ModPaneVM : ObservableRecipient
 
     [ObservableProperty] private bool _isEditingModName = false;
 
+    [ObservableProperty] private string _showKeySwapSection = "true";
+
 
     public async Task LoadMod(ModModel modModel, CancellationToken cancellationToken = default)
     {
@@ -75,6 +77,8 @@ public partial class ModPaneVM : ObservableRecipient
 
 
         Debug.Assert(_backendModModel.Equals(SelectedModModel));
+
+        ShowKeySwapSection = modSettings.IgnoreMergedIni ? "false" : "true";
 
 
         if (!_selectedSkinMod.Settings.HasMergedIni)
@@ -290,7 +294,10 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand]
     private async Task ClearSetModIniFileAsync()
     {
-        var result = await Task.Run(() => _modSettingsService.SetModIniAsync(_selectedSkinMod.Id, string.Empty));
+        var autoDetect = SelectedModModel.IgnoreMergedIni;
+
+        var result = await Task.Run(() =>
+            _modSettingsService.SetModIniAsync(_selectedSkinMod.Id, string.Empty, autoDetect));
 
 
         if (result.Notification is not null)

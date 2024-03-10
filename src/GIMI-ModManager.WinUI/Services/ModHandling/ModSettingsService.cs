@@ -4,6 +4,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using OneOf;
@@ -36,26 +37,29 @@ public class ModSettingsService
         if (mod is null)
             return new ModNotFound(modModel.Id);
 
+        if (!mod.Settings.TryGetSettings(out var modSettings))
+            return new Error<Exception>(new ModSettingsNotFoundException(mod.FullPath));
+
 
         var modUrl = Uri.TryCreate(modModel.ModUrl, UriKind.Absolute, out var uriResult) &&
                      (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
             ? uriResult
             : null;
 
-        var modSettings = new ModSettings(
-            id: modModel.Id,
-            customName: EmptyStringToNull(modModel.Name),
-            author: EmptyStringToNull(modModel.Author),
-            version: EmptyStringToNull(modModel.ModVersion),
-            modUrl: modUrl,
-            imagePath: modModel.ImagePath == ModModel.PlaceholderImagePath ? null : modModel.ImagePath,
-            characterSkinOverride: EmptyStringToNull(modModel.CharacterSkinOverride)
+        modSettings = modSettings.DeepCopyWithProperties(
+            customName: NewValue<string?>.Set(EmptyStringToNull(modModel.Name)),
+            author: NewValue<string?>.Set(EmptyStringToNull(modModel.Author)),
+            modUrl: NewValue<Uri?>.Set(modUrl),
+            imagePath: NewValue<Uri?>.Set(modModel.ImagePath == ModModel.PlaceholderImagePath
+                ? null
+                : modModel.ImagePath),
+            characterSkinOverride: NewValue<string?>.Set(EmptyStringToNull(modModel.CharacterSkinOverride))
         );
 
 
         try
         {
-            await Task.Run(() => mod.Settings.SaveSettingsAsync(modSettings)).ConfigureAwait(false);
+            await mod.Settings.SaveSettingsAsync(modSettings).ConfigureAwait(false);
             return new Success();
         }
         catch (Exception e)
@@ -82,7 +86,7 @@ public class ModSettingsService
 
         if (modSettings.TryPickT0(out var settings, out var errorResults))
         {
-            var newSettings = settings.DeepCopyWithProperties(newCharacterSkinOverride: skinName);
+            var newSettings = settings.DeepCopyWithProperties(customName: NewValue<string?>.Set(skinName));
             try
             {
                 await mod.Settings.SaveSettingsAsync(newSettings);
@@ -145,11 +149,11 @@ public class ModSettingsService
     }
 
 
-    public async Task<Result> SetModIniAsync(Guid modId, string modIni)
+    public async Task<Result> SetModIniAsync(Guid modId, string modIni, bool autoDetect = false)
     {
         try
         {
-            return await InternalSetModIniAsync(modId, modIni).ConfigureAwait(false);
+            return await InternalSetModIniAsync(modId, modIni, autoDetect).ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -162,7 +166,7 @@ public class ModSettingsService
         }
     }
 
-    private async Task<Result> InternalSetModIniAsync(Guid modId, string modIni)
+    private async Task<Result> InternalSetModIniAsync(Guid modId, string modIni, bool autoDetect = false)
     {
         var mod = _skinManagerService.GetModById(modId);
 
@@ -177,13 +181,26 @@ public class ModSettingsService
                 "An error occured trying to set Mod ini, restarting JASM may help"));
 
         ModSettings? newSettings;
+        if (modIni.IsNullOrEmpty() && autoDetect)
+        {
+            newSettings =
+                modSettings.DeepCopyWithProperties(mergedIniPath: NewValue<Uri?>.Set(null),
+                    ignoreMergedIni: NewValue<bool>.Set(false));
+            await mod.Settings.SaveSettingsAsync(newSettings).ConfigureAwait(false);
+            await mod.GetModIniPathAsync().ConfigureAwait(false);
+            return Result.Success();
+        }
+
+
         if (modIni.Trim() == string.Empty)
         {
-            newSettings = modSettings.DeepCopyWithProperties(mergedIniPath: null, ignoreMergedIni: true);
+            newSettings =
+                modSettings.DeepCopyWithProperties(mergedIniPath: null, ignoreMergedIni: NewValue<bool>.Set(true));
 
             await mod.Settings.SaveSettingsAsync(newSettings).ConfigureAwait(false);
             return Result.Success();
         }
+
 
         var modIniUri = Uri.TryCreate(modIni, UriKind.Absolute, out var uriResult) &&
                         (uriResult.Scheme == Uri.UriSchemeFile)
@@ -202,7 +219,9 @@ public class ModSettingsService
             return Result.Error(new SimpleNotification("Mod ini file is not in mod folder",
                 $"The mod ini file must be in the mod folder. Mod folder: {mod.FullPath}\nIni path: {modIniUri.LocalPath}"));
 
-        newSettings = modSettings.DeepCopyWithProperties(mergedIniPath: modIniUri, ignoreMergedIni: false);
+        newSettings =
+            modSettings.DeepCopyWithProperties(mergedIniPath: NewValue<Uri?>.Set(modIniUri),
+                ignoreMergedIni: NewValue<bool>.Set(false));
 
         await mod.Settings.SaveSettingsAsync(newSettings).ConfigureAwait(false);
         await mod.GetModIniPathAsync().ConfigureAwait(false);
