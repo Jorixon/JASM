@@ -739,7 +739,17 @@
                                     IsEnabled="{x:Bind ViewModel.ModPaneVM.IsReadOnlyMode, Mode=OneWay, Converter={StaticResource BoolInverter}}" />
                             </Grid>
                         </Grid>
-
+                        <controls:GridSplitter
+                            Grid.Column="1"
+                            Width="8"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            ResizeBehavior="BasedOnAlignment"
+                            ResizeDirection="Auto">
+                            <controls:GridSplitter.RenderTransform>
+                                <TranslateTransform X="-10" />
+                            </controls:GridSplitter.RenderTransform>
+                        </controls:GridSplitter>
                     </Grid>
                 </Grid>
 
