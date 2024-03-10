@@ -4,7 +4,7 @@
     "Keys": [
       "trailblazer"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "trailblazer.gif",
     "Rarity": 5,
     "Element": "Adaptive",
@@ -22,7 +22,7 @@
     "Keys": [
       "arlan"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "arlan.png",
     "Rarity": 4,
     "Element": "Lightning",
@@ -40,7 +40,7 @@
     "Keys": [
       "asta"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "asta.png",
     "Rarity": 4,
     "Element": "Fire",
@@ -58,7 +58,7 @@
     "Keys": [
       "bailu"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "bailu.png",
     "Rarity": 5,
     "Element": "Lightning",
@@ -76,7 +76,7 @@
     "Keys": [
       "blade"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-07-19T00:00:00",
     "Image": "blade.png",
     "Rarity": 5,
     "Element": "Wind",
@@ -94,13 +94,13 @@
     "Keys": [
       "bronya"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "bronya.png",
     "Rarity": 5,
     "Element": "Wind",
     "Class": "Harmony",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Bronya",
     "InGameSkins": [],
@@ -112,13 +112,13 @@
     "Keys": [
       "clara"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "clara.png",
     "Rarity": 5,
     "Element": "Physical",
     "Class": "Destruction",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Clara",
     "InGameSkins": [],
@@ -128,27 +128,27 @@
   {
     "Id": 7,
     "Keys": [
-      "dangheng"
+      "danheng"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "dangheng.png",
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "danheng.png",
     "Rarity": 4,
     "Element": "Wind",
     "Class": "Hunt",
     "Region": [
-      "The Xianzhou Luofu"
+      "Astral Express"
     ],
-    "ModFilesName": "Dang Heng",
+    "ModFilesName": "Dan Heng",
     "InGameSkins": [],
-    "InternalName": "Dang Heng",
-    "DisplayName": "Dang Heng"
+    "InternalName": "Dan Heng",
+    "DisplayName": "Dan Heng"
   },
   {
     "Id": 8,
     "Keys": [
-      "dangheng-IL"
+      "danheng-IL"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-08-30T00:00:00",
     "Image": "DHIL.png",
     "Rarity": 5,
     "Element": "Imaginary",
@@ -156,17 +156,17 @@
     "Region": [
       "The Xianzhou Luofu"
     ],
-    "ModFilesName": "Dang Heng IL",
+    "ModFilesName": "Dan Heng IL",
     "InGameSkins": [],
-    "InternalName": "Dang Heng IL",
-    "DisplayName": "Dang Heng - IL"
+    "InternalName": "Dan Heng IL",
+    "DisplayName": "Dan Heng - IL"
   },
   {
     "Id": 9,
     "Keys": [
       "fu xuan"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-09-20T00:00:00",
     "Image": "fuxuan.png",
     "Rarity": 5,
     "Element": "Quantum",
@@ -184,13 +184,13 @@
     "Keys": [
       "gepard"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "gepard.png",
     "Rarity": 5,
     "Element": "Ice",
     "Class": "Preservation",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Gepard",
     "InGameSkins": [],
@@ -200,33 +200,33 @@
   {
     "Id": 11,
     "Keys": [
-      "guinafen"
+      "guinaifen"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "guinafen.png",
+    "ReleaseDate": "2023-10-27T00:00:00",
+    "Image": "guinaifen.png",
     "Rarity": 4,
     "Element": "Fire",
     "Class": "Nihility",
     "Region": [
       "The Xianzhou Luofu"
     ],
-    "ModFilesName": "Guinafen",
+    "ModFilesName": "Guinaifen",
     "InGameSkins": [],
-    "InternalName": "Guinafen",
-    "DisplayName": "Guinafen"
+    "InternalName": "Guinaifen",
+    "DisplayName": "Guinaifen"
   },
   {
     "Id": 12,
     "Keys": [
       "herta"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "herta.png",
     "Rarity": 4,
     "Element": "Ice",
     "Class": "Erudition",
     "Region": [
-      "The Xianzhou Luofu"
+      "Herta Space Station"
     ],
     "ModFilesName": "Herta",
     "InGameSkins": [],
@@ -238,13 +238,13 @@
     "Keys": [
       "himeko"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "himeko.png",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Erudition",
     "Region": [
-      "The Xianzhou Luofu"
+      "Astral Express"
     ],
     "ModFilesName": "Himeko",
     "InGameSkins": [],
@@ -256,13 +256,13 @@
     "Keys": [
       "hook"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "hook.png",
     "Rarity": 4,
     "Element": "Fire",
     "Class": "Destruction",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Hook",
     "InGameSkins": [],
@@ -274,7 +274,7 @@
     "Keys": [
       "jingyuan"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-05-17T00:00:00",
     "Image": "jingyuan.png",
     "Rarity": 5,
     "Element": "Lightning",
@@ -292,7 +292,7 @@
     "Keys": [
       "jingliu"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-10-11T00:00:00",
     "Image": "jingliu.png",
     "Rarity": 5,
     "Element": "Ice",
@@ -310,14 +310,13 @@
     "Keys": [
       "kafka"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-08-09T00:00:00",
     "Image": "kafka.png",
     "Rarity": 5,
     "Element": "Lightning",
     "Class": "Nihility",
     "Region": [
-      "The Xianzhou Luofu",
-      "Heaven xD"
+      "Pteruges-V"
     ],
     "ModFilesName": "Kafka",
     "InGameSkins": [],
@@ -329,13 +328,13 @@
     "Keys": [
       "luka"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-08-09T00:00:00",
     "Image": "luka.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Nihility",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Luka",
     "InGameSkins": [],
@@ -347,7 +346,7 @@
     "Keys": [
       "luocha"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-06-28T00:00:00",
     "Image": "luocha.png",
     "Rarity": 5,
     "Element": "Imaginary",
@@ -365,13 +364,13 @@
     "Keys": [
       "lynx"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-09-20T00:00:00",
     "Image": "lynx.png",
     "Rarity": 4,
     "Element": "Quantum",
     "Class": "Abundance",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Lynx",
     "InGameSkins": [],
@@ -383,13 +382,13 @@
     "Keys": [
       "march7"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "march7.png",
     "Rarity": 4,
     "Element": "Ice",
     "Class": "Preservation",
     "Region": [
-      "The Xianzhou Luofu"
+      "Astral Express"
     ],
     "ModFilesName": "March7",
     "InGameSkins": [],
@@ -401,13 +400,13 @@
     "Keys": [
       "natasha"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "natasha.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Abundance",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Natasha",
     "InGameSkins": [],
@@ -419,13 +418,13 @@
     "Keys": [
       "pela"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "pela.png",
     "Rarity": 4,
     "Element": "Ice",
     "Class": "Nihility",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Pela",
     "InGameSkins": [],
@@ -437,7 +436,7 @@
     "Keys": [
       "qingque"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "qingque.png",
     "Rarity": 4,
     "Element": "Quantum",
@@ -455,13 +454,13 @@
     "Keys": [
       "sampo"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "sampo.png",
     "Rarity": 4,
     "Element": "Wind",
     "Class": "Nihility",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Sampo",
     "InGameSkins": [],
@@ -473,13 +472,13 @@
     "Keys": [
       "seele"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "seele.png",
     "Rarity": 5,
     "Element": "Quantum",
     "Class": "Hunt",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Seele",
     "InGameSkins": [],
@@ -491,13 +490,13 @@
     "Keys": [
       "serval"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "serval.png",
     "Rarity": 4,
     "Element": "Lightning",
     "Class": "Erudition",
     "Region": [
-      "The Xianzhou Luofu"
+      "Jarilo VI"
     ],
     "ModFilesName": "Serval",
     "InGameSkins": [],
@@ -509,13 +508,13 @@
     "Keys": [
       "silverwolf"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-06-07T00:00:00",
     "Image": "silverwolf.png",
     "Rarity": 5,
     "Element": "Quantum",
     "Class": "Nihility",
     "Region": [
-      "The Xianzhou Luofu"
+      "Punklorde"
     ],
     "ModFilesName": "SilverWolf",
     "InGameSkins": [],
@@ -527,7 +526,7 @@
     "Keys": [
       "sushang"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "sushang.png",
     "Rarity": 4,
     "Element": "Physical",
@@ -545,7 +544,7 @@
     "Keys": [
       "tingyun"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "tingyun.png",
     "Rarity": 4,
     "Element": "Lightning",
@@ -563,13 +562,13 @@
     "Keys": [
       "topaz"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-10-27T00:00:00",
     "Image": "topaz.png",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Hunt",
     "Region": [
-      "The Xianzhou Luofu"
+      "Cosmic"
     ],
     "ModFilesName": "Topaz",
     "InGameSkins": [],
@@ -581,13 +580,13 @@
     "Keys": [
       "welt"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "welt.png",
     "Rarity": 5,
     "Element": "Imaginary",
     "Class": "Nihility",
     "Region": [
-      "The Xianzhou Luofu"
+      "Astral Express"
     ],
     "ModFilesName": "Welt",
     "InGameSkins": [],
@@ -599,7 +598,7 @@
     "Keys": [
       "yanqing"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-04-26T00:00:00",
     "Image": "yanqing.png",
     "Rarity": 5,
     "Element": "Ice",
@@ -617,7 +616,7 @@
     "Keys": [
       "yukong"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-06-28T00:00:00",
     "Image": "yukong.png",
     "Rarity": 4,
     "Element": "Imaginary",
@@ -635,13 +634,13 @@
     "Keys": [
       "argenti"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-12-06T00:00:00",
     "Image": "argenti.png",
     "Rarity": 5,
     "Element": "Physical",
     "Class": "Erudition",
     "Region": [
-      "The Xianzhou Luofu"
+      "Cosmic"
     ],
     "ModFilesName": "Argenti",
     "InGameSkins": [],
@@ -653,13 +652,13 @@
     "Keys": [
       "drratio"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-01-17T00:00:00",
     "Image": "drratio.png",
     "Rarity": 5,
     "Element": "Imaginary",
     "Class": "Hunt",
     "Region": [
-      "The Xianzhou Luofu"
+      "Cosmic"
     ],
     "ModFilesName": "DrRatio",
     "InGameSkins": [],
@@ -671,7 +670,7 @@
     "Keys": [
       "hanya"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-12-06T00:00:00",
     "Image": "hanya.png",
     "Rarity": 4,
     "Element": "Physical",
@@ -689,7 +688,7 @@
     "Keys": [
       "huohuo"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-12-06T00:00:00",
     "Image": "huohuo.png",
     "Rarity": 5,
     "Element": "Wind",
@@ -707,13 +706,13 @@
     "Keys": [
       "ruanmei"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-12-27T00:00:00",
     "Image": "ruanmei.png",
     "Rarity": 5,
     "Element": "Ice",
     "Class": "Harmony",
     "Region": [
-      "The Xianzhou Luofu"
+      "Herta Space Station"
     ],
     "ModFilesName": "RuanMei",
     "InGameSkins": [],
@@ -725,7 +724,7 @@
     "Keys": [
       "xueyi"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2023-12-27T00:00:00",
     "Image": "xueyi.png",
     "Rarity": 4,
     "Element": "Quantum",
@@ -743,7 +742,7 @@
     "Keys": [
       "blackswan"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-02-06T00:00:00",
     "Image": "blackswan.png",
     "Rarity": 5,
     "Element": "Wind",
@@ -761,7 +760,7 @@
     "Keys": [
       "sparkle"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-02-29T00:00:00",
     "Image": "sparkle.png",
     "Rarity": 5,
     "Element": "Quantum",
@@ -779,7 +778,7 @@
     "Keys": [
       "misha"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-02-29T00:00:00",
     "Image": "misha.png",
     "Rarity": 4,
     "Element": "Ice",
@@ -797,7 +796,7 @@
     "Keys": [
       "acheron"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-03-27T00:00:00",
     "Image": "acheron.png",
     "Rarity": 5,
     "Element": "Lightning",
@@ -815,7 +814,7 @@
     "Keys": [
       "aventurine"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-03-27T00:00:00",
     "Image": "aventurine.png",
     "Rarity": 5,
     "Element": "Imaginary",
@@ -833,7 +832,7 @@
     "Keys": [
       "gallagher"
     ],
-    "ReleaseDate": "2020-12-23T00:00:00",
+    "ReleaseDate": "2024-03-27T00:00:00",
     "Image": "gallagher.png",
     "Rarity": 4,
     "Element": "Fire",
