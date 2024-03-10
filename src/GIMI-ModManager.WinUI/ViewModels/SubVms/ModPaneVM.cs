@@ -72,6 +72,7 @@ public partial class ModPaneVM : ObservableRecipient
             return;
         }
 
+        if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
         SelectedModModel.WithModSettings(modSettings);
         _backendModModel.WithModSettings(modSettings);
 
