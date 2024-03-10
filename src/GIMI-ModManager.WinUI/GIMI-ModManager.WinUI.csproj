@@ -372,9 +372,11 @@
 		<Content Remove="Assets\Games\Genshin\regions.json" />
 		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
 		<Content Remove="Assets\Games\Genshin\weapons.json" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\acheron.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\argenti.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\arlan.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\asta.png" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\aventurine.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\bailu.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\blackswan.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\blade.png" />
@@ -386,6 +388,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\DHIL.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\drratio.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\fuxuan.png" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\gallagher.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\gepard.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\guinafen.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\hanya.png" />

@@ -693,7 +693,7 @@
     "Image": "huohuo.png",
     "Rarity": 5,
     "Element": "Wind",
-    "Class": "Abudance",
+    "Class": "Abundance",
     "Region": [
       "The Xianzhou Luofu"
     ],
@@ -791,5 +791,59 @@
     "InGameSkins": [],
     "InternalName": "Misha",
     "DisplayName": "Misha"
+  },
+  {
+    "Id": 43,
+    "Keys": [
+      "acheron"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "acheron.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Nihility",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Acheron",
+    "InGameSkins": [],
+    "InternalName": "Acheron",
+    "DisplayName": "Acheron"
+  },
+  {
+    "Id": 44,
+    "Keys": [
+      "aventurine"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "aventurine.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Preservation",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Aventurine",
+    "InGameSkins": [],
+    "InternalName": "Aventurine",
+    "DisplayName": "Aventurine"
+  },
+  {
+    "Id": 45,
+    "Keys": [
+      "gallagher"
+    ],
+    "ReleaseDate": "2020-12-23T00:00:00",
+    "Image": "gallagher.png",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Abundance",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Gallagher",
+    "InGameSkins": [],
+    "InternalName": "Gallagher",
+    "DisplayName": "Gallagher"
   }
 ]
