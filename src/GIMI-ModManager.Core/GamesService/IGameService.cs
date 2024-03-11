@@ -13,6 +13,8 @@ public interface IGameService
 
     public event EventHandler? Initialized;
 
+    public Task<GameInfo?> GetGameInfoAsync(SupportedGames game);
+
     public Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory);
 
     public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,

@@ -222,7 +222,7 @@ public sealed class ModUpdateAvailableChecker
         OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status));
 
         var stopWatch = Stopwatch.StartNew();
-        await CheckForUpdates(modCheckOperation, cancellationToken: runningCancellationToken).ConfigureAwait(false);
+        var anyModsChecked = await CheckForUpdates(modCheckOperation, cancellationToken: runningCancellationToken).ConfigureAwait(false);
         stopWatch.Stop();
 
         _logger.Debug("Finished checking for mod updates in {Elapsed}", stopWatch.Elapsed);
@@ -235,7 +235,7 @@ public sealed class ModUpdateAvailableChecker
                 $" {modCheckOperation.ModCheckRequest.Characters.First().DisplayName}",
                 TimeSpan.FromSeconds(4));
         }
-        else
+        else if (anyModsChecked)
         {
             _notificationManager.ShowNotification("Finished checking for mod updates",
                 "Finished checking for mod updates", TimeSpan.FromSeconds(4));
@@ -269,7 +269,7 @@ public sealed class ModUpdateAvailableChecker
         return true;
     }
 
-    private async Task CheckForUpdates(ModCheckOperation modCheckOperation,
+    private async Task<bool> CheckForUpdates(ModCheckOperation modCheckOperation,
         CancellationToken cancellationToken = default)
     {
         var modEntries = modCheckOperation.ModsToCheck;
@@ -297,7 +297,7 @@ public sealed class ModUpdateAvailableChecker
         if (!tasks.Any())
         {
             _logger.Debug("No mods to check for updates");
-            return;
+            return false;
         }
 
 
@@ -326,6 +326,7 @@ public sealed class ModUpdateAvailableChecker
         }
 
         modCheckOperation.RequestFinished();
+        return true;
     }
 
     private Task AddModNotifications(CharacterSkinEntry characterSkinEntry, ModsRetrievedResult result)
