@@ -15,8 +15,8 @@
 
 ### Miscellaneous
 
-* Added Chiori, hsr 2.1 characters, hsr character info, typo fixes ([#134](https://github.com/Jorixon/JASM/issues/134)) ([6f05ee6](https://github.com/Jorixon/JASM/commit/6f05ee672987f4079fb61254f658e06e37bef136))
-* Introduce Penacony and its characters ([#132](https://github.com/Jorixon/JASM/issues/132)) ([b59e3d9](https://github.com/Jorixon/JASM/commit/b59e3d92ebb4fc8ad4ebe5c4d1cbdbb1d7d35a33))
+* Added Chiori, hsr 2.1 characters, hsr character info, typo fixes ([#134](https://github.com/Jorixon/JASM/issues/134)) ([6f05ee6](https://github.com/Jorixon/JASM/commit/6f05ee672987f4079fb61254f658e06e37bef136)) Thanks @Pyrageis 
+* Introduce Penacony and its characters ([#132](https://github.com/Jorixon/JASM/issues/132)) ([b59e3d9](https://github.com/Jorixon/JASM/commit/b59e3d92ebb4fc8ad4ebe5c4d1cbdbb1d7d35a33)) Thanks @EffortlessFury 
 * Updated WinAppSdk to 1.5 and som other packages ([ae8947e](https://github.com/Jorixon/JASM/commit/ae8947e7a79cd2c204d7dd60e27eb33c7e082e9a))
 
 ## [2.1.2](https://github.com/Jorixon/JASM/compare/v2.1.1...v2.1.2) (2024-01-31)
