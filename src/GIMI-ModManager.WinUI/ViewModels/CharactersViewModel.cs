@@ -1076,30 +1076,22 @@ public sealed class Sorter
             (characters, isDescending) =>
                 !isDescending
                     ? characters.OrderByDescending(x =>
-                        x.Mods.Count == 0
-                            ? DateTime.MinValue
-                            : x.Mods.Min(mod =>
-                            {
-                                if (mod.DateAdded == default)
-                                {
-                                    return DateTime.MaxValue;
-                                }
-
-                                return mod.DateAdded;
-                            }))
+                    {
+                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                            .ToArray();
+                        if (validDates.Any())
+                            return validDates.Max();
+                        else
+                            return DateTime.MinValue;
+                    })
                     : characters.OrderBy(x =>
                     {
-                        return x.Mods.Count == 0
-                            ? DateTime.MaxValue
-                            : x.Mods.Min(mod =>
-                            {
-                                if (mod.DateAdded == default)
-                                {
-                                    return DateTime.MaxValue;
-                                }
-
-                                return mod.DateAdded;
-                            });
+                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                            .ToArray();
+                        if (validDates.Any())
+                            return validDates.Min();
+                        else
+                            return DateTime.MaxValue;
                     }),
             (characters, _) =>
                 characters.ThenBy(x => (x.Character.DisplayName)
