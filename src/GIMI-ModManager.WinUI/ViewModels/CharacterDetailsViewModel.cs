@@ -46,6 +46,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ElevatorService _elevatorService;
 
     private ICharacterModList _modList = null!;
+    private ICategory? _category;
     public ModListVM ModListVM { get; } = null!;
     public ModPaneVM ModPaneVM { get; } = null!;
 
@@ -220,6 +221,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             ErrorNavigateBack();
             return;
         }
+
+        _category = moddableObject.ModCategory;
 
         if (moddableObject.ImageUri is not null)
             ModdableObjectImage = moddableObject.ImageUri;
@@ -685,16 +688,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private void GoBackToGrid()
     {
-        var gridLastStack = _navigationService.GetBackStackItems().FirstOrDefault(backStackItem =>
-            backStackItem.SourcePageType == typeof(CharactersPage));
+        var gridLastStack = _navigationService.GetBackStackItems().LastOrDefault();
 
-        if (gridLastStack is not null)
+        if (gridLastStack is not null && gridLastStack.SourcePageType == typeof(CharactersPage))
         {
             _navigationService.GoBack();
             return;
         }
 
-        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, _category);
     }
 
     [RelayCommand]
