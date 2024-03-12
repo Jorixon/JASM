@@ -90,17 +90,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _imageHandlerService = imageHandlerService;
         _elevatorService = elevatorService;
 
-        _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
-        {
-            foreach (var extractResult in args.ExtractResults)
-            {
-                var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
-                await AddNewModAddedNotificationAsync(AttentionType.Added,
-                    extractedFolderName, null);
-            }
-            await App.MainWindow.DispatcherQueue.EnqueueAsync(
-                async () => { await RefreshMods(); }).ConfigureAwait(false);
-        };
+        _modDragAndDropService.DragAndDropFinished += OnDragAndDropFinished;
 
         ModdableObjectImage = _imageHandlerService.PlaceholderImageUri;
 
@@ -116,6 +106,17 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModPaneVM = new ModPaneVM();
 
         _modNotificationManager.OnModNotification += OnOnModNotificationHandler;
+    }
+
+    private async void OnDragAndDropFinished(object? sender, ModDragAndDropService.DragAndDropFinishedArgs args)
+    {
+        foreach (var extractResult in args.ExtractResults)
+        {
+            var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
+            await AddNewModAddedNotificationAsync(AttentionType.Added, extractedFolderName, null);
+        }
+
+        await App.MainWindow.DispatcherQueue.EnqueueAsync(async () => { await RefreshMods(); }).ConfigureAwait(false);
     }
 
     private void OnOnModNotificationHandler(object? sender, ModNotificationManager.ModNotificationEvent e)
@@ -706,6 +707,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         if (_modList is not null)
             _modList.ModsChanged -= ModListOnModsChanged;
+        if (_modNotificationManager is not null)
+            _modNotificationManager.OnModNotification -= OnOnModNotificationHandler;
+        if (_modDragAndDropService is not null)
+            _modDragAndDropService.DragAndDropFinished -= OnDragAndDropFinished;
     }
 
 
