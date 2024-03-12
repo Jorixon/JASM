@@ -1,14 +1,19 @@
 ﻿using Windows.System;
+using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
+using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -137,6 +142,61 @@ DebugItem.Visibility = Visibility.Collapsed;
                 //}
             }
         });
+
+        App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+        {
+            var supportedGames = Enum.GetValues<SupportedGames>();
+            var notSelectedGame = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
+
+            var gameInfo = await ViewModel.GameService.GetGameInfoAsync(notSelectedGame);
+
+            if (gameInfo is null)
+                return;
+
+
+            var content = new StackPanel()
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            content.Children.Add(new Grid()
+            {
+                Width = 20,
+                Height = 20,
+                CornerRadius = new CornerRadius(8),
+                Children =
+                {
+                    new Image()
+                    {
+                        Source = new BitmapImage(new Uri(gameInfo.GameIcon)) { DecodePixelWidth = 20 }
+                    }
+                }
+            });
+
+            content.Children.Add(new TextBlock()
+            {
+                Text = gameInfo.GameName,
+                Margin = new Thickness(16, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+            var navigationItem = new NavigationViewItem()
+            {
+                Name = "SwitchGameButton",
+                Content = content,
+                Tag = "SwitchGame",
+            };
+
+            NavigationViewControl.FooterMenuItems.Insert(0, navigationItem);
+            navigationItem.DoubleTapped += SwitchGameButtonOnDoubleTapped;
+
+            var toolTip = new ToolTip
+            {
+                Content = $"Double click to switch to {gameInfo.GameName}"
+            };
+
+            ToolTipService.SetToolTip(navigationItem, toolTip);
+        });
     }
 
     private void GlobalMouseHandler_Invoked(object sender, PointerRoutedEventArgs e)
@@ -259,5 +319,16 @@ DebugItem.Visibility = Visibility.Collapsed;
     private void Perform_XD()
     {
         App.GetService<INavigationService>().NavigateTo(typeof(EasterEggVM).FullName!);
+    }
+
+    private async void SwitchGameButtonOnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (sender is not NavigationViewItem)
+            return;
+        e.Handled = true;
+        await Task.Delay(200);
+        var game = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
+        await ViewModel.SelectedGameService.SetSelectedGame(game.ToString());
+        await App.GetService<LifeCycleService>().RestartAsync(notifyOnError:true).ConfigureAwait(false);
     }
 }

@@ -15,6 +15,7 @@ public class NavigationService : INavigationService
     private readonly IPageService _pageService;
     private object? _lastParameterUsed;
     private Frame? _frame;
+    private readonly List<NavigationHistoryItem> _navigationHistory = new();
 
     public event NavigatedEventHandler? Navigated;
 
@@ -71,12 +72,14 @@ public class NavigationService : INavigationService
         if (CanGoForward)
         {
             var vmBeforeNavigation = _frame.GetPageViewModel();
+            var pageStackEntry = _frame.ForwardStack.Last();
             _frame.GoForward();
             if (vmBeforeNavigation is INavigationAware navigationAware)
             {
                 navigationAware.OnNavigatedFrom();
             }
 
+            _navigationHistory.Add(new NavigationHistoryItem(pageStackEntry));
             return true;
         }
 
@@ -88,12 +91,14 @@ public class NavigationService : INavigationService
         if (CanGoBack)
         {
             var vmBeforeNavigation = _frame.GetPageViewModel();
+            var pageStackEntry = _frame.BackStack.Last();
             _frame.GoBack();
             if (vmBeforeNavigation is INavigationAware navigationAware)
             {
                 navigationAware.OnNavigatedFrom();
             }
 
+            _navigationHistory.Add(new NavigationHistoryItem(pageStackEntry));
             return true;
         }
 
@@ -118,6 +123,8 @@ public class NavigationService : INavigationService
                     navigationAware.OnNavigatedFrom();
                 }
             }
+
+            _navigationHistory.Add(new NavigationHistoryItem(pageType, parameter));
 
             return navigated;
         }
@@ -146,6 +153,10 @@ public class NavigationService : INavigationService
                 }
             }
 
+            if (_navigationHistory.Count > maxBackStackEntries)
+            {
+                _navigationHistory.RemoveRange(0, maxBackStackEntries - 1);
+            }
 
             if (frame.GetPageViewModel() is INavigationAware navigationAware)
             {
@@ -162,4 +173,5 @@ public class NavigationService : INavigationService
     // Get BackStackItems from Frame
 
     public ICollection<PageStackEntry> GetBackStackItems() => Frame?.BackStack ?? Array.Empty<PageStackEntry>();
+    public IReadOnlyCollection<NavigationHistoryItem> GetNavigationHistory() => _navigationHistory.ToArray();
 }
