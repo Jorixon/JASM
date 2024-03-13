@@ -173,7 +173,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         }
         catch (RateLimiterRejectedException e)
         {
-            _logger.Debug("Rate limit exceeded, retrying after {retryAfter}", e.RetryAfter);
+            _logger.Verbose("Rate limit exceeded, retrying after {retryAfter}", e.RetryAfter);
             var delay = e.RetryAfter ?? TimeSpan.FromSeconds(2);
 
             await Task.Delay(delay, cancellationToken);

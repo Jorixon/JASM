@@ -5,11 +5,9 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
-using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -184,7 +182,7 @@ DebugItem.Visibility = Visibility.Collapsed;
             {
                 Name = "SwitchGameButton",
                 Content = content,
-                Tag = "SwitchGame",
+                Tag = "SwitchGame"
             };
 
             NavigationViewControl.FooterMenuItems.Insert(0, navigationItem);
@@ -328,7 +326,8 @@ DebugItem.Visibility = Visibility.Collapsed;
         e.Handled = true;
         await Task.Delay(200);
         var game = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
-        await ViewModel.SelectedGameService.SetSelectedGame(game.ToString());
-        await App.GetService<LifeCycleService>().RestartAsync(notifyOnError:true).ConfigureAwait(false);
+        await App.GetService<LifeCycleService>().RestartAsync(notifyOnError: true,
+                postShutdownLogic: () => ViewModel.SelectedGameService.SetSelectedGame(game.ToString()))
+            .ConfigureAwait(false);
     }
 }

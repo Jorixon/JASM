@@ -1,8 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Helpers;
-using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Models.Settings;
+using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
+using GIMI_ModManager.WinUI.Services.ModHandling;
+using GIMI_ModManager.WinUI.Services.Notifications;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
@@ -13,22 +18,41 @@ public class LifeCycleService
 {
     private readonly ILogger _logger;
     private readonly Notifications.NotificationManager _notificationManager;
+    private readonly ILocalSettingsService _localSettingsService;
+    private ModNotificationManager _modNotificationManager;
+    private readonly IWindowManagerService _windowManagerService;
+    private readonly UpdateChecker _updateChecker;
+    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
 
-    public LifeCycleService(ILogger logger, Notifications.NotificationManager notificationManager)
+    public LifeCycleService(ILogger logger, NotificationManager notificationManager,
+        ILocalSettingsService localSettingsService, ModNotificationManager modNotificationManager,
+        IWindowManagerService windowManagerService, UpdateChecker updateChecker,
+        ModUpdateAvailableChecker modUpdateAvailableChecker)
     {
         _notificationManager = notificationManager;
+        _localSettingsService = localSettingsService;
+        _modNotificationManager = modNotificationManager;
+        _windowManagerService = windowManagerService;
+        _updateChecker = updateChecker;
+        _modUpdateAvailableChecker = modUpdateAvailableChecker;
         _logger = logger.ForContext<LifeCycleService>();
     }
 
     /// <summary>
     /// This method will try to restart the app using the suggested method from Microsoft.
     /// </summary>
-    /// <param name="args"></param>
-    /// <param name="useLegacyRestartOnError"></param>
+    /// <param name="args">Args to pass to the app when starting up again</param>
+    /// <param name="useLegacyRestartOnError">Fallback to manually starting the app right before closing</param>
     /// <param name="notifyOnError"></param>
+    /// <param name="postShutdownLogic">Shutdown logic to run after the main application shutdown logic right before restarting. Some services may have been stopped at this point</param>
     /// <returns></returns>
-    public async Task RestartAsync(string args = "", bool useLegacyRestartOnError = true, bool notifyOnError = false)
+    public async Task RestartAsync(string args = "", bool useLegacyRestartOnError = true, bool notifyOnError = false,
+        Func<Task>? postShutdownLogic = null)
     {
+        await StartShutdownAsync(false);
+        if (postShutdownLogic is not null)
+            await postShutdownLogic();
+        _logger.Debug("Restarting app with args: {Args}", args);
         var error = AppInstance.Restart(args);
 
 
@@ -93,12 +117,12 @@ public class LifeCycleService
             _notificationManager.ShowNotification("Error restarting app", "Please restart manually",
                 TimeSpan.FromSeconds(4));
             await Task.Delay(TimeSpan.FromSeconds(3));
-            Application.Current.Exit();
+            await StartShutdownAsync();
             return;
         }
 
 
-        Application.Current.Exit();
+        await StartShutdownAsync().ConfigureAwait(false);
     }
 
     public Task<nint?> CheckIfAlreadyRunningAsync()
@@ -123,5 +147,145 @@ public class LifeCycleService
         }
 
         return Task.FromResult<IntPtr?>(null);
+    }
+
+    public async Task StartShutdownAsync(bool shutdown = true)
+    {
+        App.IsShuttingDown = true;
+        try
+        {
+            await ShutdownCleanupAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error during shutdown cleanup");
+        }
+        finally
+        {
+            App.ShutdownComplete = true;
+            if (shutdown)
+            {
+                _logger.Debug("Shutting down application...");
+
+                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+                {
+                    Application.Current.Exit();
+                    App.MainWindow.Close();
+                });
+            }
+        }
+    }
+
+    private async Task ShutdownCleanupAsync()
+    {
+        _logger.Debug("JASM starting shutdown cleanup...");
+
+        if (App.OverrideShutdown)
+        {
+            _logger.Information("Shutdown override enabled, skipping shutdown...");
+            _logger.Information("Shutdown override will be disabled in at most 1 second.");
+            await Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                App.OverrideShutdown = false;
+                _logger.Information("Shutdown override disabled.");
+            });
+            await StartShutdownAsync();
+        }
+
+
+        var notificationCleanupTask =
+            Task.Run(async () => await _modNotificationManager.CleanupAsync().ConfigureAwait(false));
+
+        var stopBackgroundTasks = Task.Run(() =>
+        {
+            _modUpdateAvailableChecker.CancelAndStop();
+            _updateChecker.CancelAndStop();
+            _notificationManager.CancelAndStop();
+        });
+
+        await notificationCleanupTask;
+
+        if (DispatcherQueue.GetForCurrentThread() is not null)
+        {
+            await SaveWindowSettingsAsync();
+            await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);
+        }
+        else
+        {
+            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+            {
+                await SaveWindowSettingsAsync();
+                await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);
+            }).ConfigureAwait(false);
+        }
+
+
+        var tmpDirCleanupTask = Task.Run(() =>
+        {
+            var tmpDir = new DirectoryInfo(App.TMP_DIR);
+            if (tmpDir.Exists)
+            {
+                tmpDir.Refresh();
+                _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
+                try
+                {
+                    tmpDir.EnumerateFiles("*", SearchOption.AllDirectories)
+                        .ForEach(f => f.Attributes = FileAttributes.Normal);
+                    tmpDir.EnumerateDirectories("*", SearchOption.AllDirectories)
+                        .ForEach(d => d.Attributes = FileAttributes.Normal);
+                    tmpDir.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    _logger.Warning(e, "Failed to delete temporary directory: {Path}", tmpDir.FullName);
+                }
+            }
+        });
+
+        await stopBackgroundTasks.ConfigureAwait(false);
+        await tmpDirCleanupTask.ConfigureAwait(false);
+
+
+        _logger.Debug("JASM shutdown cleanup complete.");
+    }
+
+    private async Task SaveWindowSettingsAsync()
+    {
+        if (App.MainWindow is null || App.MainWindow.AppWindow is null)
+            return;
+
+
+        var windowSettings = await _localSettingsService
+            .ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
+
+
+        var isFullScreen = App.MainWindow.WindowState == WindowState.Maximized;
+
+        var width = windowSettings.Width;
+        var height = windowSettings.Height;
+        var xPosition = windowSettings.XPosition;
+        var yPosition = windowSettings.YPosition;
+
+
+        if (!isFullScreen && App.MainWindow.WindowState != WindowState.Minimized)
+        {
+            width = App.MainWindow.AppWindow.Size.Width;
+            height = App.MainWindow.AppWindow.Size.Height;
+        }
+
+        if (App.MainWindow.WindowState != WindowState.Minimized)
+        {
+            xPosition = App.MainWindow.AppWindow.Position.X;
+            yPosition = App.MainWindow.AppWindow.Position.Y;
+        }
+
+        _logger.Debug($"Saving Window size: {width}x{height} | IsFullscreen: {isFullScreen}");
+
+        var newWindowSettings = new ScreenSizeSettings(width, height)
+            { IsFullScreen = isFullScreen, XPosition = xPosition, YPosition = yPosition };
+
+        await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, newWindowSettings)
+            .ConfigureAwait(false);
     }
 }
