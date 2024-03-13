@@ -18,4 +18,29 @@ public interface INavigationService
     void SetListDataItemForNextConnectedAnimation(object item);
 
     public ICollection<PageStackEntry> GetBackStackItems();
+    public IReadOnlyCollection<NavigationHistoryItem> GetNavigationHistory();
+}
+
+public record NavigationHistoryItem
+{
+    public NavigationHistoryItem(Type PageType, object? Parameter)
+    {
+        this.PageType = PageType;
+        this.Parameter = Parameter;
+    }
+
+    public NavigationHistoryItem(PageStackEntry pageStackEntry)
+    {
+        PageType = pageStackEntry.SourcePageType;
+        Parameter = pageStackEntry.Parameter;
+    }
+
+    public Type PageType { get; init; }
+    public object? Parameter { get; init; }
+
+    public void Deconstruct(out Type PageType, out object? Parameter)
+    {
+        PageType = this.PageType;
+        Parameter = this.Parameter;
+    }
 }
