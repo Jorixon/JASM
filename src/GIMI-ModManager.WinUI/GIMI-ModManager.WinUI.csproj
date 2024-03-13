@@ -58,6 +58,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_DilucFlamme_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_FischlHighness_Thumb.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_GanyuTwilight_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanCN_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_JeanSea_Thumb.png" />
@@ -76,6 +77,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_ShenheFrostflower_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\convert.py" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Albedo_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Alhaitham_Thumb.png" />
