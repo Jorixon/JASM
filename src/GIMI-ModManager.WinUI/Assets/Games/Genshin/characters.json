@@ -1607,5 +1607,22 @@
     "InGameSkins": [],
     "InternalName": "Chiori",
     "DisplayName": "Chiori"
+  },
+  {
+    "Keys": [
+      "arlecchino"
+    ],
+    "ReleaseDate": "2024-04-24T00:00:00",
+    "Image": "Character_Arlecchino_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Polearm",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Arlecchino",
+    "InGameSkins": [],
+    "InternalName": "Arlecchino",
+    "DisplayName": "Arlecchino"
   }
 ]
