@@ -76,6 +76,18 @@ public class SelectedGameService
         return selectedGame.SelectedGame;
     }
 
+    public async Task<SupportedGames> GetNotSelectedGameAsync()
+    {
+        var selectedGame = await GetSelectedGameAsync();
+
+        return selectedGame switch
+        {
+            Genshin => SupportedGames.Honkai,
+            Honkai => SupportedGames.Genshin,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
 
     public Task SaveSelectedGameAsync(string game)
     {

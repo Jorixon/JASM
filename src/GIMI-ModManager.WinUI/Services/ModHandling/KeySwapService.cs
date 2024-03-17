@@ -55,7 +55,7 @@ public class KeySwapService
 
         try
         {
-            await Task.Run(() => skinMod.KeySwaps.SaveKeySwapConfiguration(keySwapSections));
+            await skinMod.KeySwaps.SaveKeySwapConfiguration(keySwapSections).ConfigureAwait(false);
             return new Success();
         }
         catch (Exception e)
@@ -88,7 +88,7 @@ public class KeySwapService
 
         try
         {
-            await Task.Run(() => skinMod.KeySwaps.ReadKeySwapConfiguration());
+            await skinMod.KeySwaps.ReadKeySwapConfiguration().ConfigureAwait(false);
             getResult = skinMod.KeySwaps.GetKeySwaps();
 
             return getResult.AsT0;

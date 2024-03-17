@@ -19,6 +19,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
+using GIMI_ModManager.WinUI.Views;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -123,6 +124,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             });
         };
     }
+
+    public event EventHandler<ScrollToCharacterArgs>? OnScrollToCharacter;
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
     {
@@ -363,12 +366,47 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _backendCharacters = backendCharacters;
 
+        var characterTasks = new Dictionary<CharacterGridItemModel, Task<List<CharacterModItem>>>();
         foreach (var characterGridItemModel in _backendCharacters)
         {
             var modList = _skinManagerService.GetCharacterModList(characterGridItemModel.Character);
             characterGridItemModel.ModCount = modList.Mods.Count;
             characterGridItemModel.HasMods = characterGridItemModel.ModCount > 0;
+
+
+            var task = Task.Run(async () =>
+            {
+                var characterModItems = new List<CharacterModItem>();
+
+                var mods = modList.Mods.Select(ske => ske.Mod).ToArray();
+
+                foreach (var skinMod in mods)
+                {
+                    var modSettings = await skinMod.Settings.TryReadSettingsAsync(true);
+
+                    if (modSettings is null)
+                        continue;
+
+
+                    characterModItems.Add(new CharacterModItem(skinMod.Name,
+                        modSettings.DateAdded ?? default));
+                }
+
+                return characterModItems;
+            });
+            characterTasks.Add(characterGridItemModel, task);
         }
+
+        while (characterTasks.Any())
+        {
+            var completedTask = await Task.WhenAny(characterTasks.Values);
+            var (characterGridItemModel, _) = characterTasks.First(x => x.Value == completedTask);
+
+            characterTasks.Remove(characterGridItemModel);
+
+            characterGridItemModel.Mods = new ObservableCollection<CharacterModItem>(await completedTask);
+        }
+
 
         InitializeSorters();
 
@@ -400,57 +438,60 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
 
         var charactersWithMultipleActiveSkins = new List<string>();
-        foreach (var modList in charactersWithMultipleMods)
+        await Task.Run(async () =>
         {
-            if (_gameService.IsMultiMod(modList.Character))
-                continue;
-
-            if (modList.Character is ICharacter character)
+            foreach (var modList in charactersWithMultipleMods)
             {
-                var addWarning = false;
-                var subSkinsFound = new List<ICharacterSkin>();
-                foreach (var characterSkinEntry in modList.Mods)
+                if (_gameService.IsMultiMod(modList.Character))
+                    continue;
+
+                if (modList.Character is ICharacter character)
                 {
-                    if (!characterSkinEntry.IsEnabled) continue;
-
-                    var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
-                    var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
-
-
-                    var mod = ModModel.FromMod(characterSkinEntry);
-
-
-                    if (modSettingsResult.IsT0)
-                        mod.WithModSettings(modSettingsResult.AsT0);
-
-                    if (!mod.CharacterSkinOverride.IsNullOrEmpty())
-                        subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
-                            .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
-
-                    if (subSkin is null)
-                        continue;
-
-
-                    if (subSkinsFound.All(foundSubSkin =>
-                            !subSkin.InternalNameEquals(foundSubSkin)))
+                    var addWarning = false;
+                    var subSkinsFound = new List<ICharacterSkin>();
+                    foreach (var characterSkinEntry in modList.Mods)
                     {
-                        subSkinsFound.Add(subSkin);
-                        continue;
+                        if (!characterSkinEntry.IsEnabled) continue;
+
+                        var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
+                        var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
+
+
+                        var mod = ModModel.FromMod(characterSkinEntry);
+
+
+                        if (modSettingsResult.IsT0)
+                            mod.WithModSettings(modSettingsResult.AsT0);
+
+                        if (!mod.CharacterSkinOverride.IsNullOrEmpty())
+                            subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
+                                .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
+
+                        if (subSkin is null)
+                            continue;
+
+
+                        if (subSkinsFound.All(foundSubSkin =>
+                                !subSkin.InternalNameEquals(foundSubSkin)))
+                        {
+                            subSkinsFound.Add(subSkin);
+                            continue;
+                        }
+
+
+                        addWarning = true;
+                        break;
                     }
 
-
-                    addWarning = true;
-                    break;
+                    if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                        charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
                 }
-
-                if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                else if (modList.Mods.Count(modEntry => modEntry.IsEnabled) >= 2)
+                {
                     charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+                }
             }
-            else if (modList.Mods.Count(modEntry => modEntry.IsEnabled) >= 2)
-            {
-                charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
-            }
-        }
+        });
 
 
         foreach (var characterGridItemModel in _backendCharacters.Where(x =>
@@ -490,6 +531,31 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _isNavigating = false;
         ResetContent();
+
+        var lastPageType = _navigationService.GetNavigationHistory().SkipLast(1).LastOrDefault();
+        if (lastPageType?.PageType == typeof(CharacterDetailsPage) ||
+            lastPageType?.PageType == typeof(CharacterDetailsViewModel))
+        {
+            IModdableObject? moddableObject = null;
+
+            if (lastPageType.Parameter is CharacterGridItemModel characterGridModel)
+            {
+                moddableObject = characterGridModel.Character;
+            }
+            else if (lastPageType.Parameter is IModdableObject modObject)
+            {
+                moddableObject = modObject;
+            }
+
+            if (moddableObject is null)
+                return;
+
+            var characterGridItemModel = FindCharacterByInternalName(moddableObject.InternalName);
+            if (characterGridItemModel is not null)
+            {
+                OnScrollToCharacter?.Invoke(this, new ScrollToCharacterArgs(characterGridItemModel));
+            }
+        }
     }
 
     private async Task RefreshNotificationsAsync()
@@ -819,6 +885,10 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var byModCount = new SortingMethod(Sorter.ModCount(), othersCharacter, lastCharacters);
         SortingMethods.Add(byModCount);
 
+
+        var byModRecentlyAdded = new SortingMethod(Sorter.ModRecentlyAdded(), othersCharacter, lastCharacters);
+        SortingMethods.Add(byModRecentlyAdded);
+
         if (_category.ModCategory == ModCategory.Character)
         {
             SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate(), othersCharacter, lastCharacters));
@@ -1024,7 +1094,50 @@ public sealed class Sorter
     }
 
 
+    public const string ModRecentlyAddedName = "Recently Added Mods";
+
+    public static Sorter ModRecentlyAdded()
+    {
+        return new Sorter
+        (
+            ModRecentlyAddedName,
+            (characters, isDescending) =>
+                !isDescending
+                    ? characters.OrderByDescending(x =>
+                    {
+                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                            .ToArray();
+                        if (validDates.Any())
+                            return validDates.Max();
+                        else
+                            return DateTime.MinValue;
+                    })
+                    : characters.OrderBy(x =>
+                    {
+                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                            .ToArray();
+                        if (validDates.Any())
+                            return validDates.Min();
+                        else
+                            return DateTime.MaxValue;
+                    }),
+            (characters, _) =>
+                characters.ThenBy(x => (x.Character.DisplayName)
+                ));
+    }
+
+
     //sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
     //sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
     //sortThirdBy: x => x.Character.DisplayName);
+}
+
+public class ScrollToCharacterArgs : EventArgs
+{
+    public CharacterGridItemModel Character { get; }
+
+    public ScrollToCharacterArgs(CharacterGridItemModel character)
+    {
+        Character = character;
+    }
 }

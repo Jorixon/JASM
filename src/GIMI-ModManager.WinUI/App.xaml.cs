@@ -63,6 +63,9 @@ public partial class App : Application
     public static UIElement? AppTitlebar { get; set; }
 
     public static bool OverrideShutdown { get; set; }
+    public static bool IsShuttingDown { get; set; }
+    public static bool ShutdownComplete { get; set; }
+
     public static bool UnhandledExceptionHandled { get; set; }
 
     public App()

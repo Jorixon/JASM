@@ -4,6 +4,7 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -25,7 +26,6 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views;
 using Serilog;
-using CommunityToolkitWrapper;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -46,6 +46,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ElevatorService _elevatorService;
 
     private ICharacterModList _modList = null!;
+    private ICategory? _category;
     public ModListVM ModListVM { get; } = null!;
     public ModPaneVM ModPaneVM { get; } = null!;
 
@@ -90,17 +91,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _imageHandlerService = imageHandlerService;
         _elevatorService = elevatorService;
 
-        _modDragAndDropService.DragAndDropFinished += async (sender, args) =>
-        {
-            foreach (var extractResult in args.ExtractResults)
-            {
-                var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
-                await AddNewModAddedNotificationAsync(AttentionType.Added,
-                    extractedFolderName, null);
-            }
-            await App.MainWindow.DispatcherQueue.EnqueueAsync(
-                async () => { await RefreshMods(); }).ConfigureAwait(false);
-        };
+        _modDragAndDropService.DragAndDropFinished += OnDragAndDropFinished;
 
         ModdableObjectImage = _imageHandlerService.PlaceholderImageUri;
 
@@ -116,6 +107,17 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModPaneVM = new ModPaneVM();
 
         _modNotificationManager.OnModNotification += OnOnModNotificationHandler;
+    }
+
+    private async void OnDragAndDropFinished(object? sender, ModDragAndDropService.DragAndDropFinishedArgs args)
+    {
+        foreach (var extractResult in args.ExtractResults)
+        {
+            var extractedFolderName = new DirectoryInfo(extractResult.ExtractedFolderPath).Name;
+            await AddNewModAddedNotificationAsync(AttentionType.Added, extractedFolderName, null);
+        }
+
+        await App.MainWindow.DispatcherQueue.EnqueueAsync(async () => { await RefreshMods(); }).ConfigureAwait(false);
     }
 
     private void OnOnModNotificationHandler(object? sender, ModNotificationManager.ModNotificationEvent e)
@@ -219,6 +221,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
             ErrorNavigateBack();
             return;
         }
+
+        _category = moddableObject.ModCategory;
 
         if (moddableObject.ImageUri is not null)
             ModdableObjectImage = moddableObject.ImageUri;
@@ -684,16 +688,15 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     [RelayCommand]
     private void GoBackToGrid()
     {
-        var gridLastStack = _navigationService.GetBackStackItems().FirstOrDefault(backStackItem =>
-            backStackItem.SourcePageType == typeof(CharactersPage));
+        var gridLastStack = _navigationService.GetBackStackItems().LastOrDefault();
 
-        if (gridLastStack is not null)
+        if (gridLastStack is not null && gridLastStack.SourcePageType == typeof(CharactersPage))
         {
             _navigationService.GoBack();
             return;
         }
 
-        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!);
+        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, _category);
     }
 
     [RelayCommand]
@@ -706,6 +709,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     {
         if (_modList is not null)
             _modList.ModsChanged -= ModListOnModsChanged;
+        if (_modNotificationManager is not null)
+            _modNotificationManager.OnModNotification -= OnOnModNotificationHandler;
+        if (_modDragAndDropService is not null)
+            _modDragAndDropService.DragAndDropFinished -= OnDragAndDropFinished;
     }
 
 

@@ -1,4 +1,5 @@
 using Windows.ApplicationModel.DataTransfer;
+using CommunityToolkit.WinUI;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -18,6 +19,20 @@ public sealed partial class CharactersPage : Page
         ViewModel = App.GetService<CharactersViewModel>();
         InitializeComponent();
         Loaded += (sender, args) => { SearchBox.Focus(FocusState.Keyboard); };
+        ViewModel.OnScrollToCharacter += ViewModel_OnScrollToCharacter;
+    }
+
+    private void ViewModel_OnScrollToCharacter(object? sender, ScrollToCharacterArgs e)
+    {
+        if (e.Character is null) return;
+
+        var item = CharactersGridView.Items.FirstOrDefault(x =>
+            ((CharacterGridItemModel)x).Character.InternalNameEquals(e.Character.Character));
+        if (item is null)
+            return;
+
+        CharactersGridView.SmoothScrollIntoViewWithItemAsync(item, ScrollItemPlacement.Center, disableAnimation: true,
+            scrollIfVisible: false);
     }
 
 

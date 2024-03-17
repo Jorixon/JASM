@@ -6,14 +6,13 @@ public interface ISkinMod : IMod, IEqualityComparer<ISkinMod>, IEquatable<ISkinM
 {
     Guid Id { get; }
     public string GetDisplayName();
-    public bool HasMergedInI { get; }
     public void ClearCache();
     public SkinModSettingsManager Settings { get; }
     public SkinModKeySwapManager? KeySwaps { get; }
     public new ISkinMod CopyTo(string absPath);
 
     public bool ContainsOnlyJasmFiles();
-    public string? GetModIniPath();
+    public Task<string?> GetModIniPathAsync();
 
     // Get folder name without the disabled prefix
     public string GetNameWithoutDisabledPrefix();
