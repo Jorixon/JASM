@@ -19,6 +19,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
+using GIMI_ModManager.WinUI.Views;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -123,6 +124,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             });
         };
     }
+
+    public event EventHandler<ScrollToCharacterArgs>? OnScrollToCharacter;
 
     private void FilterElementSelected(object? sender, FilterElementSelectedArgs e)
     {
@@ -528,6 +531,31 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _isNavigating = false;
         ResetContent();
+
+        var lastPageType = _navigationService.GetNavigationHistory().SkipLast(1).LastOrDefault();
+        if (lastPageType?.PageType == typeof(CharacterDetailsPage) ||
+            lastPageType?.PageType == typeof(CharacterDetailsViewModel))
+        {
+            IModdableObject? moddableObject = null;
+
+            if (lastPageType.Parameter is CharacterGridItemModel characterGridModel)
+            {
+                moddableObject = characterGridModel.Character;
+            }
+            else if (lastPageType.Parameter is IModdableObject modObject)
+            {
+                moddableObject = modObject;
+            }
+
+            if (moddableObject is null)
+                return;
+
+            var characterGridItemModel = FindCharacterByInternalName(moddableObject.InternalName);
+            if (characterGridItemModel is not null)
+            {
+                OnScrollToCharacter?.Invoke(this, new ScrollToCharacterArgs(characterGridItemModel));
+            }
+        }
     }
 
     private async Task RefreshNotificationsAsync()
@@ -1076,30 +1104,22 @@ public sealed class Sorter
             (characters, isDescending) =>
                 !isDescending
                     ? characters.OrderByDescending(x =>
-                        x.Mods.Count == 0
-                            ? DateTime.MinValue
-                            : x.Mods.Min(mod =>
-                            {
-                                if (mod.DateAdded == default)
-                                {
-                                    return DateTime.MaxValue;
-                                }
-
-                                return mod.DateAdded;
-                            }))
+                    {
+                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                            .ToArray();
+                        if (validDates.Any())
+                            return validDates.Max();
+                        else
+                            return DateTime.MinValue;
+                    })
                     : characters.OrderBy(x =>
                     {
-                        return x.Mods.Count == 0
-                            ? DateTime.MaxValue
-                            : x.Mods.Min(mod =>
-                            {
-                                if (mod.DateAdded == default)
-                                {
-                                    return DateTime.MaxValue;
-                                }
-
-                                return mod.DateAdded;
-                            });
+                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                            .ToArray();
+                        if (validDates.Any())
+                            return validDates.Min();
+                        else
+                            return DateTime.MaxValue;
                     }),
             (characters, _) =>
                 characters.ThenBy(x => (x.Character.DisplayName)
@@ -1110,4 +1130,14 @@ public sealed class Sorter
     //sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
     //sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
     //sortThirdBy: x => x.Character.DisplayName);
+}
+
+public class ScrollToCharacterArgs : EventArgs
+{
+    public CharacterGridItemModel Character { get; }
+
+    public ScrollToCharacterArgs(CharacterGridItemModel character)
+    {
+        Character = character;
+    }
 }

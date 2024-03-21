@@ -1,11 +1,9 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Security.Principal;
 using Windows.Graphics;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
-using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
@@ -214,117 +212,48 @@ public class ActivationService : IActivationService
         }
     }
 
-// To allow jasm to save settings before exiting, we need to handle the first close event.
-// Once finished saving the handler calls itself again, but this time it will exit.
-    private bool _isExiting;
-
     private async void OnApplicationExit(object sender, WindowEventArgs args)
     {
-        if (App.OverrideShutdown)
+        if (App.ShutdownComplete) return;
+
+        args.Handled = true;
+
+        if (App.IsShuttingDown)
         {
-            _logger.Information("Shutdown override enabled, skipping shutdown...");
-            _logger.Information("Shutdown override will be disabled in at most 1 second.");
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(async () =>
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             {
-                await Task.Delay(500);
-                App.OverrideShutdown = false;
-                _logger.Information("Shutdown override disabled.");
-            });
-            args.Handled = true;
-            return;
-        }
+                var softShutdownGracePeriod = TimeSpan.FromSeconds(2);
+                await Task.Delay(softShutdownGracePeriod);
 
-        if (_isExiting)
-            return;
-
-        try
-        {
-            args.Handled = true;
-
-            var notificationCleanup = Task.Run(_modNotificationManager.CleanupAsync).ConfigureAwait(false);
-            var saveWindowSettingsTask = SaveWindowSettingsAsync();
-
-            _logger.Debug("JASM shutting down...");
-            _modUpdateAvailableChecker.CancelAndStop();
-            _updateChecker.CancelAndStop();
-            _notificationManager.CancelAndStop();
-
-            await saveWindowSettingsTask;
-            await _windowManagerService.CloseWindowsAsync().ConfigureAwait(false);
-
-            var tmpDir = new DirectoryInfo(App.TMP_DIR);
-            if (tmpDir.Exists)
-            {
-                tmpDir.Refresh();
-                _logger.Debug("Deleting temporary directory: {Path}", tmpDir.FullName);
-                try
-                {
-                    tmpDir.EnumerateFiles("*", SearchOption.AllDirectories)
-                        .ForEach(f => f.Attributes = FileAttributes.Normal);
-                    tmpDir.EnumerateDirectories("*", SearchOption.AllDirectories)
-                        .ForEach(d => d.Attributes = FileAttributes.Normal);
-                    tmpDir.Delete(true);
-                }
-                catch (Exception e)
-                {
-                    _logger.Warning(e, "Failed to delete temporary directory: {Path}", tmpDir.FullName);
-                }
-            }
-
-            await notificationCleanup;
-            _logger.Debug("JASM shutdown complete.");
-        }
-        finally
-        {
-            // Call the handler again, this time it will exit.
-            await Task.Run(() =>
-            {
-                _isExiting = true;
+                _logger.Warning(
+                    "JASM shutdown took too long (>{maxShutdownGracePeriod}s), ignoring cleanup and exiting...",
+                    softShutdownGracePeriod);
+                App.ShutdownComplete = true;
                 App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
                     Application.Current.Exit();
                     App.MainWindow.Close();
                 });
-            }).ConfigureAwait(false);
-        }
-    }
+            });
 
-    private async Task SaveWindowSettingsAsync()
-    {
-        if (App.MainWindow is null || App.MainWindow.AppWindow is null)
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Run(async () =>
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            {
+                var maxShutdownGracePeriod = TimeSpan.FromSeconds(5);
+                await Task.Delay(maxShutdownGracePeriod);
+
+                _logger.Fatal("JASM failed to close after {maxShutdownGracePeriod} seconds, forcing exit...",
+                    maxShutdownGracePeriod);
+                Environment.Exit(1);
+            });
             return;
-
-
-        var windowSettings = await _localSettingsService
-            .ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
-
-
-        var isFullScreen = App.MainWindow.WindowState == WindowState.Maximized;
-
-        var width = windowSettings.Width;
-        var height = windowSettings.Height;
-        var xPosition = windowSettings.XPosition;
-        var yPosition = windowSettings.YPosition;
-
-
-        if (!isFullScreen && App.MainWindow.WindowState != WindowState.Minimized)
-        {
-            width = App.MainWindow.AppWindow.Size.Width;
-            height = App.MainWindow.AppWindow.Size.Height;
         }
 
-        if (App.MainWindow.WindowState != WindowState.Minimized)
-        {
-            xPosition = App.MainWindow.AppWindow.Position.X;
-            yPosition = App.MainWindow.AppWindow.Position.Y;
-        }
 
-        _logger.Debug($"Saving Window size: {width}x{height} | IsFullscreen: {isFullScreen}");
-
-        var newWindowSettings = new ScreenSizeSettings(width, height)
-            { IsFullScreen = isFullScreen, XPosition = xPosition, YPosition = yPosition };
-
-        await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, newWindowSettings).ConfigureAwait(false);
+        await _lifeCycleService.StartShutdownAsync().ConfigureAwait(false);
     }
 
     // Declared here for now, might move to a different class later.

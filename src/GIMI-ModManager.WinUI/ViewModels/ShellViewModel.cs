@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.Views;
@@ -13,6 +14,7 @@ namespace GIMI_ModManager.WinUI.ViewModels;
 public partial class ShellViewModel : ObservableRecipient
 {
     private readonly UpdateChecker _updateChecker;
+    public readonly SelectedGameService SelectedGameService;
     [ObservableProperty] private bool isBackEnabled;
     [ObservableProperty] private bool isNotFirstTimeStartupPage = true;
     [ObservableProperty] private object? selected;
@@ -26,7 +28,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService,
         NotificationManager notificationManager, ElevatorService elevatorService, UpdateChecker updateChecker,
-        IGameService gameService)
+        IGameService gameService, SelectedGameService selectedGameService)
     {
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
@@ -35,6 +37,7 @@ public partial class ShellViewModel : ObservableRecipient
         ElevatorService = elevatorService;
         _updateChecker = updateChecker;
         GameService = gameService;
+        SelectedGameService = selectedGameService;
         _updateChecker.NewVersionAvailable += OnNewVersionAvailable;
     }
 

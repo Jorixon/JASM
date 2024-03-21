@@ -256,6 +256,7 @@
 
 
         <controls:AdaptiveGridView
+            x:Name="CharactersGridView"
             Grid.Row="2"
             Margin="0,0,0,8"
             animations:Connected.ListItemElementName="itemThumbnail"

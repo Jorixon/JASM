@@ -457,7 +457,14 @@
       "Liyue"
     ],
     "ModFilesName": "Ganyu",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "GanyuTwilight",
+        "Image": "Character_Skin_GanyuTwilight_Thumb.png",
+        "InternalName": "GanyuTwilight",
+        "DisplayName": "Twilight Blossom"
+      }
+    ],
     "InternalName": "Ganyu",
     "DisplayName": "Ganyu"
   },
@@ -1136,7 +1143,14 @@
       "Liyue"
     ],
     "ModFilesName": "Shenhe",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "ShenheFrostflower",
+        "Image": "Character_Skin_ShenheFrostflower_Thumb.png",
+        "InternalName": "ShenheFrostflower",
+        "DisplayName": "Frostflower Dew"
+      }
+    ],
     "InternalName": "Shenhe",
     "DisplayName": "Shenhe"
   },

@@ -84,7 +84,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
             if (!characterModFolder.Exists)
             {
-                _logger.Debug("Character mod folder for '{Character}' does not exist", character.DisplayName);
+                _logger.Verbose("Character mod folder for '{Character}' does not exist", character.DisplayName);
                 continue;
             }
 

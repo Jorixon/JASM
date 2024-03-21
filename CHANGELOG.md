@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.3.0](https://github.com/Jorixon/JASM/compare/v2.2.0...v2.3.0) (2024-03-13)
+
+
+### Features
+
+* Quick switch button added for switching between games ([#138](https://github.com/Jorixon/JASM/issues/138)) ([ec8adc2](https://github.com/Jorixon/JASM/commit/ec8adc2db04f51f4288ae952a92b832d257956ac))
+* When navigating back from a character page to the character overview, it will now scroll that character into view ([ec8adc2](https://github.com/Jorixon/JASM/commit/ec8adc2db04f51f4288ae952a92b832d257956ac))
+
+
+### Bug Fixes
+
+* Potential fix for crash when navigating to character after mod install ([ec8adc2](https://github.com/Jorixon/JASM/commit/ec8adc2db04f51f4288ae952a92b832d257956ac))
+
+
+### Miscellaneous
+
+* Added Ganyu and Shenhe skins ([1499042](https://github.com/Jorixon/JASM/commit/1499042f3a138992f794421310d0e7285ea21e80))
+* Redid Date Added sorting logic ([ec8adc2](https://github.com/Jorixon/JASM/commit/ec8adc2db04f51f4288ae952a92b832d257956ac))
+* Reworked application cleanup and exit process ([#141](https://github.com/Jorixon/JASM/issues/141)) ([da9e65f](https://github.com/Jorixon/JASM/commit/da9e65f895e25fb8167ff178c5cc4fb9f6c0bf37))
+
 ## [2.2.0](https://github.com/Jorixon/JASM/compare/v2.1.2...v2.2.0) (2024-03-10)
 
 
@@ -15,8 +35,8 @@
 
 ### Miscellaneous
 
-* Added Chiori, hsr 2.1 characters, hsr character info, typo fixes ([#134](https://github.com/Jorixon/JASM/issues/134)) ([6f05ee6](https://github.com/Jorixon/JASM/commit/6f05ee672987f4079fb61254f658e06e37bef136))
-* Introduce Penacony and its characters ([#132](https://github.com/Jorixon/JASM/issues/132)) ([b59e3d9](https://github.com/Jorixon/JASM/commit/b59e3d92ebb4fc8ad4ebe5c4d1cbdbb1d7d35a33))
+* Added Chiori, hsr 2.1 characters, hsr character info, typo fixes ([#134](https://github.com/Jorixon/JASM/issues/134)) ([6f05ee6](https://github.com/Jorixon/JASM/commit/6f05ee672987f4079fb61254f658e06e37bef136)) Thanks @Pyrageis 
+* Introduce Penacony and its characters ([#132](https://github.com/Jorixon/JASM/issues/132)) ([b59e3d9](https://github.com/Jorixon/JASM/commit/b59e3d92ebb4fc8ad4ebe5c4d1cbdbb1d7d35a33)) Thanks @EffortlessFury 
 * Updated WinAppSdk to 1.5 and som other packages ([ae8947e](https://github.com/Jorixon/JASM/commit/ae8947e7a79cd2c204d7dd60e27eb33c7e082e9a))
 
 ## [2.1.2](https://github.com/Jorixon/JASM/compare/v2.1.1...v2.1.2) (2024-01-31)
