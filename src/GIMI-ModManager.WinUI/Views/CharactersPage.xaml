@@ -249,7 +249,7 @@
                             <StackPanel Margin="0,8" Orientation="Horizontal">
                                 <Image Height="40">
                                     <Image.Source>
-                                        <BitmapImage DecodePixelHeight="40" UriSource="{x:Bind Character.ImageUri}" />
+                                        <BitmapImage DecodePixelHeight="40" UriSource="{x:Bind ImageUri}" />
                                     </Image.Source>
                                 </Image>
 
@@ -301,7 +301,7 @@
 
                             <Image VerticalAlignment="Top">
                                 <Image.Source>
-                                    <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind Character.ImageUri}" />
+                                    <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind ImageUri}" />
                                 </Image.Source>
                             </Image>
                             <StackPanel>

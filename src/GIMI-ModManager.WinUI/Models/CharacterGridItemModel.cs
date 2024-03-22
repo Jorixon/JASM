@@ -9,7 +9,7 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     IEquatable<IModdableObject>
 {
     [ObservableProperty] private IModdableObject _character;
-
+    [ObservableProperty] private Uri _imageUri;
 
     [ObservableProperty] private bool _isPinned;
     [ObservableProperty] private bool _warning;
@@ -28,6 +28,7 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     public CharacterGridItemModel(IModdableObject character, int modCount = 0)
     {
         Character = character;
+        ImageUri = character.ImageUri ?? ModModel.PlaceholderImagePath;
         ModCount = modCount;
         _hasMods = modCount > 0;
     }
