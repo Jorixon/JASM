@@ -59,5 +59,35 @@
     "ModFilesName": "",
     "InternalName": "Ruin Machines",
     "DisplayName": "Ruin Machines"
+  },
+  {
+    "Image": "Npc_Skirk.webp",
+    "ModFilesName": "Skirk",
+    "InternalName": "Skirk",
+    "DisplayName": "Skirk"
+  },
+  {
+    "Image": "Npc_Sorush.webp",
+    "ModFilesName": "Sorush",
+    "InternalName": "Sorush",
+    "DisplayName": "Sorush"
+  },
+  {
+    "Image": "Npc_Liloupar.webp",
+    "ModFilesName": "Liloupar",
+    "InternalName": "Liloupar",
+    "DisplayName": "Liloupar"
+  },
+  {
+    "Image": "Npc_Mikoto.webp",
+    "ModFilesName": "Mikoto",
+    "InternalName": "Mikoto",
+    "DisplayName": "Narukami no Mikoto"
+  },
+  {
+    "Image": "Npc_Signora.webp",
+    "ModFilesName": "Signora",
+    "InternalName": "Signora",
+    "DisplayName": "La Signora"
   }
 ]
