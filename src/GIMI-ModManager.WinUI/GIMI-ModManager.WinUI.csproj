@@ -362,6 +362,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Traveler%27s_Handy_Sword.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Tulaytullah%27s_Remembrance.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Twin_Nephrite.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Verdict.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Vortex_Vanquisher.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wandering_Evenstar.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Waster_Greatsword.png" />
