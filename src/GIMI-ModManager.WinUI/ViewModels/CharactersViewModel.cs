@@ -160,7 +160,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        var suitableItems = _gameService.QueryModdableObjects(text, category: _category, minScore: 100)
+        var suitableItems = _gameService.QueryModdableObjects(text, category: _category, minScore: 120)
             .OrderByDescending(kv => kv.Value)
             .Take(5)
             .Select(x => new CharacterGridItemModel(x.Key))

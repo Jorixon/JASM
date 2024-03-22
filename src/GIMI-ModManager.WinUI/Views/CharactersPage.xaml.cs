@@ -38,16 +38,10 @@ public sealed partial class CharactersPage : Page
 
     private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        ViewModel.AutoSuggestBox_TextChanged(sender.Text);
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            ViewModel.AutoSuggestBox_TextChanged(sender.Text);
     }
 
-    private void AutoSuggestBox_OnSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-    {
-        if (!ViewModel.SuggestionBox_Chosen((CharacterGridItemModel)args.SelectedItem)) return;
-
-        sender.IsEnabled = false;
-        sender.Text = string.Empty;
-    }
 
     private void CharacterSearchKeyShortcut(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
@@ -56,16 +50,7 @@ public sealed partial class CharactersPage : Page
 
     private void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        if (args.ChosenSuggestion is not null)
-            if (!ViewModel.SuggestionBox_Chosen((CharacterGridItemModel)args.ChosenSuggestion))
-                return;
-
-        if (ViewModel.SuggestionsBox.Count > 0)
-        {
-            if (!ViewModel.SuggestionBox_Chosen(ViewModel.SuggestionsBox[0])) return;
-            sender.IsEnabled = false;
-            sender.Text = string.Empty;
-        }
+        ViewModel.SuggestionBox_Chosen((CharacterGridItemModel?)args.ChosenSuggestion);
     }
 
     private void ImageCommandsFlyout_OnOpening(object? sender, object e)

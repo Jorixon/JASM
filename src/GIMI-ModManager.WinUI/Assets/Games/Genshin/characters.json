@@ -788,12 +788,6 @@
         "Image": "Character_Skin_LisaSobriquet_Thumb.png",
         "InternalName": "A Sobriquet Under Shade",
         "DisplayName": "A Sobriquet Under Shade"
-      },
-      {
-        "ModFilesName": "LisaStudent",
-        "Image": "",
-        "InternalName": "Student",
-        "DisplayName": "Student"
       }
     ],
     "InternalName": "Lisa",

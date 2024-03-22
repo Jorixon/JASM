@@ -237,7 +237,6 @@
                     PlaceholderText="{x:Bind ViewModel.SearchBoxPlaceHolder, Mode=OneWay}"
                     QueryIcon="Find"
                     QuerySubmitted="SearchBox_OnQuerySubmitted"
-                    SuggestionChosen="AutoSuggestBox_OnSuggestionChosen"
                     TextChanged="AutoSuggestBox_TextChanged">
                     <AutoSuggestBox.KeyboardAccelerators>
                         <KeyboardAccelerator
@@ -247,7 +246,20 @@
                     </AutoSuggestBox.KeyboardAccelerators>
                     <AutoSuggestBox.ItemTemplate>
                         <DataTemplate x:DataType="models:CharacterGridItemModel">
-                            <TextBlock Text="{x:Bind Character.DisplayName}" />
+                            <StackPanel Margin="0,8" Orientation="Horizontal">
+                                <Image Height="40">
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelHeight="40" UriSource="{x:Bind ImageUri}" />
+                                    </Image.Source>
+                                </Image>
+
+                                <TextBlock
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{StaticResource GenshinFont}"
+                                    FontSize="16"
+                                    Text="{x:Bind Character.DisplayName}" />
+                            </StackPanel>
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
@@ -289,7 +301,7 @@
 
                             <Image VerticalAlignment="Top">
                                 <Image.Source>
-                                    <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind Character.ImageUri}" />
+                                    <BitmapImage DecodePixelWidth="150" UriSource="{x:Bind ImageUri}" />
                                 </Image.Source>
                             </Image>
                             <StackPanel>
@@ -346,7 +358,8 @@
                                 VerticalAlignment="Bottom"
                                 FontFamily="{StaticResource GenshinFont}"
                                 FontSize="14"
-                                Text="{x:Bind Character.DisplayName}" />
+                                Text="{x:Bind Character.DisplayName}"
+                                TextWrapping="WrapWholeWords" />
                         </Grid>
                     </Grid>
                 </DataTemplate>

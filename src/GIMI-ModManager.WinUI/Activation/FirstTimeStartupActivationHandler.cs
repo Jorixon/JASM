@@ -46,9 +46,15 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
         var modManagerOptions =
             await _localSettingsService.ReadSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
-        await _gameService.InitializeAsync(
-            Path.Combine(App.ASSET_DIR, "Games", await _selectedGameService.GetSelectedGameAsync()),
-            _localSettingsService.ApplicationDataFolder);
+        var gameServiceOptions = new InitializationOptions
+        {
+            AssetsDirectory = Path.Combine(App.ASSET_DIR, "Games",
+                await _selectedGameService.GetSelectedGameAsync()),
+            LocalSettingsDirectory = _localSettingsService.ApplicationDataFolder,
+            CharacterSkinsAsCharacters = modManagerOptions?.CharacterSkinsAsCharacters ?? false
+        };
+
+        await _gameService.InitializeAsync(gameServiceOptions);
 
         await _skinManagerService.InitializeAsync(modManagerOptions!.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);

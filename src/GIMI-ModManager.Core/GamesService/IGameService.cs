@@ -17,8 +17,9 @@ public interface IGameService
 
     public Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory);
 
-    public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
-        ICollection<string>? disabledCharacters = null);
+    public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory);
+
+    public Task InitializeAsync(InitializationOptions options);
 
     public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName);
     public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri);
@@ -70,6 +71,15 @@ public interface IGameService
     public string OtherCharacterInternalName { get; }
     public string GlidersCharacterInternalName { get; }
     public string WeaponsCharacterInternalName { get; }
+}
+
+public class InitializationOptions
+{
+    public required string AssetsDirectory { get; set; }
+    public required string LocalSettingsDirectory { get; set; }
+    public ICollection<string>? DisabledCharacters { get; set; }
+
+    public bool CharacterSkinsAsCharacters { get; set; }
 }
 
 public enum GetOnly
