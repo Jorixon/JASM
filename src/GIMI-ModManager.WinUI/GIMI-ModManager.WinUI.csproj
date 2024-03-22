@@ -84,6 +84,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Aloy_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Amber_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Arataki_Itto_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Arlecchino_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Baizhu_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Barbara_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Beidou_Thumb.png" />
@@ -185,10 +186,15 @@
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Fungus.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Hilichurl.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Katheryne.png" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Liloupar.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Mikoto.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Ruin Machines.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Sigewinne.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Signora.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Skirk.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Slimes.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Sorush.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Akuoumaru.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Alley_Hunter.png" />
