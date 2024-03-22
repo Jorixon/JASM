@@ -20,7 +20,7 @@ internal class CharacterSkinsDialog
                 IsTextSelectionEnabled = true
             },
             DefaultButton = ContentDialogButton.Primary,
-            PrimaryButtonText = isEnabled ? _disablePrimaryButtonText : EnablePrimaryButtonText,
+            PrimaryButtonText = isEnabled ? DisablePrimaryButtonText : EnablePrimaryButtonText,
             CloseButtonText = "Cancel"
         };
 
@@ -32,7 +32,8 @@ internal class CharacterSkinsDialog
 
     private const string EnableContent =
         "Enabling this will make JASM treat in game skins as separate characters in the character overview.\n" +
-        "JASM will not move any of your mods nor will it delete any if you disable this later.\n\n" +
+        "This could potentially become the default setting of JASM in the future.\n" +
+        "JASM will not move any of your mods nor will it delete any.\n\n" +
         "Are you sure you want to enable character skins as characters? JASM will restart afterwards...";
 
     private const string EnablePrimaryButtonText = "Enable";
@@ -42,8 +43,8 @@ internal class CharacterSkinsDialog
     private const string DisableContent =
         "Disabling this will make JASM treat in game skins as skins of the base character in the character overview.\n" +
         "This is currently the default setting of JASM\n" +
-        "JASM will not move any of your mods nor will it delete any if you enable this later.\n\n" +
+        "JASM will not move any of your mods nor will it delete any.\n\n" +
         "Are you sure you want to disable character skins as characters? JASM will restart afterwards...";
 
-    private const string _disablePrimaryButtonText = "Disable";
+    private const string DisablePrimaryButtonText = "Disable";
 }

@@ -98,7 +98,7 @@ public class Character : ICharacter, IEquatable<Character>
         var character = Clone(characterSkin.InternalName);
 
         character.ModFilesName = characterSkin.ModFilesName;
-        character.DisplayName = characterSkin.DisplayName;
+        character.DisplayName = DisplayName + " " + characterSkin.DisplayName;
         character.Keys = new List<string>() { DisplayName, InternalName };
         character.Rarity = characterSkin.Rarity is > 0 and <= 5 ? characterSkin.Rarity : character.Rarity;
         character.ReleaseDate = characterSkin.ReleaseDate == DateTime.MaxValue ? ReleaseDate : character.ReleaseDate;

@@ -395,7 +395,7 @@ public class GameService : IGameService
             }
         }
 
-        result += sameStartChars * 10; // Give more points for same start chars
+        result += sameStartChars * 11; // Give more points for same start chars
 
         result += loweredDisplayName.Split()
             .Max(name => Fuzz.PartialRatio(name, searchQuery)); // Do a partial ratio for each name

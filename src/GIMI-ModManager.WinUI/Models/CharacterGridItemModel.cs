@@ -56,6 +56,12 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     public static bool operator ==(CharacterGridItemModel? left, CharacterGridItemModel? right) => Equals(left, right);
 
     public static bool operator !=(CharacterGridItemModel? left, CharacterGridItemModel? right) => !Equals(left, right);
+
+
+    public override string ToString()
+    {
+        return Character.DisplayName;
+    }
 }
 
 public record CharacterModItem(string Name, DateTime DateAdded);
