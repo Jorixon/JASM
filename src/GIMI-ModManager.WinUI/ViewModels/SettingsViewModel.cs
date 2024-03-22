@@ -86,6 +86,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private DateTime? _nextModCheckTime = null;
 
+    [ObservableProperty] private bool _characterAsSkinsCheckbox = false;
+
     private Dictionary<string, string> _nameToLangCode = new();
 
     public PathPicker PathToGIMIFolderPicker { get; }
@@ -141,6 +143,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _modManagerOptions = localSettingsService.ReadSetting<ModManagerOptions>(ModManagerOptions.Section);
         PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
         PathToModsFolderPicker = new PathPicker(ModsFolderValidator.Validators);
+
+        CharacterAsSkinsCheckbox = _modManagerOptions?.CharacterSkinsAsCharacters ?? false;
 
         PathToGIMIFolderPicker.Path = _modManagerOptions?.GimiRootFolderPath;
         PathToModsFolderPicker.Path = _modManagerOptions?.ModsFolderPath;
@@ -222,7 +226,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             await _themeSelectorService.SetThemeAsync(param);
             _notificationManager.ShowNotification("Restarting...", "The application will restart now.",
                 null);
-            await RestartApp();
+            await RestartAppAsync();
         }
     }
 
@@ -284,7 +288,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             _notificationManager.ShowNotification("Settings saved. Restarting App...", "", TimeSpan.FromSeconds(2));
 
 
-            await RestartApp();
+            await RestartAppAsync();
         }
     }
 
@@ -357,7 +361,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    private async Task RestartApp(int delay = 2)
+    private async Task RestartAppAsync(int delay = 2)
     {
         _navigationViewService.IsEnabled = false;
 
@@ -643,7 +647,31 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         }
 
         await _selectedGameService.SetSelectedGame(game);
-        await RestartApp(0).ConfigureAwait(false);
+        await RestartAppAsync(0).ConfigureAwait(false);
+    }
+
+    [RelayCommand]
+    private async Task ToggleCharacterSkinsAsCharacters()
+    {
+        var modManagerOptions =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
+
+        var result = await new CharacterSkinsDialog().ShowDialogAsync(modManagerOptions.CharacterSkinsAsCharacters);
+
+        if (result != ContentDialogResult.Primary)
+        {
+            CharacterAsSkinsCheckbox = modManagerOptions.CharacterSkinsAsCharacters;
+            return;
+        }
+
+
+        modManagerOptions.CharacterSkinsAsCharacters = !modManagerOptions.CharacterSkinsAsCharacters;
+
+        await _localSettingsService.SaveSettingAsync(ModManagerOptions.Section, modManagerOptions);
+
+        CharacterAsSkinsCheckbox = modManagerOptions.CharacterSkinsAsCharacters;
+
+        await RestartAppAsync().ConfigureAwait(false);
     }
 
     [RelayCommand]

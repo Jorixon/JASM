@@ -59,16 +59,7 @@ public class Character : ICharacter, IEquatable<Character>
         };
 
         // Add default skin
-        character.Skins.Add(new CharacterSkin(character)
-        {
-            InternalName = new InternalName("Default_" + internalName),
-            ModFilesName = character.ModFilesName,
-            DisplayName = "Default",
-            Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
-            ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var skinDate) ? skinDate : DateTime.MaxValue,
-            Character = character,
-            IsDefault = true
-        });
+        character.Skins.Add(CreateDefaultSkin(character));
 
 
         if (jsonCharacter.InGameSkins == null) return new CharacterBuilder(character, jsonCharacter);
@@ -83,11 +74,47 @@ public class Character : ICharacter, IEquatable<Character>
         return new CharacterBuilder(character, jsonCharacter);
     }
 
-    internal Character Clone()
+
+    internal IEnumerable<ICharacterSkin> ClearAndReturnSkins()
+    {
+        var skins = Skins.Where(s => !s.IsDefault).ToArray();
+
+        var defaultSkin = Skins.First(s => s.IsDefault);
+
+        Skins.Clear();
+
+        Skins.Add(defaultSkin);
+
+        DefaultCharacter = Clone();
+
+        return skins;
+    }
+
+    internal Character FromCharacterSkin(ICharacterSkin characterSkin)
+    {
+        if (characterSkin.IsDefault)
+            throw new InvalidOperationException("Cannot create character from default skin");
+
+        var character = Clone(characterSkin.InternalName);
+
+        character.ModFilesName = characterSkin.ModFilesName;
+        character.DisplayName = characterSkin.DisplayName;
+        character.Keys = new List<string>() { DisplayName, InternalName };
+        character.Rarity = characterSkin.Rarity is > 0 and <= 5 ? characterSkin.Rarity : character.Rarity;
+        character.ReleaseDate = characterSkin.ReleaseDate == DateTime.MaxValue ? ReleaseDate : character.ReleaseDate;
+        character.ImageUri = characterSkin.ImageUri;
+
+        character.Skins = new List<ICharacterSkin>() { CreateDefaultSkin(character) };
+        character.DefaultCharacter = character.Clone();
+
+        return character;
+    }
+
+    internal Character Clone(InternalName? internalName = null)
     {
         return new Character
         {
-            InternalName = InternalName,
+            InternalName = internalName ?? InternalName,
             ModFilesName = ModFilesName,
             DisplayName = DisplayName,
             IsMultiMod = IsMultiMod,
@@ -101,6 +128,18 @@ public class Character : ICharacter, IEquatable<Character>
             ImageUri = ImageUri
         };
     }
+
+    private static ICharacterSkin CreateDefaultSkin(Character character) =>
+        new CharacterSkin(character)
+        {
+            InternalName = new InternalName("Default_" + character.InternalName),
+            ModFilesName = character.ModFilesName,
+            DisplayName = "Default",
+            Rarity = character.Rarity,
+            ReleaseDate = character.ReleaseDate,
+            Character = character,
+            IsDefault = true
+        };
 
     internal Character()
     {

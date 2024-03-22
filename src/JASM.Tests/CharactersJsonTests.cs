@@ -19,7 +19,11 @@ public class CharactersJsonTests : IDisposable
         if (!Directory.Exists(AssetsUriPath))
             throw new FileNotFoundException("Assets file not found.", AssetsUriPath);
         var genshinService = new GameService(new MockLogger(), new MockLocalizer());
-        await genshinService.InitializeAsync(AssetsUriPath, _tmpDataDirectory);
+        await genshinService.InitializeAsync(new InitializationOptions
+        {
+            AssetsDirectory = AssetsUriPath,
+            LocalSettingsDirectory = _tmpDataDirectory
+        });
         return genshinService;
     }
 

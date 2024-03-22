@@ -16,6 +16,7 @@ public class GameService : IGameService
     private readonly ILogger _logger;
     private readonly ILanguageLocalizer _localizer;
 
+    private InitializationOptions _options = null!;
     private DirectoryInfo _assetsDirectory = null!;
     private DirectoryInfo? _languageOverrideDirectory;
 
@@ -60,18 +61,31 @@ public class GameService : IGameService
 
     private bool _initialized;
 
-
-    public async Task InitializeAsync(string assetsDirectory, string localSettingsDirectory,
-        ICollection<string>? disabledCharacters = null)
+    public Task InitializeAsync(string assetsDirectory, string localSettingsDirectory)
     {
+        var options = new InitializationOptions
+        {
+            AssetsDirectory = assetsDirectory,
+            LocalSettingsDirectory = localSettingsDirectory
+        };
+
+        return InitializeAsync(options);
+    }
+
+
+    public async Task InitializeAsync(InitializationOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options, nameof(options));
+        _options = options;
+
         if (_initialized)
             throw new InvalidOperationException("GameService is already initialized");
 
-        _assetsDirectory = new DirectoryInfo(assetsDirectory);
+        _assetsDirectory = new DirectoryInfo(options.AssetsDirectory);
         if (!_assetsDirectory.Exists)
             throw new DirectoryNotFoundException($"Directory not found at path: {_assetsDirectory.FullName}");
 
-        var settingsDirectory = new DirectoryInfo(localSettingsDirectory);
+        var settingsDirectory = new DirectoryInfo(options.LocalSettingsDirectory);
         settingsDirectory.Create();
 
         _gameSettingsManager = new GameSettingsManager(settingsDirectory);
@@ -100,7 +114,8 @@ public class GameService : IGameService
 
     public async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
     {
-        var gameFilePath = Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString(), FileNames.GameSettingsFileName);
+        var gameFilePath = Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString(),
+            FileNames.GameSettingsFileName);
 
         if (!File.Exists(gameFilePath))
             return null;
@@ -110,7 +125,8 @@ public class GameService : IGameService
         if (jsonGameInfo is null)
             throw new InvalidOperationException($"{gameFilePath} file is empty");
 
-        return new GameInfo(jsonGameInfo, new DirectoryInfo(Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString())));
+        return new GameInfo(jsonGameInfo,
+            new DirectoryInfo(Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString())));
     }
 
     public async Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory)
@@ -452,8 +468,8 @@ public class GameService : IGameService
         var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Characters");
         var characterSkinPath = Path.Combine(_assetsDirectory.FullName, "Images", "AltCharacterSkins");
 
-        var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName);
-        var overrideSettings = await _gameSettingsManager.ReadSettingsAsync();
+        var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName).ConfigureAwait(false);
+        var overrideSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
 
         foreach (var jsonCharacter in jsonCharacters)
         {
@@ -465,14 +481,23 @@ public class GameService : IGameService
                 .CreateCharacter(imageFolder: imageFolderName, characterSkinImageFolder: characterSkinPath);
 
             _characters.Add(character);
+
+            if (!_options.CharacterSkinsAsCharacters) continue;
+
+            foreach (var skin in character.ClearAndReturnSkins())
+            {
+                var newCharacter = character.FromCharacterSkin(skin);
+                _characters.Add(newCharacter);
+            }
         }
+
 
         _characters.Insert(0, getOthersCharacter());
         _characters.Add(getGlidersCharacter());
         _characters.Add(getWeaponsCharacter());
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(characterFileName, _characters.ToEnumerable());
+            await MapDisplayNames(characterFileName, _characters.ToEnumerable()).ConfigureAwait(false);
 
         foreach (var enableableCharacter in _characters)
         {
@@ -717,7 +742,8 @@ public class GameService : IGameService
             return;
         }
 
-        var json = JsonSerializer.Deserialize<ICollection<JsonOverride>>(await File.ReadAllTextAsync(filePath),
+        var json = JsonSerializer.Deserialize<ICollection<JsonOverride>>(
+            await File.ReadAllTextAsync(filePath).ConfigureAwait(false),
             _jsonSerializerOptions);
 
         if (json is null)
@@ -1009,6 +1035,8 @@ internal sealed class Enableable<T> where T : IModdableObject
     public static implicit operator T(Enableable<T> enableable) => enableable.ModdableObject;
 
     public static implicit operator Enableable<T>(T moddableObject) => new(moddableObject);
+
+    public override string ToString() => $"Enabled: {IsEnabled} | {ModdableObject.InternalName}";
 }
 
 internal sealed class EnableableList<T> : List<Enableable<T>> where T : IModdableObject

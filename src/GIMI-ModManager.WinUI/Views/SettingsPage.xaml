@@ -252,6 +252,14 @@
                             </ToolTipService.ToolTip>
                         </Button>
                     </StackPanel>
+
+
+                    <StackPanel Margin="0,16,0,0" Orientation="Horizontal">
+                        <CheckBox
+                            Command="{x:Bind ViewModel.ToggleCharacterSkinsAsCharactersCommand}"
+                            Content="Treat Character Skins as separate characters"
+                            IsChecked="{x:Bind ViewModel.CharacterAsSkinsCheckbox, Mode=TwoWay}" />
+                    </StackPanel>
                 </StackPanel>
 
                 <TextBlock l:Uids.Uid="Settings_Export_Title" Style="{ThemeResource SubtitleTextBlockStyle}" />

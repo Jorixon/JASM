@@ -8,4 +8,5 @@ public class ModManagerOptions
     public string? GimiRootFolderPath { get; set; }
     public string? ModsFolderPath { get; set; }
     public string? UnloadedModsFolderPath { get; set; }
+    public bool CharacterSkinsAsCharacters { get; set; }
 }
