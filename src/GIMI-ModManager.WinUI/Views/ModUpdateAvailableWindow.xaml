@@ -184,7 +184,8 @@
                     <WebView2
                         x:Name="ModPageBrowser"
                         DefaultBackgroundColor="Transparent"
-                        Source="{x:Bind ViewModel.ModPage, Mode=TwoWay}" />
+                        Source="{x:Bind ViewModel.ModPage, Mode=TwoWay}"
+                        Visibility="Collapsed" />
                 </Grid>
 
             </Grid>

@@ -13,6 +13,8 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
     public readonly ModUpdateVM ViewModel;
     public readonly IThemeSelectorService ThemeSelectorService = App.GetService<IThemeSelectorService>();
 
+    public bool WebViewIsAvailable = false;
+
     //private bool _isFirstTimeNavigation = true;
 
     public ModUpdateAvailableWindow(Guid notificationId)
@@ -24,6 +26,24 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
         {
             rootElement.RequestedTheme = ThemeSelectorService.Theme;
         }
+
+
+        InitWebView();
+    }
+
+    private void InitWebView()
+    {
+        try
+        {
+            CoreWebView2Environment.GetAvailableBrowserVersionString();
+        }
+        catch (Exception e)
+        {
+            return;
+        }
+
+        WebViewIsAvailable = true;
+        ModPageBrowser.Visibility = Visibility.Visible;
 
         ModPageBrowser.Loading += async (_, _) =>
         {
@@ -64,6 +84,8 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
 
     private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
+        if (!WebViewIsAvailable)
+            return;
         await ModPageBrowser.EnsureCoreWebView2Async();
 
         if (ModPageBrowser.CoreWebView2.IsDefaultDownloadDialogOpen)
