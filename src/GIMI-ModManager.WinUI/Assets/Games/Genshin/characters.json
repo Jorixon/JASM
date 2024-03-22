@@ -133,7 +133,7 @@
       {
         "ModFilesName": "BarbaraSummertime",
         "Image": "Character_Skin_BarbaraSummertime_Thumb.png",
-        "InternalName": "Summertime Sparkle",
+        "InternalName": "Barbara Summertime Sparkle",
         "DisplayName": "Summertime Sparkle"
       }
     ],
@@ -302,7 +302,7 @@
       {
         "ModFilesName": "DilucFlamme",
         "Image": "Character_Skin_DilucFlamme_Thumb.png",
-        "InternalName": "Red Dead of Night",
+        "InternalName": "Diluc Red Dead of Night",
         "DisplayName": "Red Dead of Night"
       }
     ],
@@ -399,7 +399,7 @@
       {
         "ModFilesName": "FischlHighness",
         "Image": "Character_Skin_FischlHighness_Thumb.png",
-        "InternalName": "Ein Immernachtstraum",
+        "InternalName": "Fischl Ein Immernachtstraum",
         "DisplayName": "Ein Immernachtstraum"
       }
     ],
@@ -529,7 +529,7 @@
       {
         "ModFilesName": "JeanSea",
         "Image": "Character_Skin_JeanSea_Thumb.png",
-        "InternalName": "Sea Breeze Dandelion",
+        "InternalName": "Jean Sea Breeze Dandelion",
         "DisplayName": "Sea Breeze Dandelion"
       }
     ],
@@ -574,7 +574,7 @@
       {
         "ModFilesName": "KaeyaSailwind",
         "Image": "Character_Skin_KaeyaSailwind_Thumb.png",
-        "InternalName": "Sailwind Shadow",
+        "InternalName": "Kaeya Sailwind Shadow",
         "DisplayName": "Sailwind Shadow"
       }
     ],
@@ -600,7 +600,7 @@
       {
         "ModFilesName": "AyakaSpringbloom",
         "Image": "Character_Skin_AyakaSpringbloom_Thumb.png",
-        "InternalName": "Springbloom Missive",
+        "InternalName": "Ayaka Springbloom Missive",
         "DisplayName": "Springbloom Missive"
       }
     ],
@@ -662,7 +662,7 @@
       {
         "ModFilesName": "KeqingOpulent",
         "Image": "Character_Skin_KeqingOpulent_Thumb.png",
-        "InternalName": "Opulent Splendor",
+        "InternalName": "Keqing Opulent Splendor",
         "DisplayName": "Opulent Splendor"
       }
     ],
@@ -705,7 +705,7 @@
       {
         "ModFilesName": "KleeBlossoming",
         "Image": "Character_Skin_KleeBlossoming_Thumb.png",
-        "InternalName": "Blossoming Starlight",
+        "InternalName": "Klee Blossoming Starlight",
         "DisplayName": "Blossoming Starlight"
       }
     ],
@@ -786,7 +786,7 @@
       {
         "ModFilesName": "LisaSobriquet",
         "Image": "Character_Skin_LisaSobriquet_Thumb.png",
-        "InternalName": "A Sobriquet Under Shade",
+        "InternalName": "Lisa A Sobriquet Under Shade",
         "DisplayName": "A Sobriquet Under Shade"
       }
     ],
@@ -963,7 +963,7 @@
       {
         "ModFilesName": "NingguangOrchid",
         "Image": "Character_Skin_NingguangOrchid_Thumb.png",
-        "InternalName": "Orchid's Evening Gown",
+        "InternalName": "Ningguang Orchid's Evening Gown",
         "DisplayName": "Orchid's Evening Gown"
       }
     ],
