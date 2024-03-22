@@ -1582,5 +1582,14 @@
     "Image": "Weapon_Xiphos\u0027_Moonlight.png",
     "InternalName": "Xiphos\u0027 Moonlight",
     "DisplayName": "Xiphos\u0027 Moonlight"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Claymore",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "Weapon_Verdict.webp",
+    "InternalName": "Verdict",
+    "DisplayName": "Verdict"
   }
 ]
