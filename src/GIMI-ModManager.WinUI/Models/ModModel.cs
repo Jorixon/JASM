@@ -168,6 +168,6 @@ public partial class ModModel : ObservableObject, IEquatable<ModModel>
 
         return Name == other.Name && ModUrl == other.ModUrl && ModVersion == other.ModVersion &&
                ImagePath == other.ImagePath && Author == other.Author &&
-               SkinModKeySwaps.SequenceEqual(other.SkinModKeySwaps);
+               SkinModKeySwaps.SequenceEqual(other.SkinModKeySwaps, SkinModKeySwapModel.EqualityComparer);
     }
 }

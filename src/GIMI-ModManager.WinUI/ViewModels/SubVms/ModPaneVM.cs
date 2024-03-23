@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -24,11 +25,11 @@ public partial class ModPaneVM : ObservableRecipient
     private readonly KeySwapService _keySwapService = App.GetService<KeySwapService>();
     private readonly ModSettingsService _modSettingsService = App.GetService<ModSettingsService>();
 
-    private ISkinMod _selectedSkinMod = null!;
+    private ISkinMod? _selectedSkinMod;
 
-    private ModModel _backendModModel = null!;
+    private ModModel? _backendModModel;
 
-    [ObservableProperty] private ModModel _selectedModModel = null!;
+    [ObservableProperty] private ModModel? _selectedModModel;
     [ObservableProperty] private bool _isReadOnlyMode = true;
 
     [ObservableProperty] private bool _isEditingModName = false;
@@ -56,11 +57,10 @@ public partial class ModPaneVM : ObservableRecipient
 
     private async Task ReloadModSettings(CancellationToken cancellationToken = default)
     {
-        if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
-
+        if (!IsLoaded()) return;
 
         var readSettingsResult =
-            await Task.Run(() => _modSettingsService.GetSettingsAsync(_backendModModel.Id),
+            await Task.Run(() => _modSettingsService.GetSettingsAsync(_backendModModel?.Id ?? Guid.Empty),
                 cancellationToken);
 
 
@@ -71,11 +71,11 @@ public partial class ModPaneVM : ObservableRecipient
         }
 
         if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
-        SelectedModModel.WithModSettings(modSettings);
-        _backendModModel.WithModSettings(modSettings);
+        SelectedModModel?.WithModSettings(modSettings);
+        _backendModModel?.WithModSettings(modSettings);
 
 
-        Debug.Assert(_backendModModel.Equals(SelectedModModel));
+        Debug.Assert(_backendModModel is not null && _backendModModel.Equals(SelectedModModel));
 
         ShowKeySwapSection = modSettings.IgnoreMergedIni ? "false" : "true";
 
@@ -83,8 +83,8 @@ public partial class ModPaneVM : ObservableRecipient
         if (!_selectedSkinMod.Settings.HasMergedIni)
         {
             IsReadOnlyMode = false;
-            SelectedModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
-            _backendModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
+            SelectedModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
+            _backendModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
             return;
         }
 
@@ -94,25 +94,26 @@ public partial class ModPaneVM : ObservableRecipient
         if (!readKeySwapResult.TryPickT0(out var keySwaps, out _))
         {
             IsReadOnlyMode = false;
-            SelectedModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
-            _backendModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
+            SelectedModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
+            _backendModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
             return;
         }
 
-        SelectedModModel.SetKeySwaps(keySwaps);
-        _backendModModel.SetKeySwaps(keySwaps);
+        SelectedModModel?.SetKeySwaps(keySwaps);
+        _backendModModel?.SetKeySwaps(keySwaps);
 
 
-        foreach (var skinModKeySwapModel in SelectedModModel.SkinModKeySwaps)
+        foreach (var skinModKeySwapModel in SelectedModModel?.SkinModKeySwaps ?? [])
             skinModKeySwapModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
 
         IsReadOnlyMode = false;
 
-        Debug.Assert(_backendModModel.Equals(SelectedModModel));
+        Debug.Assert(_backendModModel is not null && _backendModModel.Equals(SelectedModModel));
     }
 
     public void UnloadMod()
     {
+        if (!IsLoaded()) return;
         if (SelectedModModel is not null)
             // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
             SelectedModModel.PropertyChanged -= (_, _) => SettingsPropertiesChanged();
@@ -173,6 +174,8 @@ public partial class ModPaneVM : ObservableRecipient
 
     public async Task SetImageFromDragDropWeb(Uri? url)
     {
+        if (!IsLoaded()) return;
+
         if (url is null || !url.IsAbsoluteUri || (url.Scheme != Uri.UriSchemeHttps && url.Scheme != Uri.UriSchemeHttp))
         {
             _notificationManager.ShowNotification("Error setting image",
@@ -218,6 +221,7 @@ public partial class ModPaneVM : ObservableRecipient
     public async Task SetImageFromBitmapStreamAsync(RandomAccessStreamReference accessStreamReference,
         IReadOnlyCollection<string> formats)
     {
+        if (!IsLoaded()) return;
         var tmpDir = App.TMP_DIR;
 
         if (!Directory.Exists(tmpDir))
@@ -260,6 +264,7 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand]
     private async Task OpenModFolder()
     {
+        if (!IsLoaded()) return;
         await Launcher.LaunchFolderAsync(
             await StorageFolder.GetFolderFromPathAsync(_selectedSkinMod.FullPath));
     }
@@ -267,6 +272,7 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand]
     private async Task SetModIniFileAsync()
     {
+        if (!IsLoaded()) return;
         var filePicker = new FileOpenPicker();
         filePicker.FileTypeFilter.Add(".ini");
         filePicker.CommitButtonText = "Set";
@@ -293,6 +299,7 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand]
     private async Task ClearSetModIniFileAsync()
     {
+        if (!IsLoaded()) return;
         var autoDetect = SelectedModModel.IgnoreMergedIni;
 
         var result = await Task.Run(() =>
@@ -314,6 +321,7 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand(CanExecute = nameof(ModSettingsChanged))]
     private async Task SaveModSettingsAsync(CancellationToken cancellationToken = default)
     {
+        if (!IsLoaded()) return;
         IsReadOnlyMode = true;
         var errored = false;
 
@@ -376,6 +384,14 @@ public partial class ModPaneVM : ObservableRecipient
     [RelayCommand]
     private void ClearImage()
     {
+        if (!IsLoaded()) return;
         SelectedModModel.ImagePath = ModModel.PlaceholderImagePath;
+    }
+
+    [MemberNotNullWhen(true, nameof(_selectedSkinMod), nameof(_backendModModel), nameof(SelectedModModel))]
+    private bool IsLoaded()
+    {
+        return _selectedSkinMod is not null && _backendModModel is not null &&
+               (SelectedModModel is not null || SelectedModModel?.Id != Guid.Empty);
     }
 }
