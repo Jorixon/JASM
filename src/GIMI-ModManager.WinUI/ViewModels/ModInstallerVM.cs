@@ -394,7 +394,18 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [RelayCommand(CanExecute = nameof(_canPasteModImage))]
     private async Task PasteModImageAsync()
     {
-        var imageUri = await Task.Run(() => _imageHandlerService.GetImageFromClipboardAsync());
+        Uri? imageUri;
+        try
+        {
+            imageUri = await Task.Run(() => _imageHandlerService.GetImageFromClipboardAsync());
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed retrieve image from clipboard");
+            _notificationManager.ShowNotification("Failed retrieve image from clipboard", e.Message,
+                TimeSpan.FromSeconds(5));
+            return;
+        }
 
         if (imageUri is not null)
         {
