@@ -60,7 +60,7 @@ public partial class ModPaneVM : ObservableRecipient
         if (!IsLoaded()) return;
 
         var readSettingsResult =
-            await Task.Run(() => _modSettingsService.GetSettingsAsync(_backendModModel.Id),
+            await Task.Run(() => _modSettingsService.GetSettingsAsync(_backendModModel?.Id ?? Guid.Empty),
                 cancellationToken);
 
 
@@ -71,11 +71,11 @@ public partial class ModPaneVM : ObservableRecipient
         }
 
         if (_selectedSkinMod is null || _backendModModel is null || SelectedModModel is null) return;
-        SelectedModModel.WithModSettings(modSettings);
-        _backendModModel.WithModSettings(modSettings);
+        SelectedModModel?.WithModSettings(modSettings);
+        _backendModModel?.WithModSettings(modSettings);
 
 
-        Debug.Assert(_backendModModel.Equals(SelectedModModel));
+        Debug.Assert(_backendModModel is not null && _backendModModel.Equals(SelectedModModel));
 
         ShowKeySwapSection = modSettings.IgnoreMergedIni ? "false" : "true";
 
@@ -83,8 +83,8 @@ public partial class ModPaneVM : ObservableRecipient
         if (!_selectedSkinMod.Settings.HasMergedIni)
         {
             IsReadOnlyMode = false;
-            SelectedModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
-            _backendModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
+            SelectedModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
+            _backendModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
             return;
         }
 
@@ -94,21 +94,21 @@ public partial class ModPaneVM : ObservableRecipient
         if (!readKeySwapResult.TryPickT0(out var keySwaps, out _))
         {
             IsReadOnlyMode = false;
-            SelectedModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
-            _backendModModel.SetKeySwaps(Array.Empty<KeySwapSection>());
+            SelectedModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
+            _backendModModel?.SetKeySwaps(Array.Empty<KeySwapSection>());
             return;
         }
 
-        SelectedModModel.SetKeySwaps(keySwaps);
-        _backendModModel.SetKeySwaps(keySwaps);
+        SelectedModModel?.SetKeySwaps(keySwaps);
+        _backendModModel?.SetKeySwaps(keySwaps);
 
 
-        foreach (var skinModKeySwapModel in SelectedModModel.SkinModKeySwaps)
+        foreach (var skinModKeySwapModel in SelectedModModel?.SkinModKeySwaps ?? [])
             skinModKeySwapModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
 
         IsReadOnlyMode = false;
 
-        Debug.Assert(_backendModModel.Equals(SelectedModModel));
+        Debug.Assert(_backendModModel is not null && _backendModModel.Equals(SelectedModModel));
     }
 
     public void UnloadMod()
