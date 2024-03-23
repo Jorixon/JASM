@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.4.0](https://github.com/Jorixon/JASM/compare/v2.3.0...v2.4.0) (2024-03-23)
+
+
+### Features
+
+* Now possible to enable Character skins as separate characters ([#153](https://github.com/Jorixon/JASM/issues/153)) ([491f4bb](https://github.com/Jorixon/JASM/commit/491f4bb10aa6bdf3ea19bad416c8fa1dd8bedacf))
+
+
+### Bug Fixes
+
+* Check if WebView2 is available before using it ([#135](https://github.com/Jorixon/JASM/issues/135)) ([1bba6e6](https://github.com/Jorixon/JASM/commit/1bba6e6e77a8586678708e962b4e14a89608eac0))
+* Not being able to set character override for mods ([#156](https://github.com/Jorixon/JASM/issues/156)) ([de28cca](https://github.com/Jorixon/JASM/commit/de28cca00fd8cdc5de203dbe20b497391bc6d456))
+
+
+### Miscellaneous
+
+* Added Arlecchino and various npcs ([#149](https://github.com/Jorixon/JASM/issues/149)) ([9b882e2](https://github.com/Jorixon/JASM/commit/9b882e229f0a144b604582f47f484758090db400))
+* Added Verdict weapon ([#154](https://github.com/Jorixon/JASM/issues/154)) ([0be089e](https://github.com/Jorixon/JASM/commit/0be089e68ad7ce89208f7555f8be01b3f5c699be))
+
 ## [2.3.0](https://github.com/Jorixon/JASM/compare/v2.2.0...v2.3.0) (2024-03-13)
 
 
