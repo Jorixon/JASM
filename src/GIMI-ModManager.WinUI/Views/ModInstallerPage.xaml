@@ -184,7 +184,8 @@
 
                 <ToggleButton
                     VerticalAlignment="Top"
-                    Click="AlwaysOnTopOnClick"
+                    Command="{x:Bind ViewModel.ToggleAlwaysOnTopCommand}"
+                    IsChecked="{x:Bind ViewModel.AlwaysOnTop, Mode=TwoWay}"
                     ToolTipService.ToolTip="Keep window always on top">
                     <FontIcon Glyph="&#xE718;" />
                 </ToggleButton>
