@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.5.0](https://github.com/Jorixon/JASM/compare/v2.4.0...v2.5.0) (2024-03-23)
+
+
+### Features
+
+* Possible to pick, copy and paste mod image during mod install ([#157](https://github.com/Jorixon/JASM/issues/157)) ([b143296](https://github.com/Jorixon/JASM/commit/b14329630a6208fcb736f73f8cdcf218a62e7747))
+
+
+### Bug Fixes
+
+* Potential fix for NullReferenceException when navigating to character ([8cc90c2](https://github.com/Jorixon/JASM/commit/8cc90c2b840c447748e1adb6d4c70288ce4b2e4b))
+
+
+### Miscellaneous
+
+* Possible to set mod installer to always on top ([b143296](https://github.com/Jorixon/JASM/commit/b14329630a6208fcb736f73f8cdcf218a62e7747))
+* Updated WinAppSDK and .NET ([#159](https://github.com/Jorixon/JASM/issues/159)) ([9bbd739](https://github.com/Jorixon/JASM/commit/9bbd739a0a404ad21f31a091a6de9a8944237d3a))
+
 ## [2.4.0](https://github.com/Jorixon/JASM/compare/v2.3.0...v2.4.0) (2024-03-23)
 
 
