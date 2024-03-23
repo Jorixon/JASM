@@ -9,43 +9,47 @@
     x:Name="CustomImageRoot"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <MenuFlyout x:Name="CustomImageFlyout">
+            <MenuFlyoutItem
+                Height="40"
+                Command="{x:Bind PasteButtonCommand, Mode=OneWay}"
+                Icon="Paste"
+                Text="Paste Image" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem
+                Height="40"
+                Command="{x:Bind CopyButtonCommand, Mode=OneWay}"
+                Icon="Copy"
+                Text="Copy Image" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem
+                Command="{x:Bind ClearButtonCommand, Mode=OneWay}"
+                Icon="Delete"
+                Text="Clear image" />
+        </MenuFlyout>
+    </UserControl.Resources>
 
 
-    <StackPanel>
-        <StackPanel.Resources>
-            <MenuFlyout x:Name="CustomImageFlyout">
-                <MenuFlyoutItem
-                    Height="40"
-                    Icon="Paste"
-                    Text="Paste Image" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Height="40"
-                    Icon="Copy"
-                    Text="Copy Image" />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutSeparator />
-                <MenuFlyoutItem Icon="Delete" Text="Clear image" />
-            </MenuFlyout>
-        </StackPanel.Resources>
 
-
-        <Grid>
-            <Image x:Name="CustomImageControl">
-                <Image.Source>
-                    <BitmapImage DecodePixelWidth="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}" UriSource="{x:Bind ImageUri, Mode=OneWay}" />
-                </Image.Source>
-            </Image>
-            <Button
-                HorizontalAlignment="{x:Bind ButtonHorizontalAlignment, Mode=OneWay}"
-                VerticalAlignment="{x:Bind ButtonVerticalAlignment, Mode=OneWay}"
-                Background="{ThemeResource SmokeFillColorDefaultBrush}"
-                Command="{x:Bind EditButtonCommand, Mode=OneWay}"
-                ToolTipService.ToolTip="Pick an Image">
-                <FontIcon x:Name="EditButtonFontIcon" Glyph="&#xE70F;" />
-            </Button>
-        </Grid>
-
-    </StackPanel>
+    <Grid>
+        <Image
+            x:Name="CustomImageControl"
+            Width="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}"
+            Height="{Binding ElementName=CustomImageRoot, Path=Height, Mode=OneWay}">
+            <Image.Source>
+                <BitmapImage DecodePixelWidth="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}" UriSource="{x:Bind ImageUri, Mode=OneWay}" />
+            </Image.Source>
+        </Image>
+        <Button
+            HorizontalAlignment="{x:Bind ButtonHorizontalAlignment, Mode=OneWay}"
+            VerticalAlignment="{x:Bind ButtonVerticalAlignment, Mode=OneWay}"
+            Background="{ThemeResource SmokeFillColorDefaultBrush}"
+            Command="{x:Bind EditButtonCommand, Mode=OneWay}"
+            ToolTipService.ToolTip="Pick an Image">
+            <FontIcon x:Name="EditButtonFontIcon" Glyph="&#xE70F;" />
+        </Button>
+    </Grid>
 </UserControl>

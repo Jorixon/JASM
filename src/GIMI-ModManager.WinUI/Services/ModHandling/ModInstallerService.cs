@@ -56,7 +56,9 @@ public class ModInstallerService
             Title = $"Mod Installer Helper: {modTitle}",
             Content = modInstallPage,
             Width = 1200,
-            Height = 750
+            Height = 750,
+            MinHeight = 415,
+            MinWidth = 1024
         };
         modInstallPage.CloseRequested += (_, _) => { modInstallWindow.Close(); };
         _windowManagerService.CreateWindow(modInstallWindow, modList);
