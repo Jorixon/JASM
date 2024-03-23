@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
@@ -6,6 +7,8 @@ using GIMI_ModManager.Core.Entities.Mods.SkinMod;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
@@ -14,15 +17,12 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
-public class ModInstallerService
+public class ModInstallerService(
+    IWindowManagerService windowManagerService,
+    ILocalSettingsService localSettingsService)
 {
-    private readonly IWindowManagerService _windowManagerService;
-
-
-    public ModInstallerService(IWindowManagerService windowManagerService)
-    {
-        _windowManagerService = windowManagerService;
-    }
+    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
+    private readonly IWindowManagerService _windowManagerService = windowManagerService;
 
     public Task StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList,
         ICharacterSkin? inGameSkin = null)
@@ -36,18 +36,22 @@ public class ModInstallerService
 
         var dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainWindow.DispatcherQueue;
 
-        dispatcherQueue.TryEnqueue(() => InternalStart(modFolder, modList, inGameSkin));
+        dispatcherQueue.EnqueueAsync(() => InternalStartAsync(modFolder, modList, inGameSkin));
 
         return Task.CompletedTask;
     }
 
-    private void InternalStart(DirectoryInfo modFolder, ICharacterModList modList, ICharacterSkin? inGameSkin = null)
+    private async Task InternalStartAsync(DirectoryInfo modFolder, ICharacterModList modList,
+        ICharacterSkin? inGameSkin = null)
     {
         var modTitle = Guid.TryParse(modFolder.Name, out _)
             ? modFolder.EnumerateDirectories().FirstOrDefault()?.Name
             : modFolder.Name;
 
         modTitle ??= modFolder.Name;
+
+        var modInstallerSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key);
 
         var modInstallPage = new ModInstallerPage(modList, modFolder, inGameSkin);
         var modInstallWindow = new WindowEx()
@@ -58,7 +62,8 @@ public class ModInstallerService
             Width = 1200,
             Height = 750,
             MinHeight = 415,
-            MinWidth = 1024
+            MinWidth = 1024,
+            IsAlwaysOnTop = modInstallerSettings.ModInstallerWindowOnTop
         };
         modInstallPage.CloseRequested += (_, _) => { modInstallWindow.Close(); };
         _windowManagerService.CreateWindow(modInstallWindow, modList);

@@ -14,6 +14,7 @@ using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
@@ -85,6 +86,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [ObservableProperty] private bool _canExecuteDialogCommand;
 
     [ObservableProperty] private bool _enableThisMod;
+    [ObservableProperty] private bool _alwaysOnTop;
 
     public readonly string RootFolderIcon = "\uF89A";
     public readonly string ShaderFixesFolderIcon = "\uE710";
@@ -94,8 +96,6 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [ObservableProperty] private FileSystemItem? _lastSelectedRootFolder;
 
     [ObservableProperty] private FileSystemItem? _lastSelectedImageFile;
-
-    const string EnableModOnInstallKey = "EnableModOnInstall";
 
     public ModInstallerVM(ILogger logger, ImageHandlerService imageHandlerService,
         NotificationManager notificationManager, IWindowManagerService windowManagerService,
@@ -125,7 +125,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         RootFolder.Clear();
         RootFolder.Add(new RootFolder(modToInstall));
 
-        EnableThisMod = await _localSettingsService.ReadOrCreateSettingAsync<bool>(EnableModOnInstallKey);
+        var installerSettings = await _localSettingsService
+            .ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key);
+
+
+        EnableThisMod = installerSettings.EnableModOnInstall;
+        AlwaysOnTop = installerSettings.ModInstallerWindowOnTop;
 
         await Task.Run(() =>
         {
@@ -163,7 +168,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                         ?.GetByPath(autoFoundImages.FirstOrDefault()?.LocalPath ?? "");
                     SetModPreviewImage(fileSystemItem);
                 });
-        });
+        }).ConfigureAwait(false);
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -678,7 +683,27 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [RelayCommand]
     private async Task EnableOnlyToggleAsync()
     {
-        await _localSettingsService.SaveSettingAsync(EnableModOnInstallKey, EnableThisMod).ConfigureAwait(false);
+        var settings = await _localSettingsService
+            .ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key)
+            .ConfigureAwait(false);
+        settings.EnableModOnInstall = EnableThisMod;
+        await _localSettingsService.SaveSettingAsync(ModInstallerSettings.Key, settings)
+            .ConfigureAwait(false);
+    }
+
+    [RelayCommand]
+    private async Task ToggleAlwaysOnTopAsync()
+    {
+        var settings = await _localSettingsService
+            .ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key)
+            .ConfigureAwait(false);
+        settings.ModInstallerWindowOnTop = AlwaysOnTop;
+        await _localSettingsService.SaveSettingAsync(ModInstallerSettings.Key, settings)
+            .ConfigureAwait(false);
+
+        var window = _windowManagerService.GetWindow(_characterModList);
+
+        _dispatcherQueue?.TryEnqueue(() => window?.SetIsAlwaysOnTop(AlwaysOnTop));
     }
 
     private async Task EnableOnlyMod(ISkinMod installedMod)
