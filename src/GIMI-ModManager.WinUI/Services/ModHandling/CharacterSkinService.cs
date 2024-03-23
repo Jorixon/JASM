@@ -25,7 +25,7 @@ public class CharacterSkinService
         _logger = logger.ForContext<CharacterSkinService>();
     }
 
-    private async IAsyncEnumerable<ISkinMod> FilterModsToSkin(ICharacterSkin skin,
+    public async IAsyncEnumerable<ISkinMod> FilterModsToSkinAsync(ICharacterSkin skin,
         IEnumerable<ISkinMod> mods, bool ignoreUndetectableMods = false)
     {
         foreach (var mod in mods)
@@ -85,12 +85,12 @@ public class CharacterSkinService
         var modList = _skinManagerService.GetCharacterModList(skin.Character);
 
         var mods = modList.Mods.Select(entry => entry.Mod).ToArray();
-        await foreach (var skinMod in FilterModsToSkin(skin, mods, ignoreUndetectableMods))
+        await foreach (var skinMod in FilterModsToSkinAsync(skin, mods, ignoreUndetectableMods))
             yield return skinMod;
     }
 
 
-    public async Task<GetAllModsBySkinResult?> GetAllModsBySkin(ICharacter character)
+    public async Task<GetAllModsBySkinResult?> GetAllModsBySkinAsync(ICharacter character)
     {
         var modList = _skinManagerService.GetCharacterModListOrDefault(character.InternalName);
         if (modList is null) return null;
@@ -101,7 +101,7 @@ public class CharacterSkinService
         foreach (var skin in character.Skins)
         {
             var modsForSkin = new List<ISkinMod>();
-            await foreach (var skinMod in FilterModsToSkin(skin, mods))
+            await foreach (var skinMod in FilterModsToSkinAsync(skin, mods))
             {
                 modsForSkin.Add(skinMod);
             }
@@ -118,7 +118,7 @@ public class CharacterSkinService
     }
 
 
-    public async Task<ICharacterSkin?> GetFirstSkinForMod(ISkinMod mod, ICharacter? character = null)
+    public async Task<ICharacterSkin?> GetFirstSkinForModAsync(ISkinMod mod, ICharacter? character = null)
     {
         var modSettings = await mod.Settings.TryReadSettingsAsync();
 

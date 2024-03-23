@@ -44,6 +44,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private readonly ModSettingsService _modSettingsService;
     private readonly ImageHandlerService _imageHandlerService;
     private readonly ElevatorService _elevatorService;
+    private readonly CharacterSkinService _characterSkinService;
 
     private ICharacterModList _modList = null!;
     private ICategory? _category;
@@ -75,7 +76,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModDragAndDropService modDragAndDropService, ModCrawlerService modCrawlerService,
         ModNotificationManager modNotificationManager, ModSettingsService modSettingsService,
         IWindowManagerService windowManagerService, ImageHandlerService imageHandlerService,
-        ElevatorService elevatorService)
+        ElevatorService elevatorService, CharacterSkinService characterSkinService)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharacterDetailsViewModel>();
@@ -90,6 +91,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _windowManagerService = windowManagerService;
         _imageHandlerService = imageHandlerService;
         _elevatorService = elevatorService;
+        _characterSkinService = characterSkinService;
 
         _modDragAndDropService.DragAndDropFinished += OnDragAndDropFinished;
 
@@ -383,6 +385,9 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter.InternalName));
         var modList = new List<ModModel>();
 
+        if (SelectedInGameSkin is null)
+            return;
+
         var mods = _gameService.IsMultiMod(_modList.Character) || !MultipleInGameSkins
             ? _modList.Mods
             : await FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
@@ -471,48 +476,21 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         await RefreshMods().ConfigureAwait(false);
     }
 
-    private async Task<IReadOnlyCollection<CharacterSkinEntry>> FilterModsToSkin(IEnumerable<CharacterSkinEntry> mods,
+    private async Task<IReadOnlyCollection<CharacterSkinEntry>> FilterModsToSkin(
+        IReadOnlyCollection<CharacterSkinEntry> mods,
         ICharacterSkin skin)
     {
         if (ShownCharacter is not ICharacter character)
             return mods.ToList();
 
         var filteredMods = new List<CharacterSkinEntry>();
-        foreach (var mod in mods)
+
+        await foreach (var skinMod in _characterSkinService.FilterModsToSkinAsync(skin, mods.Select(ske => ske.Mod),
+                           ignoreUndetectableMods: false).ConfigureAwait(false))
         {
-            var modSkin = (await LoadModSettings(mod))?.CharacterSkinOverride;
-
-            // Has skin override and is a match for the shown skin
-            if (modSkin is not null && skin.InternalNameEquals(modSkin))
-            {
-                filteredMods.Add(mod);
-                continue;
-            }
-
-            // Has override skin, but does not match any of the characters skins
-            if (modSkin is not null && !character.Skins.Any(skinVm =>
-                    skinVm.InternalNameEquals(modSkin)))
-            {
-                // In this case, the override skin is not a valid skin for this character, so we just add it.
-                filteredMods.Add(mod);
-                continue;
-            }
-
-
-            var detectedSkin =
-                _modCrawlerService.GetFirstSubSkinRecursive(mod.Mod.FullPath, ShownCharacter.InternalName);
-
-            // If we can detect the skin, and the mod has no override skin, check if the detected skin matches the shown skin.
-            if (modSkin is null && detectedSkin is not null && detectedSkin.InternalNameEquals(skin.InternalName))
-            {
-                filteredMods.Add(mod);
-                continue;
-            }
-
-            // If we can't detect the skin, and the mod has no override skin, we add it.
-            if (detectedSkin is null && modSkin is null)
-                filteredMods.Add(mod);
+            filteredMods.Add(mods.First(mod => mod.Mod.Id == skinMod.Id));
         }
+
 
         return filteredMods;
     }

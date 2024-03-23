@@ -86,7 +86,7 @@ public class ModSettingsService
 
         if (modSettings.TryPickT0(out var settings, out var errorResults))
         {
-            var newSettings = settings.DeepCopyWithProperties(customName: NewValue<string?>.Set(skinName));
+            var newSettings = settings.DeepCopyWithProperties(characterSkinOverride: NewValue<string?>.Set(skinName));
             try
             {
                 await mod.Settings.SaveSettingsAsync(newSettings);
