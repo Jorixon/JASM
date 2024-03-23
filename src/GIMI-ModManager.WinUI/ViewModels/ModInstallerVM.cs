@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkitWrapper;
@@ -357,6 +359,71 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             LastSelectedImageFile = null;
         }
     }
+
+    private bool _canCopyImage()
+    {
+        return ModPreviewImagePath != _placeholderImageUri &&
+               File.Exists(ModPreviewImagePath.LocalPath);
+    }
+
+    [RelayCommand(CanExecute = nameof(_canCopyImage))]
+    private async Task CopyImageAsync()
+    {
+        await ImageHandlerService
+            .CopyImageToClipboardAsync(await StorageFile.GetFileFromPathAsync(ModPreviewImagePath.LocalPath))
+            .ConfigureAwait(false);
+    }
+
+
+    private bool _canPasteModImage()
+    {
+        var package = Clipboard.GetContent();
+
+        if (package is null)
+            return false;
+
+        if (package.Contains(StandardDataFormats.Bitmap))
+            return true;
+
+        if (!package.Contains(StandardDataFormats.StorageItems))
+            return false;
+
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(_canPasteModImage))]
+    private async Task PasteModImageAsync()
+    {
+        var imageUri = await Task.Run(() => _imageHandlerService.GetImageFromClipboardAsync());
+
+        if (imageUri is not null)
+        {
+            ModPreviewImagePath = imageUri;
+            if (LastSelectedImageFile is not null)
+            {
+                LastSelectedImageFile.RightIcon = null;
+                LastSelectedImageFile = null;
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async Task PickImageAsync()
+    {
+        var window = _windowManagerService.GetWindow(_characterModList);
+
+        var imageUri = await _imageHandlerService.PickImageAsync(window: window);
+        if (imageUri is null || !File.Exists(imageUri.Path)) return;
+
+
+        ModPreviewImagePath = new Uri(imageUri.Path);
+        if (LastSelectedImageFile is not null)
+        {
+            LastSelectedImageFile.RightIcon = null;
+            LastSelectedImageFile = null;
+        }
+    }
+
 
     [MemberNotNullWhen(true, nameof(_modInstallation))]
     private bool canAddMod()

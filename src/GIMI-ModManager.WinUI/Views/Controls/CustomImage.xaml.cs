@@ -79,4 +79,37 @@ public sealed partial class CustomImage : UserControl
         get => (VerticalAlignment)GetValue(ButtonVerticalAlignmentProperty);
         set => SetValue(ButtonVerticalAlignmentProperty, value);
     }
+
+
+    // Paste context button
+
+    public static readonly DependencyProperty PasteButtonCommandProperty = DependencyProperty.Register(
+        nameof(PasteButtonCommand), typeof(ICommand), typeof(CustomImage), new PropertyMetadata(default(ICommand)));
+
+    public ICommand PasteButtonCommand
+    {
+        get { return (ICommand)GetValue(PasteButtonCommandProperty); }
+        set { SetValue(PasteButtonCommandProperty, value); }
+    }
+
+    // Copy context button
+
+    public static readonly DependencyProperty CopyButtonCommandProperty = DependencyProperty.Register(
+        nameof(CopyButtonCommand), typeof(ICommand), typeof(CustomImage), new PropertyMetadata(default(ICommand)));
+
+    public ICommand CopyButtonCommand
+    {
+        get { return (ICommand)GetValue(CopyButtonCommandProperty); }
+        set { SetValue(CopyButtonCommandProperty, value); }
+    }
+    // Clear context button
+
+    public static readonly DependencyProperty ClearButtonCommandProperty = DependencyProperty.Register(
+        nameof(ClearButtonCommand), typeof(ICommand), typeof(CustomImage), new PropertyMetadata(default(ICommand)));
+
+    public ICommand ClearButtonCommand
+    {
+        get { return (ICommand)GetValue(ClearButtonCommandProperty); }
+        set { SetValue(ClearButtonCommandProperty, value); }
+    }
 }

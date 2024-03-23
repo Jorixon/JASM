@@ -16,14 +16,6 @@
     <Page.Resources>
 
         <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
-
-        <MenuFlyout x:Name="ImageFlyout">
-            <MenuFlyoutItem
-                Command="{x:Bind ViewModel.ClearModPreviewImageCommand}"
-                Icon="Delete"
-                Text="Clear image" />
-        </MenuFlyout>
-
         <MenuFlyout x:Name="FileFlyout">
             <MenuFlyoutItem
                 Command="{x:Bind ViewModel.SetModPreviewImageCommand, Mode=OneWay}"
@@ -190,14 +182,21 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Image
+                <ToggleButton
+                    VerticalAlignment="Top"
+                    Click="AlwaysOnTopOnClick"
+                    ToolTipService.ToolTip="Keep window always on top">
+                    <FontIcon Glyph="&#xE718;" />
+                </ToggleButton>
+                <controls:CustomImage
                     MinWidth="350"
                     MaxHeight="800"
-                    ContextFlyout="{StaticResource ImageFlyout}">
-                    <Image.Source>
-                        <BitmapImage UriSource="{x:Bind ViewModel.ModPreviewImagePath, Mode=OneWay}" />
-                    </Image.Source>
-                </Image>
+                    ClearButtonCommand="{x:Bind ViewModel.ClearModPreviewImageCommand}"
+                    CopyButtonCommand="{x:Bind ViewModel.CopyImageCommand}"
+                    EditButtonCommand="{x:Bind ViewModel.PickImageCommand}"
+                    ImageUri="{x:Bind ViewModel.ModPreviewImagePath, Mode=OneWay}"
+                    IsContextMenuEnabled="True"
+                    PasteButtonCommand="{x:Bind ViewModel.PasteModImageCommand}" />
                 <TextBox
                     Grid.Row="1"
                     Header="Mod page url"

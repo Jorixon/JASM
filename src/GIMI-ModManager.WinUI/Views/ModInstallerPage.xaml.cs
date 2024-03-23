@@ -2,6 +2,7 @@ using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,6 +15,8 @@ public sealed partial class ModInstallerPage : Page, IDisposable
     public event EventHandler? CloseRequested;
     public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
+    private Window? _window;
+
     public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall,
         ICharacterSkin? inGameSkin = null)
     {
@@ -24,6 +27,9 @@ public sealed partial class ModInstallerPage : Page, IDisposable
         {
             ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue, inGameSkin);
         };
+
+        Loaded += (_, _) => { _window = App.GetService<IWindowManagerService>().GetWindow(characterModList); };
+
         ViewModel.CloseRequested += (_, _) => { CloseRequested?.Invoke(this, EventArgs.Empty); };
     }
 
@@ -76,6 +82,11 @@ public sealed partial class ModInstallerPage : Page, IDisposable
     public void Dispose()
     {
         ViewModel.Dispose();
+    }
+
+    public void AlwaysOnTopOnClick(object sender, RoutedEventArgs routedEventArgs)
+    {
+        _window?.SetIsAlwaysOnTop(!_window.GetIsAlwaysOnTop());
     }
 }
 

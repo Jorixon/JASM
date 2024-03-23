@@ -120,7 +120,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private async Task PickImage()
     {
-        var image = await _imageHandlerService.PickImageAsync(false);
+        var image = await _imageHandlerService.PickImageAsync(copyToTmpFolder: false);
 
         if (image is null)
             return;
