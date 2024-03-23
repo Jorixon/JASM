@@ -623,7 +623,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             return;
         }
 
-        var detectedSkin = await _characterSkinService.GetFirstSkinForMod(installedMod, character)
+        var detectedSkin = await _characterSkinService.GetFirstSkinForModAsync(installedMod, character)
             .ConfigureAwait(false);
 
         if (_inGameSkin is null)
