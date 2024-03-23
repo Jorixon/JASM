@@ -395,12 +395,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var refreshResult = await Task.Run(() => _skinManagerService.RefreshModsAsync(ShownCharacter.InternalName));
         var modList = new List<ModModel>();
 
-        if (SelectedInGameSkin is null)
-            return;
 
         var mods = _gameService.IsMultiMod(_modList.Character) || !MultipleInGameSkins
             ? _modList.Mods
-            : await FilterModsToSkin(_modList.Mods, SelectedInGameSkin);
+            : await FilterModsToSkin(_modList.Mods, SelectedInGameSkin!);
 
         foreach (var skinEntry in mods)
         {
