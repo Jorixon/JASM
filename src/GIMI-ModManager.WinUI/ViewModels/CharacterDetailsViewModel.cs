@@ -107,6 +107,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         ModListVM.OnModsSelected += OnModsSelected;
 
         ModPaneVM = new ModPaneVM();
+        ModPaneVM.UnloadMod();
 
         _modNotificationManager.OnModNotification += OnOnModNotificationHandler;
     }
@@ -133,7 +134,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         var mod = _modList.Mods.FirstOrDefault(x => x.Id == selectedMod?.Id);
         if (mod is null || selectedMod is null)
         {
-            ModPaneVM.UnloadMod();
+            if (ModPaneVM.SelectedModModel is not null && ModPaneVM.SelectedModModel.Id != Guid.Empty)
+                ModPaneVM.UnloadMod();
             return;
         }
 
@@ -275,6 +277,7 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                 $"An error occurred while loading the mods for this character.\n{e.Message}",
                 TimeSpan.FromSeconds(10));
             ErrorNavigateBack();
+            return;
         }
 
         if (IsICharacter)
@@ -285,6 +288,13 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
                     StringComparison.CurrentCultureIgnoreCase));
 
             if (lastSelectedSkin is not null) await SwitchCharacterSkin(lastSelectedSkin);
+        }
+
+        if (ModListVM.Mods.Count(mod => mod.IsEnabled) == 1)
+        {
+            var mod = ModListVM.Mods.FirstOrDefault(mod => mod.IsEnabled);
+            if (mod is not null)
+                ModListVM.SelectedMods.Add(mod);
         }
     }
 

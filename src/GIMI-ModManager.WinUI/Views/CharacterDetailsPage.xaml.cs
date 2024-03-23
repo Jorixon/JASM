@@ -42,36 +42,44 @@ public sealed partial class CharacterDetailsPage : Page
                 ShowOnlyOneSkinTooltip(!ViewModel.MultipleInGameSkins);
         };
 
-        ViewModel.ModListVM.SelectedMods.CollectionChanged += (sender, args) =>
+        ModListGrid.Loaded += async (_, __) =>
         {
-            foreach (var newSelectedMods in args?.NewItems?.OfType<ModModel>() ?? new List<ModModel>(0))
+            SyncGridSelection(ViewModel.ModListVM.SelectedMods, new List<ModModel>());
+
+            ViewModel.ModListVM.SelectedMods.CollectionChanged += (_, args) =>
             {
-                var equalItemInGrid = ModListGrid.ItemsSource.OfType<ModModel>()
-                    .FirstOrDefault(x => x.Id == newSelectedMods.Id);
+                SyncGridSelection(args.NewItems?.OfType<ModModel>() ?? new List<ModModel>(),
+                    args.OldItems?.OfType<ModModel>() ?? new List<ModModel>());
+            };
 
-                if (!ModListGrid.SelectedItems.OfType<ModModel>().Contains(equalItemInGrid))
-                    ModListGrid.SelectedItems.Add(equalItemInGrid);
-            }
-
-            foreach (var removedSelectedMods in args?.OldItems?.OfType<ModModel>() ?? new List<ModModel>(0))
-            {
-                var equalItemInGrid = ModListGrid.ItemsSource.OfType<ModModel>()
-                    .FirstOrDefault(x => x.Id == removedSelectedMods.Id);
-
-                if (ModListGrid.SelectedItems.Contains(equalItemInGrid))
-                    ModListGrid.SelectedItems.Remove(equalItemInGrid);
-            }
-        };
-
-        ModListGrid.Loaded += (sender, args) =>
-        {
-            var modEntry = ModListGrid.ItemsSource.OfType<ModModel>()?.FirstOrDefault(mod => mod.IsEnabled);
-            ModListGrid.SelectedItem = modEntry;
-            // set focus to the first item
+            await Task.Delay(100);
             ModListGrid.Focus(FocusState.Programmatic);
         };
 
+
         ViewModel.MoveModsFlyoutVM.CloseFlyoutEvent += (sender, args) => { ModRowFlyout.Hide(); };
+    }
+
+    private void SyncGridSelection(IEnumerable<ModModel> newlySelectedMods,
+        IEnumerable<ModModel> newlyRemovedSelectedMods)
+    {
+        foreach (var newSelectedMods in newlySelectedMods)
+        {
+            var equalItemInGrid = ModListGrid.ItemsSource.OfType<ModModel>()
+                .FirstOrDefault(x => x.Id == newSelectedMods.Id);
+
+            if (!ModListGrid.SelectedItems.OfType<ModModel>().Contains(equalItemInGrid))
+                ModListGrid.SelectedItems.Add(equalItemInGrid);
+        }
+
+        foreach (var removedSelectedMods in newlyRemovedSelectedMods)
+        {
+            var equalItemInGrid = ModListGrid.ItemsSource.OfType<ModModel>()
+                .FirstOrDefault(x => x.Id == removedSelectedMods.Id);
+
+            if (ModListGrid.SelectedItems.Contains(equalItemInGrid))
+                ModListGrid.SelectedItems.Remove(equalItemInGrid);
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

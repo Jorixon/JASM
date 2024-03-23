@@ -39,17 +39,15 @@ public partial class ModPaneVM : ObservableRecipient
     public async Task LoadMod(ModModel modModel, CancellationToken cancellationToken = default)
     {
         if (modModel.Id == SelectedModModel?.Id) return;
-        UnloadMod();
 
         var mod = await Task.Run(() => _skinManagerService.GetModById(modModel.Id), cancellationToken);
         if (mod == null)
         {
-            UnloadMod();
             return;
         }
 
+        UnloadMod();
         _selectedSkinMod = mod;
-
         _backendModModel = ModModel.FromMod(mod, modModel.Character, modModel.IsEnabled);
         SelectedModModel = modModel;
         SelectedModModel.PropertyChanged += (_, _) => SettingsPropertiesChanged();
