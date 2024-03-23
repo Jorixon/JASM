@@ -80,7 +80,7 @@ public sealed class ModUpdateAvailableChecker
     {
         try
         {
-            await func();
+            await func().ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -139,7 +139,7 @@ public sealed class ModUpdateAvailableChecker
             // Validate mods
             foreach (var skinEntry in modsToCheck.ToArray())
             {
-                if (await IsValidForCheckAsync(skinEntry, modCheckRequest.IgnoreLastCheckedTime))
+                if (await IsValidForCheckAsync(skinEntry, modCheckRequest.IgnoreLastCheckedTime).ConfigureAwait(false))
                     continue;
 
                 modsToCheck.Remove(skinEntry);
@@ -244,7 +244,7 @@ public sealed class ModUpdateAvailableChecker
 
     private async Task<bool> IsValidForCheckAsync(CharacterSkinEntry skinEntry, bool ignoreLastCheckedTime)
     {
-        var skinModSettings = await skinEntry.Mod.Settings.TryReadSettingsAsync();
+        var skinModSettings = await skinEntry.Mod.Settings.TryReadSettingsAsync().ConfigureAwait(false);
 
         if (skinModSettings is null)
         {
@@ -308,7 +308,7 @@ public sealed class ModUpdateAvailableChecker
             var characterSkinEntry = taskToMod[finishedTask];
             try
             {
-                var result = await finishedTask;
+                var result = await finishedTask.ConfigureAwait(false);
                 await characterSkinEntry.Mod.Settings.SetLastCheckedTimeAsync(DateTime.Now).ConfigureAwait(false);
                 if (result.AnyNewMods)
                 {
