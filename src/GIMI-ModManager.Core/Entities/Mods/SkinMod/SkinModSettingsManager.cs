@@ -118,7 +118,8 @@ public class SkinModSettingsManager
         return settings;
     }
 
-    public async Task<ModSettings> ReadSettingsAsync(bool useCache = false)
+    public async Task<ModSettings> ReadSettingsAsync(bool useCache = false,
+        CancellationToken cancellationToken = default)
     {
         if (!File.Exists(_settingsFilePath))
             throw new ModSettingsNotFoundException($"Settings file not found. Path: {_settingsFilePath}");
@@ -126,9 +127,10 @@ public class SkinModSettingsManager
         if (useCache && _settings is not null)
             return _settings;
 
-        var json = await File.ReadAllTextAsync(_settingsFilePath).ConfigureAwait(false);
+        var json = await File.ReadAllTextAsync(_settingsFilePath, cancellationToken).ConfigureAwait(false);
 
         var modSettings = InternalReadSettings(_skinMod, json);
+        cancellationToken.ThrowIfCancellationRequested();
         _settings = modSettings;
         return modSettings;
     }
@@ -237,11 +239,12 @@ public class SkinModSettingsManager
         return modSettings is not null;
     }
 
-    public async Task<ModSettings?> TryReadSettingsAsync(bool useCache = false)
+    public async Task<ModSettings?> TryReadSettingsAsync(bool useCache = false,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            return await ReadSettingsAsync(useCache).ConfigureAwait(false);
+            return await ReadSettingsAsync(useCache, cancellationToken).ConfigureAwait(false);
         }
         catch (ModSettingsNotFoundException)
         {

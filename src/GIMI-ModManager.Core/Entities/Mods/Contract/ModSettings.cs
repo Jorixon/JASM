@@ -9,7 +9,8 @@ public record ModSettings
     public ModSettings(Guid id, string? customName = null, string? author = null, string? version = null,
         Uri? modUrl = null, Uri? imagePath = null, string? characterSkinOverride = null, string? description = null,
         DateTime? dateAdded = null,
-        DateTime? lastChecked = null, Uri? mergedIniPath = null, bool ignoreMergedIni = false)
+        DateTime? lastChecked = null, Uri? mergedIniPath = null, bool ignoreMergedIni = false,
+        Dictionary<string, string>? preferences = null)
     {
         Id = id;
         CustomName = customName;
@@ -23,13 +24,15 @@ public record ModSettings
         LastChecked = lastChecked;
         MergedIniPath = mergedIniPath;
         IgnoreMergedIni = ignoreMergedIni;
+        _preferences = preferences;
     }
 
     public ModSettings DeepCopyWithProperties(NewValue<string?>? customName = null,
         NewValue<string?>? characterSkinOverride = null,
         NewValue<DateTime?>? newLastChecked = null, NewValue<Uri?>? mergedIniPath = null,
         NewValue<bool>? ignoreMergedIni = null,
-        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null)
+        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null
+    )
     {
         return new ModSettings(
             Id,
@@ -43,7 +46,8 @@ public record ModSettings
             DateAdded,
             newLastChecked ?? LastChecked,
             mergedIniPath ?? MergedIniPath,
-            ignoreMergedIni ?? IgnoreMergedIni
+            ignoreMergedIni ?? IgnoreMergedIni,
+            _preferences is null ? null : new Dictionary<string, string>(_preferences)
         );
     }
 
@@ -74,6 +78,9 @@ public record ModSettings
 
     public DateTime? LastChecked { get; internal set; }
 
+    private Dictionary<string, string>? _preferences;
+    public IReadOnlyDictionary<string, string> Preferences => _preferences ??= new Dictionary<string, string>();
+
 
     internal static ModSettings FromJsonSkinSettings(ISkinMod? skinMod, JsonModSettings settings)
     {
@@ -94,7 +101,10 @@ public record ModSettings
             MergedIniPath = skinMod is not null
                 ? SkinModHelpers.RelativeModPathToAbsPath(skinMod.FullPath, settings.MergedIniPath)
                 : null,
-            IgnoreMergedIni = settings.MergedIniPath == string.Empty
+            IgnoreMergedIni = settings.MergedIniPath == string.Empty,
+            _preferences = settings.Preferences is null
+                ? null
+                : new Dictionary<string, string>(settings.Preferences)
         };
     }
 
@@ -114,7 +124,8 @@ public record ModSettings
             LastChecked = LastChecked?.ToString(),
             MergedIniPath = IgnoreMergedIni
                 ? ""
-                : SkinModHelpers.UriPathToModRelativePath(skinMod, MergedIniPath?.LocalPath)
+                : SkinModHelpers.UriPathToModRelativePath(skinMod, MergedIniPath?.LocalPath),
+            Preferences = Preferences.Count == 0 ? null : new Dictionary<string, string>(Preferences)
         };
     }
 
@@ -135,6 +146,11 @@ public record ModSettings
         if (IgnoreMergedIni != other.IgnoreMergedIni) return false;
 
         return true;
+    }
+
+    internal void SetPreferences(Dictionary<string, string> preferences)
+    {
+        _preferences = preferences;
     }
 }
 

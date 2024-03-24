@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Services;
@@ -11,6 +12,7 @@ public interface ISkinManagerService : IDisposable
 {
     public string UnloadedModsFolderPath { get; }
     public string ActiveModsFolderPath { get; }
+    public string ThreeMigotoRootfolder { get; }
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     bool IsInitialized { get; }
     public Task ScanForModsAsync();
@@ -79,6 +81,8 @@ public interface ISkinManagerService : IDisposable
     public ISkinMod AddMod(ISkinMod mod, ICharacterModList modList, bool move = false);
 
     public ICollection<DirectoryInfo> CleanCharacterFolders();
+
+    public IList<CharacterSkinEntry> GetAllMods(GetOptions getOptions = GetOptions.All);
 }
 
 public enum SetModStatus
@@ -117,4 +121,11 @@ public readonly struct RefreshResult
         public string ExistingFolderName { get; }
         public string RenamedFolderName { get; }
     }
+}
+
+public enum GetOptions
+{
+    All,
+    Enabled,
+    Disabled
 }

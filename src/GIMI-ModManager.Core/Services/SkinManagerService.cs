@@ -30,6 +30,8 @@ public sealed class SkinManagerService : ISkinManagerService
 
     private readonly List<ICharacterModList> _characterModLists = new();
 
+    public string ThreeMigotoRootfolder => _threeMigotoFolder?.FullName ?? string.Empty;
+
     public IReadOnlyCollection<ICharacterModList> CharacterModLists
     {
         get
@@ -627,7 +629,7 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
         _activeModsFolder.Create();
         InitializeFolderStructure();
-        await ScanForModsAsync();
+        await ScanForModsAsync().ConfigureAwait(false);
         IsInitialized = true;
 
 #if DEBUG
@@ -944,6 +946,20 @@ public sealed class SkinManagerService : ISkinManagerService
         }
 
         return deletedFolders;
+    }
+
+    public IList<CharacterSkinEntry> GetAllMods(GetOptions getOptions = GetOptions.All)
+    {
+        // We get them all to avoid locking for too long
+        var allMods = CharacterModLists.SelectMany(x => x.Mods).ToList();
+
+        return getOptions switch
+        {
+            GetOptions.All => allMods,
+            GetOptions.Enabled => allMods.Where(x => x.IsEnabled).ToList(),
+            GetOptions.Disabled => allMods.Where(x => !x.IsEnabled).ToList(),
+            _ => throw new ArgumentOutOfRangeException(nameof(getOptions), getOptions, null)
+        };
     }
 
     private void OnUserIniChanged(object sender, FileSystemEventArgs e)

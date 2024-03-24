@@ -1,4 +1,4 @@
-using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,20 +9,20 @@ public sealed partial class DebugPage : Page
 {
     public DebugViewModel ViewModel { get; } = App.GetService<DebugViewModel>();
 
-    public NotificationManager NotificationManager { get; } = App.GetService<NotificationManager>();
+    public UserPreferencesService UserPreferencesService { get; } = App.GetService<UserPreferencesService>();
 
     public DebugPage()
     {
         InitializeComponent();
     }
 
-    private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    private async void ButtonBase_OnClickSave(object sender, RoutedEventArgs e)
     {
-        NotificationManager.QueueNotification("This should show NOW", showNow: true);
+        await UserPreferencesService.SaveModPreferencesAsync().ConfigureAwait(false);
     }
 
-    private void ButtonBase_OnClick1(object sender, RoutedEventArgs e)
+    private async void ButtonBase_OnClickApply(object sender, RoutedEventArgs e)
     {
-        NotificationManager.QueueNotification("This should show later");
+        await UserPreferencesService.SetModPreferencesAsync().ConfigureAwait(false);
     }
 }
