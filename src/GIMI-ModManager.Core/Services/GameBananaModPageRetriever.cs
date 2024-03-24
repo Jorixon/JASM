@@ -46,14 +46,15 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         // Check if update is available
         var downloadsApiUrl = GetDownloadsApiUrl(modId);
 
-        var response = await SendRequest(cancellationToken, downloadsApiUrl);
+        var response = await SendRequest(cancellationToken, downloadsApiUrl).ConfigureAwait(false);
 
         _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
-        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using var _ = contentStream.ConfigureAwait(false);
 
         var apiMods =
             await JsonSerializer.DeserializeAsync<ApiRootResponse>(contentStream,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
 
         if (apiMods == null)
@@ -85,14 +86,15 @@ public class GameBananaModPageRetriever : IModUpdateChecker
 
         var modPageApiUrl = GetModPageApiUrl(modId);
 
-        var response = await SendRequest(cancellationToken, modPageApiUrl);
+        var response = await SendRequest(cancellationToken, modPageApiUrl).ConfigureAwait(false);
 
         _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
-        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using var _ = contentStream.ConfigureAwait(false);
 
         var apiModPage =
             await JsonSerializer.DeserializeAsync<ApiRootModPage>(contentStream,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
 
         if (apiModPage == null)
@@ -165,7 +167,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         retry:
         try
         {
-            await Task.Delay(200, cancellationToken);
+            await Task.Delay(200, cancellationToken).ConfigureAwait(false);
             response = await _resiliencePipeline.ExecuteAsync(
                     (ct) => new ValueTask<HttpResponseMessage>(_httpClient.GetAsync(downloadsApiUrl, ct)),
                     cancellationToken)
@@ -176,7 +178,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
             _logger.Verbose("Rate limit exceeded, retrying after {retryAfter}", e.RetryAfter);
             var delay = e.RetryAfter ?? TimeSpan.FromSeconds(2);
 
-            await Task.Delay(delay, cancellationToken);
+            await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
             goto retry;
         }
 

@@ -183,7 +183,7 @@ public sealed class CharacterModList : ICharacterModList
             ISkinMod newSkinMod = null!;
             try
             {
-                newSkinMod = await SkinMod.CreateModAsync(new DirectoryInfo(e.FullPath), true);
+                newSkinMod = await SkinMod.CreateModAsync(new DirectoryInfo(e.FullPath), true).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -212,8 +212,8 @@ public sealed class CharacterModList : ICharacterModList
                 ISkinMod newSkinMod = null!;
                 try
                 {
-                    newSkinMod = await SkinMod.CreateModAsync(new DirectoryInfo(e.FullPath));
-                    await newSkinMod.Settings.ReadSettingsAsync();
+                    newSkinMod = await SkinMod.CreateModAsync(new DirectoryInfo(e.FullPath)).ConfigureAwait(false);
+                    await newSkinMod.Settings.ReadSettingsAsync().ConfigureAwait(false);
                 }
                 catch (Exception exception)
                 {
