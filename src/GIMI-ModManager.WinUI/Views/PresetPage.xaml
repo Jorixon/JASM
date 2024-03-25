@@ -10,9 +10,27 @@
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ContentDialog x:Key="HelpDialog">
+            <ContentDialog.Title>
+                <TextBlock Text="How presets work" />
+            </ContentDialog.Title>
+
+
+            <ContentDialog.Content>
+                <StackPanel>
+                    <TextBlock Text="'Save active mod preferences (KeySwaps) to mods': " TextWrapping="WrapWholeWords" />
+
+
+
+                </StackPanel>
+            </ContentDialog.Content>
+
+        </ContentDialog>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -24,40 +42,66 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Spacing="16">
-                <Button Command="{x:Bind ViewModel.SaveActivePreferencesCommand}" Content="Save active mod preferences (KeySwaps)" />
-                <Button Command="{x:Bind ViewModel.ApplySavedModPreferencesCommand}" Content="Apply saved mod preferences (KeySwaps)" />
-                <Button Command="{x:Bind ViewModel.RandomizeModsCommand}" Content="Randomize Mods" />
-                <Button Content="3Dmigoto reload config" IsEnabled="False" />
+                <Button
+                    Command="{x:Bind ViewModel.SaveActivePreferencesCommand}"
+                    Content="Save active mod preferences (KeySwaps) to mods"
+                    ToolTipService.ToolTip="Reads 3Dmigoto mod preferences (d3dx_user.ini) for active mods and stores the settings in each Mod's .JASM_Config.json file" />
+                <Button
+                    Command="{x:Bind ViewModel.ApplySavedModPreferencesCommand}"
+                    Content="Apply saved mod preferences (KeySwaps)"
+                    ToolTipService.ToolTip="Reads currently active mods' preferences from .JASM_Config.json and writes them to d3dx_user.ini for 3Dmigoto to read" />
+                <Button
+                    Command="{x:Bind ViewModel.RandomizeModsCommand}"
+                    Content="Randomize Mods"
+                    ToolTipService.ToolTip="Opens a dialog with more info" />
+                <Button>
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE946;" />
+                    </Button.Content>
+                </Button>
             </StackPanel>
+
             <ProgressRing Grid.Column="1" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
         </Grid>
 
 
-        <TextBlock Grid.Row="1" Text="Mod Presets" />
 
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel>
-                <TextBox
-                    Header="Preset Name"
-                    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                    Text="{x:Bind ViewModel.NewPresetNameInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <StackPanel
-                    Margin="0,8"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <Button Command="{x:Bind ViewModel.CreatePresetCommand}" Content="Save as new preset" />
-                    <CheckBox
-                        Content="Create as an empty preset"
-                        IsChecked="{x:Bind ViewModel.CreateEmptyPresetInput, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel HorizontalAlignment="Left">
+                    <TextBox
+                        MaxWidth="400"
+                        Header="New Preset Name"
+                        IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.NewPresetNameInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <StackPanel
+                        Margin="0,8"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Button Command="{x:Bind ViewModel.CreatePresetCommand}" Content="Save as new preset" />
+                        <CheckBox
+                            Content="Create as an empty preset"
+                            IsChecked="{x:Bind ViewModel.CreateEmptyPresetInput, Mode=TwoWay}"
+                            IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+                            ToolTipService.ToolTip="If checked, the new preset will be created without any mods enabled." />
+
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+
+                <Grid Grid.Column="1" />
+
+            </Grid>
+
 
             <ListView
                 x:Name="PresetsList"
@@ -75,85 +119,100 @@
                             Margin="0,8"
                             Padding="8"
                             BorderBrush="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
-                            BorderThickness="4"
+                            BorderThickness="2"
+                            ColumnSpacing="16"
                             CornerRadius="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+                            <Grid>
+                                <FontIcon Glyph="&#xE76F;" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                            <StackPanel>
+                                <StackPanel>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <controls:EditableTextBlock
-                                        MinWidth="200"
-                                        IsEditMode="{x:Bind IsEditingName, Mode=OneWay}"
-                                        KeyDown="UIElement_OnKeyDown"
-                                        Text="{x:Bind NameInput, Mode=TwoWay}" />
+                                    <Grid>
+                                        <controls:EditableTextBlock
+                                            MinWidth="200"
+                                            Margin="-12,0,0,0"
+                                            IsEditMode="{x:Bind IsEditingName, Mode=OneWay}"
+                                            KeyDown="UIElement_OnKeyDown"
+                                            Text="{x:Bind NameInput, Mode=TwoWay}" />
+                                    </Grid>
+
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Preset Enabled Mods Count:" />
+                                        <TextBlock Margin="4,0" Text="{x:Bind EnabledModsCount, Mode=OneWay}" />
+                                    </StackPanel>
                                 </StackPanel>
 
+                                <StackPanel
+                                    Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    Spacing="16">
+                                    <Button Content="Apply Preset" ToolTipService.ToolTip="Enables all mods in this preset and writes the preset's mod preferences to mods">
+                                        <Button.Flyout>
+                                            <Flyout Placement="Left">
+                                                <StackPanel>
+                                                    <Button
+                                                        Command="{x:Bind ApplyPresetCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="Confirm" />
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Preset Mod Count:" />
-                                    <TextBlock Margin="4,0" Text="{x:Bind EnabledModsCount, Mode=OneWay}" />
-                                </StackPanel>
-                            </StackPanel>
 
-                            <StackPanel
-                                Grid.Column="2"
-                                Orientation="Horizontal"
-                                Spacing="16">
-                                <Button Content="Apply Preset">
-                                    <Button.Flyout>
-                                        <Flyout Placement="Left">
-                                            <StackPanel>
-                                                <Button
-                                                    Command="{x:Bind ApplyPresetCommand}"
+                                    </Button>
+                                    <DropDownButton AutomationProperties.Name="Options">
+                                        <DropDownButton.Content>
+                                            <FontIcon Glyph="&#xE712;" />
+                                        </DropDownButton.Content>
+                                        <DropDownButton.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind StartEditingNameCommand}"
                                                     CommandParameter="{Binding}"
-                                                    Content="Confirm" />
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Button.Flyout>
+                                                    Text="{x:Bind RenameButtonText, Mode=OneWay}">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE8AC;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind DuplicatePresetCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Text="Duplicate">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xEA35;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutSeparator Height="10" />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind DeletePresetCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Text="Delete"
+                                                    ToolTipService.ToolTip="Permanently delete this preset">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE74D;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </DropDownButton.Flyout>
+                                    </DropDownButton>
+                                </StackPanel>
 
-
-                                </Button>
-                                <DropDownButton AutomationProperties.Name="Options">
-                                    <DropDownButton.Content>
-                                        <FontIcon Glyph="&#xE712;" />
-                                    </DropDownButton.Content>
-                                    <DropDownButton.Flyout>
-                                        <MenuFlyout Placement="Bottom">
-                                            <MenuFlyoutItem
-                                                Command="{x:Bind StartEditingNameCommand}"
-                                                CommandParameter="{Binding}"
-                                                Text="{x:Bind RenameButtonText, Mode=OneWay}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE8AC;" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem
-                                                Command="{x:Bind DuplicatePresetCommand}"
-                                                CommandParameter="{Binding}"
-                                                Text="Duplicate">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xEA35;" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem
-                                                Command="{x:Bind DeletePresetCommand}"
-                                                CommandParameter="{Binding}"
-                                                Text="Delete">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE74D;" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                        </MenuFlyout>
-                                    </DropDownButton.Flyout>
-                                </DropDownButton>
-                            </StackPanel>
+                            </Grid>
 
                         </Grid>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

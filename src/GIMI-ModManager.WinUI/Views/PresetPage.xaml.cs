@@ -27,11 +27,11 @@ public sealed partial class PresetPage : Page
 
     private async void UIElement_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        var PresetVm = (ModPresetVm)((EditableTextBlock)sender).DataContext;
+        var presetVm = (ModPresetVm)((EditableTextBlock)sender).DataContext;
 
-        if (e.Key == VirtualKey.Enter && ViewModel.RenamePresetCommand.CanExecute(PresetVm))
+        if (e.Key == VirtualKey.Enter && ViewModel.RenamePresetCommand.CanExecute(presetVm))
         {
-            await ViewModel.RenamePresetCommand.ExecuteAsync(PresetVm);
+            await ViewModel.RenamePresetCommand.ExecuteAsync(presetVm);
         }
     }
 }

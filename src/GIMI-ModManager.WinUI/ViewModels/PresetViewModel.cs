@@ -438,10 +438,16 @@ public partial class ModPresetVm : ObservableObject
         Name = preset.Name;
         NameInput = Name;
         EnabledModsCount = preset.Mods.Count;
+        foreach (var mod in preset.Mods)
+        {
+            Mods.Add(new ModPresetEntryVm(mod));
+        }
     }
 
     public string Name { get; }
     public int EnabledModsCount { get; set; }
+
+    public ObservableCollection<ModPresetEntryVm> Mods { get; } = new();
 
     [ObservableProperty] private string _nameInput = string.Empty;
 
@@ -491,4 +497,20 @@ public partial class ModPresetVm : ObservableObject
 
     private const string RenameText = "Rename";
     private const string ConfirmText = "Save New Name";
+}
+
+public partial class ModPresetEntryVm : ObservableObject
+{
+    public ModPresetEntryVm(ModPresetEntry modEntry)
+    {
+        Name = modEntry.CustomName ?? modEntry.Name;
+        IsMissing = modEntry.IsMissing;
+        FullPath = modEntry.FullPath;
+    }
+
+    [ObservableProperty] private string _name;
+
+    [ObservableProperty] private string _fullPath;
+
+    [ObservableProperty] private bool _isMissing;
 }
