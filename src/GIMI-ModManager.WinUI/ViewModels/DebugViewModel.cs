@@ -36,7 +36,8 @@ public partial class DebugViewModel(
         if (SelectedPreset == null)
             return;
 
-        await Task.Run(() => _modPresetService.SaveCurrentModList(SelectedPreset.PresetName)).ConfigureAwait(false);
+        await Task.Run(() => _modPresetService.SaveActiveModsToPresetAsync(SelectedPreset.PresetName))
+            .ConfigureAwait(false);
     }
 
     [RelayCommand]

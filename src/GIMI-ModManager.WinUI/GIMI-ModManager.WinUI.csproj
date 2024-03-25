@@ -516,6 +516,7 @@
 		<None Remove="Views\ModsOverviewPage.xaml" />
 		<None Remove="Views\ModUpdateAvailableWindow.xaml" />
 		<None Remove="Views\NotificationsPage.xaml" />
+		<None Remove="Views\PresetPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -729,5 +730,8 @@
 	  <None Update="Assets\Games\Honkai\weapons.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\PresetPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 </Project>

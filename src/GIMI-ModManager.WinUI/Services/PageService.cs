@@ -24,6 +24,7 @@ public class PageService : IPageService
         Configure<EasterEggVM, EasterEggPage>();
         Configure<ModsOverviewVM, ModsOverviewPage>();
         Configure<ModInstallerVM, ModInstallerPage>();
+        Configure<PresetViewModel, PresetPage>();
     }
 
     public Type GetPageType(string key)

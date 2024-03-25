@@ -24,7 +24,12 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
         return Task.CompletedTask;
     }
 
-
+    /// <summary>
+    /// Saves the mod preferences to the mod settings file
+    /// This overrides the existing preferences in the mod settings file
+    /// 3Dmigoto should do a refresh (F10) so that it store the new preferences in the d3dx_user.ini
+    /// And we save the mod preferences to the mod settings files
+    /// </summary>
     public async Task SaveModPreferencesAsync()
     {
         if (!_threeMigotoFolder.Exists)
@@ -61,6 +66,10 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
         }
     }
 
+    /// <summary>
+    /// Overrides the mod preferences in the d3dx_user.ini file with the mod settings preferences
+    /// </summary>
+    /// <returns></returns>
     public async Task<bool> SetModPreferencesAsync()
     {
         if (!_threeMigotoFolder.Exists)
@@ -112,6 +121,9 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
             }
 
             // Add new ones from mod settings
+            // Insert after the Constants section if no existing mod preferences found
+            // 3Dmigoto seems to sort them alphabetically when adding entries, but it doesn't seem to matter if we add without alphabetical order
+
             var i = existingModPref.FirstOrDefault()?.Index ?? constantSectionIndex + 2;
             foreach (var iniPreference in modSettingsPref)
             {

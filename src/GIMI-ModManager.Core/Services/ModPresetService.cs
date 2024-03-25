@@ -72,7 +72,7 @@ public sealed class ModPresetService(
 
     public IEnumerable<ModPreset> GetPresets() => _presets;
 
-    public async Task CreatePresetAsync(string name)
+    public async Task CreatePresetAsync(string name, bool createEmptyPreset = true)
     {
         using var _ = await LockAsync().ConfigureAwait(false);
         name = name.Trim();
@@ -85,14 +85,17 @@ public sealed class ModPresetService(
         var preset = new ModPreset(name);
         _presets.Add(preset);
 
-        var modEntries = await GetActiveModsAsModEntriesAsync().ConfigureAwait(false);
+        var modEntries = createEmptyPreset
+            ? new List<ModPresetEntry>()
+            : await GetActiveModsAsModEntriesAsync().ConfigureAwait(false);
+
 
         preset._mods.AddRange(modEntries);
 
         await WritePresetsAsync().ConfigureAwait(false);
     }
 
-    public async Task SaveCurrentModList(string presetName)
+    public async Task SaveActiveModsToPresetAsync(string presetName)
     {
         using var _ = await LockAsync().ConfigureAwait(false);
 
@@ -157,7 +160,7 @@ public sealed class ModPresetService(
 
         foreach (var modEntry in allModEntries)
         {
-            var mod = allMods.FirstOrDefault(m => m.Id == modEntry.Id);
+            var mod = allMods.FirstOrDefault(m => m.Id == modEntry.ModId);
 
             if (mod is not null)
             {
@@ -276,7 +279,7 @@ public sealed class ModPresetService(
 
 public record ModPresetEntry
 {
-    public required Guid Id { get; init; }
+    public required Guid ModId { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? CustomName { get; init; }
@@ -297,7 +300,7 @@ public record ModPresetEntry
     {
         return new ModPresetEntry
         {
-            Id = skinMod.Id,
+            ModId = skinMod.Id,
             CustomName = settings.CustomName,
             FullPath = skinMod.FullPath,
             Preferences = settings.Preferences.Count == 0 ? null : settings.Preferences
