@@ -13,23 +13,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ContentDialog x:Key="HelpDialog">
-            <ContentDialog.Title>
-                <TextBlock Text="How presets work" />
-            </ContentDialog.Title>
-
-
-            <ContentDialog.Content>
-                <StackPanel>
-                    <TextBlock Text="'Save active mod preferences (KeySwaps) to mods': " TextWrapping="WrapWholeWords" />
-
-
-
-                </StackPanel>
-            </ContentDialog.Content>
-
-        </ContentDialog>
-
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <xaml:BoolInverterConverter x:Name="BoolInverter" />
 
@@ -56,11 +39,11 @@
                     <Grid MinWidth="32">
                         <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
                     </Grid>
-                    <!--<Button>
+                    <Button Click="ButtonBase_OnClick">
                         <Button.Content>
                             <FontIcon Glyph="&#xE946;" />
                         </Button.Content>
-                    </Button>-->
+                    </Button>
                 </StackPanel>
 
             </Grid>
@@ -144,7 +127,7 @@
                         <CheckBox
                             Content="Show Manual controls"
                             IsChecked="{x:Bind ViewModel.ShowManualControls, Mode=TwoWay}"
-                            ToolTipService.ToolTip="If you'd like to manually control setting preferences instead of letting JASM with the Elevator to do it for you" />
+                            ToolTipService.ToolTip="If you'd like to manually control setting preferences instead of letting JASM with the Elevator handle it for you" />
 
                     </StackPanel>
 

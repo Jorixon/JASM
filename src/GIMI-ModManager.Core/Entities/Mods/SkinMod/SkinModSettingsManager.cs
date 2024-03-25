@@ -193,6 +193,7 @@ public class SkinModSettingsManager
 
     private async Task CopyAndSetModImage(ModSettings modSettings, Uri imagePath, bool deleteOldImage = true)
     {
+        // TODO: If you're saving a modified cached modSettings after the mod has been toggled enabled/disabled, imagePath.LocalPath won't exist
         var oldModSettings = _settings ?? await ReadSettingsAsync().ConfigureAwait(false);
         if (!File.Exists(imagePath.LocalPath))
             throw new FileNotFoundException("Image file not found.", imagePath.LocalPath);

@@ -335,6 +335,15 @@ public partial class PresetViewModel(
         });
 
 
+        stackPanel.Children.Add(new TextBlock
+        {
+            Text =
+                "I suggest creating a preset (or backup) of your mods before randomizing if you have a lot of enabled mods",
+            TextWrapping = TextWrapping.WrapWholeWords,
+            Margin = new Thickness(0, 10, 0, 0)
+        });
+
+
         dialog.Content = stackPanel;
 
         var result = await _windowManagerService.ShowDialogAsync(dialog);
