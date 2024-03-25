@@ -97,7 +97,7 @@ public class CharacterSkinService
 
         var mods = modList.Mods.Select(entry => entry.Mod).ToArray();
 
-        var result = new Dictionary<ICharacterSkin, ISkinMod[]>();
+        var result = new Dictionary<ICharacterSkin, List<ISkinMod>>();
         foreach (var skin in character.Skins)
         {
             var modsForSkin = new List<ISkinMod>();
@@ -106,13 +106,13 @@ public class CharacterSkinService
                 modsForSkin.Add(skinMod);
             }
 
-            result.Add(skin, modsForSkin.ToArray());
+            result.Add(skin, modsForSkin.ToList());
         }
 
         var unknownMods = mods
             .Where(mod => !result.Values.SelectMany(detectedMods => detectedMods)
                 .Contains(mod))
-            .ToArray();
+            .ToList();
 
         return new GetAllModsBySkinResult(result, unknownMods);
     }
@@ -156,6 +156,6 @@ public class CharacterSkinService
     }
 
     public record GetAllModsBySkinResult(
-        Dictionary<ICharacterSkin, ISkinMod[]> ModsBySkin,
-        ISkinMod[] UndetectableMods);
+        Dictionary<ICharacterSkin, List<ISkinMod>> ModsBySkin,
+        List<ISkinMod> UndetectableMods);
 }

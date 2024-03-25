@@ -206,4 +206,9 @@ public class SkinMod : Mod, ISkinMod
     {
         return obj.Id.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return GetDisplayName();
+    }
 }

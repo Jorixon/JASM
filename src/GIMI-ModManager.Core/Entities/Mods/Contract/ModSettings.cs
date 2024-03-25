@@ -148,7 +148,7 @@ public record ModSettings
         return true;
     }
 
-    internal void SetPreferences(Dictionary<string, string> preferences)
+    internal void SetPreferences(Dictionary<string, string>? preferences)
     {
         _preferences = preferences;
     }
