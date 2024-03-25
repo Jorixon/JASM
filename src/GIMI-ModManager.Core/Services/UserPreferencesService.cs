@@ -13,7 +13,7 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
 
     private DirectoryInfo _threeMigotoFolder = null!;
     private DirectoryInfo _activeModsFolder = null!;
-    private const string D3DX_USER_INI = "d3dx_user.ini";
+    private static string D3DX_USER_INI = Constants.UserIniFileName;
 
 
     public Task InitializeAsync()
@@ -48,7 +48,7 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
 
         foreach (var characterSkinEntry in activeMods)
         {
-            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
+            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(false).ConfigureAwait(false);
             if (modSettings is null)
                 continue;
 

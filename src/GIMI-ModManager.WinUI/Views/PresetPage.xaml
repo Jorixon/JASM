@@ -4,10 +4,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -27,12 +29,18 @@
             </ContentDialog.Content>
 
         </ContentDialog>
+
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <xaml:BoolInverterConverter x:Name="BoolInverter" />
+
+
     </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid>
@@ -41,27 +49,21 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Spacing="16">
-                <Button
-                    Command="{x:Bind ViewModel.SaveActivePreferencesCommand}"
-                    Content="Save active mod preferences (KeySwaps) to mods"
-                    ToolTipService.ToolTip="Reads 3Dmigoto mod preferences (d3dx_user.ini) for active mods and stores the settings in each Mod's .JASM_Config.json file" />
-                <Button
-                    Command="{x:Bind ViewModel.ApplySavedModPreferencesCommand}"
-                    Content="Apply saved mod preferences (KeySwaps)"
-                    ToolTipService.ToolTip="Reads currently active mods' preferences from .JASM_Config.json and writes them to d3dx_user.ini for 3Dmigoto to read" />
-                <Button
-                    Command="{x:Bind ViewModel.RandomizeModsCommand}"
-                    Content="Randomize Mods"
-                    ToolTipService.ToolTip="Opens a dialog with more info" />
-                <Button>
-                    <Button.Content>
-                        <FontIcon Glyph="&#xE946;" />
-                    </Button.Content>
-                </Button>
-            </StackPanel>
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Mod Presets and Mod Preferences" />
 
-            <ProgressRing Grid.Column="1" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+            <Grid Grid.Column="1">
+                <StackPanel Orientation="Horizontal">
+                    <Grid MinWidth="32">
+                        <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+                    </Grid>
+                    <!--<Button>
+                        <Button.Content>
+                            <FontIcon Glyph="&#xE946;" />
+                        </Button.Content>
+                    </Button>-->
+                </StackPanel>
+
+            </Grid>
         </Grid>
 
 
@@ -73,14 +75,15 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid>
+            <Grid ColumnSpacing="30">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel HorizontalAlignment="Left">
                     <TextBox
-                        MaxWidth="400"
+                        MinWidth="345"
+                        HorizontalAlignment="Left"
                         Header="New Preset Name"
                         IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
                         Text="{x:Bind ViewModel.NewPresetNameInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -88,7 +91,7 @@
                         Margin="0,8"
                         Orientation="Horizontal"
                         Spacing="8">
-                        <Button Command="{x:Bind ViewModel.CreatePresetCommand}" Content="Save as new preset" />
+                        <Button Command="{x:Bind ViewModel.CreatePresetCommand}" Content="Save active mod preferences and create new preset" />
                         <CheckBox
                             Content="Create as an empty preset"
                             IsChecked="{x:Bind ViewModel.CreateEmptyPresetInput, Mode=TwoWay}"
@@ -98,7 +101,54 @@
                     </StackPanel>
                 </StackPanel>
 
-                <Grid Grid.Column="1" />
+                <Grid Grid.Column="1" HorizontalAlignment="Right">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+
+                    <StackPanel
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="16">
+                        <CheckBox
+                            Content="Auto sync Mod Preferences when switching presets"
+                            IsChecked="{x:Bind ViewModel.AutoSync3DMigotoConfig, Mode=TwoWay}"
+                            IsEnabled="{x:Bind ViewModel.ElevatorIsRunning, Mode=OneWay}"
+                            ToolTipService.ToolTip="If checked, then JASM will automatically sync preferences when creating presets and when switching between presets" />
+                        <Button
+                            Command="{x:Bind ViewModel.StartElevatorCommand}"
+                            Content="Start Elevator..."
+                            IsEnabled="{x:Bind ViewModel.ElevatorService.CanStartElevator, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="16">
+                        <Button
+                            Command="{x:Bind ViewModel.SaveActivePreferencesCommand}"
+                            Content="Save active mod preferences (KeySwaps) to mods"
+                            ToolTipService.ToolTip="Reads 3Dmigoto mod preferences (d3dx_user.ini) for active mods and stores the settings in each Mod's .JASM_Config.json file"
+                            Visibility="{x:Bind ViewModel.ShowManualControls, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                        <Button
+                            Command="{x:Bind ViewModel.ApplySavedModPreferencesCommand}"
+                            Content="Apply saved mod preferences (KeySwaps)"
+                            ToolTipService.ToolTip="Reads currently active mods' preferences from .JASM_Config.json and writes them to d3dx_user.ini for 3Dmigoto to read"
+                            Visibility="{x:Bind ViewModel.ShowManualControls, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                        <CheckBox
+                            Content="Show Manual controls"
+                            IsChecked="{x:Bind ViewModel.ShowManualControls, Mode=TwoWay}"
+                            ToolTipService.ToolTip="If you'd like to manually control setting preferences instead of letting JASM with the Elevator to do it for you" />
+
+                    </StackPanel>
+
+                </Grid>
 
             </Grid>
 
@@ -219,6 +269,15 @@
 
         </Grid>
 
+        <Grid
+            Grid.Row="2"
+            Margin="0,0,0,4"
+            HorizontalAlignment="Left">
+            <Button
+                Command="{x:Bind ViewModel.RandomizeModsCommand}"
+                Content="Randomize Mods"
+                ToolTipService.ToolTip="Opens a dialog with more info" />
+        </Grid>
 
     </Grid>
 </Page>

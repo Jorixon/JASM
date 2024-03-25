@@ -265,8 +265,6 @@ public sealed class ModPresetService(
         }
 
         await WritePresetsAsync().ConfigureAwait(false);
-
-        await _userPreferencesService.SetModPreferencesAsync().ConfigureAwait(false);
     }
 
 

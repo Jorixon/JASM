@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -7,6 +8,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -24,9 +26,11 @@ public partial class PresetViewModel(
     ISkinManagerService skinManagerService,
     IWindowManagerService windowManagerService,
     CharacterSkinService characterSkinService,
-    ILogger logger)
+    ILogger logger,
+    ElevatorService elevatorService)
     : ObservableRecipient, INavigationAware
 {
+    public readonly ElevatorService ElevatorService = elevatorService;
     private readonly CharacterSkinService _characterSkinService = characterSkinService;
     private readonly IWindowManagerService _windowManagerService = windowManagerService;
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
@@ -56,6 +60,10 @@ public partial class PresetViewModel(
     [ObservableProperty] private bool _createEmptyPresetInput;
     private bool _isNotBusy;
 
+    [ObservableProperty] private bool _showManualControls;
+
+    [ObservableProperty] private bool _elevatorIsRunning;
+    [ObservableProperty] private bool _autoSync3DMigotoConfig;
 
     private bool CanCreatePreset()
     {
@@ -70,7 +78,23 @@ public partial class PresetViewModel(
         IsBusy = true;
         try
         {
+            if (CanAutoSync())
+                await Task.Run(async () =>
+                {
+                    await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
+                    await Task.Delay(1000).ConfigureAwait(false);
+                });
+
+
+            await Task.Run(() => _userPreferencesService.SaveModPreferencesAsync());
             await Task.Run(() => _modPresetService.CreatePresetAsync(NewPresetNameInput, CreateEmptyPresetInput));
+
+            if (CanAutoSync())
+                await Task.Run(async () =>
+                {
+                    await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
+                    await Task.Delay(1000).ConfigureAwait(false);
+                });
         }
         catch (Exception e)
         {
@@ -135,15 +159,48 @@ public partial class PresetViewModel(
 
         try
         {
-            await Task.Run(() => _modPresetService.ApplyPresetAsync(preset.Name));
+            await Task.Run(async () =>
+            {
+                await _modPresetService.ApplyPresetAsync(preset.Name).ConfigureAwait(false);
+                await _userPreferencesService.SetModPreferencesAsync().ConfigureAwait(false);
+
+
+                if (CanAutoSync())
+                {
+                    await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
+                    if (preset.Mods.Count == 0)
+                        return;
+                    await Task.Delay(5000).ConfigureAwait(false);
+                    await _userPreferencesService.SetModPreferencesAsync().ConfigureAwait(false);
+                }
+
+
+                if (CanAutoSync())
+                {
+                    //await ElevatorService.RefreshGenshinMods().ConfigureAwait(false); // Wait and check for changes timout 5 seconds
+                    //await Task.Delay(5000).ConfigureAwait(false);
+                    await ElevatorService.RefreshAndWaitForUserIniChangesAsync().ConfigureAwait(false);
+                    await Task.Delay(1000).ConfigureAwait(false);
+                    await _userPreferencesService.SetModPreferencesAsync().ConfigureAwait(false);
+                }
+
+
+                if (CanAutoSync())
+                {
+                    await Task.Delay(2000).ConfigureAwait(false);
+                    await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
+                }
+            });
         }
         catch (Exception e)
         {
             _notificationManager.ShowNotification("Failed to apply preset", e.Message, TimeSpan.FromSeconds(5));
         }
-
-        ReloadPresets();
-        IsBusy = false;
+        finally
+        {
+            ReloadPresets();
+            IsBusy = false;
+        }
     }
 
     private bool CanRenamePreset()
@@ -207,7 +264,7 @@ public partial class PresetViewModel(
         IsBusy = false;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
     private async Task ApplySavedModPreferences()
     {
         IsBusy = true;
@@ -382,6 +439,11 @@ public partial class PresetViewModel(
             return;
         }
 
+        if (CanAutoSync())
+        {
+            await Task.Run(() => ElevatorService.RefreshGenshinMods());
+        }
+
 
         _notificationManager.ShowNotification("Mods randomized",
             "Mods have been randomized for the categories: " +
@@ -391,13 +453,50 @@ public partial class PresetViewModel(
             TimeSpan.FromSeconds(5));
     }
 
+
+    [RelayCommand]
+    private async Task StartElevator()
+    {
+        IsBusy = true;
+
+        try
+        {
+            var isStarted = await Task.Run(() => ElevatorService.StartElevator());
+
+            if (!isStarted)
+                _notificationManager.ShowNotification("Failed to start elevator",
+                    "Elevator failed to start",
+                    TimeSpan.FromSeconds(5));
+
+            if (isStarted)
+                AutoSync3DMigotoConfig = true;
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to start elevator", e.Message, TimeSpan.FromSeconds(5));
+        }
+
+        IsBusy = false;
+    }
+
     public void OnNavigatedTo(object parameter)
     {
         ReloadPresets();
+        ElevatorService.PropertyChanged += ElevatorStatusChangedHandler;
+        ElevatorService.CheckStatus();
+        AutoSync3DMigotoConfig = ElevatorService.ElevatorStatus == ElevatorStatus.Running;
+        ElevatorIsRunning = ElevatorService.ElevatorStatus == ElevatorStatus.Running;
+    }
+
+    private void ElevatorStatusChangedHandler(object? o, PropertyChangedEventArgs propertyChangedEventArgs)
+    {
+        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            ElevatorIsRunning = ElevatorService.ElevatorStatus == ElevatorStatus.Running);
     }
 
     public void OnNavigatedFrom()
     {
+        ElevatorService.PropertyChanged -= ElevatorStatusChangedHandler;
     }
 
     private void ReloadPresets()
@@ -428,6 +527,11 @@ public partial class PresetViewModel(
     {
         IsBusy = true;
         return new StartOperation(() => IsBusy = false);
+    }
+
+    private bool CanAutoSync()
+    {
+        return ElevatorIsRunning && AutoSync3DMigotoConfig && ElevatorService.ElevatorStatus == ElevatorStatus.Running;
     }
 }
 

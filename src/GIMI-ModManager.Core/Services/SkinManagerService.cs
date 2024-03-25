@@ -970,7 +970,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public event EventHandler<UserIniChanged>? UserIniChanged;
 
-    private const string D3DX_USER_INI = "d3dx_user.ini";
+    private static string D3DX_USER_INI = Constants.UserIniFileName;
 
     public async Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId)
     {
@@ -1033,7 +1033,7 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         while (true)
         {
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
             var mods = _characterModLists.SelectMany(x => x.Mods).Select(x => x.Mod);
             var duplicateIds = mods.GroupBy(x => x.Id).Where(x => x.Count() > 1).ToArray();
 
