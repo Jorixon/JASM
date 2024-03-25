@@ -10,7 +10,9 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -21,7 +23,8 @@ public partial class PresetViewModel(
     IGameService gameService,
     ISkinManagerService skinManagerService,
     IWindowManagerService windowManagerService,
-    CharacterSkinService characterSkinService)
+    CharacterSkinService characterSkinService,
+    ILogger logger)
     : ObservableRecipient, INavigationAware
 {
     private readonly CharacterSkinService _characterSkinService = characterSkinService;
@@ -31,6 +34,7 @@ public partial class PresetViewModel(
     private readonly UserPreferencesService _userPreferencesService = userPreferencesService;
     private readonly NotificationManager _notificationManager = notificationManager;
     private readonly IGameService _gameService = gameService;
+    private readonly ILogger _logger = logger.ForContext<PresetViewModel>();
     private readonly Random _random = new();
 
 
@@ -123,8 +127,10 @@ public partial class PresetViewModel(
     private bool CanApplyPreset() => !IsBusy;
 
     [RelayCommand(CanExecute = nameof(CanApplyPreset))]
-    private async Task ApplyPreset(ModPresetVm preset)
+    private async Task ApplyPreset(ModPresetVm? preset)
     {
+        if (preset is null)
+            return;
         IsBusy = true;
 
         try
@@ -189,6 +195,8 @@ public partial class PresetViewModel(
         try
         {
             await Task.Run(() => _userPreferencesService.SaveModPreferencesAsync());
+            _notificationManager.ShowNotification("Active preferences saved", "The active preferences have been saved",
+                TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
         {
@@ -207,6 +215,10 @@ public partial class PresetViewModel(
         try
         {
             await Task.Run(() => _userPreferencesService.SetModPreferencesAsync());
+
+            _notificationManager.ShowNotification("Saved preferences applied",
+                "The saved preferences have been applied",
+                TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
         {
@@ -224,13 +236,27 @@ public partial class PresetViewModel(
         {
             Title = "Randomize Mods",
             PrimaryButtonText = "Randomize",
-            CloseButtonText = "Cancel"
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
         };
 
 
         var categories = _gameService.GetCategories();
 
         var stackPanel = new StackPanel();
+
+        stackPanel.Children.Add(new TextBlock
+        {
+            Text = "Select the categories you want to randomize mods for:"
+        });
+
+        stackPanel.Children.Add(new TextBlock
+        {
+            Text =
+                "Note: This will only randomize mod folders that are meant to only have one mod active. So 'Others __' folders will not be randomized. While only one mod wil be enabled per in game character skin",
+            TextWrapping = TextWrapping.WrapWholeWords,
+            Margin = new Thickness(0, 0, 0, 10)
+        });
 
 
         foreach (var category in categories)
@@ -243,6 +269,14 @@ public partial class PresetViewModel(
 
             stackPanel.Children.Add(checkBox);
         }
+
+        stackPanel.Children.Add(new CheckBox
+        {
+            Margin = new Thickness(0, 10, 0, 0),
+            Content = "Allow no mods as a result. This means it is possible for no mods to be enabled for a mod folder",
+            IsChecked = true
+        });
+
 
         dialog.Content = stackPanel;
 
@@ -259,9 +293,15 @@ public partial class PresetViewModel(
 
         var selectedCategories = stackPanel.Children
             .OfType<CheckBox>()
+            .SkipLast(1)
             .Where(c => c.IsChecked == true)
             .Select(c => categories.First(cat => cat.DisplayNamePlural.Equals(c.Content)))
             .ToList();
+
+        var allowNoMods = stackPanel.Children
+            .OfType<CheckBox>()
+            .Last()
+            .IsChecked == true;
 
         if (selectedCategories.Count == 0)
         {
@@ -308,7 +348,11 @@ public partial class PresetViewModel(
                                 modList.DisableMod(mod.Id);
                             }
 
-                            var randomModIndex = _random.Next(0, skinMods.Count);
+                            var randomModIndex = _random.Next(0, skinMods.Count + (allowNoMods ? 1 : 0));
+
+                            if (randomModIndex == skinMods.Count)
+                                continue;
+
                             modList.EnableMod(skinMods.ElementAt(randomModIndex).Id);
                         }
 
@@ -323,13 +367,17 @@ public partial class PresetViewModel(
                     }
 
 
-                    var randomIndex = _random.Next(0, mods.Count);
+                    var randomIndex = _random.Next(0, mods.Count + (allowNoMods ? 1 : 0));
+                    if (randomIndex == mods.Count)
+                        continue;
+
                     modList.EnableMod(mods[randomIndex].Id);
                 }
             });
         }
         catch (Exception e)
         {
+            _logger.Error(e, "Failed to randomize mods");
             _notificationManager.ShowNotification("Failed to randomize mods", e.Message, TimeSpan.FromSeconds(5));
             return;
         }
@@ -368,18 +416,11 @@ public partial class PresetViewModel(
         }
     }
 
-    public class StartOperation : IDisposable
+    public sealed class StartOperation(Action setIsDone) : IDisposable
     {
-        public StartOperation(Action setIsDone)
-        {
-            _setIsDone = setIsDone;
-        }
-
-        private readonly Action _setIsDone;
-
         public void Dispose()
         {
-            _setIsDone();
+            setIsDone();
         }
     }
 

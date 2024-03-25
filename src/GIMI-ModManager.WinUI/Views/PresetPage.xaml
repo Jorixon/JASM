@@ -25,7 +25,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Spacing="16">
                 <Button Command="{x:Bind ViewModel.SaveActivePreferencesCommand}" Content="Save active mod preferences (KeySwaps)" />
-                <Button Command="{x:Bind ViewModel.ApplyPresetCommand}" Content="Apply saved mod preferences (KeySwaps)" />
+                <Button Command="{x:Bind ViewModel.ApplySavedModPreferencesCommand}" Content="Apply saved mod preferences (KeySwaps)" />
                 <Button Command="{x:Bind ViewModel.RandomizeModsCommand}" Content="Randomize Mods" />
                 <Button Content="3Dmigoto reload config" IsEnabled="False" />
             </StackPanel>
