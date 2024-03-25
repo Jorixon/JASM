@@ -39,7 +39,7 @@ public partial class PresetViewModel(
     private readonly NotificationManager _notificationManager = notificationManager;
     private readonly IGameService _gameService = gameService;
     private readonly ILogger _logger = logger.ForContext<PresetViewModel>();
-    private readonly Random _random = new();
+    private static readonly Random Random = new();
 
 
     [ObservableProperty]
@@ -82,19 +82,12 @@ public partial class PresetViewModel(
                 await Task.Run(async () =>
                 {
                     await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(2000).ConfigureAwait(false);
                 });
 
 
             await Task.Run(() => _userPreferencesService.SaveModPreferencesAsync());
             await Task.Run(() => _modPresetService.CreatePresetAsync(NewPresetNameInput, CreateEmptyPresetInput));
-
-            if (CanAutoSync())
-                await Task.Run(async () =>
-                {
-                    await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
-                    await Task.Delay(1000).ConfigureAwait(false);
-                });
         }
         catch (Exception e)
         {
@@ -338,7 +331,7 @@ public partial class PresetViewModel(
         stackPanel.Children.Add(new TextBlock
         {
             Text =
-                "I suggest creating a preset (or backup) of your mods before randomizing if you have a lot of enabled mods",
+                "I suggest creating a preset (or a backup) of your mods before randomizing if you have a lot of enabled mods",
             TextWrapping = TextWrapping.WrapWholeWords,
             Margin = new Thickness(0, 10, 0, 0)
         });
@@ -414,7 +407,7 @@ public partial class PresetViewModel(
                                 modList.DisableMod(mod.Id);
                             }
 
-                            var randomModIndex = _random.Next(0, skinMods.Count + (allowNoMods ? 1 : 0));
+                            var randomModIndex = Random.Next(0, skinMods.Count + (allowNoMods ? 1 : 0));
 
                             if (randomModIndex == skinMods.Count)
                                 continue;
@@ -433,7 +426,7 @@ public partial class PresetViewModel(
                     }
 
 
-                    var randomIndex = _random.Next(0, mods.Count + (allowNoMods ? 1 : 0));
+                    var randomIndex = Random.Next(0, mods.Count + (allowNoMods ? 1 : 0));
                     if (randomIndex == mods.Count)
                         continue;
 
