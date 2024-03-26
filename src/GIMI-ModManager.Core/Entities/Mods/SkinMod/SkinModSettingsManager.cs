@@ -112,13 +112,14 @@ public class SkinModSettingsManager
         if (Path.GetExtension(fullPath) != ".json")
             throw new InvalidOperationException($"Settings file is not a json file. Path: {fullPath}");
 
-        var json = await File.ReadAllTextAsync(fullPath);
+        var json = await File.ReadAllTextAsync(fullPath).ConfigureAwait(false);
 
         var settings = InternalReadSettings(null, json);
         return settings;
     }
 
-    public async Task<ModSettings> ReadSettingsAsync(bool useCache = false)
+    public async Task<ModSettings> ReadSettingsAsync(bool useCache = false,
+        CancellationToken cancellationToken = default)
     {
         if (!File.Exists(_settingsFilePath))
             throw new ModSettingsNotFoundException($"Settings file not found. Path: {_settingsFilePath}");
@@ -126,9 +127,10 @@ public class SkinModSettingsManager
         if (useCache && _settings is not null)
             return _settings;
 
-        var json = await File.ReadAllTextAsync(_settingsFilePath);
+        var json = await File.ReadAllTextAsync(_settingsFilePath, cancellationToken).ConfigureAwait(false);
 
         var modSettings = InternalReadSettings(_skinMod, json);
+        cancellationToken.ThrowIfCancellationRequested();
         _settings = modSettings;
         return modSettings;
     }
@@ -156,7 +158,8 @@ public class SkinModSettingsManager
     {
         if (modSettings.ImagePath is not null && !SkinModHelpers.IsInModFolder(_skinMod, modSettings.ImagePath))
         {
-            await CopyAndSetModImage(modSettings, modSettings.ImagePath, options?.DeleteOldImage ?? true);
+            await CopyAndSetModImage(modSettings, modSettings.ImagePath, options?.DeleteOldImage ?? true)
+                .ConfigureAwait(false);
         }
 
         if (modSettings.MergedIniPath is not null &&
@@ -169,14 +172,14 @@ public class SkinModSettingsManager
 
         if (modSettings.ImagePath is null)
         {
-            var oldSettings = _settings ?? await ReadSettingsAsync();
+            var oldSettings = _settings ?? await ReadSettingsAsync().ConfigureAwait(false);
             if ((options?.DeleteOldImage ?? true) && IsJasmImageFile(oldSettings.ImagePath))
                 DeleteOldImage(oldSettings.ImagePath);
         }
 
 
         var jsonSkinSettings = modSettings.ToJsonSkinSettings(_skinMod);
-        await SaveSettingsAsync(jsonSkinSettings);
+        await SaveSettingsAsync(jsonSkinSettings).ConfigureAwait(false);
         _settings = modSettings;
     }
 
@@ -190,7 +193,8 @@ public class SkinModSettingsManager
 
     private async Task CopyAndSetModImage(ModSettings modSettings, Uri imagePath, bool deleteOldImage = true)
     {
-        var oldModSettings = _settings ?? await ReadSettingsAsync();
+        // TODO: If you're saving a modified cached modSettings after the mod has been toggled enabled/disabled, imagePath.LocalPath won't exist
+        var oldModSettings = _settings ?? await ReadSettingsAsync().ConfigureAwait(false);
         if (!File.Exists(imagePath.LocalPath))
             throw new FileNotFoundException("Image file not found.", imagePath.LocalPath);
 
@@ -236,11 +240,12 @@ public class SkinModSettingsManager
         return modSettings is not null;
     }
 
-    public async Task<ModSettings?> TryReadSettingsAsync(bool useCache = false)
+    public async Task<ModSettings?> TryReadSettingsAsync(bool useCache = false,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            return await ReadSettingsAsync(useCache).ConfigureAwait(false);
+            return await ReadSettingsAsync(useCache, cancellationToken).ConfigureAwait(false);
         }
         catch (ModSettingsNotFoundException)
         {

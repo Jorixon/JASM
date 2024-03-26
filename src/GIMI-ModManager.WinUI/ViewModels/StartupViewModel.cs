@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.Options;
@@ -24,6 +25,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly IWindowManagerService _windowManagerService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly IGameService _gameService;
+    private readonly ModPresetService _modPresetService;
+    private readonly UserPreferencesService _userPreferencesService;
     private readonly SelectedGameService _selectedGameService;
 
 
@@ -58,7 +61,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
-        SelectedGameService selectedGameService, IGameService gameService)
+        SelectedGameService selectedGameService, IGameService gameService, ModPresetService modPresetService,
+        UserPreferencesService userPreferencesService)
     {
         _navigationService = navigationService;
         _localSettingsService = localSettingsService;
@@ -66,6 +70,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _skinManagerService = skinManagerService;
         _selectedGameService = selectedGameService;
         _gameService = gameService;
+        _modPresetService = modPresetService;
+        _userPreferencesService = userPreferencesService;
 
         PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
 
@@ -104,6 +110,15 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
         await _skinManagerService.InitializeAsync(modManagerOptions.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);
+
+        var tasks = new List<Task>
+        {
+            _userPreferencesService.InitializeAsync(),
+            _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder)
+        };
+
+        await Task.WhenAll(tasks);
+
         await _localSettingsService.SaveSettingAsync(ActivationService.IgnoreNewFolderStructureKey, true);
 
         if (ReorganizeModsOnStartup)

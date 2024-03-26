@@ -25,5 +25,4 @@ public readonly struct LockReleaser : IDisposable
     }
 
     public void Dispose() => _release();
-    public void Release() => _release();
 }

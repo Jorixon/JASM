@@ -13,10 +13,18 @@
     mc:Ignorable="d">
 
 
-    <Grid>
+    <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Click="ButtonBase_OnClick">Show now</Button>
-            <Button Click="ButtonBase_OnClick1">Show later</Button>
+            <Button Click="ButtonBase_OnClickSave">Save Current Preferences</Button>
+            <Button Click="ButtonBase_OnClickApply">Apply Saved Preferences</Button>
         </StackPanel>
-    </Grid>
+
+        <TextBox Text="{x:Bind ViewModel.Title, Mode=TwoWay}" />
+
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{x:Bind ViewModel.CreatePresetCommand}">Create</Button>
+            <Button Command="{x:Bind ViewModel.SavePresetCommand}">Save</Button>
+            <Button Command="{x:Bind ViewModel.ApplyPresetCommand}">Apply</Button>
+        </StackPanel>
+    </StackPanel>
 </Page>

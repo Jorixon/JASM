@@ -59,6 +59,24 @@ public static class ModFolderHelpers
     }
 
     /// <summary>
+    /// Compares two absolute paths, ignoring case and trailing directory separators. Also compares the folder names ignoring the disabled prefix.
+    /// </summary>
+    public static bool AbsModFolderCompare(string absPath, string absOtherPath)
+    {
+        absPath = absPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToLower();
+        absOtherPath = absOtherPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToLower();
+
+        var folderName = new DirectoryInfo(absPath).Name.ToLower();
+        var otherFolderName = new DirectoryInfo(absOtherPath).Name.ToLower();
+
+
+        if (absPath.Replace(folderName, "") != absOtherPath.Replace(otherFolderName, ""))
+            return false;
+
+        return FolderNameEquals(folderName, otherFolderName);
+    }
+
+    /// <summary>
     /// Checks if the folder name has the disabled prefix.
     /// </summary>
     /// <param name="folderName"></param>

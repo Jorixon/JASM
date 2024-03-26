@@ -30,6 +30,8 @@ public sealed class SkinManagerService : ISkinManagerService
 
     private readonly List<ICharacterModList> _characterModLists = new();
 
+    public string ThreeMigotoRootfolder => _threeMigotoFolder?.FullName ?? string.Empty;
+
     public IReadOnlyCollection<ICharacterModList> CharacterModLists
     {
         get
@@ -627,7 +629,7 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder = new DirectoryInfo(activeModsFolderPath);
         _activeModsFolder.Create();
         InitializeFolderStructure();
-        await ScanForModsAsync();
+        await ScanForModsAsync().ConfigureAwait(false);
         IsInitialized = true;
 
 #if DEBUG
@@ -946,6 +948,20 @@ public sealed class SkinManagerService : ISkinManagerService
         return deletedFolders;
     }
 
+    public IList<CharacterSkinEntry> GetAllMods(GetOptions getOptions = GetOptions.All)
+    {
+        // We get them all to avoid locking for too long
+        var allMods = CharacterModLists.SelectMany(x => x.Mods).ToList();
+
+        return getOptions switch
+        {
+            GetOptions.All => allMods,
+            GetOptions.Enabled => allMods.Where(x => x.IsEnabled).ToList(),
+            GetOptions.Disabled => allMods.Where(x => !x.IsEnabled).ToList(),
+            _ => throw new ArgumentOutOfRangeException(nameof(getOptions), getOptions, null)
+        };
+    }
+
     private void OnUserIniChanged(object sender, FileSystemEventArgs e)
     {
         _logger.Debug("d3dx_user.ini was changed");
@@ -954,7 +970,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
     public event EventHandler<UserIniChanged>? UserIniChanged;
 
-    private const string D3DX_USER_INI = "d3dx_user.ini";
+    private static string D3DX_USER_INI = Constants.UserIniFileName;
 
     public async Task<string> GetCurrentSwapVariationAsync(Guid characterSkinEntryId)
     {
@@ -1017,7 +1033,7 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         while (true)
         {
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
             var mods = _characterModLists.SelectMany(x => x.Mods).Select(x => x.Mod);
             var duplicateIds = mods.GroupBy(x => x.Id).Where(x => x.Count() > 1).ToArray();
 

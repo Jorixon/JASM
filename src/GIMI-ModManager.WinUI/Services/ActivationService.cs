@@ -189,6 +189,7 @@ public class ActivationService : IActivationService
         await _updateChecker.InitializeAsync();
         await _modUpdateAvailableChecker.InitializeAsync().ConfigureAwait(false);
         await Task.Run(() => _autoUpdaterService.UpdateAutoUpdater()).ConfigureAwait(false);
+        await Task.Run(() => _elevatorService.Initialize()).ConfigureAwait(false);
     }
 
     const int MinimizedPosition = -32000;

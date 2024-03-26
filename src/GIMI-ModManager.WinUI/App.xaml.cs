@@ -132,6 +132,8 @@ public partial class App : Application
                 services.AddSingleton<ModSettingsService>();
                 services.AddSingleton<KeySwapService>();
                 services.AddSingleton<ILanguageLocalizer, Localizer>();
+                services.AddSingleton<ModPresetService>();
+                services.AddSingleton<UserPreferencesService>();
 
                 services.AddSingleton<GameBananaService>();
                 services.AddTransient<IModUpdateChecker, GameBananaModPageRetriever>();
@@ -160,7 +162,11 @@ public partial class App : Application
                         QueueLimit = 0,
                         TokenLimit = 5,
                         AutoReplenishment = true,
+#if DEBUG
+                        TokensPerPeriod = 1,
+#else
                         TokensPerPeriod = 5,
+#endif
                         ReplenishmentPeriod = TimeSpan.FromSeconds(1)
                     });
 
@@ -210,6 +216,8 @@ public partial class App : Application
                 services.AddTransient<ModsOverviewPage>();
                 services.AddTransient<ModInstallerVM>();
                 services.AddTransient<ModInstallerPage>();
+                services.AddTransient<PresetViewModel>();
+                services.AddTransient<PresetPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

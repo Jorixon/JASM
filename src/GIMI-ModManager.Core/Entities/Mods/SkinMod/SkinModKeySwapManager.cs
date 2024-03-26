@@ -37,7 +37,8 @@ public class SkinModKeySwapManager
         var keySwapBlockStarted = false;
         var currentLine = -1;
         var sectionLine = string.Empty;
-        await foreach (var line in File.ReadLinesAsync(await GetIniPathAsync(), cancellationToken))
+        await foreach (var line in File.ReadLinesAsync(await GetIniPathAsync().ConfigureAwait(false), cancellationToken)
+                           .ConfigureAwait(false))
         {
             currentLine++;
             if (line.Trim().StartsWith(";") || string.IsNullOrWhiteSpace(line))
@@ -109,10 +110,11 @@ public class SkinModKeySwapManager
         var fileLines = new List<string>();
 
         await using var fileStream =
-            new FileStream(await GetIniPathAsync(), FileMode.Open, FileAccess.Read, FileShare.None);
+            new FileStream(await GetIniPathAsync().ConfigureAwait(false), FileMode.Open, FileAccess.Read,
+                FileShare.None);
         using (var reader = new StreamReader(fileStream))
         {
-            while (await reader.ReadLineAsync(cancellationToken) is { } line)
+            while (await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) is { } line)
                 fileLines.Add(line);
         }
 
@@ -219,15 +221,16 @@ public class SkinModKeySwapManager
 
         cancellationToken.ThrowIfCancellationRequested();
         await using var writeStream =
-            new FileStream(await GetIniPathAsync(), FileMode.Truncate, FileAccess.Write, FileShare.None);
+            new FileStream(await GetIniPathAsync().ConfigureAwait(false), FileMode.Truncate, FileAccess.Write,
+                FileShare.None);
 
         await using (var writer = new StreamWriter(writeStream))
         {
             foreach (var line in fileLines)
-                await writer.WriteLineAsync(line);
+                await writer.WriteLineAsync(line).ConfigureAwait(false);
         }
 
-        await ReadKeySwapConfiguration(CancellationToken.None);
+        await ReadKeySwapConfiguration(CancellationToken.None).ConfigureAwait(false);
     }
 
     public OneOf<KeySwapSection[], KeySwapsNotLoaded> GetKeySwaps()
