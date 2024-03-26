@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0](https://github.com/Jorixon/JASM/compare/v2.5.0...v2.6.0) (2024-03-26)
+
+
+### Features
+
+* Mod Presets and Persisting of Mod Preferences ([#160](https://github.com/Jorixon/JASM/issues/160)) ([2b0bc5e](https://github.com/Jorixon/JASM/commit/2b0bc5e930987f290b59a8e708f4fc138fd1138c))
+
+
+### Miscellaneous
+
+* Detect Script.ini files ([78cd6f5](https://github.com/Jorixon/JASM/commit/78cd6f5048762de8fadedd1f536733707ccaae3f))
+
 ## [2.5.0](https://github.com/Jorixon/JASM/compare/v2.4.0...v2.5.0) (2024-03-23)
 
 
