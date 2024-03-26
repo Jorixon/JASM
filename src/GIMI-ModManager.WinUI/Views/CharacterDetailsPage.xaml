@@ -594,7 +594,7 @@
                                                 Command="{x:Bind ViewModel.ModPaneVM.ClearSetModIniFileCommand}"
                                                 Icon="Clear"
                                                 Text="Ignore .ini file for this mod"
-                                                ToolTipService.ToolTip="JASM will not look for merged.ini file and ignore keyswaps for this mod" />
+                                                ToolTipService.ToolTip="JASM will not look for merged.ini/Script.ini file and ignore keyswaps for this mod" />
                                         </MenuFlyout>
                                     </SplitButton.Flyout>
 

@@ -870,7 +870,7 @@ public sealed class SkinManagerService : ISkinManagerService
     {
         foreach (var file in directoryInfo.EnumerateFiles())
         {
-            if (file.Name.Equals("merged.ini", StringComparison.OrdinalIgnoreCase))
+            if (Constants.ScriptIniNames.Any(x => x.Equals(file.Name, StringComparison.OrdinalIgnoreCase)))
                 return true;
 
             if (file.Name.StartsWith("cover", StringComparison.OrdinalIgnoreCase))

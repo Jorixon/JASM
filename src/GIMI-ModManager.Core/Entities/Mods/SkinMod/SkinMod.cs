@@ -5,9 +5,8 @@ namespace GIMI_ModManager.Core.Entities.Mods.SkinMod;
 
 public class SkinMod : Mod, ISkinMod
 {
-    private const string MergeIniName = "merged.ini";
     private string _modIniPath = string.Empty;
-    private readonly string configFileName = Constants.ModConfigFileName;
+    private readonly string _configFileName = Constants.ModConfigFileName;
     private string _configFilePath = string.Empty;
 
     public Guid Id { get; private set; }
@@ -85,8 +84,8 @@ public class SkinMod : Mod, ISkinMod
     private void Refresh()
     {
         _modDirectory.Refresh();
-        _configFilePath = Path.Combine(FullPath, configFileName);
-        _modIniPath = Path.Combine(FullPath, MergeIniName);
+        _configFilePath = Path.Combine(FullPath, _configFileName);
+        _modIniPath = Path.Combine(FullPath, _modIniPath);
     }
 
     public bool ContainsOnlyJasmFiles()
@@ -97,16 +96,13 @@ public class SkinMod : Mod, ISkinMod
 
     private static string? HasMergedInIFile(DirectoryInfo modDirectory)
     {
-        var mergedIniPath = modDirectory.EnumerateFiles(MergeIniName, SearchOption.TopDirectoryOnly)
-            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(MergeIniName, StringComparison.CurrentCultureIgnoreCase))
+        var mergedIniPath = modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
+            .FirstOrDefault(iniFiles =>
+                Constants.ScriptIniNames.Any(iniNames =>
+                    iniNames.Equals(iniFiles.Name, StringComparison.OrdinalIgnoreCase)))
             ?.FullName;
 
-        if (mergedIniPath is not null)
-            return mergedIniPath;
-
-        return modDirectory.EnumerateFiles("*.ini", SearchOption.TopDirectoryOnly)
-            .FirstOrDefault(iniFiles => iniFiles.Name.Equals(MergeIniName, StringComparison.CurrentCultureIgnoreCase))
-            ?.FullName;
+        return mergedIniPath;
     }
 
     public override ISkinMod CopyTo(string absPath)

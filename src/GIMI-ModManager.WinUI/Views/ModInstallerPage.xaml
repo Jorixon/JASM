@@ -298,7 +298,7 @@
                     <TextBlock
                         Padding="8"
                         HorizontalAlignment="Left"
-                        Text="This is usually the folder that contains the 'merged.ini' or '.JASM_ModConfig.json'.&#x0a;JASM will automatically detect the mod folder and the merged.ini file. If you want to manually select the mod folder, you can do so by right clicking the folder in the overview above. "
+                        Text="This is usually the folder that contains the 'merged.ini/Script.ini' or '.JASM_ModConfig.json'.&#x0a;JASM will automatically detect the mod folder and the merged.ini file. If you want to manually select the mod folder, you can do so by right clicking the folder in the overview above. "
                         TextWrapping="WrapWholeWords" />
 
                     <TextBlock
