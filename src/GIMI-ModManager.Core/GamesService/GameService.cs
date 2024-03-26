@@ -120,7 +120,8 @@ public class GameService : IGameService
         if (!File.Exists(gameFilePath))
             return null;
 
-        var jsonGameInfo = JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath));
+        var jsonGameInfo =
+            JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath).ConfigureAwait(false));
 
         if (jsonGameInfo is null)
             throw new InvalidOperationException($"{gameFilePath} file is empty");
@@ -150,7 +151,7 @@ public class GameService : IGameService
                 continue;
             try
             {
-                var json = await File.ReadAllTextAsync(jsonFilePath);
+                var json = await File.ReadAllTextAsync(jsonFilePath).ConfigureAwait(false);
                 var jsonBaseNameables = JsonSerializer.Deserialize<IEnumerable<JsonBaseNameable>>(json,
                     _jsonSerializerOptions);
 
@@ -182,7 +183,7 @@ public class GameService : IGameService
     {
         ArgumentException.ThrowIfNullOrEmpty(newDisplayName, nameof(newDisplayName));
 
-        await _gameSettingsManager.SetDisplayNameOverride(character.InternalName, newDisplayName);
+        await _gameSettingsManager.SetDisplayNameOverride(character.InternalName, newDisplayName).ConfigureAwait(false);
         character.DisplayName = newDisplayName;
     }
 
@@ -193,13 +194,13 @@ public class GameService : IGameService
         if (!File.Exists(newImageUri.LocalPath))
             throw new ArgumentException($"Image file does not exist at {newImageUri.LocalPath}", nameof(newImageUri));
 
-        await _gameSettingsManager.SetImageOverride(character.InternalName, newImageUri);
+        await _gameSettingsManager.SetImageOverride(character.InternalName, newImageUri).ConfigureAwait(false);
         character.ImageUri = newImageUri;
     }
 
     public async Task DisableCharacterAsync(ICharacter character)
     {
-        await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, true);
+        await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, true).ConfigureAwait(false);
         var internalCharacter =
             _characters.FirstOrDefault(x => x.ModdableObject.InternalName == character.InternalName);
 
@@ -211,7 +212,7 @@ public class GameService : IGameService
 
     public async Task EnableCharacterAsync(ICharacter character)
     {
-        await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, false);
+        await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, false).ConfigureAwait(false);
         var internalCharacter =
             _characters.FirstOrDefault(x => x.ModdableObject.InternalName == character.InternalName);
 
@@ -223,7 +224,7 @@ public class GameService : IGameService
 
     public async Task ResetOverrideForCharacterAsync(ICharacter character)
     {
-        await _gameSettingsManager.RemoveOverride(character.InternalName);
+        await _gameSettingsManager.RemoveOverride(character.InternalName).ConfigureAwait(false);
         character.DisplayName = character.DefaultCharacter.DisplayName;
         character.ImageUri = character.DefaultCharacter.ImageUri;
         character.Keys = character.DefaultCharacter.Keys;
@@ -436,7 +437,8 @@ public class GameService : IGameService
         if (!File.Exists(gameFilePath))
             throw new FileNotFoundException($"{gameFileName} File not found at path: {gameFilePath}");
 
-        var jsonGameInfo = JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath));
+        var jsonGameInfo =
+            JsonSerializer.Deserialize<JsonGame>(await File.ReadAllTextAsync(gameFilePath).ConfigureAwait(false));
 
         if (jsonGameInfo is null)
             throw new InvalidOperationException($"{gameFilePath} file is empty");
@@ -453,13 +455,14 @@ public class GameService : IGameService
             throw new FileNotFoundException($"{regionFileName} File not found at path: {regionsFilePath}");
 
         var regions =
-            JsonSerializer.Deserialize<IEnumerable<JsonRegion>>(await File.ReadAllTextAsync(regionsFilePath),
+            JsonSerializer.Deserialize<IEnumerable<JsonRegion>>(
+                await File.ReadAllTextAsync(regionsFilePath).ConfigureAwait(false),
                 _jsonSerializerOptions) ?? throw new InvalidOperationException("Regions file is empty");
 
         Regions = Regions.InitializeRegions(regions);
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(regionFileName, Regions.AllRegions);
+            await MapDisplayNames(regionFileName, Regions.AllRegions).ConfigureAwait(false);
     }
 
     private async Task InitializeCharactersAsync()
@@ -523,7 +526,7 @@ public class GameService : IGameService
         var npcFileName = "npcs.json";
         var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Npcs");
 
-        var jsonNpcs = await SerializeAsync<JsonNpc>(npcFileName);
+        var jsonNpcs = await SerializeAsync<JsonNpc>(npcFileName).ConfigureAwait(false);
 
         foreach (var jsonNpc in jsonNpcs)
         {
@@ -533,7 +536,7 @@ public class GameService : IGameService
         }
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(npcFileName, _npcs.ToEnumerable());
+            await MapDisplayNames(npcFileName, _npcs.ToEnumerable()).ConfigureAwait(false);
 
         if (_npcs.Any())
             _categories.Add(Category.CreateForNpc());
@@ -545,10 +548,11 @@ public class GameService : IGameService
         var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images",
             Path.GetFileNameWithoutExtension(objectFileName));
 
-        var objects = await BaseModdableObjectMapper(objectFileName, imageFolderName, Category.CreateForObjects());
+        var objects = await BaseModdableObjectMapper(objectFileName, imageFolderName, Category.CreateForObjects())
+            .ConfigureAwait(false);
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(objectFileName, objects);
+            await MapDisplayNames(objectFileName, objects).ConfigureAwait(false);
 
         if (objects.Any())
         {
@@ -568,7 +572,7 @@ public class GameService : IGameService
 
         const string weaponFileName = "weapons.json";
         var imageFolderName = Path.Combine(_assetsDirectory.FullName, "Images", "Weapons");
-        var jsonWeapons = await SerializeAsync<JsonWeapon>(weaponFileName);
+        var jsonWeapons = await SerializeAsync<JsonWeapon>(weaponFileName).ConfigureAwait(false);
 
         foreach (var jsonWeapon in jsonWeapons)
         {
@@ -578,7 +582,7 @@ public class GameService : IGameService
         }
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(weaponFileName, _weapons.ToEnumerable());
+            await MapDisplayNames(weaponFileName, _weapons.ToEnumerable()).ConfigureAwait(false);
 
         if (_weapons.Any())
             _categories.Add(Category.CreateForWeapons());
@@ -590,28 +594,28 @@ public class GameService : IGameService
     {
         const string classFileName = "weaponClasses.json";
 
-        var classes = await SerializeAsync<JsonClasses>(classFileName);
+        var classes = await SerializeAsync<JsonClasses>(classFileName).ConfigureAwait(false);
 
         Classes = new Classes("Classes");
 
         Classes.Initialize(classes, _assetsDirectory.FullName);
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(classFileName, Classes.AllClasses);
+            await MapDisplayNames(classFileName, Classes.AllClasses).ConfigureAwait(false);
     }
 
     private async Task InitializeElementsAsync()
     {
         const string elementsFileName = "elements.json";
 
-        var elements = await SerializeAsync<JsonElement>(elementsFileName);
+        var elements = await SerializeAsync<JsonElement>(elementsFileName).ConfigureAwait(false);
 
         Elements = new Elements("Elements");
 
         Elements.Initialize(elements, _assetsDirectory.FullName);
 
         if (LanguageOverrideAvailable())
-            await MapDisplayNames(elementsFileName, Elements.AllElements);
+            await MapDisplayNames(elementsFileName, Elements.AllElements).ConfigureAwait(false);
     }
 
     [MemberNotNullWhen(true, nameof(_languageOverrideDirectory))]
@@ -643,7 +647,8 @@ public class GameService : IGameService
                 return Array.Empty<T>();
         }
 
-        return JsonSerializer.Deserialize<IEnumerable<T>>(await File.ReadAllTextAsync(objFilePath),
+        return JsonSerializer.Deserialize<IEnumerable<T>>(
+            await File.ReadAllTextAsync(objFilePath).ConfigureAwait(false),
             _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
     }
 
@@ -832,17 +837,17 @@ public class GameService : IGameService
         }
 
 
-        await MapDisplayNames("characters.json", _characters.ToEnumerable());
-        await MapDisplayNames("npcs.json", _npcs.ToEnumerable());
-        await MapDisplayNames("elements.json", Elements.AllElements);
-        await MapDisplayNames("weaponClasses.json", Classes.AllClasses);
-        await MapDisplayNames("regions.json", Regions.AllRegions);
+        await MapDisplayNames("characters.json", _characters.ToEnumerable()).ConfigureAwait(false);
+        await MapDisplayNames("npcs.json", _npcs.ToEnumerable()).ConfigureAwait(false);
+        await MapDisplayNames("elements.json", Elements.AllElements).ConfigureAwait(false);
+        await MapDisplayNames("weaponClasses.json", Classes.AllClasses).ConfigureAwait(false);
+        await MapDisplayNames("regions.json", Regions.AllRegions).ConfigureAwait(false);
     }
 
     private async Task<IModdableObject[]> BaseModdableObjectMapper(string jsonFileName, string imageFolder,
         ICategory category)
     {
-        var jsonBaseModdableObjects = await SerializeAsync<JsonBaseModdableObject>(jsonFileName);
+        var jsonBaseModdableObjects = await SerializeAsync<JsonBaseModdableObject>(jsonFileName).ConfigureAwait(false);
 
         var list = new List<IModdableObject>();
 

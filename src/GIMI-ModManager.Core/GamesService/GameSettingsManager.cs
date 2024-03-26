@@ -27,8 +27,10 @@ internal class GameSettingsManager
         }
 
 
-        var rootSettings = JsonConvert.DeserializeObject<GameServiceRoot>(await File.ReadAllTextAsync(_settingsFile)) ??
-                           new GameServiceRoot();
+        var rootSettings =
+            JsonConvert.DeserializeObject<GameServiceRoot>(await File.ReadAllTextAsync(_settingsFile)
+                .ConfigureAwait(false)) ??
+            new GameServiceRoot();
 
         _settings = rootSettings;
         return _settings;
@@ -39,7 +41,7 @@ internal class GameSettingsManager
 
     internal async Task SetDisplayNameOverride(InternalName id, string displayName)
     {
-        var settings = await ReadSettingsAsync();
+        var settings = await ReadSettingsAsync().ConfigureAwait(false);
         if (settings.CharacterOverrides.TryGetValue(id.Id, out var @override))
             @override.DisplayName = displayName;
 
@@ -52,7 +54,7 @@ internal class GameSettingsManager
 
     internal async Task SetImageOverride(InternalName id, Uri image)
     {
-        var settings = await ReadSettingsAsync();
+        var settings = await ReadSettingsAsync().ConfigureAwait(false);
 
         var imageFile = new FileInfo(image.LocalPath);
         var imagePath = imageFile.CopyTo(GetAbsImagePath(id, imageFile)).FullName;
@@ -68,7 +70,7 @@ internal class GameSettingsManager
 
     internal async Task SetIsDisabledOverride(InternalName id, bool isDisabled)
     {
-        var settings = await ReadSettingsAsync();
+        var settings = await ReadSettingsAsync().ConfigureAwait(false);
         if (settings.CharacterOverrides.TryGetValue(id.Id, out var @override))
             @override.IsDisabled = isDisabled;
 
@@ -80,7 +82,7 @@ internal class GameSettingsManager
 
     internal async Task RemoveOverride(InternalName id)
     {
-        var settings = await ReadSettingsAsync();
+        var settings = await ReadSettingsAsync().ConfigureAwait(false);
 
         var characterOverride = settings.CharacterOverrides.FirstOrDefault(kv => id.Equals(kv.Key)).Value;
 
