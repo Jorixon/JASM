@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -75,11 +76,9 @@ public sealed class ModPresetService(
     {
         using var _ = await LockAsync().ConfigureAwait(false);
         name = name.Trim();
-        if (name.IsNullOrEmpty())
-            throw new ArgumentException("Name cannot be null or whitespace", nameof(name));
 
-        if (_presets.Any(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
-            throw new ArgumentException("Preset with the same name already exists", nameof(name));
+        AssertIsValidPresetName(name);
+
 
         var nextIndex = GetNextPresetIndex();
         var preset = new ModPreset(name)
@@ -135,11 +134,7 @@ public sealed class ModPresetService(
         if (oldName.IsNullOrEmpty())
             throw new ArgumentException("Old name cannot be null or whitespace", nameof(oldName));
 
-        if (newName.IsNullOrEmpty())
-            throw new ArgumentException("New name cannot be null or whitespace", nameof(newName));
-
-        if (_presets.Any(p => p.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
-            throw new ArgumentException("Preset with the same name already exists", nameof(newName));
+        AssertIsValidPresetName(newName);
 
         var preset = GetFirstModPreset(oldName);
         preset.Name = newName;
@@ -278,6 +273,9 @@ public sealed class ModPresetService(
 
         var nextIndex = GetNextPresetIndex();
         var newPreset = new ModPreset(preset.Name + " (Copy)") { Index = nextIndex };
+
+        AssertIsValidPresetName(newPreset.Name);
+
         newPreset._mods.AddRange(preset.Mods);
 
         _presets.Add(newPreset);
@@ -350,6 +348,17 @@ public sealed class ModPresetService(
     private ModPreset GetFirstModPreset(string presetName) =>
         _presets.FirstOrDefault(p => p.Name.Equals(presetName, StringComparison.OrdinalIgnoreCase)) ??
         throw new ArgumentException($"Preset with name {presetName} not found", nameof(presetName));
+
+    private bool IsValidPresetName(string name) =>
+        !name.IsNullOrEmpty() && name.IndexOfAny(Path.GetInvalidFileNameChars()) == -1 &&
+        !_presets.Any(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+    private void AssertIsValidPresetName([NotNull] string? name)
+    {
+        if (!IsValidPresetName(name ?? ""))
+            throw new InvalidOperationException(
+                $"The preset name '{name}' cannot be empty and must be unique among preset names");
+    }
 
     // To avoid race conditions, we lock all the preset methods
     // There is no big need for parallelism here, so we just lock the whole class
