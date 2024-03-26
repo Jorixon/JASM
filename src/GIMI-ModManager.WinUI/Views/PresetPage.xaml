@@ -182,7 +182,6 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel>
-
                                     <Grid>
                                         <controls:EditableTextBlock
                                             MinWidth="200"
@@ -193,9 +192,16 @@
                                     </Grid>
 
 
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
                                         <TextBlock Text="Preset Enabled Mods Count:" />
-                                        <TextBlock Margin="4,0" Text="{x:Bind EnabledModsCount, Mode=OneWay}" />
+                                        <TextBlock Text="{x:Bind EnabledModsCount, Mode=OneWay}" />
+
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="Created at:" />
+                                        <TextBlock Text="{x:Bind CreatedAt, Mode=OneWay}" />
+                                        <TextBlock />
                                     </StackPanel>
                                 </StackPanel>
 

@@ -582,10 +582,14 @@ public partial class ModPresetVm : ObservableObject
         {
             Mods.Add(new ModPresetEntryVm(mod));
         }
+
+        CreatedAt = preset.Created;
     }
 
     public string Name { get; }
     public int EnabledModsCount { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 
     public ObservableCollection<ModPresetEntryVm> Mods { get; } = new();
 

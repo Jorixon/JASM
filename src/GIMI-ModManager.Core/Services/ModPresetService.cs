@@ -312,7 +312,8 @@ public sealed class ModPresetService(
 
         foreach (var preset in _presets.ToArray())
         {
-            var jsonPreset = new JsonModPreset { Mods = preset.Mods.ToList(), Index = preset.Index };
+            var jsonPreset = new JsonModPreset
+                { Mods = preset.Mods.ToList(), Index = preset.Index, Created = preset.Created };
             await File.WriteAllTextAsync(GetPresetPath(preset.Name),
                 JsonSerializer.Serialize(jsonPreset, _jsonSerializerOptions)).ConfigureAwait(false);
         }
@@ -395,6 +396,7 @@ public class ModPreset
         Name = name;
         _mods.AddRange(json.Mods);
         Index = json.Index;
+        Created = json.Created;
     }
 
     internal ModPreset(string name)
@@ -406,10 +408,12 @@ public class ModPreset
     internal readonly List<ModPresetEntry> _mods = [];
     public IReadOnlyList<ModPresetEntry> Mods => _mods;
     public int Index { get; internal set; }
+    public DateTime Created { get; internal set; } = DateTime.Now;
 }
 
 internal class JsonModPreset
 {
+    public DateTime Created { get; set; } = DateTime.Now;
     public int Index { get; set; }
     public List<ModPresetEntry> Mods { get; set; } = new();
 }
