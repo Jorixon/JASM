@@ -30,7 +30,7 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
     /// 3Dmigoto should do a refresh (F10) so that it store the new preferences in the d3dx_user.ini
     /// And we save the mod preferences to the mod settings files
     /// </summary>
-    public async Task SaveModPreferencesAsync()
+    public async Task SaveModPreferencesAsync(Guid? modId = null)
     {
         if (!_threeMigotoFolder.Exists)
             return;
@@ -44,7 +44,10 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
 
         var lines = await File.ReadAllLinesAsync(d3dxUserIni.FullName).ConfigureAwait(false);
 
-        var activeMods = _skinManagerService.GetAllMods(GetOptions.Enabled);
+        var activeMods = _skinManagerService.GetAllMods(GetOptions.Enabled).AsEnumerable();
+
+        if (modId is not null && modId != Guid.Empty)
+            activeMods = activeMods.Where(ske => ske.Mod.Id == modId);
 
         foreach (var characterSkinEntry in activeMods)
         {
@@ -66,14 +69,50 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
         }
     }
 
+
+    public async Task Clear3DMigotoModPreferencesAsync(bool resetOnlyEnabledMods)
+    {
+        var getOption = resetOnlyEnabledMods ? GetOptions.Enabled : GetOptions.All;
+
+        var mods = _skinManagerService.GetAllMods(getOption);
+
+        if (!_threeMigotoFolder.Exists)
+            throw new DirectoryNotFoundException($"3DMigoto folder not found at {_threeMigotoFolder.FullName}");
+
+        var d3dxUserIni = new FileInfo(Path.Combine(_threeMigotoFolder.FullName, D3DX_USER_INI));
+        if (!d3dxUserIni.Exists)
+        {
+            _logger.Debug("d3dx_user.ini does not exist in 3DMigoto folder");
+            return;
+        }
+
+        var lines = (await File.ReadAllLinesAsync(d3dxUserIni.FullName).ConfigureAwait(false)).ToList();
+
+        foreach (var characterSkinEntry in mods)
+        {
+            var existingModPref = FindExistingModPref(_activeModsFolder.FullName, lines, characterSkinEntry);
+
+            var reversedList = existingModPref.ToList();
+            reversedList.Reverse();
+            foreach (var pref in reversedList)
+            {
+                lines.RemoveAt(pref.Index);
+            }
+        }
+
+        await File.WriteAllLinesAsync(d3dxUserIni.FullName, lines).ConfigureAwait(false);
+        _logger.Information("3DMigoto mod preferences cleared for {ModTypes}", getOption.ToString());
+    }
+
     /// <summary>
     /// Overrides the mod preferences in the d3dx_user.ini file with the mod settings preferences
     /// </summary>
     /// <returns></returns>
-    public async Task<bool> SetModPreferencesAsync()
+    public async Task<bool> SetModPreferencesAsync(Guid? modId = null)
     {
         if (!_threeMigotoFolder.Exists)
             return false;
+
 
         var d3dxUserIni = new FileInfo(Path.Combine(_threeMigotoFolder.FullName, D3DX_USER_INI));
         if (!d3dxUserIni.Exists)
@@ -97,10 +136,13 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
             .OrderBy(ske => ske.ModList.Character.InternalName.Id)
             .Where(ske => !ske.Mod.Settings.TryGetSettings(out var modSettings) || modSettings.Preferences.Any());
 
+        if (modId is not null && modId != Guid.Empty)
+            activeMods = activeMods.Where(ske => ske.Mod.Id == modId);
+
 
         foreach (var characterSkinEntry in activeMods)
         {
-            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
+            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(false).ConfigureAwait(false);
             if (modSettings is null || !modSettings.Preferences.Any())
                 continue;
 
@@ -121,8 +163,6 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
             }
 
             // Add new ones from mod settings
-            // Insert after the Constants section if no existing mod preferences found
-            // 3Dmigoto seems to sort them alphabetically when adding entries, but it doesn't seem to matter if we add without alphabetical order
 
             var i = existingModPref.FirstOrDefault()?.Index ?? constantSectionIndex + 2;
             foreach (var iniPreference in modSettingsPref)
@@ -131,9 +171,39 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
             }
         }
 
+        var rootModFolderPrefix = CreateModRootPrefix(_activeModsFolder.FullName);
+        var lastModIndex = lines.FindLastIndex(
+            x => x.StartsWith(rootModFolderPrefix, StringComparison.OrdinalIgnoreCase));
+
+        if (lastModIndex != -1)
+        {
+            lines.Sort(constantSectionIndex + 1, lastModIndex - constantSectionIndex,
+                StringComparer.OrdinalIgnoreCase);
+        }
+
+
         await File.WriteAllLinesAsync(d3dxUserIni.FullName, lines).ConfigureAwait(false);
 
         return true;
+    }
+
+
+    public async Task ResetPreferencesAsync(bool resetOnlyEnabledMods)
+    {
+        var getOption = resetOnlyEnabledMods ? GetOptions.Enabled : GetOptions.All;
+        var activeMods = _skinManagerService.GetAllMods(getOption);
+
+
+        await Parallel.ForEachAsync(activeMods, async (characterSkinEntry, ct) =>
+        {
+            var modSettings =
+                await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(false, ct).ConfigureAwait(false);
+            if (modSettings is null)
+                return;
+
+            modSettings.SetPreferences(null);
+            await characterSkinEntry.Mod.Settings.SaveSettingsAsync(modSettings).ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
     private List<IniPreference> FindExistingModPref(string rootModFolderPath, ICollection<string> lines,
@@ -169,19 +239,24 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
     private IniPreference CreateUserIniPreference(string rootModFolderPath, CharacterSkinEntry skinEntry,
         KeyValuePair<string, string>? keyValueTuple = null)
     {
-        var separator = Path.DirectorySeparatorChar;
-        rootModFolderPath = rootModFolderPath.TrimEnd(separator);
-
-
-        // => $\Mods\
-        var rootPath = "$" + separator + rootModFolderPath.Split(separator).Last() +
-                       separator;
+        // => $\mods\
+        var rootPath = CreateModRootPrefix(rootModFolderPath);
 
         return new IniPreference(rootPath,
             skinEntry.ModList.Character.ModCategory.InternalName,
             skinEntry.ModList.Character.InternalName,
             skinEntry.Mod.Name,
             keyValueTuple);
+    }
+
+    private string CreateModRootPrefix(string rootModFolderPath)
+    {
+        var separator = Path.DirectorySeparatorChar;
+        rootModFolderPath = rootModFolderPath.TrimEnd(separator);
+
+        // => $\mods\
+        return "$" + separator + rootModFolderPath.Split(separator).Last() +
+               separator;
     }
 
     internal class IniPreference : IEquatable<IniPreference>

@@ -231,13 +231,15 @@ public sealed class ModPresetService(
 
                 var modEntry = modEntryToMod.First(ske => ske.Value.Id == characterSkinEntry.Id).Key;
 
-
-                var modSettings = await characterSkinEntry.Mod.Settings
-                    .TryReadSettingsAsync(useCache: false)
-                    .ConfigureAwait(false);
+                ModSettings? modSettings;
 
                 try
                 {
+                    modSettings = await characterSkinEntry.Mod.Settings
+                        .TryReadSettingsAsync(useCache: false)
+                        .ConfigureAwait(false);
+
+
                     if (modSettings is null)
                         throw new ModSettingsNotFoundException(
                             $"Could not read mod settings for {characterSkinEntry.Mod.FullPath}");

@@ -65,7 +65,7 @@ public sealed partial class PresetPage : Page
                         "When you create a new preset JASM creates a list of all enabled mods and the preferences stored in them. So when you apply the preset later it will enable only those mods and apply the preferences stored in the preset"),
 
                     CreateTextBlock(
-                        "You can allow JASM to handle 3Dmigoto reloading by starting the Elevator and checking the Auto Sync checkbox. But you can also do it ourself by checking the Show Manual Controls checkbox and saving/loading preferences manually and refreshing 3Dmigoto with the F10 key."),
+                        "You can allow JASM to handle 3Dmigoto reloading by starting the Elevator and checking the Auto Sync checkbox. But you can also do it yourself by checking the Show Manual Controls checkbox and saving/loading preferences manually and refreshing 3Dmigoto with the F10 key."),
 
                     CreateTextBlock(
                         "In this JASM version there is no way to see what mods are in a preset... But if you reallly want to, you can find the preset configuration files in this path: %appdata%\\..\\local\\JASM\\ApplicationData_Genshin \n" +

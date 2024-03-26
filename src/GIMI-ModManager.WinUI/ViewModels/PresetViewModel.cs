@@ -58,12 +58,18 @@ public partial class PresetViewModel(
     private string _newPresetNameInput = string.Empty;
 
     [ObservableProperty] private bool _createEmptyPresetInput;
-    private bool _isNotBusy;
 
     [ObservableProperty] private bool _showManualControls;
 
     [ObservableProperty] private bool _elevatorIsRunning;
-    [ObservableProperty] private bool _autoSync3DMigotoConfig;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(AutoSync3DMigotoConfigIsDisabled))]
+    private bool _autoSync3DMigotoConfig;
+
+    public bool AutoSync3DMigotoConfigIsDisabled => !AutoSync3DMigotoConfig;
+
+    [ObservableProperty] private bool _resetOnlyEnabledMods = true;
+    [ObservableProperty] private bool _alsoReset3DmigotoConfig = true;
 
     private bool CanCreatePreset()
     {
@@ -245,7 +251,8 @@ public partial class PresetViewModel(
         try
         {
             await Task.Run(() => _userPreferencesService.SaveModPreferencesAsync());
-            _notificationManager.ShowNotification("Active preferences saved", "The active preferences have been saved",
+            _notificationManager.ShowNotification("Active preferences saved",
+                $"Preferences stored in {Constants.UserIniFileName} have been saved for enabled mods",
                 TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
@@ -267,7 +274,7 @@ public partial class PresetViewModel(
             await Task.Run(() => _userPreferencesService.SetModPreferencesAsync());
 
             _notificationManager.ShowNotification("Saved preferences applied",
-                "The saved preferences have been applied",
+                $"Mod preferences written to 3DMigoto {Constants.UserIniFileName}",
                 TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
@@ -479,6 +486,33 @@ public partial class PresetViewModel(
         }
 
         IsBusy = false;
+    }
+
+    [RelayCommand]
+    private async Task ResetModPreferences()
+    {
+        using var _ = StartBusy();
+
+        try
+        {
+            await Task.Run(async () =>
+            {
+                await _userPreferencesService.ResetPreferencesAsync(ResetOnlyEnabledMods).ConfigureAwait(false);
+
+                if (AlsoReset3DmigotoConfig)
+                    await _userPreferencesService.Clear3DMigotoModPreferencesAsync(ResetOnlyEnabledMods)
+                        .ConfigureAwait(false);
+
+                _notificationManager.ShowNotification("Mod preferences reset",
+                    $"Mod preferences have been removed{(AlsoReset3DmigotoConfig ? $" and {Constants.UserIniFileName} have been cleared" : "")}",
+                    TimeSpan.FromSeconds(5));
+            });
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to reset mod preferences", e.Message,
+                TimeSpan.FromSeconds(5));
+        }
     }
 
     public void OnNavigatedTo(object parameter)

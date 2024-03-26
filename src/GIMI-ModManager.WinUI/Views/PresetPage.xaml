@@ -32,21 +32,33 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Mod Presets and Mod Preferences" />
+
 
             <Grid Grid.Column="1">
-                <StackPanel Orientation="Horizontal">
-                    <Grid MinWidth="32">
-                        <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
-                    </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="Auto sync not enabled! Remember to manually reload 3Dmigoto config with the F10 key when doing changes"
+                        Visibility="{x:Bind ViewModel.AutoSync3DMigotoConfigIsDisabled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                     <Button Click="ButtonBase_OnClick">
                         <Button.Content>
                             <FontIcon Glyph="&#xE946;" />
                         </Button.Content>
                     </Button>
+                    <Grid MinWidth="32">
+                        <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+                    </Grid>
                 </StackPanel>
 
             </Grid>
+
+            <TextBlock
+                Grid.Column="0"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="Mod Presets and Mod Preferences"
+                TextWrapping="NoWrap" />
         </Grid>
 
 
@@ -256,10 +268,31 @@
             Grid.Row="2"
             Margin="0,0,0,4"
             HorizontalAlignment="Left">
-            <Button
-                Command="{x:Bind ViewModel.RandomizeModsCommand}"
-                Content="Randomize Mods"
-                ToolTipService.ToolTip="Opens a dialog with more info" />
+
+            <StackPanel Orientation="Horizontal" Spacing="32">
+                <Button
+                    Command="{x:Bind ViewModel.RandomizeModsCommand}"
+                    Content="Randomize Mods"
+                    ToolTipService.ToolTip="Opens a dialog with more info" />
+
+                <Button Content="Reset Mod Preferences" ToolTipService.ToolTip="Clear mod preferences stored in mods' .JASM_ModConfig.json">
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBlock Text="Reset persisted mod preferences" />
+                                <CheckBox Content="Reset only for enabled Mods" IsChecked="{x:Bind ViewModel.ResetOnlyEnabledMods, Mode=TwoWay}" />
+                                <CheckBox Content="Also clear preferences in to 3Dmigoto user ini" IsChecked="{x:Bind ViewModel.AlsoReset3DmigotoConfig, Mode=TwoWay}" />
+                                <Button
+                                    HorizontalAlignment="Center"
+                                    Command="{x:Bind ViewModel.ResetModPreferencesCommand}"
+                                    Content="Confirm" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+            </StackPanel>
+
         </Grid>
 
     </Grid>
