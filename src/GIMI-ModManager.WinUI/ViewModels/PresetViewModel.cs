@@ -190,6 +190,9 @@ public partial class PresetViewModel(
                     await ElevatorService.RefreshGenshinMods().ConfigureAwait(false);
                 }
             });
+
+            _notificationManager.ShowNotification("Preset applied", $"Preset '{preset.Name}' has been applied",
+                TimeSpan.FromSeconds(5));
         }
         catch (Exception e)
         {
