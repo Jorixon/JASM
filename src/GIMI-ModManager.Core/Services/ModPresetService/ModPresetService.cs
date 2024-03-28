@@ -86,7 +86,7 @@ public sealed class ModPresetService(
 
         var modEntries = createEmptyPreset
             ? new List<ModPresetEntry>()
-            : await GetActiveModsAsModEntriesAsync().ConfigureAwait(false);
+            : await GetModsAsModEntriesAsync().ConfigureAwait(false);
 
 
         preset.AddMods(modEntries);
@@ -124,14 +124,28 @@ public sealed class ModPresetService(
         await WritePresetsAsync().ConfigureAwait(false);
     }
 
-    public async Task AddModEntryAsync(string presetName, Guid modId, CancellationToken cancellationToken = default)
+    public async Task<ModPresetEntry> AddModEntryAsync(string presetName, Guid modId,
+        CancellationToken cancellationToken = default)
     {
         using var _ = await LockAsync(cancellationToken).ConfigureAwait(false);
 
         var preset = GetFirstModPreset(presetName);
         AssertIsEditable(preset.Name);
 
-        throw new NotImplementedException();
+        var allMods = await GetModsAsModEntriesAsync(true, cancellationToken).ConfigureAwait(false);
+
+        var modEntry = allMods.FirstOrDefault(m => m.ModId == modId);
+        if (modEntry is null)
+            throw new InvalidOperationException("Mod to add to preset not found");
+
+        if (preset.Mods.Any(m => m.ModId == modId))
+            throw new InvalidOperationException("Mod already exists in preset");
+
+        preset.AddMods([modEntry]);
+
+        await WritePresetsAsync().ConfigureAwait(false);
+
+        return modEntry;
     }
 
     public async Task ToggleReadOnlyAsync(string presetName)
@@ -329,10 +343,11 @@ public sealed class ModPresetService(
 
     private int GetNextPresetIndex() => _presets.Count == 0 ? 0 : _presets.Max(p => p.Index) + 1;
 
-    private async Task<IList<ModPresetEntry>> GetActiveModsAsModEntriesAsync(
+    private async Task<IList<ModPresetEntry>> GetModsAsModEntriesAsync(bool includeDisabled = false,
         CancellationToken cancellationToken = default)
     {
-        var enabledMods = _skinManagerService.GetAllMods(GetOptions.Enabled);
+        var options = includeDisabled ? GetOptions.All : GetOptions.Enabled;
+        var enabledMods = _skinManagerService.GetAllMods(options);
 
         var modEntries = new List<ModPresetEntry>();
 

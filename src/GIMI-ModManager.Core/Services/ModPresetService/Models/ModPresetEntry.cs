@@ -55,7 +55,8 @@ public class ModPresetEntry
             CustomName = settings.CustomName,
             FullPath = skinMod.FullPath,
             Preferences = settings.Preferences.Count == 0 ? null : settings.Preferences,
-            SourceUrl = settings.ModUrl
+            SourceUrl = settings.ModUrl,
+            AddedAt = settings.DateAdded
         };
     }
 

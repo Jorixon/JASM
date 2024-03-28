@@ -26,6 +26,7 @@ public class PageService : IPageService
         Configure<ModInstallerVM, ModInstallerPage>();
         Configure<PresetViewModel, PresetPage>();
         Configure<PresetDetailsViewModel, PresetDetailsPage>();
+        Configure<ModSelectorViewModel, ModSelector>();
     }
 
     public Type GetPageType(string key)

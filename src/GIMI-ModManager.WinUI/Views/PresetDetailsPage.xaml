@@ -52,16 +52,21 @@
                 Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                 DefaultLabelPosition="Right"
                 IsOpen="False">
-                <AppBarButton Icon="Add" Label="Add Mod" />
+                <AppBarButton
+                    Command="{x:Bind ViewModel.AddModsToPresetCommand}"
+                    Icon="Add"
+                    Label="Add Mod" />
             </CommandBar>
         </Grid>
 
 
 
-        <GridView
+        <controls:AdaptiveGridView
             Grid.Row="2"
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+            DesiredWidth="400"
             FlowDirection="LeftToRight"
+            ItemHeight="220"
             ItemsSource="{x:Bind ViewModel.ModEntries}"
             SelectionMode="None">
 
@@ -69,8 +74,6 @@
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ModPresetEntryDetailedVm">
                     <Grid
-                        Width="400"
-                        Height="220"
                         Margin="4"
                         Padding="4"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -225,7 +228,7 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
 
-        </GridView>
+        </controls:AdaptiveGridView>
 
     </Grid>
 </Page>

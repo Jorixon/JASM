@@ -9,7 +9,11 @@ using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.Views;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -18,7 +22,9 @@ public sealed partial class PresetDetailsViewModel(
     ModPresetService modPresetService,
     ISkinManagerService skinManagerService,
     ImageHandlerService imageHandlerService,
-    NotificationManager notificationManager)
+    NotificationManager notificationManager,
+    IWindowManagerService windowManagerService,
+    BusyService busyService)
     : ObservableRecipient, INavigationAware
 {
     private readonly ImageHandlerService _imageHandlerService = imageHandlerService;
@@ -26,6 +32,10 @@ public sealed partial class PresetDetailsViewModel(
     private readonly INavigationService _navigationService = navigationService;
     private readonly ModPresetService _modPresetService = modPresetService;
     private readonly NotificationManager _notificationManager = notificationManager;
+    private readonly IWindowManagerService _windowManagerService = windowManagerService;
+    private readonly BusyService _busyService = busyService;
+
+    private const string SelectModsWindowKey = "SelectModsWindow";
 
     private CancellationTokenSource? _cancellationTokenSource;
 
@@ -159,6 +169,75 @@ public sealed partial class PresetDetailsViewModel(
         }
         finally
         {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddModsToPreset()
+    {
+        var mainWindowLock = _busyService.SetMainWindowBusy();
+        SelectionResult? result;
+        try
+        {
+            IsBusy = true;
+
+            var presetModIds = ModEntries.Select(m => m.ModId).ToList();
+            var selectableMods = _skinManagerService
+                .GetAllMods(GetOptions.All)
+                .Where(mod => !presetModIds.Contains(mod.Id))
+                .ToList();
+
+            var options = new InitOptions
+            {
+                SelectableMods = selectableMods.Select(m => m.Id).ToArray(),
+                SelectionMode = ListViewSelectionMode.Single
+            };
+
+            var (modSelector, task) = ModSelector.Create(options);
+
+            var window = new WindowEx()
+            {
+                SystemBackdrop = new MicaBackdrop(),
+                Title = $"Select Mods",
+                Content = modSelector,
+                Width = 1200,
+                Height = 750,
+                MinHeight = 415,
+                MinWidth = 1024
+            };
+
+            modSelector.CloseRequested += (_, _) => { window.Close(); };
+
+            _windowManagerService.CreateWindow(window, SelectModsWindowKey);
+
+            result = await task;
+
+            if (result is null)
+                return;
+
+            var modId = result.ModIds.First();
+
+            var modEntry = await Task.Run(() => _modPresetService.AddModEntryAsync(PresetName, modId));
+
+            var modSettings = await selectableMods.First(m => m.Id == modId).Mod.Settings.TryReadSettingsAsync();
+
+            var modEntryVm = new ModPresetEntryDetailedVm(modEntry,
+                modSettings?.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
+            {
+                NavigateToModCommand = NavigateToModCommand,
+                RemoveModFromPresetCommand = RemoveModFromPresetCommand
+            };
+
+            ModEntries.Insert(0, modEntryVm);
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to add mod to preset", e.Message, null);
+        }
+        finally
+        {
+            mainWindowLock.Dispose();
             IsBusy = false;
         }
     }
