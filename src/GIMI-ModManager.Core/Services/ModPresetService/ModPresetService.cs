@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services.ModPresetService.JsonModels;
+using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using Serilog;
 
-namespace GIMI_ModManager.Core.Services;
+namespace GIMI_ModManager.Core.Services.ModPresetService;
 
 public sealed class ModPresetService(
     ILogger logger,
@@ -22,6 +22,7 @@ public sealed class ModPresetService(
 
     private DirectoryInfo _settingsDirectory = null!;
     private DirectoryInfo _presetDirectory = null!;
+    private const string PresetDirectoryName = "Presets";
 
     private readonly AsyncLock _asyncLock = new();
     private readonly List<ModPreset> _presets = new();
@@ -34,6 +35,9 @@ public sealed class ModPresetService(
 
     private bool _isInitialized;
 
+    public IEnumerable<ModPreset> GetPresets() => _presets;
+
+
     public async Task InitializeAsync(string appDataFolder)
     {
         if (_isInitialized)
@@ -42,7 +46,7 @@ public sealed class ModPresetService(
         _settingsDirectory = new DirectoryInfo(appDataFolder);
         _settingsDirectory.Create();
 
-        _presetDirectory = new DirectoryInfo(Path.Combine(appDataFolder, "Presets"));
+        _presetDirectory = new DirectoryInfo(Path.Combine(appDataFolder, PresetDirectoryName));
         _presetDirectory.Create();
 
 
@@ -55,10 +59,7 @@ public sealed class ModPresetService(
                         .ConfigureAwait(false));
 
                 if (preset is not null)
-                {
-                    var modList = new ModPreset(Path.GetFileNameWithoutExtension(jsonPreset.Name), preset);
-                    _presets.Add(modList);
-                }
+                    _presets.Add(ModPreset.FromJson(Path.GetFileNameWithoutExtension(jsonPreset.Name), preset));
             }
             catch (Exception e)
             {
@@ -70,7 +71,6 @@ public sealed class ModPresetService(
         _isInitialized = true;
     }
 
-    public IEnumerable<ModPreset> GetPresets() => _presets;
 
     public async Task CreatePresetAsync(string name, bool createEmptyPreset = true)
     {
@@ -81,10 +81,7 @@ public sealed class ModPresetService(
 
 
         var nextIndex = GetNextPresetIndex();
-        var preset = new ModPreset(name)
-        {
-            Index = nextIndex
-        };
+        var preset = ModPreset.Create(name, nextIndex);
         _presets.Add(preset);
 
         var modEntries = createEmptyPreset
@@ -92,24 +89,24 @@ public sealed class ModPresetService(
             : await GetActiveModsAsModEntriesAsync().ConfigureAwait(false);
 
 
-        preset._mods.AddRange(modEntries);
+        preset.AddMods(modEntries);
 
         await WritePresetsAsync().ConfigureAwait(false);
     }
 
-    public async Task SaveActiveModsToPresetAsync(string presetName)
-    {
-        using var _ = await LockAsync().ConfigureAwait(false);
+    //public async Task SaveActiveModsToPresetAsync(string presetName)
+    //{
+    //    using var _ = await LockAsync().ConfigureAwait(false);
 
-        var preset = GetFirstModPreset(presetName);
+    //    var preset = GetFirstModPreset(presetName);
 
-        var modEntries = await GetActiveModsAsModEntriesAsync().ConfigureAwait(false);
+    //    var modEntries = await GetActiveModsAsModEntriesAsync().ConfigureAwait(false);
 
-        preset._mods.Clear();
-        preset._mods.AddRange(modEntries);
+    //    preset._mods.Clear();
+    //    preset._mods.AddRange(modEntries);
 
-        await WritePresetsAsync().ConfigureAwait(false);
-    }
+    //    await WritePresetsAsync().ConfigureAwait(false);
+    //}
 
     public async Task DeletePresetAsync(string presetName)
     {
@@ -272,11 +269,11 @@ public sealed class ModPresetService(
         var preset = GetFirstModPreset(presetName);
 
         var nextIndex = GetNextPresetIndex();
-        var newPreset = new ModPreset(preset.Name + " (Copy)") { Index = nextIndex };
+        var newPreset = ModPreset.Create(preset.Name + " (Copy)", nextIndex);
 
         AssertIsValidPresetName(newPreset.Name);
 
-        newPreset._mods.AddRange(preset.Mods);
+        newPreset.AddMods(preset.Mods.Select(m => m.Duplicate()));
 
         _presets.Add(newPreset);
 
@@ -306,14 +303,22 @@ public sealed class ModPresetService(
 
     private async Task WritePresetsAsync()
     {
-        _presetDirectory.EnumerateFiles().ForEach(f => f.Delete());
-
-        foreach (var preset in _presets.ToArray())
+        foreach (var preset in _presets)
         {
-            var jsonPreset = new JsonModPreset
-                { Mods = preset.Mods.ToList(), Index = preset.Index, Created = preset.Created };
-            await File.WriteAllTextAsync(GetPresetPath(preset.Name),
-                JsonSerializer.Serialize(jsonPreset, _jsonSerializerOptions)).ConfigureAwait(false);
+            var presetPath = GetPresetPath(preset.Name);
+            var json = JsonSerializer.Serialize(preset.ToJson(), _jsonSerializerOptions);
+            await File.WriteAllTextAsync(presetPath, json).ConfigureAwait(false);
+        }
+
+
+        foreach (var presetFile in _presetDirectory.EnumerateFiles())
+        {
+            if (_presets.All(p =>
+                    !p.Name.Equals(Path.GetFileNameWithoutExtension(presetFile.Name),
+                        StringComparison.OrdinalIgnoreCase)))
+            {
+                presetFile.Delete();
+            }
         }
     }
 
@@ -345,84 +350,27 @@ public sealed class ModPresetService(
 
     private string GetPresetPath(string name) => Path.Combine(_presetDirectory.FullName, $"{name}.json");
 
+    /// <summary>
+    /// Throws ArgumentException if the preset does not exist
+    /// </summary>
     private ModPreset GetFirstModPreset(string presetName) =>
         _presets.FirstOrDefault(p => p.Name.Equals(presetName, StringComparison.OrdinalIgnoreCase)) ??
         throw new ArgumentException($"Preset with name {presetName} not found", nameof(presetName));
 
-    private bool IsValidPresetName(string name) =>
+    private bool IsValidPresetName([NotNullWhen(true)] string? name) =>
         !name.IsNullOrEmpty() && name.IndexOfAny(Path.GetInvalidFileNameChars()) == -1 &&
         !_presets.Any(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
     private void AssertIsValidPresetName([NotNull] string? name)
     {
-        if (!IsValidPresetName(name ?? ""))
+        if (!IsValidPresetName(name))
             throw new InvalidOperationException(
                 $"The preset name '{name}' cannot be empty and must be unique among preset names");
     }
 
     // To avoid race conditions, we lock all the preset methods
-    // There is no big need for parallelism here, so we just lock the whole class
-    private Task<LockReleaser> LockAsync() => _asyncLock.LockAsync();
+    // There is no big need for parallelism here, so we just lock the whole service
+    private Task<LockReleaser> LockAsync() => _asyncLock.LockAsync(TimeSpan.FromSeconds(2));
 
     public void Dispose() => _asyncLock.Dispose();
-}
-
-public record ModPresetEntry
-{
-    public required Guid ModId { get; init; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? CustomName { get; init; }
-
-    [JsonIgnore]
-    public string Name => ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(new DirectoryInfo(FullPath).Name);
-
-    public required string FullPath { get; init; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public IReadOnlyDictionary<string, string>? Preferences { get; init; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-
-    public bool IsMissing { get; set; }
-
-    public static ModPresetEntry FromSkinMod(ISkinMod skinMod, ModSettings settings)
-    {
-        return new ModPresetEntry
-        {
-            ModId = skinMod.Id,
-            CustomName = settings.CustomName,
-            FullPath = skinMod.FullPath,
-            Preferences = settings.Preferences.Count == 0 ? null : settings.Preferences
-        };
-    }
-}
-
-public class ModPreset
-{
-    internal ModPreset(string name, JsonModPreset json)
-    {
-        Name = name;
-        _mods.AddRange(json.Mods);
-        Index = json.Index;
-        Created = json.Created;
-    }
-
-    internal ModPreset(string name)
-    {
-        Name = name;
-    }
-
-    public string Name { get; internal set; }
-    internal readonly List<ModPresetEntry> _mods = [];
-    public IReadOnlyList<ModPresetEntry> Mods => _mods;
-    public int Index { get; internal set; }
-    public DateTime Created { get; internal set; } = DateTime.Now;
-}
-
-internal class JsonModPreset
-{
-    public DateTime Created { get; set; } = DateTime.Now;
-    public int Index { get; set; }
-    public List<ModPresetEntry> Mods { get; set; } = new();
 }

@@ -5,6 +5,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.Options;

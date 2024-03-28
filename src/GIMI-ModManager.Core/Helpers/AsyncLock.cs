@@ -4,9 +4,11 @@ public sealed class AsyncLock : IDisposable
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public async Task<LockReleaser> LockAsync(int timeout = -1, CancellationToken cancellationToken = default)
+    public async Task<LockReleaser> LockAsync(TimeSpan? timeout = null, CancellationToken cancellationToken = default)
     {
-        await _semaphore.WaitAsync(timeout, cancellationToken).ConfigureAwait(false);
+        var timeoutValue = timeout.HasValue ? (int)Math.Round(timeout.Value.TotalMilliseconds) : -1;
+
+        await _semaphore.WaitAsync(timeoutValue, cancellationToken).ConfigureAwait(false);
         return new LockReleaser(Release);
     }
 

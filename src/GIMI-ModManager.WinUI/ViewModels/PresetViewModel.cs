@@ -7,6 +7,8 @@ using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.ModPresetService;
+using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
