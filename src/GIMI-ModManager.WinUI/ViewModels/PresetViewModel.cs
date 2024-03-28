@@ -31,10 +31,12 @@ public partial class PresetViewModel(
     CharacterSkinService characterSkinService,
     ILogger logger,
     ElevatorService elevatorService,
-    INavigationService navigationService)
+    INavigationService navigationService,
+    BusyService busyService)
     : ObservableRecipient, INavigationAware
 {
     public readonly ElevatorService ElevatorService = elevatorService;
+    private readonly BusyService _busyService = busyService;
     private readonly CharacterSkinService _characterSkinService = characterSkinService;
     private readonly IWindowManagerService _windowManagerService = windowManagerService;
     private readonly ISkinManagerService _skinManagerService = skinManagerService;

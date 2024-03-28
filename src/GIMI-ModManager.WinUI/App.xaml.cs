@@ -124,6 +124,7 @@ public partial class App : Application
                 services.AddSingleton<SelectedGameService>();
 
                 services.AddSingleton<LifeCycleService>();
+                services.AddSingleton<BusyService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
