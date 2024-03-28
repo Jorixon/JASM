@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Models;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
@@ -20,7 +21,7 @@ public sealed partial class ModSelectorViewModel(ISkinManagerService skinManager
 
     [ObservableProperty] private ListViewSelectionMode _selectionMode;
 
-    [ObservableProperty] private ObservableCollection<ModModel> _selectedMods = new();
+    public ObservableCollection<ModModel> SelectedMods { get; } = new();
 
     [ObservableProperty] private string _searchText = string.Empty;
 
@@ -52,7 +53,6 @@ public sealed partial class ModSelectorViewModel(ISkinManagerService skinManager
                 }
             }
 
-
             foreach (var characterSkinEntry in SelectableMods)
             {
                 var modModel = ModModel.FromMod(characterSkinEntry);
@@ -67,12 +67,16 @@ public sealed partial class ModSelectorViewModel(ISkinManagerService skinManager
             }
         }, cancellationToken);
 
-        modModels.ForEach(m => Mods.Add(m));
+        modModels.OrderByDescending(m => m.DateAdded).ForEach(Mods.Add);
         _backendModModels = [..modModels];
+
+        SelectedMods.CollectionChanged += (sender, args) => SelectModsCommand.NotifyCanExecuteChanged();
     }
 
+    private bool CanSelectMods() => SelectedMods.Count > 0;
 
-    [RelayCommand]
+
+    [RelayCommand(CanExecute = nameof(CanSelectMods))]
     private Task SelectMods()
     {
         var selectedMods = SelectedMods.Select(m => m.Id).ToList();

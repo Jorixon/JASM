@@ -56,7 +56,7 @@ public class ModPresetEntry
             FullPath = skinMod.FullPath,
             Preferences = settings.Preferences.Count == 0 ? null : settings.Preferences,
             SourceUrl = settings.ModUrl,
-            AddedAt = settings.DateAdded
+            AddedAt = DateTime.Now
         };
     }
 

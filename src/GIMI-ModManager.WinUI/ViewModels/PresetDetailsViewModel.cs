@@ -49,8 +49,11 @@ public sealed partial class PresetDetailsViewModel(
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetPageTitle))]
     private string _presetName = string.Empty;
 
+    [ObservableProperty] private string _searchText = string.Empty;
+
     public string GetPageTitle => $"Preset Details: {PresetName}";
 
+    private List<ModPresetEntryDetailedVm> _backendModEntries = new();
     public ObservableCollection<ModPresetEntryDetailedVm> ModEntries { get; } = new();
 
 
@@ -88,7 +91,8 @@ public sealed partial class PresetDetailsViewModel(
                         _imageHandlerService.PlaceholderImageUri)
                     {
                         NavigateToModCommand = NavigateToModCommand,
-                        RemoveModFromPresetCommand = RemoveModFromPresetCommand
+                        RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                        ReplaceMissingModCommand = ReplaceMissingModCommand
                     };
 
                     ModEntries.Add(modEntry);
@@ -108,7 +112,8 @@ public sealed partial class PresetDetailsViewModel(
                         modSettings.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
                     {
                         NavigateToModCommand = NavigateToModCommand,
-                        RemoveModFromPresetCommand = RemoveModFromPresetCommand
+                        RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                        ReplaceMissingModCommand = ReplaceMissingModCommand
                     }
                     .WithModdableObject(characterSkinEntry.ModList.Character);
 
@@ -120,6 +125,7 @@ public sealed partial class PresetDetailsViewModel(
                 ModEntries.Add(presetModEntryVm);
             }
 
+            _backendModEntries.AddRange(ModEntries);
             var cts = _cancellationTokenSource;
             _cancellationTokenSource = null;
             cts.Dispose();
@@ -177,43 +183,18 @@ public sealed partial class PresetDetailsViewModel(
     private async Task AddModsToPreset()
     {
         var mainWindowLock = _busyService.SetMainWindowBusy();
-        SelectionResult? result;
         try
         {
             IsBusy = true;
-
             var presetModIds = ModEntries.Select(m => m.ModId).ToList();
             var selectableMods = _skinManagerService
                 .GetAllMods(GetOptions.All)
                 .Where(mod => !presetModIds.Contains(mod.Id))
                 .ToList();
 
-            var options = new InitOptions
-            {
-                SelectableMods = selectableMods.Select(m => m.Id).ToArray(),
-                SelectionMode = ListViewSelectionMode.Single
-            };
+            var result = await CreateModSelectorWindow(selectableMods.Select(m => m.Id));
 
-            var (modSelector, task) = ModSelector.Create(options);
-
-            var window = new WindowEx()
-            {
-                SystemBackdrop = new MicaBackdrop(),
-                Title = $"Select Mods",
-                Content = modSelector,
-                Width = 1200,
-                Height = 750,
-                MinHeight = 415,
-                MinWidth = 1024
-            };
-
-            modSelector.CloseRequested += (_, _) => { window.Close(); };
-
-            _windowManagerService.CreateWindow(window, SelectModsWindowKey);
-
-            result = await task;
-
-            if (result is null)
+            if (result is null || result.ModIds.Count == 0)
                 return;
 
             var modId = result.ModIds.First();
@@ -226,10 +207,16 @@ public sealed partial class PresetDetailsViewModel(
                 modSettings?.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
             {
                 NavigateToModCommand = NavigateToModCommand,
-                RemoveModFromPresetCommand = RemoveModFromPresetCommand
+                RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                ReplaceMissingModCommand = ReplaceMissingModCommand
             };
 
             ModEntries.Insert(0, modEntryVm);
+            _backendModEntries.Insert(0, modEntryVm);
+
+            _notificationManager.ShowNotification("Mod added to preset",
+                $"Added mod '{modEntryVm.Name}' to preset {PresetName}",
+                null);
         }
         catch (Exception e)
         {
@@ -240,6 +227,125 @@ public sealed partial class PresetDetailsViewModel(
             mainWindowLock.Dispose();
             IsBusy = false;
         }
+    }
+
+
+    private bool CanReplaceMissingMod(ModPresetEntryDetailedVm? vm) => vm is not null && vm.IsMissing && IsNotBusy;
+
+    [RelayCommand(CanExecute = nameof(CanReplaceMissingMod))]
+    private async Task ReplaceMissingMod(ModPresetEntryDetailedVm? vm)
+    {
+        if (vm is null || !vm.IsMissing)
+            return;
+
+        var mainWindowLock = _busyService.SetMainWindowBusy();
+        try
+        {
+            IsBusy = true;
+            var presetModIds = ModEntries.Select(m => m.ModId).ToList();
+            var selectableMods = _skinManagerService
+                .GetAllMods(GetOptions.All)
+                .Where(mod => !presetModIds.Contains(mod.Id))
+                .ToList();
+
+            var result = await CreateModSelectorWindow(selectableMods.Select(m => m.Id));
+
+            if (result is null || result.ModIds.Count == 0)
+                return;
+
+            var modId = result.ModIds.First();
+
+            var modEntry = await Task.Run(() => _modPresetService.AddModEntryAsync(PresetName, modId));
+
+            var modSettings = await selectableMods.First(m => m.Id == modId).Mod.Settings.TryReadSettingsAsync();
+
+            var modEntryVm = new ModPresetEntryDetailedVm(modEntry,
+                modSettings?.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
+            {
+                NavigateToModCommand = NavigateToModCommand,
+                RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                ReplaceMissingModCommand = ReplaceMissingModCommand
+            };
+
+            ModEntries.Remove(vm);
+            _backendModEntries.Remove(vm);
+
+
+            ModEntries.Insert(0, modEntryVm);
+            _backendModEntries.Insert(0, modEntryVm);
+
+
+            await Task.Run(() => _modPresetService.DeleteModEntryAsync(PresetName, vm.ModId));
+
+            _notificationManager.ShowNotification("Mod added to preset",
+                $"Added mod '{modEntryVm.Name}' to preset {PresetName}",
+                null);
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to add mod to preset", e.Message, null);
+        }
+        finally
+        {
+            mainWindowLock.Dispose();
+            IsBusy = false;
+        }
+    }
+
+    public void OnTextChanged(string searchText)
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            ModEntries.Clear();
+            _backendModEntries.ForEach(m => ModEntries.Add(m));
+            return;
+        }
+
+        ModEntries.Clear();
+
+        foreach (var modEntry in _backendModEntries)
+        {
+            if (modEntry.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            {
+                ModEntries.Add(modEntry);
+                continue;
+            }
+
+            if (modEntry.CharacterName?.Contains(searchText, StringComparison.OrdinalIgnoreCase) == true)
+            {
+                ModEntries.Add(modEntry);
+                continue;
+            }
+        }
+    }
+
+
+    private async Task<SelectionResult?> CreateModSelectorWindow(IEnumerable<Guid> selectableMods)
+    {
+        var options = new InitOptions
+        {
+            SelectableMods = selectableMods.ToArray(),
+            SelectionMode = ListViewSelectionMode.Single
+        };
+
+        var (modSelector, task) = ModSelector.Create(options);
+
+        var window = new WindowEx()
+        {
+            SystemBackdrop = new MicaBackdrop(),
+            Title = "Select Mods",
+            Content = modSelector,
+            Width = 1200,
+            Height = 750,
+            MinHeight = 415,
+            MinWidth = 1024
+        };
+
+        modSelector.CloseRequested += (_, _) => { window.Close(); };
+
+        _windowManagerService.CreateWindow(window, SelectModsWindowKey);
+
+        return await task.ConfigureAwait(false);
     }
 
     public void OnNavigatedFrom()
@@ -259,7 +365,7 @@ public sealed partial class PresetDetailsViewModel(
     }
 
     private IEnumerable<ModPresetEntry> SortDefaultOrder(IEnumerable<ModPresetEntry> modPresetEntries) =>
-        modPresetEntries.OrderByDescending(m => m.IsMissing).ThenBy(m => m.AddedAt).ThenBy(m => m.CustomName);
+        modPresetEntries.OrderByDescending(m => m.IsMissing).ThenByDescending(m => m.AddedAt).ThenBy(m => m.CustomName);
 }
 
 public record PresetDetailsNavigationParameter(string PresetName);
@@ -301,4 +407,5 @@ public partial class ModPresetEntryDetailedVm : ModPresetEntryVm
 
     public required IRelayCommand NavigateToModCommand;
     public required IAsyncRelayCommand RemoveModFromPresetCommand;
+    public required IAsyncRelayCommand ReplaceMissingModCommand;
 }

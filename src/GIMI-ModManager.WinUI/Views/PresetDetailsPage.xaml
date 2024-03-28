@@ -47,6 +47,10 @@
 
 
         <Grid Grid.Row="1" Padding="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <CommandBar
                 HorizontalAlignment="Left"
                 Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
@@ -57,6 +61,16 @@
                     Icon="Add"
                     Label="Add Mod" />
             </CommandBar>
+
+            <TextBox
+                x:Name="SearchBox"
+                Grid.Column="1"
+                MinWidth="400"
+                MaxHeight="32"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                PlaceholderText="Search Mods..."
+                TextChanged="SearchBox_OnTextChanged" />
         </Grid>
 
 
@@ -74,6 +88,7 @@
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ModPresetEntryDetailedVm">
                     <Grid
+                        MaxWidth="600"
                         Margin="4"
                         Padding="4"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -123,8 +138,6 @@
 
 
 
-
-
                             <DropDownButton
                                 Grid.Column="1"
                                 MaxHeight="32"
@@ -135,7 +148,11 @@
                                 </DropDownButton.Content>
                                 <DropDownButton.Flyout>
                                     <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem Text="Find Replacement Mod" Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ReplaceMissingModCommand}"
+                                            CommandParameter="{Binding Mode=OneWay}"
+                                            Text="Find Replacement Mod"
+                                            Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE8DA;" />
                                             </MenuFlyoutItem.Icon>
@@ -144,7 +161,7 @@
                                             IsEnabled="False"
                                             Text="Read and Save Preferences"
                                             ToolTipService.ToolTip="Read current 3Dmigoto user ini for his mod and save preference for this preset"
-                                            Visibility="{x:Bind IsNotMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            Visibility="Collapsed">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE74E;" />
                                             </MenuFlyoutItem.Icon>
@@ -175,7 +192,7 @@
                             <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8">
                                 <Image Grid.Column="0">
                                     <Image.Source>
-                                        <BitmapImage DecodePixelWidth="200" UriSource="{x:Bind ImageUri}" />
+                                        <BitmapImage DecodePixelWidth="300" UriSource="{x:Bind ImageUri}" />
                                     </Image.Source>
                                 </Image>
                             </Grid>
@@ -185,7 +202,10 @@
                                 Grid.Column="1"
                                 HorizontalAlignment="Center"
                                 Spacing="12">
-                                <TextBlock Text="{x:Bind Name}" TextWrapping="WrapWholeWords" />
+                                <TextBlock
+                                    FontSize="16"
+                                    Text="{x:Bind Name}"
+                                    TextWrapping="WrapWholeWords" />
 
                                 <controls1:LinkButton
                                     HorizontalAlignment="Center"
@@ -194,7 +214,7 @@
                                     Visibility="{x:Bind HasSourceUrl, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                                 <StackPanel>
-                                    <TextBlock HorizontalAlignment="Center" Text="Added At:" />
+                                    <TextBlock HorizontalAlignment="Center" Text="Added To Preset At:" />
                                     <TextBlock HorizontalAlignment="Center" Text="{x:Bind AddedAt}" />
                                 </StackPanel>
 

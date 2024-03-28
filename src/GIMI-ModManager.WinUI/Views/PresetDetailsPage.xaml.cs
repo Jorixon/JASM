@@ -11,4 +11,10 @@ public sealed partial class PresetDetailsPage : Page
     {
         InitializeComponent();
     }
+
+    private void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        ViewModel.SearchText = SearchBox.Text;
+        ViewModel.OnTextChanged(SearchBox.Text);
+    }
 }

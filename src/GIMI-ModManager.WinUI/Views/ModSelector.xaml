@@ -11,7 +11,7 @@
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid Padding="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -32,11 +32,11 @@
                 Text="Select Mods" />
 
             <TextBox
-                TextChanged="TextBox_OnTextChanged"
                 Grid.Column="1"
                 MinWidth="400"
                 HorizontalAlignment="Right"
-                PlaceholderText="Search Mods..." />
+                PlaceholderText="Search Mods..."
+                TextChanged="TextBox_OnTextChanged" />
         </Grid>
 
 
@@ -45,7 +45,7 @@
             x:Name="GridView"
             Grid.Row="1"
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
-            DesiredWidth="300"
+            DesiredWidth="350"
             ItemHeight="150"
             ItemsSource="{x:Bind ViewModel.Mods}"
             SelectionChanged="GridView_OnSelectionChanged"
@@ -65,12 +65,23 @@
                             </Image.Source>
                         </Image>
 
-                        <TextBlock
+                        <Grid
                             Grid.Column="1"
-                            HorizontalAlignment="Center"
+                            Margin="4,0,0,0"
                             VerticalAlignment="Center"
-                            Text="{x:Bind Name}"
-                            TextWrapping="WrapWholeWords" />
+                            RowSpacing="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{x:Bind Name}" TextWrapping="WrapWholeWords" />
+
+                            <StackPanel Grid.Row="1">
+                                <TextBlock Text="Date Added:" />
+                                <TextBlock Text="{x:Bind DateAdded}" />
+                            </StackPanel>
+
+                        </Grid>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
@@ -79,8 +90,12 @@
         </controls:AdaptiveGridView>
 
 
-        <Grid Grid.Row="2">
-            <Button Command="{x:Bind ViewModel.SelectModsCommand}" Content="Select Mods" />
+        <Grid Grid.Row="2" Margin="0,8,0,0">
+            <Button
+                MinWidth="200"
+                Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                Command="{x:Bind ViewModel.SelectModsCommand}"
+                Content="Select Mod" />
         </Grid>
 
     </Grid>
