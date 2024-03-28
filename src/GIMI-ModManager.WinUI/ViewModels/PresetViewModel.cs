@@ -9,6 +9,7 @@ using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.Core.Services.ModPresetService.Models;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
@@ -29,7 +30,8 @@ public partial class PresetViewModel(
     IWindowManagerService windowManagerService,
     CharacterSkinService characterSkinService,
     ILogger logger,
-    ElevatorService elevatorService)
+    ElevatorService elevatorService,
+    INavigationService navigationService)
     : ObservableRecipient, INavigationAware
 {
     public readonly ElevatorService ElevatorService = elevatorService;
@@ -40,6 +42,7 @@ public partial class PresetViewModel(
     private readonly UserPreferencesService _userPreferencesService = userPreferencesService;
     private readonly NotificationManager _notificationManager = notificationManager;
     private readonly IGameService _gameService = gameService;
+    private readonly INavigationService _navigationService = navigationService;
     private readonly ILogger _logger = logger.ForContext<PresetViewModel>();
     private static readonly Random Random = new();
 
@@ -47,7 +50,7 @@ public partial class PresetViewModel(
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CreatePresetCommand), nameof(DeletePresetCommand), nameof(ApplyPresetCommand),
         nameof(DuplicatePresetCommand), nameof(RenamePresetCommand), nameof(ReorderPresetsCommand),
-        nameof(SaveActivePreferencesCommand), nameof(ApplyPresetCommand))]
+        nameof(SaveActivePreferencesCommand), nameof(ApplyPresetCommand), nameof(NavigateToPresetDetailsCommand))]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool _isBusy;
 
@@ -520,6 +523,17 @@ public partial class PresetViewModel(
         }
     }
 
+
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
+    private void NavigateToPresetDetails(ModPresetVm? modPresetVm)
+    {
+        if (modPresetVm is null)
+            return;
+
+        _navigationService.NavigateTo(typeof(PresetDetailsViewModel).FullName!,
+            new PresetDetailsNavigationParameter(modPresetVm.Name));
+    }
+
     public void OnNavigatedTo(object parameter)
     {
         ReloadPresets();
@@ -551,7 +565,8 @@ public partial class PresetViewModel(
                 RenamePresetCommand = RenamePresetCommand,
                 DuplicatePresetCommand = DuplicatePresetCommand,
                 DeletePresetCommand = DeletePresetCommand,
-                ApplyPresetCommand = ApplyPresetCommand
+                ApplyPresetCommand = ApplyPresetCommand,
+                NavigateToPresetDetailsCommand = NavigateToPresetDetailsCommand
             });
         }
     }
@@ -643,6 +658,7 @@ public partial class ModPresetVm : ObservableObject
     public required IAsyncRelayCommand DuplicatePresetCommand { get; init; }
     public required IAsyncRelayCommand DeletePresetCommand { get; init; }
     public required IAsyncRelayCommand ApplyPresetCommand { get; init; }
+    public required IRelayCommand NavigateToPresetDetailsCommand { get; init; }
 
     private const string RenameText = "Rename";
     private const string ConfirmText = "Save New Name";
@@ -652,14 +668,23 @@ public partial class ModPresetEntryVm : ObservableObject
 {
     public ModPresetEntryVm(ModPresetEntry modEntry)
     {
+        ModId = modEntry.ModId;
         Name = modEntry.CustomName ?? modEntry.Name;
         IsMissing = modEntry.IsMissing;
         FullPath = modEntry.FullPath;
+        AddedAt = modEntry.AddedAt ?? DateTime.MinValue;
+        SourceUrl = modEntry.SourceUrl;
     }
+
+    [ObservableProperty] private Guid _modId;
 
     [ObservableProperty] private string _name;
 
     [ObservableProperty] private string _fullPath;
 
     [ObservableProperty] private bool _isMissing;
+
+    [ObservableProperty] private DateTime _addedAt;
+
+    [ObservableProperty] private Uri? _sourceUrl;
 }

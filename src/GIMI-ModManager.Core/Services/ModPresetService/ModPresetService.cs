@@ -108,6 +108,21 @@ public sealed class ModPresetService(
     //    await WritePresetsAsync().ConfigureAwait(false);
     //}
 
+    public async Task DeleteModEntryAsync(string presetName, Guid modId, CancellationToken cancellationToken = default)
+    {
+        using var _ = await LockAsync().ConfigureAwait(false);
+
+        var preset = GetFirstModPreset(presetName);
+
+        var modEntry = preset.Mods.FirstOrDefault(m => m.ModId == modId);
+        if (modEntry != null)
+        {
+            preset.RemoveMods([modEntry]);
+        }
+
+        await WritePresetsAsync().ConfigureAwait(false);
+    }
+
     public async Task DeletePresetAsync(string presetName)
     {
         using var _ = await LockAsync().ConfigureAwait(false);

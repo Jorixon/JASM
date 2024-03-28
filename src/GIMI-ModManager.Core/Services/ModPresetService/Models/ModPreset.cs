@@ -23,6 +23,12 @@ public class ModPreset
         _mods.AddRange(mods);
     }
 
+    internal void RemoveMods(IEnumerable<ModPresetEntry> mods)
+    {
+        foreach (var mod in mods)
+            _mods.Remove(mod);
+    }
+
 
     internal static ModPreset Create(string name, int index)
     {
@@ -48,8 +54,8 @@ public class ModPreset
         return new JsonModPreset
         {
             Index = Index,
-            Mods = _mods.Select(x => x.ToJson()).ToList()
-            Created = Created,
+            Mods = _mods.Select(x => x.ToJson()).ToList(),
+            Created = Created
         };
     }
 }

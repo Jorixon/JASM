@@ -201,8 +201,12 @@
                                     <StackPanel Orientation="Horizontal" Spacing="4">
                                         <TextBlock Text="Created at:" />
                                         <TextBlock Text="{x:Bind CreatedAt, Mode=OneWay}" />
-                                        <TextBlock />
                                     </StackPanel>
+
+                                    <Button
+                                        Command="{x:Bind NavigateToPresetDetailsCommand}"
+                                        CommandParameter="{Binding}"
+                                        Content="Go to Preset Details" />
                                 </StackPanel>
 
                                 <StackPanel

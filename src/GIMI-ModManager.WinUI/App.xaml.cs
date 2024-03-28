@@ -219,6 +219,8 @@ public partial class App : Application
                 services.AddTransient<ModInstallerPage>();
                 services.AddTransient<PresetViewModel>();
                 services.AddTransient<PresetPage>();
+                services.AddTransient<PresetDetailsViewModel>();
+                services.AddTransient<PresetDetailsPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(
