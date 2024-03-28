@@ -170,6 +170,34 @@ public class NavigationService : INavigationService
     public void SetListDataItemForNextConnectedAnimation(object item) =>
         Frame.SetListDataItemForNextConnectedAnimation(item);
 
+    public void ClearBackStack(int amountToClear = -1, bool clearFromMostRecent = true)
+    {
+        if (Frame == null)
+            return;
+
+
+        if (amountToClear == -1)
+        {
+            amountToClear = Frame.BackStack.Count;
+        }
+
+
+        if (clearFromMostRecent)
+        {
+            for (int i = 0; i < amountToClear; i++)
+            {
+                Frame.BackStack.RemoveAt(Frame.BackStack.Count - 1);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < amountToClear; i++)
+            {
+                Frame.BackStack.RemoveAt(0);
+            }
+        }
+    }
+
     // Get BackStackItems from Frame
 
     public ICollection<PageStackEntry> GetBackStackItems() => Frame?.BackStack ?? Array.Empty<PageStackEntry>();

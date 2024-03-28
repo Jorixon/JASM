@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.PresetDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="{x:Bind ViewModel.GetPageTitle, Mode=OneWay}"
+                TextWrapping="NoWrap" />
+
+            <ProgressRing
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+        </Grid>
+
+
+
+
+        <Grid Grid.Row="1" Padding="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <CommandBar
+                HorizontalAlignment="Left"
+                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                DefaultLabelPosition="Right"
+                IsOpen="False">
+                <AppBarButton
+                    Command="{x:Bind ViewModel.AddModsToPresetCommand}"
+                    Icon="Add"
+                    Label="Add Mod" />
+            </CommandBar>
+
+            <TextBox
+                x:Name="SearchBox"
+                Grid.Column="1"
+                MinWidth="400"
+                MaxHeight="32"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                PlaceholderText="Search Mods..."
+                TextChanged="SearchBox_OnTextChanged" />
+        </Grid>
+
+
+
+        <controls:AdaptiveGridView
+            Grid.Row="2"
+            animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+            DesiredWidth="400"
+            FlowDirection="LeftToRight"
+            ItemHeight="220"
+            ItemsSource="{x:Bind ViewModel.ModEntries}"
+            SelectionMode="None">
+
+
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:ModPresetEntryDetailedVm">
+                    <Grid
+                        MaxWidth="600"
+                        Margin="4"
+                        Padding="4"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="4">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+
+                            <Button
+                                MaxHeight="32"
+                                VerticalAlignment="Center"
+                                Command="{x:Bind NavigateToModCommand}"
+                                CommandParameter="{Binding Mode=OneTime}"
+                                CornerRadius="8"
+                                ToolTipService.ToolTip="{x:Bind GoToText}"
+                                Visibility="{x:Bind HasConnectedCharacter, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Button.Content>
+
+                                    <StackPanel
+                                        MaxHeight="32"
+                                        Orientation="Horizontal"
+                                        Spacing="4">
+                                        <Image Width="32" Height="32">
+                                            <Image.Source>
+                                                <BitmapImage DecodePixelWidth="32" UriSource="{x:Bind CharacterUri}" />
+                                            </Image.Source>
+                                        </Image>
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontFamily="{StaticResource GenshinFont}"
+                                            Text="{x:Bind CharacterName}" />
+                                    </StackPanel>
+
+                                </Button.Content>
+                            </Button>
+
+
+
+                            <DropDownButton
+                                Grid.Column="1"
+                                MaxHeight="32"
+                                HorizontalAlignment="Right"
+                                AutomationProperties.Name="More Options">
+                                <DropDownButton.Content>
+                                    <FontIcon Glyph="&#xE712;" />
+                                </DropDownButton.Content>
+                                <DropDownButton.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ReplaceMissingModCommand}"
+                                            CommandParameter="{Binding Mode=OneWay}"
+                                            Text="Find Replacement Mod"
+                                            Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8DA;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem
+                                            IsEnabled="False"
+                                            Text="Read and Save Preferences"
+                                            ToolTipService.ToolTip="Read current 3Dmigoto user ini for his mod and save preference for this preset"
+                                            Visibility="Collapsed">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE74E;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator Height="20" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind RemoveModFromPresetCommand}"
+                                            CommandParameter="{Binding Mode=OneTime}"
+                                            Text="Remove Mod From Preset">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE894;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </DropDownButton.Flyout>
+                            </DropDownButton>
+                        </Grid>
+
+
+
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8">
+                                <Image Grid.Column="0">
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelWidth="300" UriSource="{x:Bind ImageUri}" />
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                Spacing="12">
+                                <TextBlock
+                                    FontSize="16"
+                                    Text="{x:Bind Name}"
+                                    TextWrapping="WrapWholeWords" />
+
+                                <controls1:LinkButton
+                                    HorizontalAlignment="Center"
+                                    Link="{x:Bind SourceUrl}"
+                                    Text="{x:Bind ModUrlName}"
+                                    Visibility="{x:Bind HasSourceUrl, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                <StackPanel>
+                                    <TextBlock HorizontalAlignment="Center" Text="Added To Preset At:" />
+                                    <TextBlock HorizontalAlignment="Center" Text="{x:Bind AddedAt}" />
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Row="2" Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+
+
+                            <StackPanel HorizontalAlignment="Center" Spacing="8">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    Foreground="Red"
+                                    Text="This mod could not be found on disk!" />
+
+                                <StackPanel>
+                                    <TextBlock HorizontalAlignment="Center" Text="Original Path:" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        Text="{x:Bind FullPath}"
+                                        TextWrapping="Wrap"
+                                        ToolTipService.ToolTip="{x:Bind FullPath}" />
+                                </StackPanel>
+                            </StackPanel>
+
+
+                        </Grid>
+
+                    </Grid>
+
+
+                </DataTemplate>
+            </GridView.ItemTemplate>
+
+        </controls:AdaptiveGridView>
+
+    </Grid>
+</Page>

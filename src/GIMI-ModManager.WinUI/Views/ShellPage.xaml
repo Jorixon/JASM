@@ -46,6 +46,7 @@
             ExpandedModeThresholdWidth="1280"
             IsBackButtonVisible="Auto"
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
+            IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
             IsPaneVisible="{x:Bind ViewModel.IsNotFirstTimeStartupPage, Mode=OneWay}"
             IsSettingsVisible="True"
             OpenPaneLength="220"

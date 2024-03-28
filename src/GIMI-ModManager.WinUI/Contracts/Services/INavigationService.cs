@@ -17,6 +17,8 @@ public interface INavigationService
     bool GoBack();
     void SetListDataItemForNextConnectedAnimation(object item);
 
+    void ClearBackStack(int amountToClear = -1, bool clearFromMostRecent = true);
+
     public ICollection<PageStackEntry> GetBackStackItems();
     public IReadOnlyCollection<NavigationHistoryItem> GetNavigationHistory();
 }
