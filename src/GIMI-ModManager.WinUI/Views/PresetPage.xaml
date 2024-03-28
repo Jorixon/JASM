@@ -233,9 +233,14 @@
                                         </DropDownButton.Content>
                                         <DropDownButton.Flyout>
                                             <MenuFlyout Placement="Bottom">
+                                                <ToggleMenuFlyoutItem
+                                                    Command="{x:Bind ToggleReadOnlyCommand}"
+                                                    CommandParameter="{Binding Mode=OneWay}"
+                                                    IsChecked="{x:Bind IsReadOnly, Mode=OneWay}"
+                                                    Text="Read Only" />
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind StartEditingNameCommand}"
-                                                    CommandParameter="{Binding}"
+                                                    CommandParameter="{Binding Mode=OneWay}"
                                                     Text="{x:Bind RenameButtonText, Mode=OneWay}">
                                                     <MenuFlyoutItem.Icon>
                                                         <FontIcon Glyph="&#xE8AC;" />
@@ -243,7 +248,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind DuplicatePresetCommand}"
-                                                    CommandParameter="{Binding}"
+                                                    CommandParameter="{Binding Mode=OneWay}"
                                                     Text="Duplicate">
                                                     <MenuFlyoutItem.Icon>
                                                         <FontIcon Glyph="&#xEA35;" />
@@ -252,7 +257,7 @@
                                                 <MenuFlyoutSeparator Height="10" />
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind DeletePresetCommand}"
-                                                    CommandParameter="{Binding}"
+                                                    CommandParameter="{Binding Mode=OneWay}"
                                                     Text="Delete"
                                                     ToolTipService.ToolTip="Permanently delete this preset">
                                                     <MenuFlyoutItem.Icon>

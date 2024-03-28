@@ -110,9 +110,10 @@ public sealed class ModPresetService(
 
     public async Task DeleteModEntryAsync(string presetName, Guid modId, CancellationToken cancellationToken = default)
     {
-        using var _ = await LockAsync().ConfigureAwait(false);
+        using var _ = await LockAsync(cancellationToken).ConfigureAwait(false);
 
         var preset = GetFirstModPreset(presetName);
+        AssertIsEditable(preset.Name);
 
         var modEntry = preset.Mods.FirstOrDefault(m => m.ModId == modId);
         if (modEntry != null)
@@ -123,11 +124,32 @@ public sealed class ModPresetService(
         await WritePresetsAsync().ConfigureAwait(false);
     }
 
+    public async Task AddModEntryAsync(string presetName, Guid modId, CancellationToken cancellationToken = default)
+    {
+        using var _ = await LockAsync(cancellationToken).ConfigureAwait(false);
+
+        var preset = GetFirstModPreset(presetName);
+        AssertIsEditable(preset.Name);
+
+        throw new NotImplementedException();
+    }
+
+    public async Task ToggleReadOnlyAsync(string presetName)
+    {
+        using var _ = await LockAsync().ConfigureAwait(false);
+
+        var preset = GetFirstModPreset(presetName);
+        preset.IsReadOnly = !preset.IsReadOnly;
+
+        await WritePresetsAsync().ConfigureAwait(false);
+    }
+
     public async Task DeletePresetAsync(string presetName)
     {
         using var _ = await LockAsync().ConfigureAwait(false);
 
         var preset = GetFirstModPreset(presetName);
+        AssertIsEditable(preset.Name);
 
         _presets.Remove(preset);
 
@@ -149,6 +171,9 @@ public sealed class ModPresetService(
         AssertIsValidPresetName(newName);
 
         var preset = GetFirstModPreset(oldName);
+
+        AssertIsEditable(preset.Name);
+
         preset.Name = newName;
 
         await WritePresetsAsync().ConfigureAwait(false);
@@ -170,52 +195,17 @@ public sealed class ModPresetService(
 
         foreach (var modEntry in allModEntries)
         {
-            var mod = allMods.FirstOrDefault(m => m.Id == modEntry.ModId);
+            var mod = ResolveModFromPresetEntry(allMods, modEntry);
 
             if (mod is not null)
             {
                 modEntryToMod.Add(modEntry, mod);
+                modEntry.IsMissing = false;
                 continue;
             }
 
-            mod = allMods.FirstOrDefault(m => m.Mod.FullPath.AbsPathCompare(modEntry.FullPath));
-
-            if (mod is not null)
-            {
-                modEntryToMod.Add(modEntry, mod);
-                continue;
-            }
-
-            mod = allMods.FirstOrDefault(m => ModFolderHelpers.AbsModFolderCompare(m.Mod.FullPath, modEntry.FullPath));
-
-
-            if (mod is not null)
-            {
-                modEntryToMod.Add(modEntry, mod);
-                continue;
-            }
-
-
-            var modByName = allMods
-                .Where(ske => ModFolderHelpers.FolderNameEquals(ske.Mod.Name, modEntry.Name)).ToArray();
-
-            if (modByName.Length == 1)
-            {
-                modEntryToMod.Add(modEntry, modByName[0]);
-                continue;
-            }
-
-            if (modByName.Length == 0)
-            {
-                missingMods.Add(modEntry);
-                modEntry.IsMissing = true;
-                _logger.Warning("Could not find mod with Id {ModEntryId}", modEntry.Name);
-                continue;
-            }
-
-            _logger.Warning(
-                "Could not find mod by Id or fullPath and found at least 2 mods with the same name {ModEntryName}\n\t1. {FirstMod}\n\t2. {SecondMod}",
-                modEntry.Name, modByName[0].Mod.FullPath, modByName[1].Mod.FullPath);
+            _logger.Warning("Could not find mod with Id {ModEntryId} at path {ModEntryPath}", modEntry.Name,
+                modEntry.FullPath);
 
             missingMods.Add(modEntry);
             modEntry.IsMissing = true;
@@ -383,9 +373,94 @@ public sealed class ModPresetService(
                 $"The preset name '{name}' cannot be empty and must be unique among preset names");
     }
 
+    private void AssertIsEditable(string presetName)
+    {
+        var preset = GetFirstModPreset(presetName);
+
+        if (preset.IsReadOnly)
+            throw new InvalidOperationException($"Preset '{presetName}' is set to read-only");
+    }
+
     // To avoid race conditions, we lock all the preset methods
     // There is no big need for parallelism here, so we just lock the whole service
-    private Task<LockReleaser> LockAsync() => _asyncLock.LockAsync(TimeSpan.FromSeconds(2));
+    private Task<LockReleaser> LockAsync(CancellationToken cancellationToken = default) =>
+        _asyncLock.LockAsync(TimeSpan.FromSeconds(2), cancellationToken);
 
     public void Dispose() => _asyncLock.Dispose();
+
+
+    public async Task RefreshAsync(CancellationToken cancellationToken = default)
+    {
+        using var _ = await LockAsync(cancellationToken).ConfigureAwait(false);
+
+        var allMods = _skinManagerService.GetAllMods(GetOptions.All);
+
+        var anyChanges = false;
+
+        foreach (var preset in _presets)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            foreach (var mod in preset.Mods)
+            {
+                var characterSkinEntry = ResolveModFromPresetEntry(allMods, mod);
+
+                if (characterSkinEntry is null)
+                {
+                    _logger.Information("Could not resolve mod preset entry at path {ModFullPath}", mod.FullPath);
+
+                    mod.IsMissing = true;
+                    anyChanges = true;
+                    continue;
+                }
+
+                if (characterSkinEntry.Id != mod.ModId)
+                {
+                    _logger.Information(
+                        "Resolved mod preset entry {ModFullPath} to {CharacterSkinEntryFullPath}, updating preset modId",
+                        mod.FullPath,
+                        characterSkinEntry.Mod.FullPath);
+
+                    mod.ModId = characterSkinEntry.Id;
+                    anyChanges = true;
+                    continue;
+                }
+
+                mod.IsMissing = false;
+            }
+        }
+
+        if (anyChanges)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await WritePresetsAsync().ConfigureAwait(false);
+        }
+    }
+
+    private CharacterSkinEntry? ResolveModFromPresetEntry(ICollection<CharacterSkinEntry> mods,
+        ModPresetEntry modPresetEntry)
+    {
+        var mod = mods.FirstOrDefault(m => m.Id == modPresetEntry.ModId);
+
+        if (mod is not null)
+            return mod;
+
+        mod = mods.FirstOrDefault(m => m.Mod.FullPath.AbsPathCompare(modPresetEntry.FullPath));
+
+        if (mod is not null)
+            return mod;
+
+        mod = mods.FirstOrDefault(m => ModFolderHelpers.AbsModFolderCompare(m.Mod.FullPath, modPresetEntry.FullPath));
+
+        return mod;
+
+
+        // TODO: Try to parse category, character and mod name from the path to be completely sure
+        //var modByName = mods
+        //    .Where(ske => ModFolderHelpers.FolderNameEquals(ske.Mod.Name, modPresetEntry.Name)).ToArray();
+
+        //if (modByName.Length == 1)
+        //    return modByName[0];
+
+        //return null;
+    }
 }

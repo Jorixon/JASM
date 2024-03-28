@@ -8,7 +8,7 @@ namespace GIMI_ModManager.Core.Services.ModPresetService.Models;
 
 public class ModPresetEntry
 {
-    public required Guid ModId { get; init; }
+    public Guid ModId { get; internal set; }
 
     public required string FullPath { get; init; }
 

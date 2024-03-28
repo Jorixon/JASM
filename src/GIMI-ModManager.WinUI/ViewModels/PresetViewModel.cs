@@ -295,6 +295,26 @@ public partial class PresetViewModel(
     }
 
     [RelayCommand(CanExecute = nameof(IsNotBusy))]
+    private async Task ToggleReadOnly(ModPresetVm? modPresetVm)
+    {
+        if (modPresetVm is null)
+            return;
+
+        using var _ = StartBusy();
+
+        try
+        {
+            await Task.Run(() => _modPresetService.ToggleReadOnlyAsync(modPresetVm.Name));
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to toggle read only", e.Message, TimeSpan.FromSeconds(5));
+        }
+
+        ReloadPresets();
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
     private async Task RandomizeMods()
     {
         var dialog = new ContentDialog
@@ -562,6 +582,7 @@ public partial class PresetViewModel(
         {
             Presets.Add(new ModPresetVm(preset)
             {
+                ToggleReadOnlyCommand = ToggleReadOnlyCommand,
                 RenamePresetCommand = RenamePresetCommand,
                 DuplicatePresetCommand = DuplicatePresetCommand,
                 DeletePresetCommand = DeletePresetCommand,
@@ -604,6 +625,7 @@ public partial class ModPresetVm : ObservableObject
         }
 
         CreatedAt = preset.Created;
+        IsReadOnly = preset.IsReadOnly;
     }
 
     public string Name { get; }
@@ -618,6 +640,7 @@ public partial class ModPresetVm : ObservableObject
     [ObservableProperty] private bool _isEditingName;
 
     [ObservableProperty] private string _renameButtonText = RenameText;
+    [ObservableProperty] private bool _isReadOnly;
 
     [RelayCommand]
     private async Task StartEditingName()
@@ -654,6 +677,7 @@ public partial class ModPresetVm : ObservableObject
         }
     }
 
+    public required IAsyncRelayCommand ToggleReadOnlyCommand { get; init; }
     public required IAsyncRelayCommand RenamePresetCommand { get; init; }
     public required IAsyncRelayCommand DuplicatePresetCommand { get; init; }
     public required IAsyncRelayCommand DeletePresetCommand { get; init; }
@@ -682,7 +706,10 @@ public partial class ModPresetEntryVm : ObservableObject
 
     [ObservableProperty] private string _fullPath;
 
-    [ObservableProperty] private bool _isMissing;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotMissing))]
+    private bool _isMissing;
+
+    public bool IsNotMissing => !IsMissing;
 
     [ObservableProperty] private DateTime _addedAt;
 

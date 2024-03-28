@@ -11,6 +11,7 @@ public class ModPreset
             _mods.AddRange(mods);
     }
 
+    public bool IsReadOnly { get; internal set; }
     public string Name { get; internal set; }
     private readonly List<ModPresetEntry> _mods = [];
     public IReadOnlyList<ModPresetEntry> Mods => _mods;
@@ -44,7 +45,8 @@ public class ModPreset
         return new ModPreset(name, json.Mods.Select(ModPresetEntry.FromJson))
         {
             Index = json.Index,
-            Created = json.Created
+            Created = json.Created,
+            IsReadOnly = json.IsReadOnly
         };
     }
 
@@ -55,7 +57,8 @@ public class ModPreset
         {
             Index = Index,
             Mods = _mods.Select(x => x.ToJson()).ToList(),
-            Created = Created
+            Created = Created,
+            IsReadOnly = IsReadOnly
         };
     }
 }

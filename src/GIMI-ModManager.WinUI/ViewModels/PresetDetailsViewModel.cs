@@ -57,6 +57,7 @@ public sealed partial class PresetDetailsViewModel(
         var ct = _cancellationTokenSource.Token;
         try
         {
+            await Task.Run(() => _modPresetService.RefreshAsync(ct), ct);
             var preset = _modPresetService.GetPresets().FirstOrDefault(p => p.Name == navigationParameter.PresetName);
 
             if (preset is null)
@@ -73,8 +74,15 @@ public sealed partial class PresetDetailsViewModel(
 
                 if (characterSkinEntry is null)
                 {
-                    ErrorNavigateBack(); // TODO
-                    return;
+                    var modEntry = new ModPresetEntryDetailedVm(modPresetEntry,
+                        _imageHandlerService.PlaceholderImageUri)
+                    {
+                        NavigateToModCommand = NavigateToModCommand,
+                        RemoveModFromPresetCommand = RemoveModFromPresetCommand
+                    };
+
+                    ModEntries.Add(modEntry);
+                    continue;
                 }
 
                 var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(cancellationToken: ct);
@@ -142,7 +150,8 @@ public sealed partial class PresetDetailsViewModel(
             ModEntries.Remove(modPresetEntryVm);
 
             _notificationManager.ShowNotification("Mod removed from preset",
-                $"Removed mod '{modPresetEntryVm.Name}' from preset {PresetName}", null);
+                $"Removed {(modPresetEntryVm.IsMissing ? "missing" : "")} mod '{modPresetEntryVm.Name}' from preset {PresetName}",
+                null);
         }
         catch (Exception e)
         {
@@ -171,7 +180,7 @@ public sealed partial class PresetDetailsViewModel(
     }
 
     private IEnumerable<ModPresetEntry> SortDefaultOrder(IEnumerable<ModPresetEntry> modPresetEntries) =>
-        modPresetEntries.OrderBy(m => m.IsMissing).ThenBy(m => m.AddedAt).ThenBy(m => m.CustomName);
+        modPresetEntries.OrderByDescending(m => m.IsMissing).ThenBy(m => m.AddedAt).ThenBy(m => m.CustomName);
 }
 
 public record PresetDetailsNavigationParameter(string PresetName);

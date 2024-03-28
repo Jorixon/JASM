@@ -132,10 +132,16 @@
                                 </DropDownButton.Content>
                                 <DropDownButton.Flyout>
                                     <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem Text="Find Replacement Mod" Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE8DA;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                         <MenuFlyoutItem
                                             IsEnabled="False"
                                             Text="Read and Save Preferences"
-                                            ToolTipService.ToolTip="Read current 3Dmigoto user ini for his mod and save preference for this preset">
+                                            ToolTipService.ToolTip="Read current 3Dmigoto user ini for his mod and save preference for this preset"
+                                            Visibility="{x:Bind IsNotMissing, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE74E;" />
                                             </MenuFlyoutItem.Icon>
@@ -171,10 +177,6 @@
                                 </Image>
                             </Grid>
 
-
-
-
-
                             <StackPanel
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -209,7 +211,7 @@
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         Text="{x:Bind FullPath}"
-                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="Wrap"
                                         ToolTipService.ToolTip="{x:Bind FullPath}" />
                                 </StackPanel>
                             </StackPanel>
