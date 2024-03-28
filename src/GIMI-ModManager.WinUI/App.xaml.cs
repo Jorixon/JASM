@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
@@ -123,6 +124,7 @@ public partial class App : Application
                 services.AddSingleton<SelectedGameService>();
 
                 services.AddSingleton<LifeCycleService>();
+                services.AddSingleton<BusyService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
@@ -218,6 +220,10 @@ public partial class App : Application
                 services.AddTransient<ModInstallerPage>();
                 services.AddTransient<PresetViewModel>();
                 services.AddTransient<PresetPage>();
+                services.AddTransient<PresetDetailsViewModel>();
+                services.AddTransient<PresetDetailsPage>();
+                services.AddTransient<ModSelectorViewModel>();
+                services.AddTransient<ModSelector>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

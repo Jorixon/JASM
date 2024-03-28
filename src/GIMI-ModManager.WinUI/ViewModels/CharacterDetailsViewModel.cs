@@ -216,6 +216,10 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         {
             internalName = new InternalName(internalNameString);
         }
+        else if (parameter is InternalName internalName1)
+        {
+            internalName = internalName1;
+        }
 
 
         var moddableObject = _gameService.GetModdableObjectByIdentifier(internalName);

@@ -328,6 +328,12 @@ public sealed class SkinManagerService : ISkinManagerService
     public ISkinMod? GetModById(Guid id) =>
         CharacterModLists.SelectMany(x => x.Mods).FirstOrDefault(x => x.Id == id)?.Mod;
 
+    public CharacterSkinEntry? GetModEntryById(Guid id)
+    {
+        var modEntries = GetAllMods(GetOptions.All);
+        return modEntries.FirstOrDefault(x => x.Id == id);
+    }
+
     public Task EnableModListAsync(ICharacter moddableObject)
     {
         var modList = new CharacterModList(moddableObject, GetCharacterModFolderPath(moddableObject), logger: _logger);

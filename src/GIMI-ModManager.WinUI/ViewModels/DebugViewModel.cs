@@ -2,7 +2,8 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.ModPresetService;
+using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 
@@ -31,13 +32,9 @@ public partial class DebugViewModel(
     }
 
     [RelayCommand]
-    private async Task SavePreset()
+    private Task SavePreset()
     {
-        if (SelectedPreset == null)
-            return;
-
-        await Task.Run(() => _modPresetService.SaveActiveModsToPresetAsync(SelectedPreset.PresetName))
-            .ConfigureAwait(false);
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

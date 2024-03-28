@@ -7,6 +7,9 @@ using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.ModPresetService;
+using GIMI_ModManager.Core.Services.ModPresetService.Models;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
@@ -27,10 +30,13 @@ public partial class PresetViewModel(
     IWindowManagerService windowManagerService,
     CharacterSkinService characterSkinService,
     ILogger logger,
-    ElevatorService elevatorService)
+    ElevatorService elevatorService,
+    INavigationService navigationService,
+    BusyService busyService)
     : ObservableRecipient, INavigationAware
 {
     public readonly ElevatorService ElevatorService = elevatorService;
+    private readonly BusyService _busyService = busyService;
     private readonly CharacterSkinService _characterSkinService = characterSkinService;
     private readonly IWindowManagerService _windowManagerService = windowManagerService;
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
@@ -38,6 +44,7 @@ public partial class PresetViewModel(
     private readonly UserPreferencesService _userPreferencesService = userPreferencesService;
     private readonly NotificationManager _notificationManager = notificationManager;
     private readonly IGameService _gameService = gameService;
+    private readonly INavigationService _navigationService = navigationService;
     private readonly ILogger _logger = logger.ForContext<PresetViewModel>();
     private static readonly Random Random = new();
 
@@ -45,7 +52,7 @@ public partial class PresetViewModel(
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CreatePresetCommand), nameof(DeletePresetCommand), nameof(ApplyPresetCommand),
         nameof(DuplicatePresetCommand), nameof(RenamePresetCommand), nameof(ReorderPresetsCommand),
-        nameof(SaveActivePreferencesCommand), nameof(ApplyPresetCommand))]
+        nameof(SaveActivePreferencesCommand), nameof(ApplyPresetCommand), nameof(NavigateToPresetDetailsCommand))]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool _isBusy;
 
@@ -290,6 +297,26 @@ public partial class PresetViewModel(
     }
 
     [RelayCommand(CanExecute = nameof(IsNotBusy))]
+    private async Task ToggleReadOnly(ModPresetVm? modPresetVm)
+    {
+        if (modPresetVm is null)
+            return;
+
+        using var _ = StartBusy();
+
+        try
+        {
+            await Task.Run(() => _modPresetService.ToggleReadOnlyAsync(modPresetVm.Name));
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to toggle read only", e.Message, TimeSpan.FromSeconds(5));
+        }
+
+        ReloadPresets();
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
     private async Task RandomizeMods()
     {
         var dialog = new ContentDialog
@@ -518,6 +545,17 @@ public partial class PresetViewModel(
         }
     }
 
+
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
+    private void NavigateToPresetDetails(ModPresetVm? modPresetVm)
+    {
+        if (modPresetVm is null)
+            return;
+
+        _navigationService.NavigateTo(typeof(PresetDetailsViewModel).FullName!,
+            new PresetDetailsNavigationParameter(modPresetVm.Name));
+    }
+
     public void OnNavigatedTo(object parameter)
     {
         ReloadPresets();
@@ -546,10 +584,12 @@ public partial class PresetViewModel(
         {
             Presets.Add(new ModPresetVm(preset)
             {
+                ToggleReadOnlyCommand = ToggleReadOnlyCommand,
                 RenamePresetCommand = RenamePresetCommand,
                 DuplicatePresetCommand = DuplicatePresetCommand,
                 DeletePresetCommand = DeletePresetCommand,
-                ApplyPresetCommand = ApplyPresetCommand
+                ApplyPresetCommand = ApplyPresetCommand,
+                NavigateToPresetDetailsCommand = NavigateToPresetDetailsCommand
             });
         }
     }
@@ -587,6 +627,7 @@ public partial class ModPresetVm : ObservableObject
         }
 
         CreatedAt = preset.Created;
+        IsReadOnly = preset.IsReadOnly;
     }
 
     public string Name { get; }
@@ -601,6 +642,7 @@ public partial class ModPresetVm : ObservableObject
     [ObservableProperty] private bool _isEditingName;
 
     [ObservableProperty] private string _renameButtonText = RenameText;
+    [ObservableProperty] private bool _isReadOnly;
 
     [RelayCommand]
     private async Task StartEditingName()
@@ -637,10 +679,12 @@ public partial class ModPresetVm : ObservableObject
         }
     }
 
+    public required IAsyncRelayCommand ToggleReadOnlyCommand { get; init; }
     public required IAsyncRelayCommand RenamePresetCommand { get; init; }
     public required IAsyncRelayCommand DuplicatePresetCommand { get; init; }
     public required IAsyncRelayCommand DeletePresetCommand { get; init; }
     public required IAsyncRelayCommand ApplyPresetCommand { get; init; }
+    public required IRelayCommand NavigateToPresetDetailsCommand { get; init; }
 
     private const string RenameText = "Rename";
     private const string ConfirmText = "Save New Name";
@@ -650,14 +694,26 @@ public partial class ModPresetEntryVm : ObservableObject
 {
     public ModPresetEntryVm(ModPresetEntry modEntry)
     {
+        ModId = modEntry.ModId;
         Name = modEntry.CustomName ?? modEntry.Name;
         IsMissing = modEntry.IsMissing;
         FullPath = modEntry.FullPath;
+        AddedAt = modEntry.AddedAt ?? DateTime.MinValue;
+        SourceUrl = modEntry.SourceUrl;
     }
+
+    [ObservableProperty] private Guid _modId;
 
     [ObservableProperty] private string _name;
 
     [ObservableProperty] private string _fullPath;
 
-    [ObservableProperty] private bool _isMissing;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotMissing))]
+    private bool _isMissing;
+
+    public bool IsNotMissing => !IsMissing;
+
+    [ObservableProperty] private DateTime _addedAt;
+
+    [ObservableProperty] private Uri? _sourceUrl;
 }

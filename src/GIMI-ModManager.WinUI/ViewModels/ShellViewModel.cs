@@ -14,11 +14,13 @@ namespace GIMI_ModManager.WinUI.ViewModels;
 public partial class ShellViewModel : ObservableRecipient
 {
     private readonly UpdateChecker _updateChecker;
+    private readonly BusyService _busyService;
     public readonly SelectedGameService SelectedGameService;
     [ObservableProperty] private bool isBackEnabled;
     [ObservableProperty] private bool isNotFirstTimeStartupPage = true;
     [ObservableProperty] private object? selected;
     [ObservableProperty] private int settingsInfoBadgeOpacity = 0;
+    [ObservableProperty] private bool _isEnabled = true;
     public readonly IGameService GameService;
 
     public INavigationService NavigationService { get; }
@@ -28,7 +30,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService,
         NotificationManager notificationManager, ElevatorService elevatorService, UpdateChecker updateChecker,
-        IGameService gameService, SelectedGameService selectedGameService)
+        IGameService gameService, SelectedGameService selectedGameService, BusyService busyService)
     {
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
@@ -38,7 +40,13 @@ public partial class ShellViewModel : ObservableRecipient
         _updateChecker = updateChecker;
         GameService = gameService;
         SelectedGameService = selectedGameService;
+        _busyService = busyService;
         _updateChecker.NewVersionAvailable += OnNewVersionAvailable;
+        _busyService.BusyChanged += (sender, e) =>
+        {
+            if (e.Key == BusyService.MainWindowKey)
+                App.MainWindow.DispatcherQueue.TryEnqueue(() => IsEnabled = !e.IsBusy);
+        };
     }
 
     public event EventHandler<bool>? ShowSettingsInfoBadge;
