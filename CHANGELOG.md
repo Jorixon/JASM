@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.6.1](https://github.com/Jorixon/JASM/compare/v2.6.0...v2.6.1) (2024-03-29)
+
+
+### Bug Fixes
+
+* Pasting image from clipboard was saved as .bitmap when .png format was available ([81eb571](https://github.com/Jorixon/JASM/commit/81eb571c68a24fd8ffb180974538776b9c3837f7))
+
+
+### Miscellaneous
+
+* Added presets overview ([#162](https://github.com/Jorixon/JASM/issues/162)) ([442a164](https://github.com/Jorixon/JASM/commit/442a16470478e35bcf1cff999cfed41a5d31a39b))
+* Possible set preset as Read Only ([442a164](https://github.com/Jorixon/JASM/commit/442a16470478e35bcf1cff999cfed41a5d31a39b))
+* Possible to manually retrieve/refresh mod info when installing a mod ([668883c](https://github.com/Jorixon/JASM/commit/668883c607847c45125c1529253d2c33e1f4e9b6))
+
 ## [2.6.0](https://github.com/Jorixon/JASM/compare/v2.5.0...v2.6.0) (2024-03-26)
 
 
