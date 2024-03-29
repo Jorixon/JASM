@@ -198,6 +198,24 @@
                     ImageUri="{x:Bind ViewModel.ModPreviewImagePath, Mode=OneWay}"
                     IsContextMenuEnabled="True"
                     PasteButtonCommand="{x:Bind ViewModel.PasteModImageCommand}" />
+
+                <Button
+                    Margin="0,0,0,4"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind ViewModel.ReRetrieveModInfoCommand}"
+                    ToolTipService.ToolTip="Retrieve mod info from the mod page">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE72C;" />
+                    </Button.Content>
+                </Button>
+
+                <ProgressRing
+                    Margin="0,0,0,4"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    IsActive="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}" />
+
                 <TextBox
                     Grid.Row="1"
                     Header="Mod page url"

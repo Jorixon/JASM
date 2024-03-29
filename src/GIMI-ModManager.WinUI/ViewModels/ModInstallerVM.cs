@@ -54,7 +54,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     public event EventHandler? CloseRequested;
 
     [ObservableProperty] private string _modCharacterName = string.Empty;
-    [ObservableProperty] private bool _isRetrievingModInfo;
+
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ReRetrieveModInfoCommand))]
+    private bool _isRetrievingModInfo;
+
     [ObservableProperty] private FileSystemItem? _lastSelectedShaderFixesFolder;
 
 
@@ -71,7 +74,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private Uri _modPreviewImagePath = App.GetService<ImageHandlerService>().PlaceholderImageUri;
     [ObservableProperty] private string _customName = string.Empty;
-    [ObservableProperty] private string _modUrl = string.Empty;
+
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ReRetrieveModInfoCommand))]
+    private string _modUrl = string.Empty;
+
     [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
 
@@ -175,6 +181,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     {
         if (e.PropertyName == nameof(ModUrl))
         {
+            if (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty())
+                return;
             await GetModInfo(ModUrl);
         }
         else if (e.PropertyName == nameof(OverwriteExistingMod))
@@ -572,11 +580,27 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         }
     }
 
+
+    private bool _canRetrieveModInfo()
+    {
+        return !IsRetrievingModInfo && !ModUrl.IsNullOrEmpty() &&
+               Uri.TryCreate(ModUrl, UriKind.Absolute, out var modPageUrl) &&
+               (modPageUrl.Scheme == Uri.UriSchemeHttps &&
+                modPageUrl.Host.Equals("gamebanana.com", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [RelayCommand(CanExecute = nameof(_canRetrieveModInfo))]
+    private async Task ReRetrieveModInfo()
+    {
+        await GetModInfo(ModUrl, overrideCurrent: true).ConfigureAwait(false);
+    }
+
+
     private static readonly Dictionary<Uri, ModPageDataResult> _modPageDataCache = new();
 
-    private async Task GetModInfo(string url)
+    private async Task GetModInfo(string url, bool overrideCurrent = false)
     {
-        if (url.IsNullOrEmpty() || IsRetrievingModInfo || (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty()))
+        if (url.IsNullOrEmpty() || IsRetrievingModInfo)
             return;
 
         var isValidUrl = Uri.TryCreate(url, UriKind.Absolute, out var modPageUrl) &&
@@ -597,13 +621,13 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                 _modPageDataCache.Add(modPageUrl, modInfo);
             }
 
-            if (CustomName.IsNullOrEmpty() && !modInfo.ModName.IsNullOrEmpty())
+            if ((overrideCurrent || CustomName.IsNullOrEmpty()) && !modInfo.ModName.IsNullOrEmpty())
                 CustomName = modInfo.ModName;
 
-            if (Author.IsNullOrEmpty() && !modInfo.AuthorName.IsNullOrEmpty())
+            if ((overrideCurrent || Author.IsNullOrEmpty()) && !modInfo.AuthorName.IsNullOrEmpty())
                 Author = modInfo.AuthorName;
 
-            if (ModPreviewImagePath == _placeholderImageUri)
+            if (ModPreviewImagePath == _placeholderImageUri || overrideCurrent)
             {
                 var newImageUrl = modInfo.PreviewImages?.FirstOrDefault();
 
