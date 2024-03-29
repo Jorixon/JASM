@@ -229,9 +229,9 @@ public partial class ModPaneVM : ObservableRecipient
 
         var tmpFile = Path.Combine(tmpDir, $"CLIPBOARD_PASTE_{Guid.NewGuid():N}");
 
-        var fileExtension = formats.FirstOrDefault(format =>
-            _supportedImageExtensions.Append("bitmap").Any(supportedFormat =>
-                supportedFormat.Trim('.').Equals(format, StringComparison.OrdinalIgnoreCase)));
+        var fileExtension = _supportedImageExtensions.Append("bitmap").FirstOrDefault(supportedFormats =>
+            formats.Any(format =>
+                format.Trim('.').Equals(supportedFormats.Trim('.'), StringComparison.OrdinalIgnoreCase)));
 
         if (fileExtension is null)
         {
@@ -241,7 +241,7 @@ public partial class ModPaneVM : ObservableRecipient
             return;
         }
 
-        tmpFile += "." + fileExtension;
+        tmpFile += fileExtension;
 
 
         await Task.Run(async () =>
