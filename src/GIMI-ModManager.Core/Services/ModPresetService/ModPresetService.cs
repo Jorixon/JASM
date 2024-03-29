@@ -148,6 +148,35 @@ public sealed class ModPresetService(
         return modEntry;
     }
 
+    public async Task<ModPresetEntry> UpdateModEntry(string presetName, Guid modId)
+    {
+        using var _ = await LockAsync().ConfigureAwait(false);
+
+        var preset = GetFirstModPreset(presetName);
+        AssertIsEditable(preset.Name);
+
+        var existingModEntry = preset.Mods.FirstOrDefault(m => m.ModId == modId)
+                               ?? throw new InvalidOperationException("Mod to update in preset not found");
+
+        var mod = _skinManagerService.GetModById(modId) ??
+                  throw new InvalidOperationException("Mod to update in preset not found");
+
+        var modSettings = await mod.Settings.TryReadSettingsAsync(useCache: false).ConfigureAwait(false) ??
+                          throw new ModSettingsNotFoundException($"Could not read mod settings for {mod.FullPath}");
+
+
+        var updatedModEntry = ModPresetEntry.FromSkinMod(mod, modSettings);
+        updatedModEntry.AddedAt = existingModEntry.AddedAt;
+
+        preset.RemoveMods([existingModEntry]);
+        preset.AddMods([updatedModEntry]);
+
+
+        await WritePresetsAsync().ConfigureAwait(false);
+
+        return updatedModEntry;
+    }
+
     public async Task ToggleReadOnlyAsync(string presetName)
     {
         using var _ = await LockAsync().ConfigureAwait(false);

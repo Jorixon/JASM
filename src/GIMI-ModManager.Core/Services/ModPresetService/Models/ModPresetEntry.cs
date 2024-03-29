@@ -26,7 +26,7 @@ public class ModPresetEntry
 
     public IReadOnlyDictionary<string, string>? Preferences { get; init; }
 
-    public DateTime? AddedAt { get; init; }
+    public DateTime? AddedAt { get; internal set; }
 
 
     private ModPresetEntry()

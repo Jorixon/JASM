@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -24,7 +25,9 @@ public sealed partial class PresetDetailsViewModel(
     ImageHandlerService imageHandlerService,
     NotificationManager notificationManager,
     IWindowManagerService windowManagerService,
-    BusyService busyService)
+    BusyService busyService,
+    ElevatorService elevatorService,
+    UserPreferencesService userPreferencesService)
     : ObservableRecipient, INavigationAware
 {
     private readonly ImageHandlerService _imageHandlerService = imageHandlerService;
@@ -34,6 +37,8 @@ public sealed partial class PresetDetailsViewModel(
     private readonly NotificationManager _notificationManager = notificationManager;
     private readonly IWindowManagerService _windowManagerService = windowManagerService;
     private readonly BusyService _busyService = busyService;
+    private readonly ElevatorService _elevatorService = elevatorService;
+    private readonly UserPreferencesService _userPreferencesService = userPreferencesService;
 
     private const string SelectModsWindowKey = "SelectModsWindow";
 
@@ -41,7 +46,8 @@ public sealed partial class PresetDetailsViewModel(
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    [NotifyCanExecuteChangedFor(nameof(RemoveModFromPresetCommand), nameof(NavigateToModCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RemoveModFromPresetCommand), nameof(NavigateToModCommand),
+        nameof(AddModsToPresetCommand), nameof(ReadAndSavePreferencesCommand))]
     private bool _isBusy;
 
     public bool IsNotBusy => !IsBusy;
@@ -51,11 +57,24 @@ public sealed partial class PresetDetailsViewModel(
 
     [ObservableProperty] private string _searchText = string.Empty;
 
-    public string GetPageTitle => $"Preset Details: {PresetName}";
+    public string GetPageTitle => GetPageTiltFunc();
 
     private List<ModPresetEntryDetailedVm> _backendModEntries = new();
     public ObservableCollection<ModPresetEntryDetailedVm> ModEntries { get; } = new();
 
+
+    private string GetPageTiltFunc()
+    {
+        var preset = _modPresetService.GetPresets().FirstOrDefault(p => p.Name == PresetName);
+
+        var modCountText = $"{preset?.Mods.Count ?? 0} mods";
+
+        var isReadOnly = preset?.IsReadOnly ?? false;
+
+        var readOnlyText = isReadOnly ? " (Read-Only)" : string.Empty;
+
+        return $"Preset Details: {PresetName} ({modCountText}){readOnlyText}";
+    }
 
     public async void OnNavigatedTo(object parameter)
     {
@@ -92,7 +111,8 @@ public sealed partial class PresetDetailsViewModel(
                     {
                         NavigateToModCommand = NavigateToModCommand,
                         RemoveModFromPresetCommand = RemoveModFromPresetCommand,
-                        ReplaceMissingModCommand = ReplaceMissingModCommand
+                        ReplaceMissingModCommand = ReplaceMissingModCommand,
+                        ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
                     };
 
                     ModEntries.Add(modEntry);
@@ -113,7 +133,8 @@ public sealed partial class PresetDetailsViewModel(
                     {
                         NavigateToModCommand = NavigateToModCommand,
                         RemoveModFromPresetCommand = RemoveModFromPresetCommand,
-                        ReplaceMissingModCommand = ReplaceMissingModCommand
+                        ReplaceMissingModCommand = ReplaceMissingModCommand,
+                        ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
                     }
                     .WithModdableObject(characterSkinEntry.ModList.Character);
 
@@ -179,7 +200,7 @@ public sealed partial class PresetDetailsViewModel(
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
     private async Task AddModsToPreset()
     {
         var mainWindowLock = _busyService.SetMainWindowBusy();
@@ -208,7 +229,8 @@ public sealed partial class PresetDetailsViewModel(
             {
                 NavigateToModCommand = NavigateToModCommand,
                 RemoveModFromPresetCommand = RemoveModFromPresetCommand,
-                ReplaceMissingModCommand = ReplaceMissingModCommand
+                ReplaceMissingModCommand = ReplaceMissingModCommand,
+                ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
             };
 
             ModEntries.Insert(0, modEntryVm);
@@ -264,7 +286,8 @@ public sealed partial class PresetDetailsViewModel(
             {
                 NavigateToModCommand = NavigateToModCommand,
                 RemoveModFromPresetCommand = RemoveModFromPresetCommand,
-                ReplaceMissingModCommand = ReplaceMissingModCommand
+                ReplaceMissingModCommand = ReplaceMissingModCommand,
+                ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
             };
 
             ModEntries.Remove(vm);
@@ -288,6 +311,53 @@ public sealed partial class PresetDetailsViewModel(
         finally
         {
             mainWindowLock.Dispose();
+            IsBusy = false;
+        }
+    }
+
+    private bool CanReadAndSavePreferences(ModPresetEntryDetailedVm? vm) =>
+        vm is not null && IsNotBusy && vm.IsNotMissing;
+
+    [RelayCommand(CanExecute = nameof(CanReadAndSavePreferences))]
+    private async Task ReadAndSavePreferences(ModPresetEntryDetailedVm? presetEntryDetailedVm)
+    {
+        if (presetEntryDetailedVm is null)
+            return;
+
+        IsBusy = true;
+
+        try
+        {
+            var updatedModEntry = await Task.Run(async () =>
+            {
+                if (_elevatorService.ElevatorStatus == ElevatorStatus.Running)
+                    await _elevatorService.RefreshAndWaitForUserIniChangesAsync().ConfigureAwait(false);
+
+                await _userPreferencesService.SaveModPreferencesAsync(presetEntryDetailedVm.ModId)
+                    .ConfigureAwait(false);
+
+                var modEntry = await _modPresetService.UpdateModEntry(PresetName, presetEntryDetailedVm.ModId)
+                    .ConfigureAwait(false);
+
+                return await CreateModEntryVm(modEntry).ConfigureAwait(false);
+            });
+
+            var index = ModEntries.IndexOf(presetEntryDetailedVm);
+            ModEntries[index] = updatedModEntry;
+
+            var backendIndex = _backendModEntries.IndexOf(presetEntryDetailedVm);
+            _backendModEntries[backendIndex] = updatedModEntry;
+
+
+            _notificationManager.ShowNotification("Preferences saved for mod",
+                $"Preferences saved successfully for mod {presetEntryDetailedVm.Name}", null);
+        }
+        catch (Exception e)
+        {
+            _notificationManager.ShowNotification("Failed to save mod preferences", e.Message, null);
+        }
+        finally
+        {
             IsBusy = false;
         }
     }
@@ -364,6 +434,45 @@ public sealed partial class PresetDetailsViewModel(
         });
     }
 
+    private async Task<ModPresetEntryDetailedVm> CreateModEntryVm(ModPresetEntry modPresetEntry,
+        CancellationToken cancellationToken = default)
+    {
+        var characterSkinEntry = _skinManagerService.GetModEntryById(modPresetEntry.ModId);
+
+        if (characterSkinEntry is null)
+        {
+            return new ModPresetEntryDetailedVm(modPresetEntry,
+                _imageHandlerService.PlaceholderImageUri)
+            {
+                NavigateToModCommand = NavigateToModCommand,
+                RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                ReplaceMissingModCommand = ReplaceMissingModCommand,
+                ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
+            };
+        }
+
+        var modSettings =
+            await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(cancellationToken: cancellationToken);
+
+
+        var presetModEntryVm = new ModPresetEntryDetailedVm(modPresetEntry,
+                modSettings?.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
+            {
+                NavigateToModCommand = NavigateToModCommand,
+                RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                ReplaceMissingModCommand = ReplaceMissingModCommand,
+                ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
+            }
+            .WithModdableObject(characterSkinEntry.ModList.Character);
+
+        if (modSettings?.ModUrl is not null && presetModEntryVm.SourceUrl is null)
+        {
+            presetModEntryVm.SourceUrl = modSettings.ModUrl;
+        }
+
+        return presetModEntryVm;
+    }
+
     private IEnumerable<ModPresetEntry> SortDefaultOrder(IEnumerable<ModPresetEntry> modPresetEntries) =>
         modPresetEntries.OrderByDescending(m => m.IsMissing).ThenByDescending(m => m.AddedAt).ThenBy(m => m.CustomName);
 }
@@ -408,4 +517,5 @@ public partial class ModPresetEntryDetailedVm : ModPresetEntryVm
     public required IRelayCommand NavigateToModCommand;
     public required IAsyncRelayCommand RemoveModFromPresetCommand;
     public required IAsyncRelayCommand ReplaceMissingModCommand;
+    public required IAsyncRelayCommand ReadAndSavePreferencesCommand;
 }

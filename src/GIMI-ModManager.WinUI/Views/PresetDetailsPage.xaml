@@ -158,10 +158,11 @@
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem
-                                            IsEnabled="False"
+                                            Command="{x:Bind ReadAndSavePreferencesCommand}"
+                                            CommandParameter="{Binding Mode=OneWay}"
                                             Text="Read and Save Preferences"
                                             ToolTipService.ToolTip="Read current 3Dmigoto user ini for his mod and save preference for this preset"
-                                            Visibility="Collapsed">
+                                            Visibility="{x:Bind IsNotMissing, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE74E;" />
                                             </MenuFlyoutItem.Icon>
