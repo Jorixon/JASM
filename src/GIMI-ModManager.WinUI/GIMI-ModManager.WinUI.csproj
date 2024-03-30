@@ -490,8 +490,13 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
 		<Content Remove="Assets\Games\Honkai\weapons.json" />
+		<Content Remove="Assets\Icon_Inventory_Weapons.webp" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
+
+		<Content Remove="Assets\NPC_Icon.png" />
+
+		<Content Remove="Assets\Weapon_Icon.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\easterEgg.mp3" />
@@ -563,6 +568,9 @@
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Weapon_Icon.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\ModPanePlaceholder.webp">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -646,6 +654,9 @@
 		<Content Update="Assets\Fonts\zh-cn2.ttf">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<None Update="Assets\Icon_Inventory_Weapons.webp">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Assets\Games\Genshin\Images\Npcs\Npc_Slimes.webp">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -730,6 +741,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Assets\Games\Honkai\weapons.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <Page Update="Views\ModSelector.xaml">

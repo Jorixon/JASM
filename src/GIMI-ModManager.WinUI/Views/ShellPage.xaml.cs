@@ -88,32 +88,48 @@ DebugItem.Visibility = Visibility.Collapsed;
                 NavigationHelper.SetNavigateTo(categoryViewItem, typeof(CharactersViewModel).FullName!);
 
 
-                if (category.ModCategory == ModCategory.Character)
+                switch (category.ModCategory)
                 {
-                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uE716" };
+                    case ModCategory.Character:
+                        categoryViewItem.Icon = new FontIcon() { Glyph = "\uE716" };
 
-                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
-                }
-                else if (category.ModCategory == ModCategory.NPC)
-                {
-                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uE8D5" };
+                        ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                        break;
+                    case ModCategory.NPC:
+                        categoryViewItem.Icon = new BitmapIcon()
+                        {
+                            UriSource = new Uri($"{App.ASSET_DIR}/NPC_Icon.png"),
+                            ShowAsMonochrome = true
+                        };
 
-                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
-                }
-                else if (category.ModCategory == ModCategory.Object)
-                {
-                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uE8FC" };
+                        ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                        break;
+                    case ModCategory.Object:
+                        categoryViewItem.Icon = new FontIcon() { Glyph = "\uE8FC" };
 
-                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
-                }
-                else
-                {
-                    categoryViewItem.Icon = new FontIcon() { Glyph = "\uF142" };
-                    ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                        ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                        break;
+                    case ModCategory.Weapons:
+                        categoryViewItem.Icon = new BitmapIcon()
+                        {
+                            UriSource = new Uri($"{App.ASSET_DIR}/Weapon_Icon.png"),
+                            ShowAsMonochrome = false
+                        };
+
+                        ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                        break;
+
+
+                    case ModCategory.Ui:
+                    case ModCategory.Gliders:
+                    case ModCategory.Custom:
+                    default:
+                        categoryViewItem.Icon = new FontIcon() { Glyph = "\uF142" };
+                        ViewModel.NavigationViewService.MenuItems!.Insert(index, categoryViewItem);
+                        break;
                 }
 
                 index++;
-
 
                 //const string menuName = "Categories";
                 //if (NavigationViewControl.MenuItems[1] is NavigationViewItem { Tag: not null } menuItem &&
