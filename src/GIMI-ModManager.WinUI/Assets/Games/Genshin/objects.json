@@ -4,5 +4,11 @@
     "DisplayName": "Other Objects",
     "IsMultiMod": true,
     "Image": "Object_Others.png"
+  },
+  {
+    "InternalName": "waverider",
+    "DisplayName": "Waverider",
+    "IsMultiMod": false,
+    "Image": "Waverider.png"
   }
 ]
