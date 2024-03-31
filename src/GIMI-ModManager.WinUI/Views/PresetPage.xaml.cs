@@ -3,6 +3,7 @@ using Windows.System;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views.Controls;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -76,4 +77,10 @@ public sealed partial class PresetPage : Page
 
         await App.GetService<IWindowManagerService>().ShowDialogAsync(dialog).ConfigureAwait(false);
     }
+
+    private void DragHandleIcon_OnPointerEntered(object sender, PointerRoutedEventArgs e) =>
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeAll);
+
+    private void DragHandleIcon_OnPointerExited(object sender, PointerRoutedEventArgs e) =>
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
 }
