@@ -171,7 +171,10 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Grid>
+                            <Grid
+                                x:Name="DragHandleIcon"
+                                PointerEntered="DragHandleIcon_OnPointerEntered"
+                                PointerExited="DragHandleIcon_OnPointerExited">
                                 <FontIcon Glyph="&#xE76F;" />
                             </Grid>
                             <Grid Grid.Column="1">
@@ -237,7 +240,11 @@
                                                     Command="{x:Bind ToggleReadOnlyCommand}"
                                                     CommandParameter="{Binding Mode=OneWay}"
                                                     IsChecked="{x:Bind IsReadOnly, Mode=OneWay}"
-                                                    Text="Read Only" />
+                                                    Text="Read Only">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE736;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </ToggleMenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     Command="{x:Bind StartEditingNameCommand}"
                                                     CommandParameter="{Binding Mode=OneWay}"

@@ -78,6 +78,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_ShenheFrostflower_Thumb.png" />
+		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_XingqiuBambooRain_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\convert.py" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Albedo_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Characters\Character_Alhaitham_Thumb.png" />
@@ -195,6 +196,7 @@
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Skirk.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Slimes.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\Npcs\Npc_Sorush.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\Objects\Waverider.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Akuoumaru.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Alley_Hunter.png" />

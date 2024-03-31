@@ -3,6 +3,7 @@ using Windows.System;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views.Controls;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -68,10 +69,6 @@ public sealed partial class PresetPage : Page
                         "You can allow JASM to handle 3Dmigoto reloading by starting the Elevator and checking the Auto Sync checkbox. But you can also do it yourself by checking the Show Manual Controls checkbox and saving/loading preferences manually and refreshing 3Dmigoto with the F10 key."),
 
                     CreateTextBlock(
-                        "In this JASM version there is no way to see what mods are in a preset... But if you reallly want to, you can find the preset configuration files in this path: %appdata%\\..\\local\\JASM\\ApplicationData_Genshin \n" +
-                        "I suggest not changing anything as these files are not meant to be edited manually."),
-
-                    CreateTextBlock(
                         "It is possible to simply ignore the preset part of this page and only use the manual controls to persist mod preferences."
                     )
                 }
@@ -80,4 +77,10 @@ public sealed partial class PresetPage : Page
 
         await App.GetService<IWindowManagerService>().ShowDialogAsync(dialog).ConfigureAwait(false);
     }
+
+    private void DragHandleIcon_OnPointerEntered(object sender, PointerRoutedEventArgs e) =>
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeAll);
+
+    private void DragHandleIcon_OnPointerExited(object sender, PointerRoutedEventArgs e) =>
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
 }

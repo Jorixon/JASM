@@ -1366,7 +1366,14 @@
       "Liyue"
     ],
     "ModFilesName": "Xingqiu",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "XingqiuBamboo",
+        "Image": "Character_Skin_XingqiuBambooRain_Thumb.png",
+        "InternalName": "Xingqiu Bamboo Rain",
+        "DisplayName": "Bamboo Rain"
+      }
+    ],
     "InternalName": "Xingqiu",
     "DisplayName": "Xingqiu"
   },
