@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.2](https://github.com/Jorixon/JASM/compare/v2.6.1...v2.6.2) (2024-03-31)
+
+
+### Miscellaneous
+
+* Added Waverider and Xingqiu skin Bamboo Rain ([#168](https://github.com/Jorixon/JASM/issues/168)) ([c978d06](https://github.com/Jorixon/JASM/commit/c978d069434a837c487164fc387370f93b875eb4))
+* Changed NPC and Weapon icons ([2176bfb](https://github.com/Jorixon/JASM/commit/2176bfbcf16f6fb1bb5bab33933fdcc97c3869ba))
+
 ## [2.6.1](https://github.com/Jorixon/JASM/compare/v2.6.0...v2.6.1) (2024-03-29)
 
 
