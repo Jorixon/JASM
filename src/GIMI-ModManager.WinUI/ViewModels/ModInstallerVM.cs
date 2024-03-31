@@ -228,15 +228,15 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             Task.Run(() =>
             {
-                if (_characterModList.Mods.Count >= 1)
-                {
-                    //false if all the mods are disabled or there are no mods other than the new one
-                    var anyEnabled = _characterModList.Mods.Where(entry => entry.Mod.Id != newMod.Id).Any(entry => entry.IsEnabled);
+                if (_characterModList.Mods.Count == 0) return;
 
-                    if (anyEnabled)
-                        DisableMod(newMod);
-                }
+                // False if all the mods are disabled or there are no mods other than the new one
+                var anyEnabled = _characterModList.Mods
+                    .Where(entry => entry.Mod.Id != newMod.Id)
+                    .Any(entry => entry.IsEnabled);
 
+                if (anyEnabled)
+                    DisableMod(newMod);
             });
         }
 
