@@ -224,6 +224,21 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
         if (EnableThisMod)
             Task.Run(() => EnableOnlyMod(newMod));
+        else
+        {
+            Task.Run(() =>
+            {
+                if (_characterModList.Mods.Count >= 1)
+                {
+                    //false if all the mods are disabled or there are no mods other than the new one
+                    var anyEnabled = _characterModList.Mods.Where(entry => entry.Mod.Id != newMod.Id).Any(entry => entry.IsEnabled);
+
+                    if (anyEnabled)
+                        DisableMod(newMod);
+                }
+
+            });
+        }
 
         _dispatcherQueue?.TryEnqueue(() => { _windowManagerService.GetWindow(_characterModList)?.Close(); });
 
