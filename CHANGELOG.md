@@ -5,7 +5,7 @@
 
 ### Miscellaneous
 
-* Improved mod enabling logic during install ([#167](https://github.com/Jorixon/JASM/issues/167)) ([7498afb](https://github.com/Jorixon/JASM/commit/7498afb83948ad4967c50266b3d354637909c601))
+* Improved mod enabling logic during mod install ([#167](https://github.com/Jorixon/JASM/issues/167)) ([7498afb](https://github.com/Jorixon/JASM/commit/7498afb83948ad4967c50266b3d354637909c601)) Thanks @Davoleo 
 
 ## [2.6.2](https://github.com/Jorixon/JASM/compare/v2.6.1...v2.6.2) (2024-03-31)
 
