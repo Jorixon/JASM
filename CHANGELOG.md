@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.3](https://github.com/Jorixon/JASM/compare/v2.6.2...v2.6.3) (2024-04-01)
+
+
+### Miscellaneous
+
+* Improved mod enabling logic during install ([#167](https://github.com/Jorixon/JASM/issues/167)) ([7498afb](https://github.com/Jorixon/JASM/commit/7498afb83948ad4967c50266b3d354637909c601))
+
 ## [2.6.2](https://github.com/Jorixon/JASM/compare/v2.6.1...v2.6.2) (2024-03-31)
 
 
