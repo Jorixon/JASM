@@ -59,8 +59,8 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 
 
 ### Limitations and Acknowledgements
-- The Json file that stores the Genshin characters is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and some of the images are also from the same repository.
-- The Json file that stores the Genshin weapons is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/94d55e8b88d5580d84e6b0991ce82e2798220d44/data/weapons.json) and the weapon images are also from the same repository.
+- The Json file that stores the the game characters is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and some of the images are also from the same repository.
+- The Json file that stores the weapons is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/94d55e8b88d5580d84e6b0991ce82e2798220d44/data/weapons.json) and the weapon images are also from the same repository.
 - 7-Zip is bundled with the app, 7-Zip is licensed under the GNU Lesser General Public License (LGPL). You can find the full license details and source code at [www.7-zip.org](https://www.7-zip.org/).
 - SharpCompress is used if the bundled 7-zip is not found. SharpCompress is licensed under the MIT license. You can find the full license details and source code at [SharpCompress's GitHub Page](https://github.com/adamhathcock/sharpcompress)
 - WinUI3Localizer is used for localization. WinUI3Localizer is licensed under the MIT license. You can find the full license details and source code at [WinUI3Localizer's GitHub Page](https://github.com/AndrewKeepCoding/WinUI3Localizer)
