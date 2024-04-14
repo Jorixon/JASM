@@ -15,8 +15,10 @@ using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.Views;
 using GIMI_ModManager.WinUI.Views.CharacterManager;
+using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -232,6 +234,8 @@ public partial class App : Application
                 services.AddTransient<ModSelector>();
                 services.AddTransient<CharacterGalleryPage>();
                 services.AddTransient<CharacterGalleryViewModel>();
+                services.AddTransient<CharacterDetailsSettingsViewModel>();
+                services.AddTransient<CharacterDetailsSettingsPage>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

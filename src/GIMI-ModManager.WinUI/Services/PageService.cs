@@ -2,8 +2,10 @@
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.Views;
 using GIMI_ModManager.WinUI.Views.CharacterManager;
+using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -29,6 +31,7 @@ public class PageService : IPageService
         Configure<PresetDetailsViewModel, PresetDetailsPage>();
         Configure<ModSelectorViewModel, ModSelector>();
         Configure<CharacterGalleryViewModel, CharacterGalleryPage>();
+        Configure<CharacterDetailsSettingsViewModel, CharacterDetailsSettingsPage>();
     }
 
     public Type GetPageType(string key)

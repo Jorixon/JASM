@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.Settings.CharacterDetailsSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.Settings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winUi="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d">
+
+
+
+
+    <StackPanel MaxWidth="1000" Spacing="4">
+        <TextBlock Style="{StaticResource PageTitleStyle}" Text="Mod Details Settings" />
+
+        <controls:SettingsCard
+            Description="Set the default sorting method for the mod details view"
+            Header="Default Mod Sorting"
+            HeaderIcon="{winUi:FontIcon Glyph=&#xE716;}">
+            <ComboBox SelectedIndex="0">
+                <ComboBoxItem>Name</ComboBoxItem>
+                <ComboBoxItem>Name (Desc)</ComboBoxItem>
+                <ComboBoxItem>Date Added</ComboBoxItem>
+                <ComboBoxItem>Date Added (Desc)</ComboBoxItem>
+            </ComboBox>
+        </controls:SettingsCard>
+
+        <controls:SettingsCard
+            Description="Most mod categories, like for characters you usually only want to have one mod enabled. This can be used to disable this feature and allow multiple mods to be enabled"
+            Header="Allow for multiple active mods for a single character"
+            HeaderIcon="{winUi:FontIcon Glyph=&#xE716;}">
+            <ToggleSwitch IsOn="False" />
+        </controls:SettingsCard>
+
+    </StackPanel>
+
+</Page>
