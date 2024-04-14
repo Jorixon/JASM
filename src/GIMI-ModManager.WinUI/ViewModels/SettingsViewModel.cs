@@ -27,6 +27,7 @@ using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -45,6 +46,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly SelectedGameService _selectedGameService;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
     private readonly LifeCycleService _lifeCycleService;
+    private readonly INavigationService _navigationService;
 
 
     private readonly NotificationManager _notificationManager;
@@ -106,7 +108,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
         SelectedGameService selectedGameService, ModUpdateAvailableChecker modUpdateAvailableChecker,
-        LifeCycleService lifeCycleService)
+        LifeCycleService lifeCycleService, INavigationService navigationService)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -122,6 +124,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _selectedGameService = selectedGameService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
         _lifeCycleService = lifeCycleService;
+        _navigationService = navigationService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -672,6 +675,14 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         CharacterAsSkinsCheckbox = modManagerOptions.CharacterSkinsAsCharacters;
 
         await RestartAppAsync().ConfigureAwait(false);
+    }
+
+    [RelayCommand]
+    private Task NavigateToCharacterDetailsSettings()
+    {
+        _navigationService.NavigateTo(typeof(CharacterDetailsSettingsViewModel).FullName!,
+            transitionInfo: new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

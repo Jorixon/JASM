@@ -3,9 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:controls1="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI.UI"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     xmlns:xaml="using:Microsoft.UI.Xaml"
     xmlns:xaml1="using:GIMI_ModManager.WinUI.Helpers.Xaml"
@@ -79,7 +81,7 @@
             l:Uids.Uid="Settings_Title"
             Style="{StaticResource PageTitleStyle}" />
         <ScrollViewer Grid.Row="1">
-            <StackPanel x:Name="ContentArea">
+            <StackPanel x:Name="ContentArea" Padding="0,0,20,0">
                 <TextBlock l:Uids.Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock l:Uids.Uid="Settings_Theme" />
@@ -201,6 +203,15 @@
                         TextWrapping="WrapWholeWords" />
 
                 </StackPanel>
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Folders" />
+                <controls1:SettingsCard
+                    Command="{x:Bind ViewModel.NavigateToCharacterDetailsSettingsCommand}"
+                    Description="Settings related to mod details overview"
+                    Header="Mod Details Settings"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE716;}"
+                    IsClickEnabled="True" />
+
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Folders" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
