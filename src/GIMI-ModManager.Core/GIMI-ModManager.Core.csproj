@@ -27,7 +27,7 @@
 		</AssemblyAttribute>
 	</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ErrorOr" Version="1.2.1" />
+    <PackageReference Include="ErrorOr" Version="2.0.1" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
