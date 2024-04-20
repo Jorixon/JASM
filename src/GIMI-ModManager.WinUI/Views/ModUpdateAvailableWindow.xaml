@@ -64,7 +64,7 @@
                                 <controls:BoolBorder
                                     BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
                                     BorderSize="2"
-                                    IsEnabled="{x:Bind IsBusy, Mode=OneWay}"
+                                    IsEnabled="{x:Bind IsNotBusy, Mode=OneWay}"
                                     ShowBorder="{x:Bind IsNew}">
                                     <Grid Margin="8">
                                         <Grid.RowDefinitions>
@@ -112,12 +112,16 @@
                                                     HorizontalAlignment="Right"
                                                     Command="{x:Bind DownloadCommand}"
                                                     CommandParameter="{Binding Mode=OneWay}"
-                                                    Content="Download" />
+                                                    Content="Download"
+                                                    Visibility="{Binding Path=ShowDownloadButton, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                                                 <Button
                                                     Width="90"
                                                     HorizontalAlignment="Right"
-                                                    Content="Install" />
+                                                    Command="{x:Bind InstallCommand}"
+                                                    CommandParameter="{Binding Mode=OneWay}"
+                                                    Content="Install"
+                                                    Visibility="{Binding Path=ShowInstallButton, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </Grid>
 
 

@@ -5,6 +5,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
@@ -29,6 +30,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly ModPresetService _modPresetService;
     private readonly UserPreferencesService _userPreferencesService;
     private readonly SelectedGameService _selectedGameService;
+    private readonly ModArchiveRepository _modArchiveRepository;
 
 
     private const string _genshinModelImporterName = "Genshin-Impact-Model-Importer";
@@ -63,7 +65,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
         SelectedGameService selectedGameService, IGameService gameService, ModPresetService modPresetService,
-        UserPreferencesService userPreferencesService)
+        UserPreferencesService userPreferencesService, ModArchiveRepository modArchiveRepository)
     {
         _navigationService = navigationService;
         _localSettingsService = localSettingsService;
@@ -73,6 +75,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _gameService = gameService;
         _modPresetService = modPresetService;
         _userPreferencesService = userPreferencesService;
+        _modArchiveRepository = modArchiveRepository;
 
         PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
 
@@ -115,7 +118,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         var tasks = new List<Task>
         {
             _userPreferencesService.InitializeAsync(),
-            _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder)
+            _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder),
+            _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder)
         };
 
         await Task.WhenAll(tasks);

@@ -22,6 +22,7 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Dispatching;
 using Serilog;
 using Constants = GIMI_ModManager.Core.Helpers.Constants;
+using static GIMI_ModManager.WinUI.ViewModels.CloseRequestedArgs;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -51,7 +52,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     public event EventHandler? DuplicateModDialog;
     public event EventHandler? InstallerFinished;
-    public event EventHandler? CloseRequested;
+    public event EventHandler<CloseRequestedArgs>? CloseRequested;
 
     [ObservableProperty] private string _modCharacterName = string.Empty;
 
@@ -121,7 +122,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     }
 
     public async Task InitializeAsync(ICharacterModList characterModList, DirectoryInfo modToInstall,
-        DispatcherQueue dispatcherQueue, ICharacterSkin? inGameSkin = null)
+        DispatcherQueue dispatcherQueue, ICharacterSkin? inGameSkin = null, InstallOptions? options = null)
     {
         _characterModList = characterModList;
         ModCharacterName = characterModList.Character.DisplayName;
@@ -163,6 +164,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                 if (fileSystemItem is not null)
                     dispatcherQueue.TryEnqueue(() => { SetShaderFixesFolder(fileSystemItem); });
             }
+
+            if (options?.ModUrl is not null)
+                dispatcherQueue.TryEnqueue(() => { ModUrl = options.ModUrl.ToString(); });
 
             var autoFoundImages = SkinModHelpers.DetectModPreviewImages(_modInstallation.ModFolder.FullName);
 
@@ -240,7 +244,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             });
         }
 
-        _dispatcherQueue?.TryEnqueue(() => { _windowManagerService.GetWindow(_characterModList)?.Close(); });
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            CloseRequested?.Invoke(this, new CloseRequestedArgs(CloseReasons.Success));
+        });
 
         App.MainWindow.DispatcherQueue.EnqueueAsync(() =>
             _modNotificationManager.AddModNotification(new ModNotification()
@@ -509,7 +516,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         catch (Exception e)
         {
             _logger.Error(e, "Failed to add mod");
-            ErrorOccurred();
+            ErrorOccurred(e);
         }
         finally
         {
@@ -533,7 +540,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         catch (Exception e)
         {
             _logger.Error(e, "Failed to add mod");
-            ErrorOccurred();
+            ErrorOccurred(e);
         }
         finally
         {
@@ -550,20 +557,21 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         if (ModFolderName.IsNullOrEmpty() || DuplicateModFolderName.IsNullOrEmpty())
             return false;
 
-        if (ModFolderName == DuplicateModFolderName)
+        if (ModFolderName.Equals(DuplicateModFolderName, StringComparison.OrdinalIgnoreCase))
             return false;
 
         if (_duplicateMod is null)
             return false;
 
-        if (DuplicateModFolderName != _duplicateMod?.Name)
+
+        if (!ModFolderHelpers.FolderNameEquals(DuplicateModFolderName, _duplicateMod.Name))
             foreach (var skinEntry in _characterModList.Mods)
             {
                 if (ModFolderHelpers.FolderNameEquals(skinEntry.Mod.Name, DuplicateModFolderName))
                     return false;
             }
 
-        if (ModFolderName != _modInstallation.ModFolder.Name)
+        if (!ModFolderHelpers.FolderNameEquals(ModFolderName, _modInstallation.ModFolder.Name))
             foreach (var skinEntry in _characterModList.Mods)
             {
                 if (ModFolderHelpers.FolderNameEquals(skinEntry.Mod.Name, ModFolderName))
@@ -587,7 +595,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         catch (Exception e)
         {
             _logger.Error(e, "Failed to add mod");
-            ErrorOccurred();
+            ErrorOccurred(e);
         }
         finally
         {
@@ -707,7 +715,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _modInstallation = null;
     }
 
-    private void ErrorOccurred()
+    private void ErrorOccurred(Exception e)
     {
         InstallerFinished?.Invoke(this, EventArgs.Empty);
         Win32.PlaySound("SystemAsterisk", nuint.Zero,
@@ -715,7 +723,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _notificationManager.ShowNotification("An error occurred",
             "An error occurred while adding the mod. See logs for more details",
             TimeSpan.FromSeconds(10));
-        CloseRequested?.Invoke(this, EventArgs.Empty);
+        CloseRequested?.Invoke(this, new CloseRequestedArgs(CloseReasons.Error, e));
     }
 
 
@@ -825,6 +833,26 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             _windowManagerService.MainWindow.BringToFront();
         });
+    }
+}
+
+public class CloseRequestedArgs : EventArgs
+{
+    public CloseReasons CloseReason { get; }
+    public Exception? Exception { get; }
+
+    public CloseRequestedArgs(CloseReasons closeReason, Exception? exception = null)
+    {
+        CloseReason = closeReason;
+        Exception = exception;
+    }
+
+
+    public enum CloseReasons
+    {
+        Canceled,
+        Success,
+        Error
     }
 }
 

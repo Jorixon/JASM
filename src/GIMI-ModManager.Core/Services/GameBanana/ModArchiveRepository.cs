@@ -19,7 +19,7 @@ public sealed class ModArchiveRepository
     private const string ModArchiveDirectoryName = "ModDownloads";
 
     private const string DownloadTempPrefix = ".TMP_DOWNLOAD";
-    internal const string Separator = "_!!_";
+    public const string Separator = "_!!_";
 
     private readonly int _MaxDirectorySizeGb = 10;
 

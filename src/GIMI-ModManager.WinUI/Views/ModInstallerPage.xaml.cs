@@ -2,6 +2,7 @@ using Windows.Storage;
 using Windows.System;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,21 +12,21 @@ namespace GIMI_ModManager.WinUI.Views;
 
 public sealed partial class ModInstallerPage : Page, IDisposable
 {
-    public event EventHandler? CloseRequested;
+    public event EventHandler<CloseRequestedArgs>? CloseRequested;
     public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
     public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall,
-        ICharacterSkin? inGameSkin = null)
+        ICharacterSkin? inGameSkin = null, InstallOptions? options = null)
     {
         InitializeComponent();
         ViewModel.DuplicateModDialog += OnDuplicateModFound;
         ViewModel.InstallerFinished += (_, _) => { DispatcherQueue.TryEnqueue(() => { IsEnabled = false; }); };
         Loading += (_, _) =>
         {
-            ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue, inGameSkin);
+            _ = ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue, inGameSkin, options);
         };
 
-        ViewModel.CloseRequested += (_, _) => { CloseRequested?.Invoke(this, EventArgs.Empty); };
+        ViewModel.CloseRequested += (_, e) => { CloseRequested?.Invoke(this, e); };
     }
 
     private async void OnDuplicateModFound(object? sender, EventArgs e)

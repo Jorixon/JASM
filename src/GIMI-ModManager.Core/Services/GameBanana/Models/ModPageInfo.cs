@@ -6,6 +6,7 @@ public class ModPageInfo
 {
     public ModPageInfo(ApiModProfile apiModProfile)
     {
+        ModId = apiModProfile.ModId.ToString();
         ModPageUrl = Uri.TryCreate(apiModProfile.ModPageUrl, UriKind.Absolute, out var modPageUrl) ? modPageUrl : null;
         ModName = apiModProfile.ModName;
         AuthorName = apiModProfile.Author?.AuthorName;
@@ -33,11 +34,11 @@ public class ModPageInfo
 
         PreviewImages = previewImageUrls.AsReadOnly();
 
-        Files = apiModProfile.Files?.Select(apiModFileInfo => new ModFileInfo(apiModFileInfo)).ToList() ??
+        Files = apiModProfile.Files?.Select(apiModFileInfo => new ModFileInfo(apiModFileInfo, ModId)).ToList() ??
                 [];
     }
 
-
+    public string ModId { get; init; }
     public Uri? ModPageUrl { get; init; }
     public string? ModName { get; init; }
     public string? AuthorName { get; init; }

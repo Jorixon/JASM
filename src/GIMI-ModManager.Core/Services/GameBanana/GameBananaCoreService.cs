@@ -63,7 +63,7 @@ public sealed class GameBananaCoreService(
         if (modFilesInfo == null)
             return null;
 
-        return new List<ModFileInfo>(modFilesInfo.Files.Select(x => new ModFileInfo(x)));
+        return new List<ModFileInfo>(modFilesInfo.Files.Select(x => new ModFileInfo(x, modId)));
     }
 
     /// <summary>
