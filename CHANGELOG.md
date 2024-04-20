@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.7.0](https://github.com/Jorixon/JASM/compare/v2.6.3...v2.7.0) (2024-04-20)
+
+
+### Features
+
+* Now possible to quickly switch presets from the characters overview page ([#176](https://github.com/Jorixon/JASM/issues/176)) ([9731655](https://github.com/Jorixon/JASM/commit/9731655d86ae70b079d0c24b87c8beb490541983))
+
+
+### Miscellaneous
+
+* Updated WinAppSdk and a few other packages ([#174](https://github.com/Jorixon/JASM/issues/174)) ([4289cda](https://github.com/Jorixon/JASM/commit/4289cda936d9c4d88fabb4d2f9caf981a1e5f360))
+
+
+### Continuous Integration
+
+* Added Self Contained build to releases ([9731655](https://github.com/Jorixon/JASM/commit/9731655d86ae70b079d0c24b87c8beb490541983))
+
 ## [2.6.3](https://github.com/Jorixon/JASM/compare/v2.6.2...v2.6.3) (2024-04-01)
 
 
