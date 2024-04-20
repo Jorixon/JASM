@@ -64,7 +64,6 @@
                                 <controls:BoolBorder
                                     BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
                                     BorderSize="2"
-                                    IsEnabled="{x:Bind IsNotBusy, Mode=OneWay}"
                                     ShowBorder="{x:Bind IsNew}">
                                     <Grid Margin="8">
                                         <Grid.RowDefinitions>
