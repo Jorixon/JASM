@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -25,6 +26,7 @@ using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
+using GameBananaService = GIMI_ModManager.WinUI.Services.ModHandling.GameBananaService;
 using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 
 namespace GIMI_ModManager.WinUI;
@@ -137,14 +139,29 @@ public partial class App : Application
                 services.AddSingleton<ILanguageLocalizer, Localizer>();
                 services.AddSingleton<ModPresetService>();
                 services.AddSingleton<UserPreferencesService>();
+                services.AddSingleton<ArchiveService>();
+                services.AddSingleton<ModArchiveRepository>();
+                services.AddSingleton<GameBananaCoreService>();
 
                 services.AddSingleton<GameBananaService>();
                 services.AddTransient<IModUpdateChecker, GameBananaModPageRetriever>();
+                services.AddTransient<IApiGameBananaClient, ApiGameBananaClient>();
 
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
                 // I've read just about every microsoft docs page httpclients, and I can't figure out what I'm doing wrong
                 // Also tried with httpclientfactory, but that didn't work either
                 services.AddHttpClient<IModUpdateChecker, GameBananaModPageRetriever>(client =>
+                    {
+                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
+                        client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    })
+                    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
+                    {
+                        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
+                    })
+                    .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+
+                services.AddHttpClient<IApiGameBananaClient, ApiGameBananaClient>(client =>
                     {
                         client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
                         client.DefaultRequestHeaders.Add("Accept", "application/json");

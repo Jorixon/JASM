@@ -14,17 +14,7 @@
 
 
     <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Button Click="ButtonBase_OnClickSave">Save Current Preferences</Button>
-            <Button Click="ButtonBase_OnClickApply">Apply Saved Preferences</Button>
-        </StackPanel>
-
-        <TextBox Text="{x:Bind ViewModel.Title, Mode=TwoWay}" />
-
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{x:Bind ViewModel.CreatePresetCommand}">Create</Button>
-            <Button Command="{x:Bind ViewModel.SavePresetCommand}">Save</Button>
-            <Button Command="{x:Bind ViewModel.ApplyPresetCommand}">Apply</Button>
-        </StackPanel>
+        <TextBox Text="{x:Bind ModId, Mode=TwoWay}" />
+        <Button Click="ButtonBase_OnClick">Run</Button>
     </StackPanel>
 </Page>
