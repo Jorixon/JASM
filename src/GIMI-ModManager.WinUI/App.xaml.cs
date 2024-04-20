@@ -132,6 +132,7 @@ public partial class App : Application
                 services.AddSingleton<ISkinManagerService, SkinManagerService>();
                 services.AddSingleton<ModCrawlerService>();
                 services.AddSingleton<ModSettingsService>();
+                services.AddSingleton<ModPresetHandlerService>();
                 services.AddSingleton<KeySwapService>();
                 services.AddSingleton<ILanguageLocalizer, Localizer>();
                 services.AddSingleton<ModPresetService>();

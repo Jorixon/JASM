@@ -11,6 +11,7 @@ using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
@@ -32,7 +33,9 @@ public partial class PresetViewModel(
     ILogger logger,
     ElevatorService elevatorService,
     INavigationService navigationService,
-    BusyService busyService)
+    BusyService busyService,
+    ModPresetHandlerService modPresetHandlerService,
+    ILocalSettingsService localSettingsService)
     : ObservableRecipient, INavigationAware
 {
     public readonly ElevatorService ElevatorService = elevatorService;
@@ -46,13 +49,16 @@ public partial class PresetViewModel(
     private readonly IGameService _gameService = gameService;
     private readonly INavigationService _navigationService = navigationService;
     private readonly ILogger _logger = logger.ForContext<PresetViewModel>();
+    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
+    private readonly ModPresetHandlerService _modPresetHandlerService = modPresetHandlerService;
     private static readonly Random Random = new();
 
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CreatePresetCommand), nameof(DeletePresetCommand), nameof(ApplyPresetCommand),
         nameof(DuplicatePresetCommand), nameof(RenamePresetCommand), nameof(ReorderPresetsCommand),
-        nameof(SaveActivePreferencesCommand), nameof(ApplyPresetCommand), nameof(NavigateToPresetDetailsCommand))]
+        nameof(SaveActivePreferencesCommand), nameof(ApplyPresetCommand), nameof(NavigateToPresetDetailsCommand),
+        nameof(ToggleAutoSyncCommand))]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool _isBusy;
 
@@ -68,7 +74,8 @@ public partial class PresetViewModel(
 
     [ObservableProperty] private bool _showManualControls;
 
-    [ObservableProperty] private bool _elevatorIsRunning;
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ToggleAutoSyncCommand))]
+    private bool _elevatorIsRunning;
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(AutoSync3DMigotoConfigIsDisabled))]
     private bool _autoSync3DMigotoConfig;
@@ -256,44 +263,23 @@ public partial class PresetViewModel(
     [RelayCommand(CanExecute = nameof(IsNotBusy))]
     private async Task SaveActivePreferences()
     {
-        IsBusy = true;
+        using var _ = StartBusy();
 
-        try
-        {
-            await Task.Run(() => _userPreferencesService.SaveModPreferencesAsync());
-            _notificationManager.ShowNotification("Active preferences saved",
-                $"Preferences stored in {Constants.UserIniFileName} have been saved for enabled mods",
-                TimeSpan.FromSeconds(5));
-        }
-        catch (Exception e)
-        {
-            _notificationManager.ShowNotification("Failed to save active preferences", e.Message,
-                TimeSpan.FromSeconds(5));
-        }
+        var result = await Task.Run(() => _modPresetHandlerService.SaveActiveModPreferencesAsync());
 
-        IsBusy = false;
+        if (result.HasNotification)
+            _notificationManager.ShowNotification(result.Notification);
     }
 
     [RelayCommand(CanExecute = nameof(IsNotBusy))]
     private async Task ApplySavedModPreferences()
     {
-        IsBusy = true;
+        using var _ = StartBusy();
 
-        try
-        {
-            await Task.Run(() => _userPreferencesService.SetModPreferencesAsync());
+        var result = await Task.Run(() => _modPresetHandlerService.ApplyActiveModPreferencesAsync());
 
-            _notificationManager.ShowNotification("Saved preferences applied",
-                $"Mod preferences written to 3DMigoto {Constants.UserIniFileName}",
-                TimeSpan.FromSeconds(5));
-        }
-        catch (Exception e)
-        {
-            _notificationManager.ShowNotification("Failed to apply saved preferences", e.Message,
-                TimeSpan.FromSeconds(5));
-        }
-
-        IsBusy = false;
+        if (result.HasNotification)
+            _notificationManager.ShowNotification(result.Notification);
     }
 
     [RelayCommand(CanExecute = nameof(IsNotBusy))]
@@ -507,8 +493,9 @@ public partial class PresetViewModel(
                     "Elevator failed to start",
                     TimeSpan.FromSeconds(5));
 
-            if (isStarted)
-                AutoSync3DMigotoConfig = true;
+            AutoSync3DMigotoConfig = ElevatorService.ElevatorStatus == ElevatorStatus.Running &&
+                                     (await _localSettingsService.ReadOrCreateSettingAsync<ModPresetSettings>(
+                                         ModPresetSettings.Key)).AutoSyncMods;
         }
         catch (Exception e)
         {
@@ -556,13 +543,32 @@ public partial class PresetViewModel(
             new PresetDetailsNavigationParameter(modPresetVm.Name));
     }
 
-    public void OnNavigatedTo(object parameter)
+
+    private bool CanToggleAutoSync()
+    {
+        return ElevatorIsRunning && IsNotBusy;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanToggleAutoSync))]
+    private async Task ToggleAutoSync()
+    {
+        AutoSync3DMigotoConfig = !AutoSync3DMigotoConfig;
+
+        var settings = await _localSettingsService.ReadOrCreateSettingAsync<ModPresetSettings>(ModPresetSettings.Key);
+        settings.AutoSyncMods = AutoSync3DMigotoConfig;
+        await _localSettingsService.SaveSettingAsync(ModPresetSettings.Key, settings);
+    }
+
+    public async void OnNavigatedTo(object parameter)
     {
         ReloadPresets();
         ElevatorService.PropertyChanged += ElevatorStatusChangedHandler;
         ElevatorService.CheckStatus();
-        AutoSync3DMigotoConfig = ElevatorService.ElevatorStatus == ElevatorStatus.Running;
         ElevatorIsRunning = ElevatorService.ElevatorStatus == ElevatorStatus.Running;
+
+        AutoSync3DMigotoConfig = ElevatorService.ElevatorStatus == ElevatorStatus.Running &&
+                                 (await _localSettingsService.ReadOrCreateSettingAsync<ModPresetSettings>(
+                                     ModPresetSettings.Key)).AutoSyncMods;
     }
 
     private void ElevatorStatusChangedHandler(object? o, PropertyChangedEventArgs propertyChangedEventArgs)

@@ -13,12 +13,10 @@ namespace GIMI_ModManager.Core.Services.ModPresetService;
 
 public sealed class ModPresetService(
     ILogger logger,
-    ISkinManagerService skinManagerService,
-    UserPreferencesService userPreferencesService) : IDisposable
+    ISkinManagerService skinManagerService) : IDisposable
 {
     private readonly ILogger _logger = logger.ForContext<ModPresetService>();
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
-    private readonly UserPreferencesService _userPreferencesService = userPreferencesService;
 
     private DirectoryInfo _settingsDirectory = null!;
     private DirectoryInfo _presetDirectory = null!;
@@ -37,6 +35,11 @@ public sealed class ModPresetService(
 
     public IEnumerable<ModPreset> GetPresets() => _presets;
 
+    public ModPreset? GetPresetOrDefault(string name) =>
+        _presets.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+    public ModPreset GetPreset(string name) =>
+        GetFirstModPreset(name);
 
     public async Task InitializeAsync(string appDataFolder)
     {
@@ -222,9 +225,9 @@ public sealed class ModPresetService(
         await WritePresetsAsync().ConfigureAwait(false);
     }
 
-    public async Task ApplyPresetAsync(string presetName)
+    public async Task ApplyPresetAsync(string presetName, CancellationToken cancellationToken = default)
     {
-        using var _ = await LockAsync().ConfigureAwait(false);
+        using var _ = await LockAsync(cancellationToken).ConfigureAwait(false);
 
         var preset = GetFirstModPreset(presetName);
 
@@ -254,7 +257,7 @@ public sealed class ModPresetService(
             modEntry.IsMissing = true;
         }
 
-
+        cancellationToken.ThrowIfCancellationRequested();
         foreach (var characterSkinEntry in allMods)
         {
             var modList = characterSkinEntry.ModList;
@@ -276,7 +279,7 @@ public sealed class ModPresetService(
                 try
                 {
                     modSettings = await characterSkinEntry.Mod.Settings
-                        .TryReadSettingsAsync(useCache: false)
+                        .TryReadSettingsAsync(useCache: false, cancellationToken: CancellationToken.None)
                         .ConfigureAwait(false);
 
 
@@ -403,7 +406,7 @@ public sealed class ModPresetService(
     /// Throws ArgumentException if the preset does not exist
     /// </summary>
     private ModPreset GetFirstModPreset(string presetName) =>
-        _presets.FirstOrDefault(p => p.Name.Equals(presetName, StringComparison.OrdinalIgnoreCase)) ??
+        GetPresetOrDefault(presetName) ??
         throw new ArgumentException($"Preset with name {presetName} not found", nameof(presetName));
 
     private bool IsValidPresetName([NotNullWhen(true)] string? name) =>

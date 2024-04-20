@@ -29,17 +29,21 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
     /// This overrides the existing preferences in the mod settings file
     /// 3Dmigoto should do a refresh (F10) so that it store the new preferences in the d3dx_user.ini
     /// And we save the mod preferences to the mod settings files
+    /// Returns  True if success, returns false if 3MigotoFolder or d3dxUserIni is not found or d3dxUserIni is invalid
     /// </summary>
-    public async Task SaveModPreferencesAsync(Guid? modId = null)
+    public async Task<bool> SaveModPreferencesAsync(Guid? modId = null)
     {
         if (!_threeMigotoFolder.Exists)
-            return;
+        {
+            _logger.Warning("3DMigoto folder does not exist");
+            return false;
+        }
 
         var d3dxUserIni = new FileInfo(Path.Combine(_threeMigotoFolder.FullName, D3DX_USER_INI));
         if (!d3dxUserIni.Exists)
         {
-            _logger.Debug("d3dx_user.ini does not exist in 3DMigoto folder");
-            return;
+            _logger.Information("d3dx_user.ini does not exist in 3DMigoto folder");
+            return false;
         }
 
         var lines = await File.ReadAllLinesAsync(d3dxUserIni.FullName).ConfigureAwait(false);
@@ -67,6 +71,8 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
 
             await characterSkinEntry.Mod.Settings.SaveSettingsAsync(modSettings).ConfigureAwait(false);
         }
+
+        return true;
     }
 
 
@@ -106,28 +112,33 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
 
     /// <summary>
     /// Overrides the mod preferences in the d3dx_user.ini file with the mod settings preferences
+    /// Returns  True if success, returns false if 3MigotoFolder or d3dxUserIni is not found or d3dxUserIni is invalid
     /// </summary>
-    /// <returns></returns>
-    public async Task<bool> SetModPreferencesAsync(Guid? modId = null)
+    public async Task<bool> SetModPreferencesAsync(Guid? modId = null, CancellationToken cancellationToken = default)
     {
         if (!_threeMigotoFolder.Exists)
+        {
+            _logger.Warning("3DMigoto folder does not exist");
             return false;
+        }
 
 
         var d3dxUserIni = new FileInfo(Path.Combine(_threeMigotoFolder.FullName, D3DX_USER_INI));
         if (!d3dxUserIni.Exists)
         {
-            _logger.Debug("d3dx_user.ini does not exist in 3DMigoto folder");
+            _logger.Information("d3dx_user.ini does not exist in 3DMigoto folder");
             return false;
         }
 
-        var lines = (await File.ReadAllLinesAsync(d3dxUserIni.FullName).ConfigureAwait(false)).ToList();
+        var lines =
+            (await File.ReadAllLinesAsync(d3dxUserIni.FullName, cancellationToken).ConfigureAwait(false)).ToList();
+
         var constantSectionIndex =
             lines.IndexOf(lines.FirstOrDefault(x => IniConfigHelpers.IsSection(x, "Constants")) ?? "SomeString");
 
         if (constantSectionIndex == -1)
         {
-            _logger.Debug("Constants section not found in d3dx_user.ini");
+            _logger.Warning("Constants section not found in d3dx_user.ini");
             return false;
         }
 
@@ -142,7 +153,8 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
 
         foreach (var characterSkinEntry in activeMods)
         {
-            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(false).ConfigureAwait(false);
+            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(false, cancellationToken)
+                .ConfigureAwait(false);
             if (modSettings is null || !modSettings.Preferences.Any())
                 continue;
 
@@ -182,7 +194,7 @@ public class UserPreferencesService(ILogger logger, ISkinManagerService skinMana
         }
 
 
-        await File.WriteAllLinesAsync(d3dxUserIni.FullName, lines).ConfigureAwait(false);
+        await File.WriteAllLinesAsync(d3dxUserIni.FullName, lines, cancellationToken).ConfigureAwait(false);
 
         return true;
     }
