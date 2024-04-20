@@ -252,6 +252,9 @@ public record Result : IResult
     public string? ErrorMessage => _result.ErrorMessage;
     public SimpleNotification? Notification => _result.Notification;
 
+    [MemberNotNullWhen(true, nameof(Notification))]
+    public bool HasNotification => Notification is not null;
+
     public static Result Success() => new();
 
     public static Result Success(SimpleNotification notification)
@@ -304,6 +307,9 @@ public record Result<T> : IResult
     }
 
     public SimpleNotification? Notification { get; init; }
+
+    [MemberNotNullWhen(true, nameof(Notification))]
+    public bool HasNotification => Notification is not null;
 
     public static Result<T> Success(T value, SimpleNotification notification) =>
         new()
@@ -361,4 +367,5 @@ public interface IResult
     public Exception? Exception { get; }
     public string? ErrorMessage { get; }
     public SimpleNotification? Notification { get; }
+    public bool HasNotification { get; }
 }

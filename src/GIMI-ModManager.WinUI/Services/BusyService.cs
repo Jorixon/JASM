@@ -62,6 +62,11 @@ public class BusyChangedEventArgs : EventArgs
         Key = key;
         IsBusy = isBusy;
     }
+
+    public bool IsKey<T>(T pageType) where T : ObservableRecipient
+    {
+        return Key == pageType.GetType().FullName!;
+    }
 }
 
 public readonly struct BusyReleaser(Action releaseAction) : IDisposable

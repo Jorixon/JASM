@@ -1,21 +1,13 @@
 # This workflow will build and publish a WinUI 3 unpackaged desktop application
 # built on .NET.
 
-name: Test,Build And Release JASM
+name: Build And Release JASM Self Contained
 
 on:
   workflow_dispatch:
-
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'src/**'
   push:
-    branches: [ main ]
-    paths:
-      - 'src/**'
-      - 'CHANGELOG.md'
-
+    tags:
+      - v*
 jobs:
   build:
     strategy:
@@ -41,13 +33,13 @@ jobs:
       run: dotnet test ${{ github.workspace }}\src
 
     - name: Build, publish and zip the app
-      run: python ${{ github.workspace }}\Build\Release.py
+      run: python ${{ github.workspace }}\Build\Release.py SelfContained
       shell: cmd
 
     # Upload the app
-    - name: Upload JASM
+    - name: Upload JASM Self Contained
       uses: actions/upload-artifact@v3
       with:
-        name: Upload JASM
+        name: JASM Self Contained
         path: ${{ github.workspace }}\\${{ env.zipFile }}
         
