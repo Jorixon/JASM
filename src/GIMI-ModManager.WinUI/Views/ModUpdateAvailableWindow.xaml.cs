@@ -15,11 +15,14 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
 
     public bool WebViewIsAvailable = false;
 
-    //private bool _isFirstTimeNavigation = true;
+
+    private CancellationTokenSource? _cts;
 
     public ModUpdateAvailableWindow(Guid notificationId)
     {
-        ViewModel = new ModUpdateVM(notificationId, this);
+        _cts = new CancellationTokenSource();
+
+        ViewModel = new ModUpdateVM(notificationId, this, _cts.Token);
         InitializeComponent();
 
         if (Content is FrameworkElement rootElement)
@@ -27,6 +30,14 @@ public sealed partial class ModUpdateAvailableWindow : WindowEx
             rootElement.RequestedTheme = ThemeSelectorService.Theme;
         }
 
+        Closed += (_, _) =>
+        {
+            if (_cts is null) return;
+            var cts = _cts;
+            _cts = null;
+            cts?.Cancel();
+            cts?.Dispose();
+        };
 
         InitWebView();
     }

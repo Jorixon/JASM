@@ -2,9 +2,11 @@
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
@@ -23,12 +25,14 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
     private readonly ModPresetService _modPresetService;
     private readonly UserPreferencesService _userPreferencesService;
     private readonly SelectedGameService _selectedGameService;
+    private readonly ModArchiveRepository _modArchiveRepository;
     public override string ActivationName { get; } = "RegularStartup";
 
     public FirstTimeStartupActivationHandler(INavigationService navigationService,
         ILocalSettingsService localSettingsService,
         ISkinManagerService skinManagerService, IGameService gameService, SelectedGameService selectedGameService,
-        ModPresetService modPresetService, UserPreferencesService userPreferencesService)
+        ModPresetService modPresetService, UserPreferencesService userPreferencesService,
+        ModArchiveRepository modArchiveRepository)
     {
         _navigationService = navigationService;
         _localSettingsService = localSettingsService;
@@ -37,6 +41,7 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
         _selectedGameService = selectedGameService;
         _modPresetService = modPresetService;
         _userPreferencesService = userPreferencesService;
+        _modArchiveRepository = modArchiveRepository;
     }
 
     protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
@@ -63,6 +68,9 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
 
         await Task.Run(async () =>
         {
+            var modArchiveSettings =
+                await _localSettingsService.ReadOrCreateSettingAsync<ModArchiveSettings>(ModArchiveSettings.Key);
+
             await _gameService.InitializeAsync(gameServiceOptions).ConfigureAwait(false);
 
             await _skinManagerService.InitializeAsync(modManagerOptions!.ModsFolderPath!, null,
@@ -71,7 +79,9 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
             var tasks = new List<Task>
             {
                 _userPreferencesService.InitializeAsync(),
-                _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder)
+                _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder),
+                _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder,
+                    o => o.MaxDirectorySizeGb = modArchiveSettings.MaxLocalArchiveCacheSizeGb)
             };
 
             await Task.WhenAll(tasks).ConfigureAwait(false);

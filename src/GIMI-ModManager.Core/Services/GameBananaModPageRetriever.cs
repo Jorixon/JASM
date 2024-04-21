@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using GIMI_ModManager.Core.Services.GameBanana;
 using Polly;
 using Polly.RateLimiting;
 using Polly.Registry;
@@ -7,6 +9,7 @@ using Serilog;
 
 namespace GIMI_ModManager.Core.Services;
 
+[Obsolete($"Use {nameof(GameBananaCoreService)} instead")]
 public class GameBananaModPageRetriever : IModUpdateChecker
 {
     private readonly ILogger _logger;
@@ -16,6 +19,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
 
     private const string DownloadUrl = "https://gamebanana.com/dl/";
     private const string ApiUrl = "https://gamebanana.com/apiv11/Mod/";
+    private const string HealthCheckUrl = "https://gamebanana.com/apiv11";
 
     public GameBananaModPageRetriever(ILogger logger, HttpClient httpClient,
         ResiliencePipelineProvider<string> resiliencePipelineProvider)
@@ -25,7 +29,13 @@ public class GameBananaModPageRetriever : IModUpdateChecker
         _resiliencePipeline = resiliencePipelineProvider.GetPipeline(HttpClientName);
     }
 
+    public async Task<bool> CheckSiteStatusAsync(CancellationToken cancellationToken = default)
+    {
+        using var response = await _httpClient.GetAsync(HealthCheckUrl, cancellationToken).ConfigureAwait(false);
+        return response.StatusCode == HttpStatusCode.OK;
+    }
 
+    [Obsolete($"Use {nameof(GameBananaCoreService)} instead")]
     public async Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
         CancellationToken cancellationToken = default)
     {
@@ -68,6 +78,7 @@ public class GameBananaModPageRetriever : IModUpdateChecker
     }
 
 
+    [Obsolete($"Use {nameof(GameBananaCoreService)} instead")]
     public async Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(url);
@@ -197,9 +208,11 @@ public class GameBananaModPageRetriever : IModUpdateChecker
 
 public interface IModUpdateChecker
 {
+    [Obsolete($"Use {nameof(GameBananaCoreService)} instead")]
     public Task<ModsRetrievedResult> CheckForUpdatesAsync(Uri url, DateTime lastCheck,
         CancellationToken cancellationToken = default);
 
+    [Obsolete($"Use {nameof(GameBananaCoreService)} instead")]
     public Task<ModPageDataResult> GetModPageDataAsync(Uri url, CancellationToken cancellationToken = default);
 }
 
@@ -244,6 +257,8 @@ public sealed class ApiImageUrl
 
 public sealed class ApiRootResponse
 {
+    [JsonPropertyName("_idRow")] public int ModId { get; init; } = -1;
+
     [JsonPropertyName("_aFiles")] public List<ApiFiles> Files { get; set; } = new(0);
 }
 
@@ -281,6 +296,20 @@ public record UpdateCheckResult
 
 public record ModsRetrievedResult
 {
+    private string _modId = "-1";
+
+    public string ModId
+    {
+        get
+        {
+            if (_modId == "-1" && SitePageUrl != null)
+                return SitePageUrl.Segments.Last();
+
+            return _modId;
+        }
+        set => _modId = value;
+    }
+
     public DateTime CheckTime { get; init; }
     public DateTime LastCheck { get; init; }
     public Uri SitePageUrl { get; init; } = null!;
@@ -313,6 +342,7 @@ internal static class ApiToResultMapper
 
         return new ModsRetrievedResult
         {
+            ModId = apiResponse.ModId.ToString(),
             CheckTime = DateTime.Now,
             LastCheck = lastCheck,
             SitePageUrl = sitePageUrl,

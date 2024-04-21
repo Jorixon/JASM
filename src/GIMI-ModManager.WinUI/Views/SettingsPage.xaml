@@ -260,6 +260,25 @@
                             Content="Treat Character Skins as separate characters"
                             IsChecked="{x:Bind ViewModel.CharacterAsSkinsCheckbox, Mode=TwoWay}" />
                     </StackPanel>
+
+                    <StackPanel Margin="0,16,0,0" Spacing="8">
+                        <TextBlock
+                            MaxWidth="600"
+                            HorizontalAlignment="Left"
+                            Text="When using JASM to download mods, it automatically caches the archives or zip files. You can specify a maximum limit in gigabytes for the cache directory, and JASM will keep the cache size under the limit when starting up."
+                            TextWrapping="WrapWholeWords" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+
+                            <Slider
+                                x:Name="LocalCacheSlider"
+                                Width="200"
+                                ValueChanged="LocalCacheSlider_OnValueChanged"
+                                Value="{x:Bind ViewModel.MaxCacheLimit, Mode=OneWay}" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.MaxCacheSizeString, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
                 </StackPanel>
 
                 <TextBlock l:Uids.Uid="Settings_Export_Title" Style="{ThemeResource SubtitleTextBlockStyle}" />

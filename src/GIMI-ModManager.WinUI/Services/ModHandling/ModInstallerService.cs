@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagement;
+using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;
@@ -24,8 +25,8 @@ public class ModInstallerService(
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly IWindowManagerService _windowManagerService = windowManagerService;
 
-    public Task StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList,
-        ICharacterSkin? inGameSkin = null)
+    public async Task<InstallMonitor> StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList,
+        ICharacterSkin? inGameSkin = null, Action<InstallOptions>? setup = null)
     {
         ArgumentNullException.ThrowIfNull(modFolder);
         ArgumentNullException.ThrowIfNull(modList);
@@ -36,13 +37,18 @@ public class ModInstallerService(
 
         var dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainWindow.DispatcherQueue;
 
-        dispatcherQueue.EnqueueAsync(() => InternalStartAsync(modFolder, modList, inGameSkin));
+        var modOptions = new InstallOptions();
+        setup?.Invoke(modOptions);
 
-        return Task.CompletedTask;
+
+        var monitor =
+            await dispatcherQueue.EnqueueAsync(() => InternalStartAsync(modFolder, modList, inGameSkin, modOptions));
+
+        return monitor;
     }
 
-    private async Task InternalStartAsync(DirectoryInfo modFolder, ICharacterModList modList,
-        ICharacterSkin? inGameSkin = null)
+    private async Task<InstallMonitor> InternalStartAsync(DirectoryInfo modFolder, ICharacterModList modList,
+        ICharacterSkin? inGameSkin = null, InstallOptions? options = null)
     {
         var modTitle = Guid.TryParse(modFolder.Name, out _)
             ? modFolder.EnumerateDirectories().FirstOrDefault()?.Name
@@ -53,7 +59,7 @@ public class ModInstallerService(
         var modInstallerSettings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key);
 
-        var modInstallPage = new ModInstallerPage(modList, modFolder, inGameSkin);
+        var modInstallPage = new ModInstallerPage(modList, modFolder, inGameSkin, options);
         var modInstallWindow = new WindowEx()
         {
             SystemBackdrop = new MicaBackdrop(),
@@ -65,8 +71,61 @@ public class ModInstallerService(
             MinWidth = 1024,
             IsAlwaysOnTop = modInstallerSettings.ModInstallerWindowOnTop
         };
-        modInstallPage.CloseRequested += (_, _) => { modInstallWindow.Close(); };
         _windowManagerService.CreateWindow(modInstallWindow, modList);
+
+        return new InstallMonitor(modInstallPage, modInstallWindow);
+    }
+}
+
+public class InstallOptions
+{
+    public Uri? ModUrl { get; set; }
+}
+
+public sealed class InstallMonitor : IDisposable
+{
+    private readonly TaskCompletionSource<CloseRequestedArgs> _taskCompletionSource = new();
+    private readonly ModInstallerPage _modInstallerPage;
+    private readonly WindowEx _modInstallerWindow;
+    private CancellationTokenRegistration? _cancellationTokenRegistration;
+
+
+    public InstallMonitor(ModInstallerPage modInstallerPage, WindowEx modInstallerWindow)
+    {
+        _modInstallerPage = modInstallerPage;
+        _modInstallerWindow = modInstallerWindow;
+
+        _modInstallerPage.CloseRequested += (_, e) =>
+        {
+            _taskCompletionSource.SetResult(e);
+            _modInstallerWindow.Close();
+        };
+
+        _modInstallerWindow.Closed += (_, _) =>
+        {
+            if (!_taskCompletionSource.Task.IsCompleted)
+                _taskCompletionSource.TrySetResult(new CloseRequestedArgs(CloseRequestedArgs.CloseReasons.Canceled));
+        };
+    }
+
+    public Task<CloseRequestedArgs> WaitForCloseAsync(CancellationToken cancellationToken = default)
+    {
+        _cancellationTokenRegistration = cancellationToken.Register(() =>
+        {
+            if (!_taskCompletionSource.Task.IsCompleted)
+            {
+                _taskCompletionSource.TrySetCanceled();
+                _modInstallerWindow.Close();
+            }
+        });
+
+        return _taskCompletionSource.Task;
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenRegistration?.Dispose();
+        _cancellationTokenRegistration = null;
     }
 }
 
@@ -213,14 +272,15 @@ public sealed class ModInstallation : IDisposable
         if (dupeModNewFolderName.IsNullOrEmpty() && options.NewModFolderName.IsNullOrEmpty())
             throw new ArgumentException("The new mod folder name and old folder name cannot be null or empty");
 
-        if (dupeModNewFolderName == options.NewModFolderName)
+        if (ModFolderHelpers.FolderNameEquals(dupeModNewFolderName, options.NewModFolderName!))
             throw new ArgumentException("The new mod folder name and old folder name cannot be the same");
 
         ReleaseLockedFiles();
 
         var skinMod = await CreateSkinModWithOptionsAsync(options);
         var newModRenamed = false;
-        if (!options.NewModFolderName.IsNullOrEmpty() && skinMod.Name != options.NewModFolderName)
+        if (!options.NewModFolderName.IsNullOrEmpty() &&
+            !ModFolderHelpers.FolderNameEquals(skinMod.Name, options.NewModFolderName))
         {
             var tmpFolder = App.GetUniqueTmpFolder();
             skinMod = await SkinMod.CreateModAsync(skinMod.CopyTo(tmpFolder.FullName).FullPath).ConfigureAwait(false);
@@ -228,7 +288,8 @@ public sealed class ModInstallation : IDisposable
             newModRenamed = true;
         }
 
-        if (!dupeModNewFolderName.IsNullOrEmpty() && dupeMod.Name != dupeModNewFolderName)
+        if (!dupeModNewFolderName.IsNullOrEmpty() &&
+            !ModFolderHelpers.FolderNameEquals(dupeMod.Name, dupeModNewFolderName))
         {
             _destinationModList.RenameMod(dupeMod, dupeModNewFolderName);
         }
