@@ -918,7 +918,7 @@ public partial class FileSystemItem : ObservableObject
     {
         _fileSystemInfo = fileSystemInfo;
 
-        if (recursionCount < 2)
+        if (recursionCount < 1)
         {
             _isExpanded = true;
         }
