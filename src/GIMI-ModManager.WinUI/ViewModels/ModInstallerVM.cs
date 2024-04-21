@@ -165,8 +165,6 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                     dispatcherQueue.TryEnqueue(() => { SetShaderFixesFolder(fileSystemItem); });
             }
 
-            if (options?.ModUrl is not null)
-                dispatcherQueue.TryEnqueue(() => { ModUrl = options.ModUrl.ToString(); });
 
             var autoFoundImages = SkinModHelpers.DetectModPreviewImages(_modInstallation.ModFolder.FullName);
 
@@ -178,6 +176,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                         ?.GetByPath(autoFoundImages.FirstOrDefault()?.LocalPath ?? "");
                     SetModPreviewImage(fileSystemItem);
                 });
+
+            if (options?.ModUrl is not null)
+                dispatcherQueue.TryEnqueue(() => { ModUrl = options.ModUrl.ToString(); });
         }).ConfigureAwait(false);
     }
 
@@ -660,6 +661,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                     {
                         var newImage = await Task.Run(() => _imageHandlerService.DownloadImageAsync(newImageUrl));
                         ModPreviewImagePath = new Uri(newImage.Path);
+
+                        if (LastSelectedImageFile is not null)
+                        {
+                            LastSelectedImageFile.RightIcon = null;
+                            LastSelectedImageFile = null;
+                        }
                     }
                 }
                 catch (Exception e)

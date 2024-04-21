@@ -302,11 +302,15 @@ public partial class ModUpdateVM : ObservableRecipient
                 var modFolderName = archiveNameSections[0];
                 var modFolderExt = Path.GetExtension(modFolder.Name);
 
-                modFolder.MoveTo(Path.Combine(modFolder.Parent!.FullName, $"{modFolderName}{modFolderExt}"));
+                var modFolderParent = modFolder.Parent!;
+
+                var zipRoot = Directory.CreateDirectory(Path.Combine(modFolderParent.FullName, "ArchiveRoot"));
+
+                modFolder.MoveTo(Path.Combine(zipRoot.FullName, $"{modFolderName}{modFolderExt}"));
 
                 var modUrl = _modPageInfo?.ModPageUrl;
 
-                using var task = await _modInstallerService.StartModInstallationAsync(modFolder, _characterModList,
+                using var task = await _modInstallerService.StartModInstallationAsync(zipRoot, _characterModList,
                     setup: options => options.ModUrl = modUrl).ConfigureAwait(false);
 
                 return await task.WaitForCloseAsync(_ct).ConfigureAwait(false);
