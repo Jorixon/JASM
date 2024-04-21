@@ -21,7 +21,7 @@ public sealed class ModArchiveRepository
     private const string DownloadTempPrefix = ".TMP_DOWNLOAD";
     public const string Separator = "_!!_";
 
-    private int _maxDirectorySizeGb = 10;
+    private int _maxDirectorySizeGb;
 
     public ModArchiveRepository(ILogger logger, ArchiveService archiveService)
     {
@@ -231,6 +231,16 @@ public sealed class ModArchiveRepository
     private void RemoveUntilUnderMaxSize()
     {
         // Remove archives until the directory is under the max size
+        var currentSize = _modArchives.Sum(x => x.Value.SizeInGb);
+
+        if (currentSize > _maxDirectorySizeGb)
+        {
+            _logger.Information(
+                "Mod archive directory is over the size limit, removing archives. Limit {MaxLimit} | CurrentSize: {CurrentSize}",
+                _maxDirectorySizeGb, currentSize);
+        }
+
+
         while (_modArchives.Sum(x => x.Value.SizeInGb) > _maxDirectorySizeGb)
         {
             var oldest = _modArchives.MinBy(x => x.Value.LastWriteTime);
@@ -369,8 +379,8 @@ public class setupOptions
         get => _maxDirectorySizeGb;
         set
         {
-            if (value <= 1)
-                _maxDirectorySizeGb = 1;
+            if (value <= 0)
+                _maxDirectorySizeGb = 0;
 
             _maxDirectorySizeGb = value;
         }

@@ -1,6 +1,7 @@
 ﻿using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views.Controls;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -34,5 +35,11 @@ public sealed partial class SettingsPage : Page
         if (e.AddedItems.Count == 0) return;
         var item = (string)e.AddedItems[0];
         await ViewModel.SelectGameCommand.ExecuteAsync(item).ConfigureAwait(false);
+    }
+
+    private void LocalCacheSlider_OnValueChanged(object _, RangeBaseValueChangedEventArgs e)
+    {
+        if (ViewModel.SetCacheLimitCommand.CanExecute((int)e.NewValue))
+            ViewModel.SetCacheLimitCommand.ExecuteAsync((int)e.NewValue);
     }
 }

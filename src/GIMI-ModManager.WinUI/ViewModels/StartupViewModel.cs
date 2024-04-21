@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -115,11 +116,15 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         await _skinManagerService.InitializeAsync(modManagerOptions.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);
 
+        var modArchiveSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModArchiveSettings>(ModArchiveSettings.Key);
+
         var tasks = new List<Task>
         {
             _userPreferencesService.InitializeAsync(),
             _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder),
-            _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder)
+            _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder,
+                o => o.MaxDirectorySizeGb = modArchiveSettings.MaxLocalArchiveCacheSizeGb)
         };
 
         await Task.WhenAll(tasks);

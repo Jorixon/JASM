@@ -17,6 +17,7 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
@@ -87,6 +88,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private DateTime? _nextModCheckTime = null;
 
     [ObservableProperty] private bool _characterAsSkinsCheckbox = false;
+
+    [ObservableProperty] private int _maxCacheLimit;
 
     private Dictionary<string, string> _nameToLangCode = new();
 
@@ -168,6 +171,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         };
         ElevatorService.CheckStatus();
 
+        MaxCacheLimit = localSettingsService.ReadSetting<ModArchiveSettings>(ModArchiveSettings.Key)
+            ?.MaxLocalArchiveCacheSizeGb ?? new ModArchiveSettings().MaxLocalArchiveCacheSizeGb;
+        SetCacheString(MaxCacheLimit);
 
         var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
         cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
@@ -705,6 +711,27 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 BackGroundModCheckerSettings.Key);
 
         IsModUpdateCheckerEnabled = modUpdateCheckerOptions.Enabled;
+    }
+
+    [ObservableProperty] private string _maxCacheSizeString = string.Empty;
+
+    private void SetCacheString(int value)
+    {
+        MaxCacheSizeString = $"{value} GB";
+    }
+
+    [RelayCommand]
+    private async Task SetCacheLimit(int maxValue)
+    {
+        var modArchiveSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModArchiveSettings>(ModArchiveSettings.Key);
+
+        modArchiveSettings.MaxLocalArchiveCacheSizeGb = maxValue;
+
+        await _localSettingsService.SaveSettingAsync(ModArchiveSettings.Key, modArchiveSettings);
+
+        MaxCacheLimit = maxValue;
+        SetCacheString(maxValue);
     }
 
 

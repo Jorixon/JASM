@@ -362,6 +362,25 @@ public partial class ModFileInfoVm : ObservableObject
 
     public DateTime DateAdded => _modFileInfo.DateAdded;
 
+    public string DateAddedTooltipFormat => $"Submitted: {DateAdded}";
+
+    public TimeSpan Age => DateTime.Now - DateAdded;
+
+    public string AgeFormated
+    {
+        get
+        {
+            var age = Age;
+
+            return (age) switch
+            {
+                { TotalHours: < 1 } => $"{age.Minutes} minutes ago",
+                { TotalDays: < 1 } => $"{age.Hours} hours ago",
+                _ => $"{Math.Round(age.TotalDays)} days ago"
+            };
+        }
+    }
+
     public string Description => _modFileInfo.Description;
 
     public string Md5Hash => _modFileInfo.Md5Checksum;

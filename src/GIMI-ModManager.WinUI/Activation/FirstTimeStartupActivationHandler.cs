@@ -6,6 +6,7 @@ using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
@@ -67,6 +68,9 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
 
         await Task.Run(async () =>
         {
+            var modArchiveSettings =
+                await _localSettingsService.ReadOrCreateSettingAsync<ModArchiveSettings>(ModArchiveSettings.Key);
+
             await _gameService.InitializeAsync(gameServiceOptions).ConfigureAwait(false);
 
             await _skinManagerService.InitializeAsync(modManagerOptions!.ModsFolderPath!, null,
@@ -76,7 +80,8 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
             {
                 _userPreferencesService.InitializeAsync(),
                 _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder),
-                _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder)
+                _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder,
+                    o => o.MaxDirectorySizeGb = modArchiveSettings.MaxLocalArchiveCacheSizeGb)
             };
 
             await Task.WhenAll(tasks).ConfigureAwait(false);

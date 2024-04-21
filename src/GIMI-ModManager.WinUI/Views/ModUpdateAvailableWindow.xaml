@@ -99,7 +99,8 @@
                                                         Margin="8,0"
                                                         VerticalAlignment="Bottom"
                                                         IsTextSelectionEnabled="True"
-                                                        Text="{x:Bind DateAdded}" />
+                                                        Text="{x:Bind AgeFormated}"
+                                                        ToolTipService.ToolTip="{x:Bind DateAddedTooltipFormat}" />
                                                 </StackPanel>
 
 
