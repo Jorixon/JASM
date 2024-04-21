@@ -21,7 +21,7 @@ public sealed class ModArchiveRepository
     private const string DownloadTempPrefix = ".TMP_DOWNLOAD";
     public const string Separator = "_!!_";
 
-    private readonly int _MaxDirectorySizeGb = 10;
+    private int _maxDirectorySizeGb = 10;
 
     public ModArchiveRepository(ILogger logger, ArchiveService archiveService)
     {
@@ -29,15 +29,20 @@ public sealed class ModArchiveRepository
         _logger = logger.ForContext<ModArchiveRepository>();
     }
 
-    public async Task InitializeAsync(string appDataFolder)
+
+    public async Task InitializeAsync(string appDataFolder, Action<setupOptions>? setup = null)
     {
+        ReadOptions(setup);
+
         _settingsDirectory = new DirectoryInfo(appDataFolder);
         _settingsDirectory.Create();
 
         _modArchiveDirectory = new DirectoryInfo(Path.Combine(appDataFolder, ModArchiveDirectoryName));
         _modArchiveDirectory.Create();
 
-        foreach (var archive in _modArchiveDirectory.EnumerateFiles())
+        var deleteTasks = new List<Task>();
+
+        foreach (var archive in _modArchiveDirectory.EnumerateFiles().ToArray())
         {
             try
             {
@@ -45,21 +50,33 @@ public sealed class ModArchiveRepository
 
                 if (_modArchives.ContainsKey(archiveHandle.FullName))
                 {
-                    archive.Delete();
+                    _logger.Debug("Duplicate archive found, deleting: {ArchiveName}", archiveHandle.FullName);
+
+
+                    deleteTasks.Add(Task.Run(archive.Delete));
                     continue;
                 }
 
                 TrackArchive(archiveHandle);
             }
-            catch (InvalidArchiveNameFormatException)
+            catch (Exception e)
             {
-                archive.Delete();
+                _logger.Information("Invalid archive, deleting: {ArchiveName}", archive.FullName);
+                deleteTasks.Add(Task.Run(archive.Delete));
             }
         }
+
+        await Task.WhenAll(deleteTasks).ConfigureAwait(false);
 
         var _ = Task.Run(RemoveUntilUnderMaxSize);
     }
 
+    private void ReadOptions(Action<setupOptions>? setup = null)
+    {
+        var options = new setupOptions();
+        setup?.Invoke(options);
+        _maxDirectorySizeGb = options.MaxDirectorySizeGb;
+    }
 
     public async Task<ModArchiveHandle> CopyAndTrackModArchiveAsync(string archivePath,
         GbModFileIdentifier modFileIdentifier,
@@ -200,7 +217,7 @@ public sealed class ModArchiveRepository
         var archiveExtension = Path.GetExtension(archivePath);
 
         if (string.IsNullOrEmpty(archiveFileName) || string.IsNullOrEmpty(archiveExtension))
-            throw new ArgumentException("Invalid archive file path", nameof(archivePath));
+            throw new ArgumentException($"Invalid archive file path: {archivePath}", nameof(archivePath));
 
         if (!File.Exists(archivePath))
             throw new FileNotFoundException("Archive not found", archivePath);
@@ -213,14 +230,15 @@ public sealed class ModArchiveRepository
 
     private void RemoveUntilUnderMaxSize()
     {
-        while (_modArchives.ToArray().Sum(x => x.Value.SizeInGb) > _MaxDirectorySizeGb)
+        // Remove archives until the directory is under the max size
+        while (_modArchives.Sum(x => x.Value.SizeInGb) > _maxDirectorySizeGb)
         {
-            var smallest = _modArchives.ToArray().MinBy(x => x.Value.SizeInGb);
-            _modArchives.TryRemove(smallest.Key, out _);
+            var oldest = _modArchives.MinBy(x => x.Value.LastWriteTime);
+            _modArchives.TryRemove(oldest.Key, out _);
 
-            if (smallest.Value.Exists)
-                File.Delete(smallest.Value.FullName);
-            smallest.Value.Refresh();
+            if (oldest.Value.Exists)
+                File.Delete(oldest.Value.FullName);
+            oldest.Value.Refresh();
         }
     }
 }
@@ -240,7 +258,9 @@ public class ModArchiveHandle
 
     public bool Exists => _archiveFile.Exists;
 
-    public int SizeInGb => (int)Math.Ceiling((decimal)_archiveFile.Length / 1024 / 1024 / 1024);
+    public double SizeInGb => _archiveFile.Length / 1024D / 1024D / 1024D;
+
+    public DateTime LastWriteTime => _archiveFile.LastWriteTime;
 
     public void Refresh() => _archiveFile.Refresh();
 
@@ -337,5 +357,22 @@ public class ModIdentifier
         {
             MD5Hash = md5Hash
         };
+    }
+}
+
+public class setupOptions
+{
+    private int _maxDirectorySizeGb = 10;
+
+    public int MaxDirectorySizeGb
+    {
+        get => _maxDirectorySizeGb;
+        set
+        {
+            if (value <= 1)
+                _maxDirectorySizeGb = 1;
+
+            _maxDirectorySizeGb = value;
+        }
     }
 }

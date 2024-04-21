@@ -33,6 +33,8 @@ public partial class ModUpdateVM : ObservableRecipient
 
     private ModPageInfo? _modPageInfo;
 
+    [ObservableProperty] private string _initializing = "true";
+
     [ObservableProperty] private string _modName = string.Empty;
 
     [ObservableProperty] private Uri _modPage = new("https://gamebanana.com/");
@@ -52,7 +54,7 @@ public partial class ModUpdateVM : ObservableRecipient
     public bool IsNotBusy => !IsWindowBusy;
 
 
-    public ObservableCollection<ModFileInfoVm> ModFileInfos = new();
+    public readonly ObservableCollection<ModFileInfoVm> ModFileInfos = new();
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<ModUpdateVM>();
 
     public ModUpdateVM(Guid notificationId, WindowEx window, CancellationToken ctsToken)
@@ -69,6 +71,7 @@ public partial class ModUpdateVM : ObservableRecipient
         try
         {
             await InternalInitialize();
+            Initializing = "false";
         }
         catch (Exception e)
         {
@@ -235,6 +238,10 @@ public partial class ModUpdateVM : ObservableRecipient
             fileInfoVm.ArchiveFile = new FileInfo(archivePath);
             fileInfoVm.Status = ModFileInfoVm.InstallStatus.Downloaded;
         }
+        catch (Exception) when (_ct.IsCancellationRequested)
+        {
+            Reset();
+        }
         catch (Exception e)
         {
             _logger.Error(e, "Failed to download mod file");
@@ -242,13 +249,18 @@ public partial class ModUpdateVM : ObservableRecipient
             _notificationManager.ShowNotification("Failed to download mod file",
                 e.Message, TimeSpan.FromSeconds(10));
 
-            fileInfoVm.Status = ModFileInfoVm.InstallStatus.NotStarted;
-            fileInfoVm.ArchiveFile = null;
-            fileInfoVm.DownloadProgress = 0;
+            Reset();
         }
         finally
         {
             fileInfoVm.IsBusy = false;
+        }
+
+        void Reset()
+        {
+            fileInfoVm.Status = ModFileInfoVm.InstallStatus.NotStarted;
+            fileInfoVm.ArchiveFile = null;
+            fileInfoVm.DownloadProgress = 0;
         }
     }
 
@@ -272,6 +284,7 @@ public partial class ModUpdateVM : ObservableRecipient
     private async Task StartInstall(ModFileInfoVm fileInfoVm)
     {
         IsWindowBusy = true;
+        fileInfoVm.IsBusy = true;
 
         fileInfoVm.Status = ModFileInfoVm.InstallStatus.Installing;
 
@@ -286,7 +299,7 @@ public partial class ModUpdateVM : ObservableRecipient
                 if (archiveNameSections.Length != 4)
                     throw new InvalidArchiveNameFormatException();
 
-                var modFolderName = archiveNameSections[1];
+                var modFolderName = archiveNameSections[0];
                 var modFolderExt = Path.GetExtension(modFolder.Name);
 
                 modFolder.MoveTo(Path.Combine(modFolder.Parent!.FullName, $"{modFolderName}{modFolderExt}"));
@@ -318,6 +331,10 @@ public partial class ModUpdateVM : ObservableRecipient
 
             fileInfoVm.Status = ModFileInfoVm.InstallStatus.Installed;
         }
+        catch (TaskCanceledException)
+        {
+            fileInfoVm.Status = ModFileInfoVm.InstallStatus.Downloaded;
+        }
         catch (Exception e)
         {
             _logger.Error(e, "Failed to install mod file");
@@ -330,6 +347,7 @@ public partial class ModUpdateVM : ObservableRecipient
         finally
         {
             IsWindowBusy = false;
+            fileInfoVm.IsBusy = false;
         }
     }
 }
