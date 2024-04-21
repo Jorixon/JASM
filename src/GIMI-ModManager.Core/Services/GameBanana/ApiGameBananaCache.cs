@@ -62,7 +62,7 @@ internal sealed class ApiGameBananaCache
         _cache.Clear();
     }
 
-    private static string CreateKey(string key, Type type) => $"{type.FullName}_{key}";
+    private static string CreateKey(string key, Type type) => $"{type.Name}_{key}";
 }
 
 internal sealed class CacheEntry<T>

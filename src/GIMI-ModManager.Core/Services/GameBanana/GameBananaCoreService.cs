@@ -52,7 +52,12 @@ public sealed class GameBananaCoreService(
         if (apiModProfile == null)
             return null;
 
-        return new ModPageInfo(apiModProfile);
+
+        var modInfo = new ModPageInfo(apiModProfile);
+
+        _cache.Set(modId, modInfo);
+
+        return modInfo;
     }
 
     /// <summary>
