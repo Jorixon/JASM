@@ -24,7 +24,9 @@ public sealed class GameBananaCoreService(
     private IApiGameBananaClient CreateApiGameBananaClient() =>
         _serviceProvider.GetRequiredService<IApiGameBananaClient>();
 
-
+    /// <summary>
+    /// Checks if the GameBanana API is reachable
+    /// </summary>
     public async Task<bool> HealthCheckAsync(CancellationToken ct = default)
     {
         var apiGameBananaClient = CreateApiGameBananaClient();
@@ -32,6 +34,10 @@ public sealed class GameBananaCoreService(
         return await apiGameBananaClient.HealthCheckAsync(ct).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Gets the profile of a mod from GameBanana. Uses caching to reduce the number of API calls.
+    /// The return type <see cref="ModPageInfo"/> also contains mod files info <see cref="ModFileInfo"/>
+    /// </summary>
     public async Task<ModPageInfo?> GetModProfileAsync(GbModId modId, CancellationToken ct = default)
     {
         var cachedModProfile = _cache.Get<ModPageInfo>(modId);
@@ -49,11 +55,20 @@ public sealed class GameBananaCoreService(
         return new ModPageInfo(apiModProfile);
     }
 
+    /// <summary>
+    ///  Tries to get a locally cached mod archive by its MD5 hash
+    /// </summary>
     public async Task<ModArchiveHandle?> GetLocalModArchiveByMd5HashAsync(string md5Hash,
         CancellationToken ct = default) =>
         await _modArchiveRepository.FirstOrDefaultAsync(modFile => modFile.MD5Hash == md5Hash, ct)
             .ConfigureAwait(false);
 
+    /// <summary>
+    /// Gets the files info of a mod from GameBanana. Uses caching to reduce the number of API calls. Is more lightweight than <see cref="GetModProfileAsync"/>>
+    /// </summary>
+    /// <param name="modId"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
     public async Task<IReadOnlyList<ModFileInfo>?> GetModFilesInfoAsync(GbModId modId, CancellationToken ct = default)
     {
         var apiGameBananaClient = CreateApiGameBananaClient();
@@ -102,6 +117,14 @@ public sealed class GameBananaCoreService(
         public required bool Exists { get; init; }
     }
 
+    /// <summary>
+    /// Downloads a mod from GameBanana. Uses caching to reduce the number of API calls and checks archive cache before downloading.
+    /// </summary>
+    /// <param name="modFileIdentifier"></param>
+    /// <param name="progress">An IProgress that can be used to monitor progress. Goes from 0 to 100</param>
+    /// <param name="ct"></param>
+    /// <returns>The Absolute path to the downloaded archive</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<string> DownloadModAsync(GbModFileIdentifier modFileIdentifier, IProgress<int>? progress = null,
         CancellationToken ct = default)
     {

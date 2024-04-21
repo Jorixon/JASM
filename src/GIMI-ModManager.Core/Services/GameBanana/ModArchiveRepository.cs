@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
 using Serilog;
@@ -30,7 +29,7 @@ public sealed class ModArchiveRepository
     }
 
 
-    public async Task InitializeAsync(string appDataFolder, Action<setupOptions>? setup = null)
+    public async Task InitializeAsync(string appDataFolder, Action<SetupOptions>? setup = null)
     {
         ReadOptions(setup);
 
@@ -71,9 +70,9 @@ public sealed class ModArchiveRepository
         var _ = Task.Run(RemoveUntilUnderMaxSize);
     }
 
-    private void ReadOptions(Action<setupOptions>? setup = null)
+    private void ReadOptions(Action<SetupOptions>? setup = null)
     {
-        var options = new setupOptions();
+        var options = new SetupOptions();
         setup?.Invoke(options);
         _maxDirectorySizeGb = options.MaxDirectorySizeGb;
     }
@@ -195,7 +194,7 @@ public sealed class ModArchiveRepository
         var archiveName = Path.GetFileNameWithoutExtension(archiveFileName);
         var archiveExtension = Path.GetExtension(archiveFileName);
 
-        var hash = archiveHash ?? "|REPLACE|"; //TODO: Implement hash calculation
+        var hash = archiveHash ?? "|REPLACE|";
 
         return Task.FromResult(
             $"{archiveName}{Separator}{modFileIdentifier.ModId}{Separator}{modFileIdentifier.ModFileId}{Separator}{hash}{archiveExtension}");
@@ -317,60 +316,7 @@ public class InvalidArchiveNameFormatException : Exception
     }
 }
 
-// Archive has filename: ModFileName_!!_ModId_!!_MD5Hash.<extension>
-public class ModIdentifier
-{
-    public string? ModId { get; private init; }
-    public string? ModFileName { get; private init; }
-
-    public string? MD5Hash { get; private init; }
-
-    private ModIdentifier()
-    {
-    }
-
-    public static ModIdentifier FromArchiveFileName(string archiveFileName)
-    {
-        var parts = archiveFileName.Split("__");
-        if (parts.Length != 3)
-            throw new ArgumentException("Invalid archive file name", nameof(archiveFileName));
-
-        return new ModIdentifier
-        {
-            ModFileName = parts[0],
-            ModId = parts[1],
-            MD5Hash = parts[2]
-        };
-    }
-
-    [MemberNotNull(nameof(ModId))] //TODO: Test if this works
-    public static ModIdentifier FromModId(string modId)
-    {
-        return new ModIdentifier
-        {
-            ModId = modId
-        };
-    }
-
-    public static ModIdentifier FromModIdAndFileName(string modId, string modFileName)
-    {
-        return new ModIdentifier
-        {
-            ModId = modId,
-            ModFileName = modFileName
-        };
-    }
-
-    public static ModIdentifier FromMD5Hash(string md5Hash)
-    {
-        return new ModIdentifier
-        {
-            MD5Hash = md5Hash
-        };
-    }
-}
-
-public class setupOptions
+public class SetupOptions
 {
     private int _maxDirectorySizeGb = 10;
 
