@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/Jorixon/JASM/compare/v2.7.0...v2.8.0) (2024-04-21)
+
+
+### Features
+
+* Now possible to download mods directly in the "Update available" / "New mod files" window ([#177](https://github.com/Jorixon/JASM/issues/177)) ([8c7ed5f](https://github.com/Jorixon/JASM/commit/8c7ed5f3fe81f347d6da03c29906f28430b15cac))
+
 ## [2.7.0](https://github.com/Jorixon/JASM/compare/v2.6.3...v2.7.0) (2024-04-20)
 
 
