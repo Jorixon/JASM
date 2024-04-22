@@ -14,6 +14,7 @@ using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.Views;
 using GIMI_ModManager.WinUI.Views.CharacterManager;
 using Microsoft.Extensions.DependencyInjection;
@@ -144,8 +145,6 @@ public partial class App : Application
                 services.AddSingleton<GameBananaCoreService>();
 
                 services.AddSingleton<GameBananaService>();
-                services.AddTransient<IModUpdateChecker, GameBananaModPageRetriever>();
-                services.AddTransient<IApiGameBananaClient, ApiGameBananaClient>();
 
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
                 // I've read just about every microsoft docs page httpclients, and I can't figure out what I'm doing wrong
@@ -169,8 +168,7 @@ public partial class App : Application
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
                     {
                         PooledConnectionLifetime = TimeSpan.FromMinutes(10)
-                    })
-                    .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+                    });
 
                 // I'm preeeetty sure this is not correctly set up, not used to polly 8.x.x
                 // But it does rate limit, so I guess it's fine for now
@@ -242,6 +240,8 @@ public partial class App : Application
                 services.AddTransient<PresetDetailsPage>();
                 services.AddTransient<ModSelectorViewModel>();
                 services.AddTransient<ModSelector>();
+                services.AddTransient<CharacterGalleryPage>();
+                services.AddTransient<CharacterGalleryViewModel>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

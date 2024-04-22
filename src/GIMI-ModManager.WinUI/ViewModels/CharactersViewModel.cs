@@ -18,6 +18,7 @@ using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views;
 using Serilog;
@@ -622,8 +623,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void CharacterClicked(CharacterGridItemModel characterModel)
     {
-        _navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
-        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
+        //_navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
+        _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, characterModel);
+        //_navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
     }
 
     [ObservableProperty] private bool _showOnlyCharactersWithMods = false;

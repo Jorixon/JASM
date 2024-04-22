@@ -1,5 +1,8 @@
 ﻿namespace GIMI_ModManager.Core.Services.GameBanana.Models;
 
+/// <summary>
+/// Example: https://gamebanana.com/dl/<see cref="GbModFileId"/>
+/// </summary>
 public record GbModFileId
 {
     public string ModFileId { get; }
