@@ -621,11 +621,20 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void CharacterClicked(CharacterGridItemModel characterModel)
+    private async Task CharacterClicked(CharacterGridItemModel characterModel)
     {
-        //_navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
-        _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, characterModel);
-        //_navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
+        _navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
+
+        var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
+            CharacterDetailsSettings.Key);
+
+        if (settings.GalleryView)
+        {
+            _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, characterModel);
+            return;
+        }
+
+        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
     }
 
     [ObservableProperty] private bool _showOnlyCharactersWithMods = false;

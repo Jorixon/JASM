@@ -4,6 +4,7 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -105,7 +106,8 @@ public class NavigationService : INavigationService
         return false;
     }
 
-    public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false)
+    public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false,
+        NavigationTransitionInfo? transitionInfo = null)
     {
         var pageType = _pageService.GetPageType(pageKey);
 
@@ -114,7 +116,10 @@ public class NavigationService : INavigationService
         {
             _frame.Tag = clearNavigation;
             var vmBeforeNavigation = _frame.GetPageViewModel();
-            var navigated = _frame.Navigate(pageType, parameter);
+            var navigated = transitionInfo is null
+                ? _frame.Navigate(pageType, parameter)
+                : _frame.Navigate(pageType, parameter, transitionInfo);
+
             if (navigated)
             {
                 _lastParameterUsed = parameter;

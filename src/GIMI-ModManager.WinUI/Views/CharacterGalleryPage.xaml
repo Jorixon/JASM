@@ -48,7 +48,7 @@
                     <TextBlock Text="Go Back" />
                 </Button>
 
-                <Grid CornerRadius="16">
+                <Grid x:Name="itemHero" CornerRadius="16">
                     <Image>
                         <Image.Source>
                             <BitmapImage DecodePixelHeight="64" UriSource="{x:Bind ViewModel.ImagePath, Mode=OneWay}" />
@@ -92,7 +92,11 @@
                                     TickFrequency="50"
                                     Value="{x:Bind ViewModel.GridItemWidth, Mode=TwoWay}" />
 
-                                <Button HorizontalAlignment="Right">Reset</Button>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <CheckBox HorizontalAlignment="Left" ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time.">Single Select</CheckBox>
+                                    <Button HorizontalAlignment="Right">Reset</Button>
+
+                                </StackPanel>
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
@@ -106,9 +110,11 @@
 
 
                 <ToggleSwitch
+                    x:Name="ViewToggleSwitch"
                     IsOn="True"
                     OffContent="Detailed View"
-                    OnContent="Gallery View" />
+                    OnContent="Gallery View"
+                    Toggled="ViewToggleSwitch_OnToggled" />
 
                 <Grid MinWidth="32">
                     <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />

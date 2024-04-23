@@ -345,8 +345,9 @@
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <ProgressRing IsActive="{x:Bind ViewModel.IsAddingModFolder, Mode=OneWay}" />
+                        Orientation="Horizontal"
+                        Spacing="16">
+
                         <InfoBar
                             Height="50"
                             VerticalAlignment="Center"
@@ -355,6 +356,18 @@
                             Message="{x:Bind ViewModel.ModListVM.InfoBarMessage, Mode=OneWay}"
                             Severity="{x:Bind ViewModel.ModListVM.Severity, Mode=OneWay}"
                             Visibility="Visible" />
+
+                        <ToggleSwitch
+                            x:Name="ViewToggleSwitch"
+                            IsOn="False"
+                            OffContent="Detailed View"
+                            OnContent="Gallery View"
+                            Toggled="ViewToggleSwitch_OnToggled" />
+
+                        <Grid MinWidth="32">
+                            <ProgressRing IsActive="{x:Bind ViewModel.IsAddingModFolder, Mode=OneWay}" />
+                        </Grid>
+
                     </StackPanel>
 
                 </Grid>

@@ -17,10 +17,12 @@ public partial class CharacterGalleryViewModel(
     IGameService gameService,
     INavigationService navigationService,
     ISkinManagerService skinManagerService,
+    ILocalSettingsService localSettingsService,
     ElevatorService elevatorService)
     : ObservableRecipient, INavigationAware
 {
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
+    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly ElevatorService _elevatorService = elevatorService;
     private readonly INavigationService _navigationService = navigationService;
     private readonly IGameService _gameService = gameService;
