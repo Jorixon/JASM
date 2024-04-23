@@ -62,7 +62,7 @@ else:
 	print()
 
 print("Building JASM...")
-jasmPublishCommand = "dotnet publish " + JASM_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release" + (" /p:SelfContained=true --self-contained true" if SelfContained else "")
+jasmPublishCommand = "dotnet publish " + JASM_CSPROJ + (" /p:PublishProfile=FolderProfileSelfContained.pubxml" if SelfContained else " /p:PublishProfile=FolderProfile.pubxml") + " -c Release" 
 print(jasmPublishCommand)
 checkSuccessfulExitCode(os.system(jasmPublishCommand))
 print()
