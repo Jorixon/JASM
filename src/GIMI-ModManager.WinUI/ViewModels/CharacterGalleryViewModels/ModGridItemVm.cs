@@ -21,10 +21,19 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
         public Uri ImagePath => _modModel.ImagePath;
         public Uri? ModUrl => string.IsNullOrWhiteSpace(_modModel.ModUrl) ? null : new Uri(_modModel.ModUrl);
         public bool HasModUrl => ModUrl is not null;
-        public string NameTooltip => $"Custom Name: {Name}\nFolder Name: {_modModel.FolderName}";
+        public string NameTooltip => $"Custom Name: {Name}\nFolder Name: {FolderName}";
         public string ButtonText => _modModel.IsEnabled ? "Disable" : "Enable";
 
-        public string FolderName => _modModel.FolderName;
+        public string FolderName
+        {
+            get => _modModel.FolderName;
+            set
+            {
+                _modModel.FolderName = value;
+                OnPropertyChanged(nameof(NameTooltip));
+                OnPropertyChanged();
+            }
+        }
 
         public Style? ButtonStyle => _modModel.IsEnabled
             ? (Style)Application.Current.Resources["AccentButtonStyle"]

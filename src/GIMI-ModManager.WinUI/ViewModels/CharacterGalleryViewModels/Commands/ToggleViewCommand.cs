@@ -7,7 +7,7 @@ public partial class CharacterGalleryViewModel
 {
     private bool CanToggleView()
     {
-        return !IsNavigating() && !IsBusy;
+        return !IsNavigating && !IsBusy;
     }
 
     [RelayCommand(CanExecute = nameof(CanToggleView))]

@@ -3,6 +3,7 @@ using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -21,6 +22,13 @@ public sealed partial class CharacterGalleryPage : Page
     public CharacterGalleryPage()
     {
         InitializeComponent();
+        Loaded += CharacterGalleryPage_Loaded;
+    }
+
+    private void CharacterGalleryPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        GridItemHeightSlider.ValueChanged += GridItemHeightSlider_OnValueChanged;
+        GridItemWithSlider.ValueChanged += GridItemWithSlider_OnValueChanged;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -39,5 +47,25 @@ public sealed partial class CharacterGalleryPage : Page
     {
         if (ViewModel.ToggleViewCommand.CanExecute(null))
             ViewModel.ToggleViewCommand.Execute(null);
+    }
+
+    private async void GridItemHeightSlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        await CallSetWidthHeight(GridItemWithSlider?.Value, e?.NewValue);
+    }
+
+    private async void GridItemWithSlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        await CallSetWidthHeight(e?.NewValue, GridItemHeightSlider?.Value);
+    }
+
+    private async Task CallSetWidthHeight(double? width, double? height)
+    {
+        if (width is null || height is null)
+            return;
+
+        var value = new SetHeightWidth((int)Math.Round(width.Value), (int)Math.Round(height.Value));
+        if (ViewModel.SetHeightWidthCommand.CanExecute(value))
+            await ViewModel.SetHeightWidthCommand.ExecuteAsync(value);
     }
 }

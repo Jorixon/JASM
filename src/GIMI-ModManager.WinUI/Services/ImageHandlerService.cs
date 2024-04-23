@@ -11,8 +11,9 @@ public class ImageHandlerService
 {
     private readonly string _tmpFolder = Path.Combine(App.TMP_DIR, "Images");
 
-    public readonly Uri PlaceholderImageUri =
-        new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
+    public readonly Uri PlaceholderImageUri = StaticPlaceholderImageUri;
+
+    public static Uri StaticPlaceholderImageUri => new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
 
     private readonly IHttpClientFactory _httpClientFactory;
 

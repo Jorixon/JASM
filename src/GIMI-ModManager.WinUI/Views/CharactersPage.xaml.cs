@@ -48,9 +48,9 @@ public sealed partial class CharactersPage : Page
         SearchBox.Focus(FocusState.Keyboard);
     }
 
-    private void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    private async void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        ViewModel.SuggestionBox_Chosen((CharacterGridItemModel?)args.ChosenSuggestion);
+        await ViewModel.SuggestionBox_Chosen((CharacterGridItemModel?)args.ChosenSuggestion);
     }
 
     private void ImageCommandsFlyout_OnOpening(object? sender, object e)

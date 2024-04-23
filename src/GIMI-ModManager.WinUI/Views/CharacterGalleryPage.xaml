@@ -24,6 +24,12 @@
 
     <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}" RowSpacing="4">
 
+        <Grid.Resources>
+            <Flyout x:Name="SelectInGameSkin">
+                <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.CharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.ChangeSkinCommandCommand}" />
+            </Flyout>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -51,16 +57,31 @@
                 <Grid x:Name="itemHero" CornerRadius="16">
                     <Image>
                         <Image.Source>
-                            <BitmapImage DecodePixelHeight="64" UriSource="{x:Bind ViewModel.ImagePath, Mode=OneWay}" />
+                            <BitmapImage DecodePixelHeight="64" UriSource="{x:Bind ViewModel.ModdableObjectImagePath, Mode=OneWay}" />
                         </Image.Source>
                     </Image>
                 </Grid>
 
 
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Text="{x:Bind ViewModel.Name, Mode=OneWay}"
-                    TextTrimming="CharacterEllipsis" />
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource GenshinFont}"
+                        FontSize="14"
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind ViewModel.ModdableObjectName, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <Button
+                        Content="Select Skin"
+                        Flyout="{StaticResource SelectInGameSkin}"
+                        IsEnabled="{x:Bind ViewModel.MultipleCharacterSkins, Mode=OneWay}">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="F1" />
+                        </Button.KeyboardAccelerators>
+                    </Button>
+                </StackPanel>
+
 
             </StackPanel>
 
@@ -79,6 +100,7 @@
                             <StackPanel MinWidth="200" Spacing="8">
                                 <TextBlock Text="Adjust Height:" />
                                 <Slider
+                                    x:Name="GridItemHeightSlider"
                                     Maximum="500"
                                     Minimum="200"
                                     SnapsTo="Ticks"
@@ -86,6 +108,7 @@
                                     Value="{x:Bind ViewModel.GridItemHeight, Mode=TwoWay}" />
                                 <TextBlock Text="Adjust Desired Width:" />
                                 <Slider
+                                    x:Name="GridItemWithSlider"
                                     Maximum="800"
                                     Minimum="200"
                                     SnapsTo="Ticks"
@@ -93,9 +116,13 @@
                                     Value="{x:Bind ViewModel.GridItemWidth, Mode=TwoWay}" />
 
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <CheckBox HorizontalAlignment="Left" ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time.">Single Select</CheckBox>
-                                    <Button HorizontalAlignment="Right">Reset</Button>
-
+                                    <CheckBox
+                                        HorizontalAlignment="Left"
+                                        Command="{x:Bind ViewModel.ToggleSingleSelectionCommand}"
+                                        IsChecked="{x:Bind ViewModel.IsSingleSelection, Mode=OneWay}"
+                                        ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time.">
+                                        Single Select
+                                    </CheckBox>
                                 </StackPanel>
                             </StackPanel>
                         </Flyout>
@@ -155,6 +182,7 @@
 
                                 <TextBlock
                                     Padding="4,0,0,0"
+                                    IsTextSelectionEnabled="True"
                                     Style="{ThemeResource SubtitleTextBlockStyle}"
                                     Text="{x:Bind Name}"
                                     TextTrimming="CharacterEllipsis"
@@ -165,11 +193,10 @@
                                     Grid.Row="1"
                                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     CornerRadius="16">
-                                    <Image>
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelWidth="500" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
-                                        </Image.Source>
-                                    </Image>
+                                    <controls1:CustomImage
+                                        EditButtonVisibility="Collapsed"
+                                        ImageUri="{x:Bind ImagePath, Mode=OneWay}"
+                                        IsContextMenuEnabled="False" />
                                 </Grid>
 
                                 <Grid
@@ -188,6 +215,7 @@
                                         Spacing="8">
                                         <TextBlock Text="Author:" />
                                         <TextBlock
+                                            IsTextSelectionEnabled="True"
                                             Text="{x:Bind Author}"
                                             TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap"

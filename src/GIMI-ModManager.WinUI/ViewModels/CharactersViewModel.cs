@@ -196,15 +196,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
+    public async Task SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
         if (character == NoCharacterFound || character is null)
-            return false;
+            return;
 
 
-        _navigationService.SetListDataItemForNextConnectedAnimation(character);
-        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
-        return true;
+        await CharacterClicked(character);
     }
 
     private void ResetContent()

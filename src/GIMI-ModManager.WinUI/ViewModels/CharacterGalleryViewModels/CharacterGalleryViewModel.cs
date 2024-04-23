@@ -3,53 +3,102 @@ using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.ModHandling;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 
-public partial class CharacterGalleryViewModel(
-    IGameService gameService,
-    INavigationService navigationService,
-    ISkinManagerService skinManagerService,
-    ILocalSettingsService localSettingsService,
-    ElevatorService elevatorService)
-    : ObservableRecipient, INavigationAware
+public partial class CharacterGalleryViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly ISkinManagerService _skinManagerService = skinManagerService;
-    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
-    private readonly ElevatorService _elevatorService = elevatorService;
-    private readonly INavigationService _navigationService = navigationService;
-    private readonly IGameService _gameService = gameService;
+    private readonly ISkinManagerService _skinManagerService;
+    private readonly ILocalSettingsService _localSettingsService;
+    private readonly CharacterSkinService _characterSkinService;
+    private readonly ElevatorService _elevatorService;
+    private readonly INavigationService _navigationService;
+    private readonly IGameService _gameService;
     private ICategory? _category;
     private IModdableObject? _moddableObject;
     private ICharacterModList? _modList;
+    private ICharacterSkin? _selectedSkin;
 
-    private readonly List<ModModel> _backendMods = new();
+    private readonly List<ModGridItemVm> _backendMods = new();
     public ObservableCollection<ModGridItemVm> Mods { get; } = new();
+    public ObservableCollection<SelectCharacterTemplate> CharacterSkins { get; } = new();
+    public bool MultipleCharacterSkins => CharacterSkins.Count > 1;
 
-    public string Name => _moddableObject?.DisplayName ?? "Loading...";
-    public Uri ImagePath => _moddableObject?.ImageUri ?? ModModel.PlaceholderImagePath;
+    public string ModdableObjectName
+    {
+        get
+        {
+            if (_selectedSkin is not null &&
+                !_selectedSkin.InternalName.Id.Contains("default", StringComparison.OrdinalIgnoreCase))
+                return _selectedSkin.DisplayName;
 
-    [ObservableProperty] private int _gridItemWidth = 500;
+            return _moddableObject?.DisplayName ?? "Loading...";
+        }
+    }
 
-    [ObservableProperty] private int _gridItemHeight = 300;
+    public Uri ModdableObjectImagePath =>
+        _selectedSkin?.ImageUri ?? _moddableObject?.ImageUri ?? ModModel.PlaceholderImagePath;
 
-    [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private int _gridItemWidth;
+
+    [ObservableProperty] private int _gridItemHeight;
+
+    [ObservableProperty] private bool _isSingleSelection;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ToggleViewCommand), nameof(ToggleModCommand),
+        nameof(ToggleSingleSelectionCommand), nameof(SetHeightWidthCommand))]
+    private bool _isBusy;
+
+    private bool _isNavigating;
+    private readonly ILogger _logger;
 
 
     [MemberNotNullWhen(false, nameof(_category), nameof(_moddableObject), nameof(_modList))]
-    private bool IsNavigating()
+    public bool IsNavigating
     {
-        return _isNavigating;
+        get => _isNavigating || _category is null || _moddableObject is null || _modList is null;
+        set
+        {
+            if (value == _isNavigating) return;
+            _isNavigating = value;
+            OnPropertyChanged(string.Empty);
+        }
     }
 
-    private bool _isNavigating = true;
+    public CharacterGalleryViewModel(IGameService gameService,
+        INavigationService navigationService,
+        ISkinManagerService skinManagerService,
+        ILocalSettingsService localSettingsService,
+        CharacterSkinService characterSkinService,
+        ElevatorService elevatorService, ILogger logger)
+    {
+        _skinManagerService = skinManagerService;
+        _localSettingsService = localSettingsService;
+        _characterSkinService = characterSkinService;
+        _elevatorService = elevatorService;
+        _logger = logger.ForContext<CharacterGalleryViewModel>();
+        _navigationService = navigationService;
+        _gameService = gameService;
+
+        var settings = _localSettingsService.ReadSetting<CharacterGallerySettings>(CharacterGallerySettings.Key) ??
+                       new CharacterGallerySettings();
+        _gridItemHeight = settings.ItemHeight;
+        _gridItemWidth = settings.ItemDesiredWidth;
+        _isSingleSelection = settings.IsSingleSelection;
+    }
 
     public async void OnNavigatedTo(object parameter)
     {
@@ -84,38 +133,109 @@ public partial class CharacterGalleryViewModel(
 
         _category = moddableObject.ModCategory;
         _moddableObject = moddableObject;
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(ImagePath));
+        if (_moddableObject is ICharacter character)
+        {
+            _selectedSkin = character.Skins.First();
+            foreach (var characterSkin in character.Skins)
+            {
+                CharacterSkins.Add(new SelectCharacterTemplate(characterSkin));
+            }
+
+            CharacterSkins.First().IsSelected = true;
+        }
+
+        OnPropertyChanged(nameof(ModdableObjectName));
+        OnPropertyChanged(nameof(ModdableObjectImagePath));
+        OnPropertyChanged(nameof(MultipleCharacterSkins));
 
 
         _modList = _skinManagerService.GetCharacterModList(_moddableObject);
 
-        foreach (var characterSkinEntry in _modList.Mods)
+        await ReloadModsAsync();
+
+
+        IsNavigating = false;
+    }
+
+    private async Task ReloadModsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_modList is null || _moddableObject is null)
+            return;
+
+        var mods = new List<CharacterSkinEntry>();
+        await Task.Run(async () =>
         {
-            var modModel = ModModel.FromMod(characterSkinEntry);
-
-            var modSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(false);
-
-            if (modSettings is not null)
-                modModel.WithModSettings(modSettings);
-
-            if (characterSkinEntry.Mod.KeySwaps is not null)
+            if (_moddableObject is ICharacter { Skins.Count: > 1 } character)
             {
-                var keySwaps = await characterSkinEntry.Mod.KeySwaps.ReadKeySwapConfiguration();
+                var selectedSkin = _selectedSkin!;
 
-                modModel.SetKeySwaps(keySwaps);
+                var skinEntries = _characterSkinService.GetCharacterSkinEntriesForSkinAsync(selectedSkin);
+
+                await foreach (var skinEntry in skinEntries.ConfigureAwait(false))
+                {
+                    mods.Add(skinEntry);
+                }
+            }
+            else
+            {
+                mods.AddRange(_modList.Mods);
             }
 
-            _backendMods.Add(modModel);
-        }
+            _backendMods.Clear();
 
-        foreach (var mod in _backendMods)
+            foreach (var skinEntry in mods)
+            {
+                var modVm = await MapSkinEntryToModGridItemVm(skinEntry, cancellationToken);
+
+                _backendMods.Add(modVm);
+            }
+        }, cancellationToken);
+
+
+        Mods.Clear();
+        foreach (var modGridItemVm in _backendMods)
         {
-            Mods.Add(new ModGridItemVm(mod, ToggleModCommand));
+            Mods.Add(modGridItemVm);
+        }
+    }
+
+    private async Task UpdateGridItemAsync(CharacterSkinEntry skinEntry)
+    {
+        var modVm = await MapSkinEntryToModGridItemVm(skinEntry);
+
+        var existingModVm = _backendMods.FirstOrDefault(m => m.Id == modVm.Id);
+
+        if (existingModVm is not null)
+            Update(existingModVm, modVm);
+    }
+
+    private static void Update(ModGridItemVm oldItem, ModGridItemVm newItem)
+    {
+        oldItem.FolderName = newItem.FolderName;
+        oldItem.IsEnabled = newItem.IsEnabled;
+    }
+
+
+    private async Task<ModGridItemVm> MapSkinEntryToModGridItemVm(CharacterSkinEntry skinEntry,
+        CancellationToken cancellationToken = default)
+    {
+        var modModel = ModModel.FromMod(skinEntry);
+
+        var modSettings = await skinEntry.Mod.Settings.TryReadSettingsAsync(false, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (modSettings is not null)
+            modModel.WithModSettings(modSettings);
+
+        if (skinEntry.Mod.KeySwaps is not null)
+        {
+            var keySwaps = await skinEntry.Mod.KeySwaps.ReadKeySwapConfiguration(cancellationToken)
+                .ConfigureAwait(false);
+
+            modModel.SetKeySwaps(keySwaps);
         }
 
-
-        _isNavigating = false;
+        return new ModGridItemVm(modModel, ToggleModCommand);
     }
 
 

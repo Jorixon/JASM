@@ -112,4 +112,15 @@ public sealed partial class CustomImage : UserControl
         get { return (ICommand)GetValue(ClearButtonCommandProperty); }
         set { SetValue(ClearButtonCommandProperty, value); }
     }
+
+
+    public static readonly DependencyProperty EditButtonVisibilityProperty = DependencyProperty.Register(
+        nameof(EditButtonVisibility), typeof(Visibility), typeof(CustomImage),
+        new PropertyMetadata(default(Visibility)));
+
+    public Visibility EditButtonVisibility
+    {
+        get { return (Visibility)GetValue(EditButtonVisibilityProperty); }
+        set { SetValue(EditButtonVisibilityProperty, value); }
+    }
 }
