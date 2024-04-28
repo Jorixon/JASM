@@ -8,7 +8,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 
 public partial class SelectableModdableObjectVm : ObservableObject
 {
-    private IModdableObject _modObject;
+    private readonly IModdableObject _modObject;
 
     [ObservableProperty] private bool _isSelected;
 

@@ -13,6 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
+    x:Name="RootPageName"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -53,8 +54,12 @@
                 Orientation="Horizontal"
                 Spacing="16">
 
-                <Button Command="{x:Bind ViewModel.GoBackToGridCommand}">
-                    <TextBlock Text="Go Back" />
+                <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackToGridCommand}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Escape" IsEnabled="True" />
+                    </Button.KeyboardAccelerators>
+
+                    <FontIcon Glyph="&#xE72B; &#xE80A; " />
                 </Button>
 
                 <Grid
@@ -88,32 +93,6 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
-
-
-            <Grid Grid.Column="1" MaxHeight="62">
-                <GridView
-                    x:Name="ModdableObjectsGridView"
-                    IsItemClickEnabled="True"
-                    ItemClick="ModdableObjectsGridView_OnItemClick"
-                    ItemsSource="{x:Bind ViewModel.ModdableObjectVms}"
-                    SelectionMode="Single">
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="characterGalleryViewModels:SelectableModdableObjectVm">
-                            <Grid
-                                Height="{StaticResource CharacterImageHeightDouble}"
-                                CornerRadius="16"
-                                ToolTipService.ToolTip="{x:Bind Name}">
-                                <Image>
-                                    <Image.Source>
-                                        <BitmapImage DecodePixelHeight="{StaticResource CharacterImageHeight}" UriSource="{x:Bind ImagePath}" />
-                                    </Image.Source>
-                                </Image>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-
-                </GridView>
-            </Grid>
 
 
             <StackPanel
@@ -184,8 +163,50 @@
 
         <Grid Grid.Row="1">
 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <controls:AdaptiveGridView
+                x:Name="ModdableObjectsGridView"
+                Margin="0,4,0,0"
+                Padding="0,0,16,0"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="0,4,4,0"
+                DesiredWidth="{StaticResource CharacterImageHeightDouble}"
+                IsItemClickEnabled="True"
+                ItemClickCommand="{x:Bind ViewModel.NavigateToModObjectCommand}"
+                ItemsSource="{x:Bind ViewModel.ModdableObjectVms}"
+                SelectionMode="None"
+                Visibility="Collapsed">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="characterGalleryViewModels:SelectableModdableObjectVm">
+                        <controls1:BoolBorder
+                            BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                            BorderSize="2"
+                            ShowBorder="{x:Bind IsSelected, Mode=OneWay}">
+                            <Grid
+                                Height="{StaticResource CharacterImageHeightDouble}"
+                                CornerRadius="16"
+                                ToolTipService.ToolTip="{x:Bind Name}">
+                                <Image>
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelWidth="{StaticResource CharacterImageHeight}" UriSource="{x:Bind ImagePath}" />
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </controls1:BoolBorder>
+
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+            </controls:AdaptiveGridView>
+
+
+
             <controls:AdaptiveGridView
                 x:Name="GridView"
+                Grid.Column="1"
                 animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
                 DesiredWidth="{x:Bind ViewModel.GridItemWidth, Mode=OneWay}"
                 ItemHeight="{x:Bind ViewModel.GridItemHeight, Mode=OneWay}"
@@ -261,13 +282,15 @@
 
 
                                 <Grid
+                                    x:Name="ImageWrapper"
                                     Grid.Row="1"
                                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     CornerRadius="16">
-                                    <controls1:CustomImage
-                                        EditButtonVisibility="Collapsed"
-                                        ImageUri="{x:Bind ImagePath, Mode=OneWay}"
-                                        IsContextMenuEnabled="False" />
+                                    <Image>
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelWidth="{Binding ElementName=ImageWrapper, Path=ActualWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
+                                        </Image.Source>
+                                    </Image>
                                 </Grid>
 
                                 <Grid

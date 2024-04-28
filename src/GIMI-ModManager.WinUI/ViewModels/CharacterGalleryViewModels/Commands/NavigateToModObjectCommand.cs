@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Helpers;
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 
@@ -20,7 +21,7 @@ public partial class CharacterGalleryViewModel
 
 
         _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!,
-            selectableModdableObject.ModdableObject);
+            selectableModdableObject.ModdableObject, transitionInfo: new SuppressNavigationTransitionInfo());
 
         IsNavigating = false;
         return Task.CompletedTask;

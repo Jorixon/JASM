@@ -36,6 +36,8 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
     private ICharacterModList? _modList;
     private ICharacterSkin? _selectedSkin;
 
+    public event EventHandler? Initialized;
+
     private readonly List<ModGridItemVm> _backendMods = new();
     public ObservableCollection<ModGridItemVm> Mods { get; } = new();
     public ObservableCollection<SelectCharacterTemplate> CharacterSkins { get; } = new();
@@ -159,30 +161,43 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         OnPropertyChanged(nameof(ModdableObjectImagePath));
         OnPropertyChanged(nameof(MultipleCharacterSkins));
 
-        var moddableObjects = _gameService.GetModdableObjects(_category).AsEnumerable();
 
-        // Check for date support
-        if (typeof(IDateSupport).IsAssignableFrom(_category.ModdableObjectType))
+        List<SelectableModdableObjectVm> moddableObjectVms = [];
+        await Task.Run(() =>
         {
-            moddableObjects = moddableObjects.OrderByDescending(m => ((IDateSupport)m).ReleaseDate);
-        }
+            var moddableObjects = _gameService.GetModdableObjects(_category).AsEnumerable();
 
+            // Check for date support
+            if (typeof(IDateSupport).IsAssignableFrom(_category.ModdableObjectType))
+            {
+                moddableObjects = moddableObjects.OrderByDescending(m => ((IDateSupport)m).ReleaseDate);
+            }
 
-        foreach (var modObject in moddableObjects)
-        {
-            ModdableObjectVms.Add(new SelectableModdableObjectVm(modObject, NavigateToModObjectCommand));
+            foreach (var modObject in moddableObjects)
+            {
+                var vm = new SelectableModdableObjectVm(modObject, NavigateToModObjectCommand);
 
-            if (modObject.InternalNameEquals(_moddableObject))
-                ModdableObjectVms.Last().IsSelected = true;
-        }
+                if (modObject.InternalNameEquals(_moddableObject))
+                    vm.IsSelected = true;
 
+                var modList = _skinManagerService.GetCharacterModList(modObject);
+                if (!vm.IsSelected && modList.Mods.Count == 0)
+                    continue;
 
-        _modList = _skinManagerService.GetCharacterModList(_moddableObject);
+                moddableObjectVms.Add(vm);
+            }
+
+            _modList = _skinManagerService.GetCharacterModList(_moddableObject);
+        });
+
+        moddableObjectVms.ForEach(ModdableObjectVms.Add);
+
 
         await ReloadModsAsync();
 
 
         IsNavigating = false;
+        App.MainWindow.DispatcherQueue.TryEnqueue(() => Initialized?.Invoke(this, EventArgs.Empty));
     }
 
     private async Task ReloadModsAsync(CancellationToken cancellationToken = default)

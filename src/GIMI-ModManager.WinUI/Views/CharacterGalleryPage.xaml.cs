@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using Microsoft.UI.Input;
@@ -23,6 +24,14 @@ public sealed partial class CharacterGalleryPage : Page
     {
         InitializeComponent();
         Loaded += CharacterGalleryPage_Loaded;
+        ViewModel.Initialized += ViewModel_Initialized;
+    }
+
+    private void ViewModel_Initialized(object? sender, EventArgs e)
+    {
+        var selectedCharacter = ViewModel.ModdableObjectVms.FirstOrDefault(m => m.IsSelected);
+        if (selectedCharacter is not null)
+            ModdableObjectsGridView.SmoothScrollIntoViewWithItemAsync(selectedCharacter);
     }
 
     private void CharacterGalleryPage_Loaded(object sender, RoutedEventArgs e)
