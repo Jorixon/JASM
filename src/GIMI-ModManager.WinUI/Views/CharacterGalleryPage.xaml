@@ -203,152 +203,165 @@
             </controls:AdaptiveGridView>
 
 
+            <controls:SwitchPresenter Value="{x:Bind ViewModel.IsInitializingMods, Mode=OneWay}">
+                <controls:Case Value="false">
+                    <controls:AdaptiveGridView
+                        x:Name="GridView"
+                        animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+                        DesiredWidth="{x:Bind ViewModel.GridItemWidth, Mode=OneWay}"
+                        ItemHeight="{x:Bind ViewModel.GridItemHeight, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.Mods}"
+                        SelectionMode="None">
 
-            <controls:AdaptiveGridView
-                x:Name="GridView"
-                Grid.Column="1"
-                animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
-                DesiredWidth="{x:Bind ViewModel.GridItemWidth, Mode=OneWay}"
-                ItemHeight="{x:Bind ViewModel.GridItemHeight, Mode=OneWay}"
-                ItemsSource="{x:Bind ViewModel.Mods}"
-                SelectionMode="None">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="characterGalleryViewModels:ModGridItemVm">
+                                <controls1:BoolBorder
+                                    BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                                    BorderSize="4"
+                                    ShowBorder="{x:Bind IsEnabled, Mode=OneWay}">
 
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="characterGalleryViewModels:ModGridItemVm">
-                        <controls1:BoolBorder
-                            BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
-                            BorderSize="4"
-                            ShowBorder="{x:Bind IsEnabled, Mode=OneWay}">
-
-                            <Grid
-                                Padding="4,8,4,8"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                RowSpacing="4">
-
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Padding="4,0,0,0"
-                                        VerticalAlignment="Center"
-                                        IsTextSelectionEnabled="True"
-                                        Style="{ThemeResource SubtitleTextBlockStyle}"
-                                        Text="{x:Bind Name, Mode=OneWay}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="NoWrap"
-                                        ToolTipService.ToolTip="{x:Bind NameTooltip, Mode=OneWay}" />
+                                    <Grid
+                                        Padding="4,8,4,8"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        RowSpacing="4">
 
 
-                                    <Button Grid.Column="1" Height="26">
-                                        <Button.Content>
-                                            <FontIcon Glyph="&#xE712;" />
-                                        </Button.Content>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                                        <Button.Flyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem
-                                                    Command="{x:Bind OpenModFolderCommand}"
-                                                    CommandParameter="{x:Bind Mode=OneWay}"
-                                                    Text="Open Mod Folder...">
-                                                    <MenuFlyoutItem.Icon>
-                                                        <FontIcon Glyph="&#xE838;" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                                <MenuFlyoutSeparator />
-                                                <MenuFlyoutItem
-                                                    Command="{x:Bind OpenModUrlCommand}"
-                                                    CommandParameter="{x:Bind Mode=OneWay}"
-                                                    Text="Open Mod Page...">
-                                                    <MenuFlyoutItem.Icon>
-                                                        <FontIcon Glyph="&#xE8A7;" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                    </Button>
-
-                                </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Padding="4,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsTextSelectionEnabled="True"
+                                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                Text="{x:Bind Name, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap"
+                                                ToolTipService.ToolTip="{x:Bind NameTooltip, Mode=OneWay}" />
 
 
+                                            <Button Grid.Column="1" Height="26">
+                                                <Button.Content>
+                                                    <FontIcon Glyph="&#xE712;" />
+                                                </Button.Content>
 
-                                <Grid
-                                    x:Name="ImageWrapper"
-                                    Grid.Row="1"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="16">
-                                    <Image>
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelWidth="{Binding ElementName=ImageWrapper, Path=ActualWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
-                                        </Image.Source>
-                                    </Image>
-                                </Grid>
+                                                <Button.Flyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem
+                                                            Command="{x:Bind OpenModFolderCommand}"
+                                                            CommandParameter="{x:Bind Mode=OneWay}"
+                                                            Text="Open Mod Folder...">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE838;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                        <MenuFlyoutSeparator />
+                                                        <MenuFlyoutItem
+                                                            Command="{x:Bind OpenModUrlCommand}"
+                                                            CommandParameter="{x:Bind Mode=OneWay}"
+                                                            Text="Open Mod Page...">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE8A7;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </Button.Flyout>
+                                            </Button>
 
-                                <Grid
-                                    Grid.Row="2"
-                                    MinHeight="32"
-                                    Padding="4,0,4,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel
-                                        VerticalAlignment="Center"
-                                        Orientation="Horizontal"
-                                        Spacing="8">
-                                        <TextBlock Text="Author:" />
-                                        <TextBlock
-                                            IsTextSelectionEnabled="True"
-                                            Text="{x:Bind Author, Mode=OneWay}"
-                                            TextTrimming="CharacterEllipsis"
-                                            TextWrapping="Wrap"
-                                            ToolTipService.ToolTip="{x:Bind Author, Mode=OneWay}" />
-                                    </StackPanel>
+                                        </Grid>
 
 
-                                    <StackPanel
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Orientation="Horizontal"
-                                        Spacing="4">
-                                        <TextBlock Text="Added:" />
-                                        <TextBlock Text="{x:Bind TimeSinceFormated, Mode=OneWay}" ToolTipService.ToolTip="{x:Bind DateAdded, Mode=OneWay}" />
-                                    </StackPanel>
 
-                                </Grid>
+                                        <Grid
+                                            x:Name="ImageWrapper"
+                                            Grid.Row="1"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="16">
+                                            <Image>
+                                                <Image.Source>
+                                                    <BitmapImage DecodePixelWidth="{Binding ElementName=ImageWrapper, Path=ActualWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
+                                                </Image.Source>
+                                            </Image>
+                                        </Grid>
 
-                                <Button
-                                    x:Name="ToggleModButton"
-                                    Grid.Row="3"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{x:Bind ToggleModCommand}"
-                                    CommandParameter="{Binding Mode=OneWay}"
-                                    Content="{x:Bind ButtonText, Mode=OneWay}"
-                                    PointerEntered="ToggleModButton_OnPointerEntered"
-                                    PointerExited="ToggleModButton_OnPointerExited"
-                                    Style="{x:Bind ButtonStyle, Mode=OneWay}" />
+                                        <Grid
+                                            Grid.Row="2"
+                                            MinHeight="32"
+                                            Padding="4,0,4,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                            </Grid>
-                        </controls1:BoolBorder>
+                                            <StackPanel
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal"
+                                                Spacing="8">
+                                                <TextBlock Text="Author:" />
+                                                <TextBlock
+                                                    IsTextSelectionEnabled="True"
+                                                    Text="{x:Bind Author, Mode=OneWay}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap"
+                                                    ToolTipService.ToolTip="{x:Bind Author, Mode=OneWay}" />
+                                            </StackPanel>
 
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </controls:AdaptiveGridView>
+
+                                            <StackPanel
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal"
+                                                Spacing="4">
+                                                <TextBlock Text="Added:" />
+                                                <TextBlock Text="{x:Bind TimeSinceFormated, Mode=OneWay}" ToolTipService.ToolTip="{x:Bind DateAdded, Mode=OneWay}" />
+                                            </StackPanel>
+
+                                        </Grid>
+
+                                        <Button
+                                            x:Name="ToggleModButton"
+                                            Grid.Row="3"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{x:Bind ToggleModCommand}"
+                                            CommandParameter="{Binding Mode=OneWay}"
+                                            Content="{x:Bind ButtonText, Mode=OneWay}"
+                                            PointerEntered="ToggleModButton_OnPointerEntered"
+                                            PointerExited="ToggleModButton_OnPointerExited"
+                                            Style="{x:Bind ButtonStyle, Mode=OneWay}" />
+
+                                    </Grid>
+                                </controls1:BoolBorder>
+
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </controls:AdaptiveGridView>
+                </controls:Case>
+
+                <controls:Case Value="true">
+
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Spacing="16">
+                            <ProgressRing IsActive="True" />
+                            <TextBlock Text="Loading Mods..." />
+                        </StackPanel>
+                    </Grid>
+
+                </controls:Case>
+            </controls:SwitchPresenter>
+
 
 
         </Grid>
-
 
     </Grid>
 </Page>

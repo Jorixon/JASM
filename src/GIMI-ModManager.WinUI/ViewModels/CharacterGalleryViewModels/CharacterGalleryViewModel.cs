@@ -74,6 +74,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
     private bool _isBusy;
 
     private bool _isNavigating;
+    [ObservableProperty] private string _isInitializingMods = "true";
 
 
     [ObservableProperty] private string _searchText = string.Empty;
@@ -195,8 +196,8 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
 
         await ReloadModsAsync();
 
-
         IsNavigating = false;
+        IsInitializingMods = "false";
         App.MainWindow.DispatcherQueue.TryEnqueue(() => Initialized?.Invoke(this, EventArgs.Empty));
     }
 
