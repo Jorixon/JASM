@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.Contracts.Entities;
@@ -7,6 +8,7 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
@@ -26,6 +28,9 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
     private readonly ElevatorService _elevatorService;
     private readonly INavigationService _navigationService;
     private readonly IGameService _gameService;
+    private readonly ILogger _logger;
+
+
     private ICategory? _category;
     private IModdableObject? _moddableObject;
     private ICharacterModList? _modList;
@@ -34,6 +39,9 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
     private readonly List<ModGridItemVm> _backendMods = new();
     public ObservableCollection<ModGridItemVm> Mods { get; } = new();
     public ObservableCollection<SelectCharacterTemplate> CharacterSkins { get; } = new();
+
+    public ObservableCollection<SelectableModdableObjectVm> ModdableObjectVms { get; } = new();
+
     public bool MultipleCharacterSkins => CharacterSkins.Count > 1;
 
     public string ModdableObjectName
@@ -59,11 +67,14 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ToggleViewCommand), nameof(ToggleModCommand),
-        nameof(ToggleSingleSelectionCommand), nameof(SetHeightWidthCommand))]
+        nameof(ToggleSingleSelectionCommand), nameof(SetHeightWidthCommand), nameof(OpenModFolderCommand),
+        nameof(OpenModUrlCommand), nameof(NavigateToModObjectCommand))]
     private bool _isBusy;
 
     private bool _isNavigating;
-    private readonly ILogger _logger;
+
+
+    [ObservableProperty] private string _searchText = string.Empty;
 
 
     [MemberNotNullWhen(false, nameof(_category), nameof(_moddableObject), nameof(_modList))]
@@ -148,6 +159,23 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         OnPropertyChanged(nameof(ModdableObjectImagePath));
         OnPropertyChanged(nameof(MultipleCharacterSkins));
 
+        var moddableObjects = _gameService.GetModdableObjects(_category).AsEnumerable();
+
+        // Check for date support
+        if (typeof(IDateSupport).IsAssignableFrom(_category.ModdableObjectType))
+        {
+            moddableObjects = moddableObjects.OrderByDescending(m => ((IDateSupport)m).ReleaseDate);
+        }
+
+
+        foreach (var modObject in moddableObjects)
+        {
+            ModdableObjectVms.Add(new SelectableModdableObjectVm(modObject, NavigateToModObjectCommand));
+
+            if (modObject.InternalNameEquals(_moddableObject))
+                ModdableObjectVms.Last().IsSelected = true;
+        }
+
 
         _modList = _skinManagerService.GetCharacterModList(_moddableObject);
 
@@ -192,10 +220,67 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         }, cancellationToken);
 
 
-        Mods.Clear();
-        foreach (var modGridItemVm in _backendMods)
+        ResetContent();
+    }
+
+    public void OnSearchBoxTextChanged(string? searchText)
+    {
+        SearchText = searchText.IsNullOrEmpty() ? string.Empty : searchText;
+        ResetContent();
+    }
+
+    private void ResetContent()
+    {
+        if (_modList is null || _moddableObject is null)
+            return;
+
+        var gridItemVms = SearchText.IsNullOrEmpty()
+            ? _backendMods.ToList()
+            : _backendMods.Where(m
+                => m.FolderName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                   m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                   m.Author.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+
+        gridItemVms.Sort((a, b) =>
         {
-            Mods.Add(modGridItemVm);
+            var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
+            return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+        });
+
+
+        var currentMods = Mods.ToArray();
+
+        foreach (var mod in currentMods)
+        {
+            if (gridItemVms.Contains(mod))
+                continue;
+
+            Mods.Remove(mod);
+        }
+
+        foreach (var mod in gridItemVms)
+        {
+            if (currentMods.Contains(mod))
+                continue;
+
+            Mods.Add(mod);
+        }
+
+        Debug.Assert(Mods.Count == gridItemVms.Count);
+
+        foreach (var mod in gridItemVms)
+        {
+            var newIndex = gridItemVms.IndexOf(mod);
+            var oldIndex = Mods.IndexOf(mod);
+
+
+            if (newIndex == Mods.IndexOf(mod)) continue;
+            if (oldIndex < 0 || oldIndex >= Mods.Count || newIndex < 0 || newIndex >= Mods.Count)
+                throw new ArgumentOutOfRangeException();
+
+            Mods.RemoveAt(oldIndex);
+            Mods.Insert(newIndex, mod);
         }
     }
 
@@ -235,7 +320,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
             modModel.SetKeySwaps(keySwaps);
         }
 
-        return new ModGridItemVm(modModel, ToggleModCommand);
+        return new ModGridItemVm(modModel, ToggleModCommand, OpenModFolderCommand, OpenModUrlCommand);
     }
 
 

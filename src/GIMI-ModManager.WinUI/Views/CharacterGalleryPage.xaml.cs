@@ -68,4 +68,19 @@ public sealed partial class CharacterGalleryPage : Page
         if (ViewModel.SetHeightWidthCommand.CanExecute(value))
             await ViewModel.SetHeightWidthCommand.ExecuteAsync(value);
     }
+
+    private void ModSearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (sender is TextBox textBox)
+            ViewModel.OnSearchBoxTextChanged(textBox.Text);
+    }
+
+    private async void ModdableObjectsGridView_OnItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is not SelectableModdableObjectVm moddableObjectVm)
+            return;
+
+        if (ViewModel.NavigateToModObjectCommand.CanExecute(moddableObjectVm))
+            await ViewModel.NavigateToModObjectCommand.ExecuteAsync(moddableObjectVm);
+    }
 }

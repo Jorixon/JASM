@@ -35,6 +35,8 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
             }
         }
 
+        public string FolderPath => _modModel.FolderPath;
+
         public Style? ButtonStyle => _modModel.IsEnabled
             ? (Style)Application.Current.Resources["AccentButtonStyle"]
             : (Style)Application.Current.Resources["DefaultButtonStyle"];
@@ -51,13 +53,20 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
             }
         }
 
-        public ModGridItemVm(ModModel modModel, IAsyncRelayCommand toggleModCommand)
+        public ModGridItemVm(ModModel modModel, IAsyncRelayCommand toggleModCommand,
+            IAsyncRelayCommand openModFolderCommand, IAsyncRelayCommand openModUrlCommand)
         {
             _modModel = modModel;
             ToggleModCommand = toggleModCommand;
+            OpenModFolderCommand = openModFolderCommand;
+            OpenModUrlCommand = openModUrlCommand;
         }
 
 
         public IAsyncRelayCommand ToggleModCommand { get; }
+
+        public IAsyncRelayCommand OpenModFolderCommand { get; }
+
+        public IAsyncRelayCommand OpenModUrlCommand { get; }
     }
 }

@@ -20,13 +20,16 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <xaml:ValueToBoolConverter x:Key="ValueToBoolConverter" />
 
+        <x:Int32 x:Key="CharacterImageHeight">64</x:Int32>
+        <x:Double x:Key="CharacterImageHeightDouble">64</x:Double>
+
     </Page.Resources>
 
     <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}" RowSpacing="4">
 
         <Grid.Resources>
             <Flyout x:Name="SelectInGameSkin">
-                <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.CharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.ChangeSkinCommandCommand}" />
+                <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.CharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.ChangeSkinCommand}" />
             </Flyout>
         </Grid.Resources>
 
@@ -54,10 +57,13 @@
                     <TextBlock Text="Go Back" />
                 </Button>
 
-                <Grid x:Name="itemHero" CornerRadius="16">
+                <Grid
+                    x:Name="itemHero"
+                    Height="{StaticResource CharacterImageHeightDouble}"
+                    CornerRadius="16">
                     <Image>
                         <Image.Source>
-                            <BitmapImage DecodePixelHeight="64" UriSource="{x:Bind ViewModel.ModdableObjectImagePath, Mode=OneWay}" />
+                            <BitmapImage DecodePixelHeight="{StaticResource CharacterImageHeight}" UriSource="{x:Bind ViewModel.ModdableObjectImagePath, Mode=OneWay}" />
                         </Image.Source>
                     </Image>
                 </Grid>
@@ -81,9 +87,33 @@
                         </Button.KeyboardAccelerators>
                     </Button>
                 </StackPanel>
-
-
             </StackPanel>
+
+
+            <Grid Grid.Column="1" MaxHeight="62">
+                <GridView
+                    x:Name="ModdableObjectsGridView"
+                    IsItemClickEnabled="True"
+                    ItemClick="ModdableObjectsGridView_OnItemClick"
+                    ItemsSource="{x:Bind ViewModel.ModdableObjectVms}"
+                    SelectionMode="Single">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="characterGalleryViewModels:SelectableModdableObjectVm">
+                            <Grid
+                                Height="{StaticResource CharacterImageHeightDouble}"
+                                CornerRadius="16"
+                                ToolTipService.ToolTip="{x:Bind Name}">
+                                <Image>
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelHeight="{StaticResource CharacterImageHeight}" UriSource="{x:Bind ImagePath}" />
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+
+                </GridView>
+            </Grid>
 
 
             <StackPanel
@@ -129,11 +159,13 @@
                     </Button.Flyout>
                 </Button>
 
-                <AutoSuggestBox
+                <TextBox
+                    x:Name="ModSearchBox"
                     Height="32"
                     MinWidth="320"
                     MaxWidth="400"
-                    PlaceholderText="Search Mods..." />
+                    PlaceholderText="Search Mods..."
+                    TextChanged="ModSearchBox_OnTextChanged" />
 
 
                 <ToggleSwitch
@@ -180,14 +212,53 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <TextBlock
-                                    Padding="4,0,0,0"
-                                    IsTextSelectionEnabled="True"
-                                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                                    Text="{x:Bind Name}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    ToolTipService.ToolTip="{x:Bind NameTooltip}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Padding="4,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsTextSelectionEnabled="True"
+                                        Style="{ThemeResource SubtitleTextBlockStyle}"
+                                        Text="{x:Bind Name, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        ToolTipService.ToolTip="{x:Bind NameTooltip, Mode=OneWay}" />
+
+
+                                    <Button Grid.Column="1" Height="26">
+                                        <Button.Content>
+                                            <FontIcon Glyph="&#xE712;" />
+                                        </Button.Content>
+
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind OpenModFolderCommand}"
+                                                    CommandParameter="{x:Bind Mode=OneWay}"
+                                                    Text="Open Mod Folder...">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE838;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem
+                                                    Command="{x:Bind OpenModUrlCommand}"
+                                                    CommandParameter="{x:Bind Mode=OneWay}"
+                                                    Text="Open Mod Page...">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE8A7;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
+
+                                </Grid>
+
+
 
                                 <Grid
                                     Grid.Row="1"
@@ -205,7 +276,6 @@
                                     Padding="4,0,4,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
@@ -216,29 +286,21 @@
                                         <TextBlock Text="Author:" />
                                         <TextBlock
                                             IsTextSelectionEnabled="True"
-                                            Text="{x:Bind Author}"
+                                            Text="{x:Bind Author, Mode=OneWay}"
                                             TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap"
-                                            ToolTipService.ToolTip="{x:Bind Author}" />
+                                            ToolTipService.ToolTip="{x:Bind Author, Mode=OneWay}" />
                                     </StackPanel>
 
 
-                                    <controls1:LinkButton
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        Link="{x:Bind ModUrl}"
-                                        Text="ModLink"
-                                        ToolTipService.ToolTip="{x:Bind ModUrl}"
-                                        Visibility="{x:Bind HasModUrl, Converter={StaticResource BoolToVisibilityConverter}}" />
-
                                     <StackPanel
-                                        Grid.Column="2"
+                                        Grid.Column="1"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         Orientation="Horizontal"
                                         Spacing="4">
                                         <TextBlock Text="Added:" />
-                                        <TextBlock Text="{x:Bind TimeSinceFormated}" ToolTipService.ToolTip="{x:Bind DateAdded}" />
+                                        <TextBlock Text="{x:Bind TimeSinceFormated, Mode=OneWay}" ToolTipService.ToolTip="{x:Bind DateAdded, Mode=OneWay}" />
                                     </StackPanel>
 
                                 </Grid>

@@ -14,7 +14,7 @@ public partial class CharacterGalleryViewModel
     }
 
     [RelayCommand(CanExecute = nameof(CanChangeSkin))]
-    private async Task ChangeSkinCommand(SelectCharacterTemplate characterSkin)
+    private async Task ChangeSkin(SelectCharacterTemplate characterSkin)
     {
         var character = (ICharacter)_moddableObject!;
         var selectedSkin = character.Skins.FirstOrDefault(sk => sk.InternalNameEquals(characterSkin.InternalName));
