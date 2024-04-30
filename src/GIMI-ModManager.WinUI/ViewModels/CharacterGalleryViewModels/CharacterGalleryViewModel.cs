@@ -70,7 +70,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ToggleViewCommand), nameof(ToggleModCommand),
         nameof(ToggleSingleSelectionCommand), nameof(SetHeightWidthCommand), nameof(OpenModFolderCommand),
-        nameof(OpenModUrlCommand), nameof(NavigateToModObjectCommand))]
+        nameof(OpenModUrlCommand), nameof(NavigateToModObjectCommand), nameof(ToggleNavPaneCommand))]
     private bool _isBusy;
 
     private bool _isNavigating;
@@ -112,6 +112,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         _gridItemHeight = settings.ItemHeight;
         _gridItemWidth = settings.ItemDesiredWidth;
         _isSingleSelection = settings.IsSingleSelection;
+        IsNavPaneVisible = settings.IsNavPaneOpen;
     }
 
     public async void OnNavigatedTo(object parameter)

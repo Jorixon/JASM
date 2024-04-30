@@ -27,17 +27,35 @@ public sealed partial class CharacterGalleryPage : Page
         ViewModel.Initialized += ViewModel_Initialized;
     }
 
-    private void ViewModel_Initialized(object? sender, EventArgs e)
+
+    private ManualResetEventSlim? _manualResetEventSlim = new(false);
+
+    private async void ViewModel_Initialized(object? sender, EventArgs e)
     {
+        if (!IsLoaded)
+            await Task.Run(() => _manualResetEventSlim?.WaitHandle.WaitOne(TimeSpan.FromSeconds(1), false));
+
+
+        SetColDefinitions();
         var selectedCharacter = ViewModel.ModdableObjectVms.FirstOrDefault(m => m.IsSelected);
         if (selectedCharacter is not null)
-            ModdableObjectsGridView.SmoothScrollIntoViewWithItemAsync(selectedCharacter);
+            await ModdableObjectsGridView.SmoothScrollIntoViewWithItemAsync(selectedCharacter);
+
+        RegisterPostInitEventHandlers();
+        _manualResetEventSlim?.Dispose();
+        _manualResetEventSlim = null;
     }
 
     private void CharacterGalleryPage_Loaded(object sender, RoutedEventArgs e)
     {
+        _manualResetEventSlim?.Set();
+    }
+
+    private void RegisterPostInitEventHandlers()
+    {
         GridItemHeightSlider.ValueChanged += GridItemHeightSlider_OnValueChanged;
         GridItemWithSlider.ValueChanged += GridItemWithSlider_OnValueChanged;
+        NavPaneToggleSwitch.Toggled += NavPaneToggleSwitch_OnToggled;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -84,12 +102,26 @@ public sealed partial class CharacterGalleryPage : Page
             ViewModel.OnSearchBoxTextChanged(textBox.Text);
     }
 
-    private async void ModdableObjectsGridView_OnItemClick(object sender, ItemClickEventArgs e)
+    private async void NavPaneToggleSwitch_OnToggled(object sender, RoutedEventArgs e)
     {
-        if (e.ClickedItem is not SelectableModdableObjectVm moddableObjectVm)
-            return;
+        if (ViewModel.ToggleNavPaneCommand.CanExecute(null))
+        {
+            await ViewModel.ToggleNavPaneCommand.ExecuteAsync(null);
+            SetColDefinitions();
+        }
+    }
 
-        if (ViewModel.NavigateToModObjectCommand.CanExecute(moddableObjectVm))
-            await ViewModel.NavigateToModObjectCommand.ExecuteAsync(moddableObjectVm);
+    private void SetColDefinitions()
+    {
+        if (ViewModel.IsNavPaneVisible)
+        {
+            NavPaneColDef.Width = new GridLength(1, GridUnitType.Star);
+            ModGridViewColDef.Width = new GridLength(10, GridUnitType.Star);
+        }
+        else
+        {
+            NavPaneColDef.Width = new GridLength(0, GridUnitType.Auto);
+            ModGridViewColDef.Width = new GridLength(1, GridUnitType.Star);
+        }
     }
 }

@@ -17,7 +17,7 @@ public class ModNotificationManager(
     private bool _isInitialized;
     private FileInfo _modNotificationsFile = null!;
 
-    public const string ModNotificationsFileName = "ModNotifications.json";
+    private const string ModNotificationsFileName = "ModNotifications.json";
 
     public event EventHandler<ModNotificationEvent>? OnModNotification;
 

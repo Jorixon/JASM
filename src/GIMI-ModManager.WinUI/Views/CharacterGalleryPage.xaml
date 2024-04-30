@@ -54,13 +54,29 @@
                 Orientation="Horizontal"
                 Spacing="16">
 
-                <Button AutomationProperties.AcceleratorKey="Escape" Command="{x:Bind ViewModel.GoBackToGridCommand}">
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Escape" IsEnabled="True" />
-                    </Button.KeyboardAccelerators>
 
-                    <FontIcon Glyph="&#xE72B; &#xE80A; " />
-                </Button>
+                <StackPanel>
+                    <Button
+                        x:Name="BackButton"
+                        AutomationProperties.AcceleratorKey="Escape"
+                        Command="{x:Bind ViewModel.GoBackToGridCommand}">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Escape" IsEnabled="True" />
+                        </Button.KeyboardAccelerators>
+
+                        <FontIcon Glyph="&#xE72B; &#xE80A; " />
+                    </Button>
+
+                    <ToggleSwitch
+                        x:Name="NavPaneToggleSwitch"
+                        MaxWidth="120"
+                        IsOn="{x:Bind ViewModel.IsNavPaneVisible, Mode=OneWay}"
+                        OffContent=""
+                        OnContent=""/>
+                </StackPanel>
+
+
+
 
                 <Grid
                     x:Name="itemHero"
@@ -164,7 +180,8 @@
         <Grid Grid.Row="1">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="NavPaneColDef" Width="1*" />
+                <ColumnDefinition x:Name="ModGridViewColDef" Width="10*" />
             </Grid.ColumnDefinitions>
 
             <controls:AdaptiveGridView
@@ -178,7 +195,7 @@
                 ItemClickCommand="{x:Bind ViewModel.NavigateToModObjectCommand}"
                 ItemsSource="{x:Bind ViewModel.ModdableObjectVms}"
                 SelectionMode="None"
-                Visibility="Collapsed">
+                Visibility="{x:Bind ViewModel.IsNavPaneVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="characterGalleryViewModels:SelectableModdableObjectVm">
                         <controls1:BoolBorder
@@ -203,7 +220,7 @@
             </controls:AdaptiveGridView>
 
 
-            <controls:SwitchPresenter Value="{x:Bind ViewModel.IsInitializingMods, Mode=OneWay}">
+            <controls:SwitchPresenter Grid.Column="1" Value="{x:Bind ViewModel.IsInitializingMods, Mode=OneWay}">
                 <controls:Case Value="false">
                     <controls:AdaptiveGridView
                         x:Name="GridView"

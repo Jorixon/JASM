@@ -11,4 +11,6 @@ public class CharacterGallerySettings
     public int ItemDesiredWidth { get; set; } = 500;
 
     public bool IsSingleSelection { get; set; } = true;
+
+    public bool IsNavPaneOpen { get; set; } = false;
 }
