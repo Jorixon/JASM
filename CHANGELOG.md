@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.9.0](https://github.com/Jorixon/JASM/compare/v2.8.0...v2.9.0) (2024-05-05)
+
+
+### Features
+
+* Added first iteration of the mod gallery view ([#180](https://github.com/Jorixon/JASM/issues/180)) ([461a91f](https://github.com/Jorixon/JASM/commit/461a91fa3caf97877673cfa15c9b69e0eff03229))
+
+
+### Miscellaneous
+
+* Added HSR 2.2-2.3 characters ([#182](https://github.com/Jorixon/JASM/issues/182)) ([3c519cc](https://github.com/Jorixon/JASM/commit/3c519ccff7d59f91b826a2fab7df66e2cbdefb5d))
+* **ModInstaller:** "Enable only this mod" checkbox defaults to off for multi mod characters ([9aa90a9](https://github.com/Jorixon/JASM/commit/9aa90a9fb1217029051599b3e00146e293bc7ccd))
+
 ## [2.8.0](https://github.com/Jorixon/JASM/compare/v2.7.0...v2.8.0) (2024-04-21)
 
 
