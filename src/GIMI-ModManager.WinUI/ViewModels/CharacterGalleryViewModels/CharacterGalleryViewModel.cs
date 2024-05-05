@@ -313,6 +313,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
 
     private static void Update(ModGridItemVm oldItem, ModGridItemVm newItem)
     {
+        oldItem.FolderPath = newItem.FolderPath;
         oldItem.FolderName = newItem.FolderName;
         oldItem.IsEnabled = newItem.IsEnabled;
     }

@@ -16,6 +16,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
         public string Name => _modModel.Name;
         public string Author => _modModel.Author;
         public DateTime DateAdded => _modModel.DateAdded;
+        public string DateAddedView => $"Added to JASM on: {DateAdded}";
         public TimeSpan TimeSinceAdded => DateTime.Now - DateAdded;
         public string TimeSinceFormated => FormaterHelpers.FormatTimeSinceAdded(TimeSinceAdded);
         public Uri ImagePath => _modModel.ImagePath;
@@ -35,7 +36,16 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
             }
         }
 
-        public string FolderPath => _modModel.FolderPath;
+        public string FolderPath
+        {
+            get => _modModel.FolderPath;
+            set
+            {
+                _modModel.FolderPath = value;
+                OnPropertyChanged(nameof(NameTooltip));
+                OnPropertyChanged();
+            }
+        }
 
         public Style? ButtonStyle => _modModel.IsEnabled
             ? (Style)Application.Current.Resources["AccentButtonStyle"]

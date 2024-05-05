@@ -72,7 +72,7 @@
                         MaxWidth="120"
                         IsOn="{x:Bind ViewModel.IsNavPaneVisible, Mode=OneWay}"
                         OffContent=""
-                        OnContent=""/>
+                        OnContent="" />
                 </StackPanel>
 
 
@@ -208,7 +208,7 @@
                                 ToolTipService.ToolTip="{x:Bind Name}">
                                 <Image>
                                     <Image.Source>
-                                        <BitmapImage DecodePixelWidth="{StaticResource CharacterImageHeight}" UriSource="{x:Bind ImagePath}" />
+                                        <BitmapImage DecodePixelWidth="128" UriSource="{x:Bind ImagePath}" />
                                     </Image.Source>
                                 </Image>
                             </Grid>
@@ -299,13 +299,12 @@
 
 
                                         <Grid
-                                            x:Name="ImageWrapper"
                                             Grid.Row="1"
                                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                             CornerRadius="16">
                                             <Image>
                                                 <Image.Source>
-                                                    <BitmapImage DecodePixelWidth="{Binding ElementName=ImageWrapper, Path=ActualWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
+                                                    <BitmapImage DecodePixelWidth="{Binding ElementName=RootPageName, Path=ViewModel.GridItemWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
                                                 </Image.Source>
                                             </Image>
                                         </Grid>
@@ -340,7 +339,7 @@
                                                 Orientation="Horizontal"
                                                 Spacing="4">
                                                 <TextBlock Text="Added:" />
-                                                <TextBlock Text="{x:Bind TimeSinceFormated, Mode=OneWay}" ToolTipService.ToolTip="{x:Bind DateAdded, Mode=OneWay}" />
+                                                <TextBlock Text="{x:Bind TimeSinceFormated, Mode=OneWay}" ToolTipService.ToolTip="{x:Bind DateAddedView, Mode=OneWay}" />
                                             </StackPanel>
 
                                         </Grid>
