@@ -568,7 +568,7 @@
     "Element": "Fire",
     "Class": "Hunt",
     "Region": [
-      "Cosmic"
+      "IPC"
     ],
     "ModFilesName": "Topaz",
     "InGameSkins": [],
@@ -820,7 +820,7 @@
     "Element": "Imaginary",
     "Class": "Preservation",
     "Region": [
-      "Penacony"
+      "IPC"
     ],
     "ModFilesName": "Aventurine",
     "InGameSkins": [],
@@ -844,5 +844,77 @@
     "InGameSkins": [],
     "InternalName": "Gallagher",
     "DisplayName": "Gallagher"
+  },
+  {
+    "Id": 46,
+    "Keys": [
+      "robin"
+    ],
+    "ReleaseDate": "2024-05-07T00:00:00",
+    "Image": "robin.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Harmony",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Robin",
+    "InGameSkins": [],
+    "InternalName": "Robin",
+    "DisplayName": "Robin"
+  },
+  {
+    "Id": 47,
+    "Keys": [
+      "boothill"
+    ],
+    "ReleaseDate": "2024-05-07T00:00:00",
+    "Image": "boothill.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Hunt",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Boothill",
+    "InGameSkins": [],
+    "InternalName": "Boothill",
+    "DisplayName": "Boothill"
+  },
+  {
+    "Id": 48,
+    "Keys": [
+      "firefly"
+    ],
+    "ReleaseDate": "2024-06-18T00:00:00",
+    "Image": "firefly.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Destruction",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Firefly",
+    "InGameSkins": [],
+    "InternalName": "Firefly",
+    "DisplayName": "Firefly"
+  },
+  {
+    "Id": 49,
+    "Keys": [
+      "jade"
+    ],
+    "ReleaseDate": "2024-06-18T00:00:00",
+    "Image": "jade.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Erudition",
+    "Region": [
+      "IPC"
+    ],
+    "ModFilesName": "Jade",
+    "InGameSkins": [],
+    "InternalName": "Jade",
+    "DisplayName": "Jade"
   }
 ]
