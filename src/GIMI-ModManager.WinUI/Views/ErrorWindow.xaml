@@ -67,14 +67,6 @@
                     Link="{x:Bind ViewModel.JASM_GITHUB}"
                     Text="GitHub"
                     TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="OR" />
-                <controls:LinkButton
-                    Link="{x:Bind ViewModel.JASM_GAMEBANANA}"
-                    Text="GameBanana"
-                    TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
             </StackPanel>
 
         </Grid>
