@@ -136,7 +136,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             .ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key);
 
 
-        EnableThisMod = installerSettings.EnableModOnInstall;
+        EnableThisMod = !_characterModList.Character.IsMultiMod && installerSettings.EnableModOnInstall;
         AlwaysOnTop = installerSettings.ModInstallerWindowOnTop;
 
         await Task.Run(() =>
@@ -737,6 +737,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [RelayCommand]
     private async Task EnableOnlyToggleAsync()
     {
+        EnableThisMod = !EnableThisMod;
+
         var settings = await _localSettingsService
             .ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key)
             .ConfigureAwait(false);
