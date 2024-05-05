@@ -19,10 +19,12 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views;
 using Serilog;
@@ -317,7 +319,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _elevatorService.RefreshGenshinMods();
     }
 
-    [ObservableProperty] private bool _isAddingModFolder = false;
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(GoToGalleryScreenCommand))]
+    private bool _isAddingModFolder = false;
 
     [RelayCommand]
     private async Task AddModFolder()
@@ -693,6 +696,25 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private void GoToCharacterEditScreen()
     {
         _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, ShownCharacter.InternalName);
+    }
+
+    private bool CanGoToGalleryScreen()
+    {
+        return !IsAddingModFolder;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanGoToGalleryScreen))]
+    private async Task GoToGalleryScreen()
+    {
+        var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
+            CharacterDetailsSettings.Key);
+
+        settings.GalleryView = true;
+
+        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings);
+
+        _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, ShownCharacter.InternalName);
+        _navigationService.ClearBackStack(1);
     }
 
     public void OnNavigatedFrom()

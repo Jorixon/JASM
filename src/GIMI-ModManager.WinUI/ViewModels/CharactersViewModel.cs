@@ -18,6 +18,7 @@ using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views;
 using Serilog;
@@ -195,15 +196,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
+    public async Task SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
         if (character == NoCharacterFound || character is null)
-            return false;
+            return;
 
 
-        _navigationService.SetListDataItemForNextConnectedAnimation(character);
-        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
-        return true;
+        await CharacterClicked(character);
     }
 
     private void ResetContent()
@@ -620,9 +619,19 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private void CharacterClicked(CharacterGridItemModel characterModel)
+    private async Task CharacterClicked(CharacterGridItemModel characterModel)
     {
         _navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
+
+        var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
+            CharacterDetailsSettings.Key);
+
+        if (settings.GalleryView)
+        {
+            _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, characterModel);
+            return;
+        }
+
         _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
     }
 

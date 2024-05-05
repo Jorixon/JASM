@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.CharacterGalleryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+    xmlns:characterGalleryViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:GIMI_ModManager.WinUI.Models"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
+    x:Name="RootPageName"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <xaml:ValueToBoolConverter x:Key="ValueToBoolConverter" />
+
+        <x:Int32 x:Key="CharacterImageHeight">64</x:Int32>
+        <x:Double x:Key="CharacterImageHeightDouble">64</x:Double>
+
+    </Page.Resources>
+
+    <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}" RowSpacing="4">
+
+        <Grid.Resources>
+            <Flyout x:Name="SelectInGameSkin">
+                <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.CharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.ChangeSkinCommand}" />
+            </Flyout>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel
+                Height="64"
+                Orientation="Horizontal"
+                Spacing="16">
+
+
+                <StackPanel>
+                    <Button
+                        x:Name="BackButton"
+                        AutomationProperties.AcceleratorKey="Escape"
+                        Command="{x:Bind ViewModel.GoBackToGridCommand}">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Escape" IsEnabled="True" />
+                        </Button.KeyboardAccelerators>
+
+                        <FontIcon Glyph="&#xE72B; &#xE80A; " />
+                    </Button>
+
+                    <ToggleSwitch
+                        x:Name="NavPaneToggleSwitch"
+                        MaxWidth="120"
+                        IsOn="{x:Bind ViewModel.IsNavPaneVisible, Mode=OneWay}"
+                        OffContent=""
+                        OnContent="" />
+                </StackPanel>
+
+
+
+
+                <Grid
+                    x:Name="itemHero"
+                    Height="{StaticResource CharacterImageHeightDouble}"
+                    CornerRadius="16">
+                    <Image>
+                        <Image.Source>
+                            <BitmapImage DecodePixelHeight="{StaticResource CharacterImageHeight}" UriSource="{x:Bind ViewModel.ModdableObjectImagePath, Mode=OneWay}" />
+                        </Image.Source>
+                    </Image>
+                </Grid>
+
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource GenshinFont}"
+                        FontSize="14"
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind ViewModel.ModdableObjectName, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <Button
+                        Content="Select Skin"
+                        Flyout="{StaticResource SelectInGameSkin}"
+                        IsEnabled="{x:Bind ViewModel.MultipleCharacterSkins, Mode=OneWay}">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="F1" />
+                        </Button.KeyboardAccelerators>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel
+                Grid.Column="2"
+                Margin="0,0,4,0"
+                Orientation="Horizontal"
+                Spacing="16">
+
+
+                <Button>
+                    <TextBlock Text="View" />
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel MinWidth="200" Spacing="8">
+                                <TextBlock Text="Adjust Height:" />
+                                <Slider
+                                    x:Name="GridItemHeightSlider"
+                                    Maximum="500"
+                                    Minimum="200"
+                                    SnapsTo="Ticks"
+                                    TickFrequency="50"
+                                    Value="{x:Bind ViewModel.GridItemHeight, Mode=TwoWay}" />
+                                <TextBlock Text="Adjust Desired Width:" />
+                                <Slider
+                                    x:Name="GridItemWithSlider"
+                                    Maximum="800"
+                                    Minimum="200"
+                                    SnapsTo="Ticks"
+                                    TickFrequency="50"
+                                    Value="{x:Bind ViewModel.GridItemWidth, Mode=TwoWay}" />
+
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <CheckBox
+                                        HorizontalAlignment="Left"
+                                        Command="{x:Bind ViewModel.ToggleSingleSelectionCommand}"
+                                        IsChecked="{x:Bind ViewModel.IsSingleSelection, Mode=OneWay}"
+                                        ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time.">
+                                        Single Select
+                                    </CheckBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                <TextBox
+                    x:Name="ModSearchBox"
+                    Height="32"
+                    MinWidth="320"
+                    MaxWidth="400"
+                    PlaceholderText="Search Mods..."
+                    TextChanged="ModSearchBox_OnTextChanged" />
+
+
+                <ToggleSwitch
+                    x:Name="ViewToggleSwitch"
+                    IsOn="True"
+                    OffContent="Detailed View"
+                    OnContent="Gallery View"
+                    Toggled="ViewToggleSwitch_OnToggled" />
+
+                <Grid MinWidth="32">
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+                </Grid>
+            </StackPanel>
+        </Grid>
+
+
+        <Grid Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="NavPaneColDef" Width="1*" />
+                <ColumnDefinition x:Name="ModGridViewColDef" Width="10*" />
+            </Grid.ColumnDefinitions>
+
+            <controls:AdaptiveGridView
+                x:Name="ModdableObjectsGridView"
+                Margin="0,4,0,0"
+                Padding="0,0,16,0"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="0,4,4,0"
+                DesiredWidth="{StaticResource CharacterImageHeightDouble}"
+                IsItemClickEnabled="True"
+                ItemClickCommand="{x:Bind ViewModel.NavigateToModObjectCommand}"
+                ItemsSource="{x:Bind ViewModel.ModdableObjectVms}"
+                SelectionMode="None"
+                Visibility="{x:Bind ViewModel.IsNavPaneVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="characterGalleryViewModels:SelectableModdableObjectVm">
+                        <controls1:BoolBorder
+                            BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                            BorderSize="2"
+                            ShowBorder="{x:Bind IsSelected, Mode=OneWay}">
+                            <Grid
+                                Height="{StaticResource CharacterImageHeightDouble}"
+                                CornerRadius="16"
+                                ToolTipService.ToolTip="{x:Bind Name}">
+                                <Image>
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelWidth="128" UriSource="{x:Bind ImagePath}" />
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </controls1:BoolBorder>
+
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+            </controls:AdaptiveGridView>
+
+
+            <controls:SwitchPresenter Grid.Column="1" Value="{x:Bind ViewModel.IsInitializingMods, Mode=OneWay}">
+                <controls:Case Value="false">
+                    <controls:AdaptiveGridView
+                        x:Name="GridView"
+                        animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
+                        DesiredWidth="{x:Bind ViewModel.GridItemWidth, Mode=OneWay}"
+                        ItemHeight="{x:Bind ViewModel.GridItemHeight, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.Mods}"
+                        SelectionMode="None">
+
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="characterGalleryViewModels:ModGridItemVm">
+                                <controls1:BoolBorder
+                                    BorderColor="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                                    BorderSize="4"
+                                    ShowBorder="{x:Bind IsEnabled, Mode=OneWay}">
+
+                                    <Grid
+                                        Padding="4,8,4,8"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        RowSpacing="4">
+
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Padding="4,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsTextSelectionEnabled="True"
+                                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                Text="{x:Bind Name, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap"
+                                                ToolTipService.ToolTip="{x:Bind NameTooltip, Mode=OneWay}" />
+
+
+                                            <Button Grid.Column="1" Height="26">
+                                                <Button.Content>
+                                                    <FontIcon Glyph="&#xE712;" />
+                                                </Button.Content>
+
+                                                <Button.Flyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem
+                                                            Command="{x:Bind OpenModFolderCommand}"
+                                                            CommandParameter="{x:Bind Mode=OneWay}"
+                                                            Text="Open Mod Folder...">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE838;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                        <MenuFlyoutSeparator />
+                                                        <MenuFlyoutItem
+                                                            Command="{x:Bind OpenModUrlCommand}"
+                                                            CommandParameter="{x:Bind Mode=OneWay}"
+                                                            Text="Open Mod Page...">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE8A7;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </Button.Flyout>
+                                            </Button>
+
+                                        </Grid>
+
+
+
+                                        <Grid
+                                            Grid.Row="1"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="16">
+                                            <Image>
+                                                <Image.Source>
+                                                    <BitmapImage DecodePixelWidth="{Binding ElementName=RootPageName, Path=ViewModel.GridItemWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
+                                                </Image.Source>
+                                            </Image>
+                                        </Grid>
+
+                                        <Grid
+                                            Grid.Row="2"
+                                            MinHeight="32"
+                                            Padding="4,0,4,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal"
+                                                Spacing="8">
+                                                <TextBlock Text="Author:" />
+                                                <TextBlock
+                                                    IsTextSelectionEnabled="True"
+                                                    Text="{x:Bind Author, Mode=OneWay}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap"
+                                                    ToolTipService.ToolTip="{x:Bind Author, Mode=OneWay}" />
+                                            </StackPanel>
+
+
+                                            <StackPanel
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal"
+                                                Spacing="4">
+                                                <TextBlock Text="Added:" />
+                                                <TextBlock Text="{x:Bind TimeSinceFormated, Mode=OneWay}" ToolTipService.ToolTip="{x:Bind DateAddedView, Mode=OneWay}" />
+                                            </StackPanel>
+
+                                        </Grid>
+
+                                        <Button
+                                            x:Name="ToggleModButton"
+                                            Grid.Row="3"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{x:Bind ToggleModCommand}"
+                                            CommandParameter="{Binding Mode=OneWay}"
+                                            Content="{x:Bind ButtonText, Mode=OneWay}"
+                                            PointerEntered="ToggleModButton_OnPointerEntered"
+                                            PointerExited="ToggleModButton_OnPointerExited"
+                                            Style="{x:Bind ButtonStyle, Mode=OneWay}" />
+
+                                    </Grid>
+                                </controls1:BoolBorder>
+
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </controls:AdaptiveGridView>
+                </controls:Case>
+
+                <controls:Case Value="true">
+
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Spacing="16">
+                            <ProgressRing IsActive="True" />
+                            <TextBlock Text="Loading Mods..." />
+                        </StackPanel>
+                    </Grid>
+
+                </controls:Case>
+            </controls:SwitchPresenter>
+
+
+
+        </Grid>
+
+    </Grid>
+</Page>

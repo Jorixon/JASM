@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace GIMI_ModManager.WinUI.Contracts.Services;
@@ -11,7 +12,9 @@ public interface INavigationService
 
     Frame? Frame { get; set; }
 
-    bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false);
+    bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false,
+        NavigationTransitionInfo? transitionInfo = null);
+
     bool GoForward();
 
     bool GoBack();

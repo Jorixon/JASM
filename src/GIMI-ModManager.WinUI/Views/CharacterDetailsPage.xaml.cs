@@ -562,4 +562,10 @@ public sealed partial class CharacterDetailsPage : Page
 
         ToolTipService.SetToolTip(button, toolTip);
     }
+
+    private async void ViewToggleSwitch_OnToggled(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.GoToGalleryScreenCommand.CanExecute(null))
+            await ViewModel.GoToGalleryScreenCommand.ExecuteAsync(null);
+    }
 }

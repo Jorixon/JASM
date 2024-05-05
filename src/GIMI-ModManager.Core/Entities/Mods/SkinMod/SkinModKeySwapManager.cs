@@ -30,7 +30,8 @@ public class SkinModKeySwapManager
         return iniPath;
     }
 
-    public async Task ReadKeySwapConfiguration(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<KeySwapSection>> ReadKeySwapConfiguration(
+        CancellationToken cancellationToken = default)
     {
         List<string> keySwapLines = new();
         List<IniKeySwapSection> keySwaps = new();
@@ -94,6 +95,8 @@ public class SkinModKeySwapManager
         {
             _keySwaps.Add(KeySwapSection.FromIniKeySwapSection(keySwap));
         }
+
+        return new List<KeySwapSection>(_keySwaps).AsReadOnly();
     }
 
 

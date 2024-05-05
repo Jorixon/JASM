@@ -6,19 +6,18 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.Notifications;
 
-public class ModNotificationManager
+public class ModNotificationManager(
+    ILogger logger,
+    ILocalSettingsService localSettingsService,
+    ISkinManagerService skinManagerService)
 {
-    private readonly ILogger _logger;
-    private readonly ILocalSettingsService _localSettingsService;
-    private readonly ISkinManagerService _skinManagerService;
-
     private readonly List<ModNotification> _inMemoryModNotifications = new();
     private readonly List<ModNotification> _modNotifications = new();
 
     private bool _isInitialized;
     private FileInfo _modNotificationsFile = null!;
 
-    public const string ModNotificationsFileName = "ModNotifications.json";
+    private const string ModNotificationsFileName = "ModNotifications.json";
 
     public event EventHandler<ModNotificationEvent>? OnModNotification;
 
@@ -28,21 +27,12 @@ public class ModNotificationManager
         WriteIndented = true
     };
 
-
-    public ModNotificationManager(ILogger logger, ILocalSettingsService localSettingsService,
-        ISkinManagerService skinManagerService)
-    {
-        _logger = logger;
-        _localSettingsService = localSettingsService;
-        _skinManagerService = skinManagerService;
-    }
-
     private async Task InitializeAsync()
     {
         if (_isInitialized)
             return;
 
-        var appDataFolder = new DirectoryInfo(_localSettingsService.ApplicationDataFolder);
+        var appDataFolder = new DirectoryInfo(localSettingsService.ApplicationDataFolder);
         if (!appDataFolder.Exists)
             appDataFolder.Create();
 
@@ -51,16 +41,41 @@ public class ModNotificationManager
 
         if (!_modNotificationsFile.Exists)
         {
-            await using var fileStream = _modNotificationsFile.Create();
+            var fileStream = _modNotificationsFile.Create();
 
-            await JsonSerializer.SerializeAsync(fileStream, new ModNotificationsRoot(), _jsonSerializerOptions);
+            await JsonSerializer.SerializeAsync(fileStream, new ModNotificationsRoot(), _jsonSerializerOptions)
+                .ConfigureAwait(false);
+            await fileStream.DisposeAsync().ConfigureAwait(false);
             return;
         }
 
-        await using var stream = _modNotificationsFile.OpenRead();
-        var modNotificationRoot =
-            await JsonSerializer.DeserializeAsync<ModNotificationsRoot>(stream, _jsonSerializerOptions) ??
-            new ModNotificationsRoot();
+        var stream = _modNotificationsFile.OpenRead();
+        ModNotificationsRoot? modNotificationRoot = null;
+        try
+        {
+            modNotificationRoot =
+                await JsonSerializer.DeserializeAsync<ModNotificationsRoot>(stream, _jsonSerializerOptions) ??
+                new ModNotificationsRoot();
+        }
+        catch (Exception e)
+        {
+            logger.Error(e, "Error while reading mod notifications file. Deleting file and creating a new one");
+        }
+        finally
+        {
+            await stream.DisposeAsync().ConfigureAwait(false);
+        }
+
+        if (modNotificationRoot is null)
+        {
+            _modNotificationsFile.Delete();
+            modNotificationRoot = new ModNotificationsRoot();
+            var fileStream = _modNotificationsFile.Create();
+            await JsonSerializer.SerializeAsync(fileStream, modNotificationRoot, _jsonSerializerOptions)
+                .ConfigureAwait(false);
+            await fileStream.DisposeAsync().ConfigureAwait(false);
+        }
+
 
         _modNotifications.AddRange(modNotificationRoot.ModNotifications);
         _modNotifications.ForEach(x => x.IsPersistent = true);
@@ -223,10 +238,10 @@ public class ModNotificationManager
     /// </summary>
     public async Task CleanupAsync()
     {
-        _logger.Debug("Cleaning up mod notifications");
+        logger.Debug("Cleaning up mod notifications");
         var persistentNotifications =
             new List<ModNotification>(await GetNotificationsAsync(NotificationType.Persistent));
-        var allMods = _skinManagerService.CharacterModLists.SelectMany(x => x.Mods);
+        var allMods = skinManagerService.CharacterModLists.SelectMany(x => x.Mods);
 
         foreach (var characterSkinEntry in allMods)
         {
@@ -237,7 +252,7 @@ public class ModNotificationManager
         }
 
         if (persistentNotifications.Any())
-            _logger.Information("Removing {Count} mod notifications that are not in the mod manager anymore",
+            logger.Information("Removing {Count} mod notifications that are not in the mod manager anymore",
                 persistentNotifications.Count);
 
         foreach (var notification in persistentNotifications)

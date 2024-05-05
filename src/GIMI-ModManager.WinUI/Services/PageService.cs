@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.Views;
 using GIMI_ModManager.WinUI.Views.CharacterManager;
 using Microsoft.UI.Xaml.Controls;
@@ -27,6 +28,7 @@ public class PageService : IPageService
         Configure<PresetViewModel, PresetPage>();
         Configure<PresetDetailsViewModel, PresetDetailsPage>();
         Configure<ModSelectorViewModel, ModSelector>();
+        Configure<CharacterGalleryViewModel, CharacterGalleryPage>();
     }
 
     public Type GetPageType(string key)

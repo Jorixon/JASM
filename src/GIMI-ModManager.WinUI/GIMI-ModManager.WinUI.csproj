@@ -510,6 +510,7 @@
 		<None Remove="Assets\Games\Honkai\Images\Start_Game.png" />
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
+		<None Remove="Views\CharacterGalleryPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
@@ -752,6 +753,9 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\CharacterGalleryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\ModSelector.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
