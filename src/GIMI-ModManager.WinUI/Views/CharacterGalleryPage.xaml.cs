@@ -39,7 +39,8 @@ public sealed partial class CharacterGalleryPage : Page
         SetColDefinitions();
         var selectedCharacter = ViewModel.ModdableObjectVms.FirstOrDefault(m => m.IsSelected);
         if (selectedCharacter is not null)
-            await ModdableObjectsGridView.SmoothScrollIntoViewWithItemAsync(selectedCharacter);
+            await ModdableObjectsGridView.SmoothScrollIntoViewWithItemAsync(selectedCharacter,
+                ScrollItemPlacement.Center);
 
         RegisterPostInitEventHandlers();
         _manualResetEventSlim?.Dispose();
