@@ -11,20 +11,6 @@
     "Image": "Npc_Katheryne.png"
   },
   {
-    "Image": "Npc_Clorinde.png",
-    "Region": [
-      "Fontaine"
-    ],
-    "ModFilesName": "Clorinde",
-    "InternalName": "Clorinde",
-    "DisplayName": "Clorinde"
-  },
-  {
-    "ModFilesName": "Sigewinne",
-    "InternalName": "Sigewinne",
-    "DisplayName": "Sigewinne"
-  },
-  {
     "IsMultiMod": true,
     "ModFilesName": "Hilichurl",
     "InternalName": "Hilichurl",
