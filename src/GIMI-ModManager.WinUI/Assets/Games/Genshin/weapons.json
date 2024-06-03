@@ -1591,5 +1591,50 @@
     "Image": "Weapon_Verdict.webp",
     "InternalName": "Verdict",
     "DisplayName": "Verdict"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Polearm",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "Weapon_CrimsonMoon.webp",
+    "InternalName": "Crimson Moon's Semblance",
+    "DisplayName": "Crimson Moon's Semblance"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Sword",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "Weapon_Absolution.webp",
+    "InternalName": "Absolution",
+    "DisplayName": "Absolution"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Bow",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "Weapon_Silvershower_Heartstrings.webp",
+    "InternalName": "Silvershower Heartstrings",
+    "DisplayName": "Silvershower Heartstrings"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Sword",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "Weapon_Uraku_Misugiri.webp",
+    "InternalName": "Uraku Misugiri",
+    "DisplayName": "Uraku Misugiri"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Catalyst",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "Weapon_Cranes_Echoing_Call.webp",
+    "InternalName": "Crane's Echoing Call",
+    "DisplayName": "Crane's Echoing Call"
   }
 ]
