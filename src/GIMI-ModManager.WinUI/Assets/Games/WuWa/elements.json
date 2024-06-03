@@ -1,0 +1,32 @@
+[
+	{
+		"InternalName": "Fusion",
+		"DisplayName": "Fusion",
+		"Image": "Fusion.svg"
+	},
+	{
+		"InternalName": "Glacio",
+		"DisplayName": "Glacio",
+		"Image": "Glacio.svg"
+	},
+	{
+		"InternalName": "Aero",
+		"DisplayName": "Aero",
+		"Image": "Aero.svg"
+	},
+	{
+		"InternalName": "Electro",
+		"DisplayName": "Electro",
+		"Image": "Electro.svg"
+	},
+	{
+		"InternalName": "Spectro",
+		"DisplayName": "Spectro",
+		"Image": "Spectro.svg"
+	},
+	{
+		"InternalName": "Havoc",
+		"DisplayName": "Havoc",
+		"Image": "Havoc.svg"
+	}
+]

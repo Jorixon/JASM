@@ -1,0 +1,19 @@
+[
+  {
+    "Keys": [
+      "Baizhi"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "Baizhi.png",
+    "Rarity": 4,
+    "Element": "Glacio",
+    "Class": "Rectifier",
+    "Region": [
+      "Jinzhou"
+    ],
+    "ModFilesName": "Baizhi",
+    "InGameSkins": [],
+    "InternalName": "Baizhi",
+    "DisplayName": "Baizhi"
+  }
+]

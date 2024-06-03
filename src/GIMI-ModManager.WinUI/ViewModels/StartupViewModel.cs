@@ -60,7 +60,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<string> Games { get; } = new()
     {
         SelectedGameService.Genshin,
-        SelectedGameService.Honkai
+        SelectedGameService.Honkai,
+        SelectedGameService.WuWa
     };
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
@@ -201,19 +202,26 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     private void SetGameInfo(string game)
     {
-        if (game == SelectedGameService.Genshin)
+        switch (game)
         {
-            ModelImporterName = _genshinModelImporterName;
-            ModelImporterShortName = _genshinModelImporterShortName;
-            GameBananaUrl = _genshinGameBananaUrl;
-            ModelImporterUrl = _genshinModelImporterUrl;
-        }
-        else if (game == SelectedGameService.Honkai)
-        {
-            ModelImporterName = _honkaiModelImporterName;
-            ModelImporterShortName = _honkaiModelImporterShortName;
-            GameBananaUrl = _honkaiGameBananaUrl;
-            ModelImporterUrl = _honkaiModelImporterUrl;
+            case SelectedGameService.Genshin:
+                ModelImporterName = _genshinModelImporterName;
+                ModelImporterShortName = _genshinModelImporterShortName;
+                GameBananaUrl = _genshinGameBananaUrl;
+                ModelImporterUrl = _genshinModelImporterUrl;
+                break;
+            case SelectedGameService.Honkai:
+                ModelImporterName = _honkaiModelImporterName;
+                ModelImporterShortName = _honkaiModelImporterShortName;
+                GameBananaUrl = _honkaiGameBananaUrl;
+                ModelImporterUrl = _honkaiModelImporterUrl;
+                break;
+            case SelectedGameService.WuWa:
+                ModelImporterName = _genshinModelImporterName;
+                ModelImporterShortName = _genshinModelImporterShortName;
+                GameBananaUrl = new Uri("https://gamebanana.com/games/20357");
+                ModelImporterUrl = _genshinModelImporterUrl;
+                break;
         }
     }
 

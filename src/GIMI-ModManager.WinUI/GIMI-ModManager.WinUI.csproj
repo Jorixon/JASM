@@ -500,6 +500,23 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
 		<Content Remove="Assets\Games\Honkai\weapons.json" />
+		<Content Remove="Assets\Games\WutheringWaves\characters.json" />
+		<Content Remove="Assets\Games\WutheringWaves\elements.json" />
+		<Content Remove="Assets\Games\WutheringWaves\game.json" />
+		<Content Remove="Assets\Games\WutheringWaves\Images\Characters\Baizhi.png" />
+		<Content Remove="Assets\Games\WutheringWaves\Images\Start_Game.png" />
+		<Content Remove="Assets\Games\WutheringWaves\regions.json" />
+		<Content Remove="Assets\Games\WutheringWaves\weaponClasses.json" />
+		<Content Remove="Assets\Games\WuWa\characters.json" />
+		<Content Remove="Assets\Games\WuWa\elements.json" />
+		<Content Remove="Assets\Games\WuWa\game.json" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Baizhi.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Start_Game.png" />
+		<Content Remove="Assets\Games\WuWa\npcs.json" />
+		<Content Remove="Assets\Games\WuWa\objects.json" />
+		<Content Remove="Assets\Games\WuWa\regions.json" />
+		<Content Remove="Assets\Games\WuWa\weaponClasses.json" />
+		<Content Remove="Assets\Games\WuWa\weapons.json" />
 		<Content Remove="Assets\Icon_Inventory_Weapons.webp" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
