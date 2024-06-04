@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.9.1](https://github.com/Jorixon/JASM/compare/v2.9.0...v2.9.1) (2024-06-03)
+
+
+### Miscellaneous
+
+* **Genshin:** Moved Clorinde and Sigewinne to characters, added Sethos character and added missing weapons ([#190](https://github.com/Jorixon/JASM/issues/190)) ([1c11e31](https://github.com/Jorixon/JASM/commit/1c11e31ff650276ee501ae9d65313c8dcc102764))
+* Updated WinAppSdk to 1.5.3 ([b8c8d61](https://github.com/Jorixon/JASM/commit/b8c8d61754ce60645ee42bb10ed53b9348bbb004))
+
 ## [2.9.0](https://github.com/Jorixon/JASM/compare/v2.8.0...v2.9.0) (2024-05-05)
 
 
