@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://github.com/Jorixon/JASM/compare/v2.9.1...v2.10.0) (2024-06-05)
+
+
+### Features
+
+* Wuthering Waves support ([#192](https://github.com/Jorixon/JASM/issues/192)) ([697ccf7](https://github.com/Jorixon/JASM/commit/697ccf745434b402e022f2ccc9d442ae0b41fdef))
+
 ## [2.9.1](https://github.com/Jorixon/JASM/compare/v2.9.0...v2.9.1) (2024-06-03)
 
 
