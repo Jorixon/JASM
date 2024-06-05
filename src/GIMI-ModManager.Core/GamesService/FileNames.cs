@@ -20,5 +20,6 @@ internal static class FileNames
 public enum SupportedGames
 {
     Genshin,
-    Honkai
+    Honkai,
+    WuWa
 }

@@ -21,6 +21,7 @@ public class SelectedGameService
 
     public const string Genshin = "Genshin";
     public const string Honkai = "Honkai";
+    public const string WuWa = "WuWa";
 
 
     public SelectedGameService(ILocalSettingsService localSettingsService, ILogger logger)
@@ -76,14 +77,15 @@ public class SelectedGameService
         return selectedGame.SelectedGame;
     }
 
-    public async Task<SupportedGames> GetNotSelectedGameAsync()
+    public async Task<SupportedGames[]> GetNotSelectedGameAsync()
     {
         var selectedGame = await GetSelectedGameAsync();
 
         return selectedGame switch
         {
-            Genshin => SupportedGames.Honkai,
-            Honkai => SupportedGames.Genshin,
+            Genshin => [SupportedGames.Honkai, SupportedGames.WuWa],
+            Honkai => [SupportedGames.Genshin, SupportedGames.Honkai],
+            WuWa => [SupportedGames.Honkai, SupportedGames.Genshin],
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -130,10 +132,10 @@ public class SelectedGameService
 
     private bool IsValidGame(string game)
     {
-        if (Enum.TryParse<SupportedGames>(game, out var supportedGame))
-            return supportedGame is SupportedGames.Genshin or SupportedGames.Honkai;
+        if (Enum.TryParse<SupportedGames>(game, out _))
+            return true;
 
-        return game == Genshin || game == Honkai;
+        return game is Genshin or Honkai or WuWa;
     }
 
 

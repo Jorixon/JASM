@@ -159,10 +159,13 @@ DebugItem.Visibility = Visibility.Collapsed;
 
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
-            var supportedGames = Enum.GetValues<SupportedGames>();
+            if (await ViewModel.SelectedGameService.GetSelectedGameAsync() == SelectedGameService.WuWa)
+                return;
+
             var notSelectedGame = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
 
-            var gameInfo = await ViewModel.GameService.GetGameInfoAsync(notSelectedGame);
+
+            var gameInfo = await ViewModel.GameService.GetGameInfoAsync(notSelectedGame.First());
 
             if (gameInfo is null)
                 return;
@@ -343,7 +346,7 @@ DebugItem.Visibility = Visibility.Collapsed;
         await Task.Delay(200);
         var game = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
         await App.GetService<LifeCycleService>().RestartAsync(notifyOnError: true,
-                postShutdownLogic: () => ViewModel.SelectedGameService.SetSelectedGame(game.ToString()))
+                postShutdownLogic: () => ViewModel.SelectedGameService.SetSelectedGame(game.First().ToString()))
             .ConfigureAwait(false);
     }
 }
