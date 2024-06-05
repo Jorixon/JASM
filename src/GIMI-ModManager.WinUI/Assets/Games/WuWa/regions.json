@@ -1,6 +1,18 @@
 [
-  {
-    "InternalName": "Jinzhou",
-    "DisplayName": "Jinzhou"
-  }
-]
+    {
+      "InternalName": "Huanglong",
+      "DisplayName": "Huanglong"
+    },
+    {
+      "InternalName": "Newfed",
+      "DisplayName": "New Federation"
+    },
+    {
+      "InternalName": "Fraxinus",
+      "DisplayName": "Fraxinus"
+    },
+    {
+        "InternalName": "BShores",
+        "DisplayName": "Black Shores"
+    }
+  ]
