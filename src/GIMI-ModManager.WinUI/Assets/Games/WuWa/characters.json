@@ -287,5 +287,39 @@
     "InGameSkins": [],
     "InternalName": "Yinlin",
     "DisplayName": "Yinlin"
+  },
+  {
+    "Keys": [
+      "Changli"
+    ],
+    "ReleaseDate": "2025-06-6T00:00:00",
+    "Image": "Changli.png",
+    "Rarity": 5,
+    "Element": "Fusion",
+    "Class": "Sword",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Changli",
+    "InGameSkins": [],
+    "InternalName": "Changli",
+    "DisplayName": "Changli"
+  },
+  {
+    "Keys": [
+      "Jinhsi"
+    ],
+    "ReleaseDate": "2025-06-6T00:00:00",
+    "Image": "Jinhsi.png",
+    "Rarity": 5,
+    "Element": "Spectro",
+    "Class": "Broadblade",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Jinhsi",
+    "InGameSkins": [],
+    "InternalName": "Jinhsi",
+    "DisplayName": "Jinhsi"
   }
 ]

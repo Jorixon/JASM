@@ -506,10 +506,13 @@
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Aalto.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Baizhi.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Calcharo.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Changli.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Character_Others.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Chixia.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Danjin.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Encore.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Jianxin.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Jinhsi.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Jiyan.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Lingyang.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Mortefi.png" />
