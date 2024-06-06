@@ -181,7 +181,7 @@
     <value>Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters. Any mods that can't be reasonably matched will be placed in an 'Others' folder.</value>
   </data>
   <data name="Startup/Tooltip2.Text" xml:space="preserve">
-    <value>A mod folder containing multiple character names may be wrongly moved to a character's directory. This assumes a flat mod structure, where skin folder are loosley stored in the mods folder. If you have a custom folder structure, there is a high change JASM will incorectly identify your skins. This also the case if you have nested folders with skins inside of them.</value>
+    <value>A mod folder containing multiple character names may be wrongly moved to a character's directory. This assumes a flat mod structure, where skin folders are loosely stored in the mods folder. If you have a custom folder structure, there is a high chance that JASM will incorrectly identify your skins. This also the case if you have nested folders with skins inside of them.</value>
   </data>
   <data name="Startup/Tooltip3.Text" xml:space="preserve">
     <value>This can be activated later in the settings page.</value>
