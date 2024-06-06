@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.1](https://github.com/Jorixon/JASM/compare/v2.10.0...v2.10.1) (2024-06-06)
+
+
+### Miscellaneous
+
+* Updated "reorganize mods" tooltip on startup page ([4288708](https://github.com/Jorixon/JASM/commit/42887087cba0ca8f164b1664a78f58de7469cba9))
+
 ## [2.10.0](https://github.com/Jorixon/JASM/compare/v2.9.1...v2.10.0) (2024-06-05)
 
 
