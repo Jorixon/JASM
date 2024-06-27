@@ -13,7 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="H.InputSimulator" Version="1.4.0" />
+		<PackageReference Include="H.InputSimulator" Version="1.4.1" />
 		<PackageReference Include="NamedPipeServerStream.NetFrameworkVersion" Version="1.1.13" />
 	</ItemGroup>
 

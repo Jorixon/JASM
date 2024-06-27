@@ -10,7 +10,7 @@ using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
-using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
@@ -34,6 +34,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     private readonly ModNotificationManager _modNotificationManager;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ILocalSettingsService _localSettingsService;
+    private readonly GameBananaService _gameBananaService;
     private readonly CharacterSkinService _characterSkinService;
     private readonly ModSettingsService _modSettingsService;
     private readonly Uri _placeholderImageUri;
@@ -61,7 +62,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private FileSystemItem? _lastSelectedShaderFixesFolder;
 
-
+    private CancellationTokenSource _cts = new();
     private ModInstallation? _modInstallation;
 
     [ObservableProperty] private string _modFolderName = string.Empty;
@@ -107,7 +108,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     public ModInstallerVM(ILogger logger, ImageHandlerService imageHandlerService,
         NotificationManager notificationManager, IWindowManagerService windowManagerService,
         ModNotificationManager modNotificationManager, ILocalSettingsService localSettingsService,
-        CharacterSkinService characterSkinService, ModSettingsService modSettingsService)
+        CharacterSkinService characterSkinService, ModSettingsService modSettingsService,
+        GameBananaService gameBananaService)
     {
         _logger = logger;
         _imageHandlerService = imageHandlerService;
@@ -118,6 +120,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _localSettingsService = localSettingsService;
         _characterSkinService = characterSkinService;
         _modSettingsService = modSettingsService;
+        _gameBananaService = gameBananaService;
         PropertyChanged += OnPropertyChanged;
     }
 
@@ -620,7 +623,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     }
 
 
-    private static readonly Dictionary<Uri, ModPageDataResult> _modPageDataCache = new();
+    private readonly Dictionary<Uri, ModPageInfo> _modPageDataCache = new();
 
     private async Task GetModInfo(string url, bool overrideCurrent = false)
     {
@@ -635,13 +638,13 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             return;
 
         IsRetrievingModInfo = true;
-
+        var ct = _cts.Token;
         try
         {
             if (!_modPageDataCache.TryGetValue(modPageUrl, out var modInfo))
             {
-                modInfo = await Task.Run(() =>
-                    App.GetService<IModUpdateChecker>().GetModPageDataAsync(modPageUrl, CancellationToken.None));
+                modInfo = await Task.Run(() => _gameBananaService.GetModInfoAsync(modPageUrl, ct), ct);
+
                 _modPageDataCache.Add(modPageUrl, modInfo);
             }
 
@@ -659,7 +662,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                 {
                     if (newImageUrl is not null)
                     {
-                        var newImage = await Task.Run(() => _imageHandlerService.DownloadImageAsync(newImageUrl));
+                        var newImage = await Task.Run(() => _imageHandlerService.DownloadImageAsync(newImageUrl, ct),
+                            ct);
                         ModPreviewImagePath = new Uri(newImage.Path);
 
                         if (LastSelectedImageFile is not null)
@@ -720,6 +724,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     {
         _modInstallation?.Dispose();
         _modInstallation = null;
+        if (_cts.IsCancellationRequested) return;
+        _cts.Cancel();
+        _cts.Dispose();
     }
 
     private void ErrorOccurred(Exception e)

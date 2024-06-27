@@ -149,16 +149,6 @@ public partial class App : Application
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
                 // I've read just about every microsoft docs page httpclients, and I can't figure out what I'm doing wrong
                 // Also tried with httpclientfactory, but that didn't work either
-                services.AddHttpClient<IModUpdateChecker, GameBananaModPageRetriever>(client =>
-                    {
-                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
-                        client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    })
-                    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
-                    {
-                        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
-                    })
-                    .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
 
                 services.AddHttpClient<IApiGameBananaClient, ApiGameBananaClient>(client =>
                     {
@@ -172,7 +162,7 @@ public partial class App : Application
 
                 // I'm preeeetty sure this is not correctly set up, not used to polly 8.x.x
                 // But it does rate limit, so I guess it's fine for now
-                services.AddResiliencePipeline(GameBananaModPageRetriever.HttpClientName, (builder, context) =>
+                services.AddResiliencePipeline(ApiGameBananaClient.HttpClientName, (builder, context) =>
                 {
                     var limiter = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions()
                     {
@@ -251,15 +241,31 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        Log.Fatal(e.Exception, "Unhandled exception");
-        await Log.CloseAndFlushAsync();
+        e.Handled = true;
+        Log.Error(e.Exception, """
 
-        if (UnhandledExceptionHandled)
-            return;
-
-        await GetService<IWindowManagerService>().CloseWindowsAsync();
+                               --------------------------------------------------------------------
+                                    _   _    ____  __  __                                        
+                                   | | / \  / ___||  \/  |                                       
+                                _  | |/ _ \ \___ \| |\/| |                                       
+                               | |_| / ___ \ ___) | |  | |                                       
+                                \___/_/   \_\____/|_|  |_| _ _   _ _____ _____ ____  _____ ____  
+                               | ____| \ | |/ ___/ _ \| | | | \ | |_   _| ____|  _ \| ____|  _ \ 
+                               |  _| |  \| | |  | | | | | | |  \| | | | |  _| | |_) |  _| | | | |
+                               | |___| |\  | |__| |_| | |_| | |\  | | | | |___|  _ <| |___| |_| |
+                               |_____|_|_\_|\____\___/_\___/|_|_\_| |_| |_____|_| \_\_____|____/ 
+                                  / \  | \ | | | | | | \ | | |/ / \ | |/ _ \ \      / / \ | |    
+                                 / _ \ |  \| | | | | |  \| | ' /|  \| | | | \ \ /\ / /|  \| |    
+                                / ___ \| |\  | | |_| | |\  | . \| |\  | |_| |\ V  V / | |\  |    
+                               /_/___\_\_| \_|__\___/|_|_\_|_|\_\_| \_|\___/  \_/\_/  |_| \_|    
+                               | ____|  _ \|  _ \ / _ \|  _ \                                    
+                               |  _| | |_) | |_) | | | | |_) |                                   
+                               | |___|  _ <|  _ <| |_| |  _ <                                    
+                               |_____|_| \_\_| \_\\___/|_| \_\                                   
+                               --------------------------------------------------------------------
+                               """);
 
         // show error dialog
         var window = new ErrorWindow(e.Exception)
@@ -268,11 +274,14 @@ public partial class App : Application
             Title = "JASM - Unhandled Exception",
             SystemBackdrop = new MicaBackdrop()
         };
+
         window.Activate();
         window.CenterOnScreen();
-        MainWindow.Hide();
-        e.Handled = true;
-        UnhandledExceptionHandled = true;
+
+        GetService<NotificationManager>()
+            .ShowNotification("An error occured!",
+                "JASM may be in an unstable state could crash at any moment. It is suggested to restart the app.",
+                TimeSpan.FromMinutes(60));
     }
 
 

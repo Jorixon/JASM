@@ -1,117 +1,110 @@
-﻿using System.Collections.Concurrent;
-using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Services;
+﻿using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
+using GIMI_ModManager.Core.Services.GameBanana.Models;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
-public class GameBananaService
+public class GameBananaService(
+    ILogger logger,
+    ISkinManagerService skinManagerService,
+    GameBananaCoreService gameBananaCoreService)
 {
-    private readonly ILogger _logger;
-    private readonly ISkinManagerService _skinManagerService;
-
-    private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(1);
-
-    private readonly TimeSpan _minTimeBetweenChecks = TimeSpan.FromHours(1);
-
-    private readonly ConcurrentDictionary<Guid, ModCacheInfo> _cache = new();
+    private readonly ILogger _logger = logger.ForContext<GameBananaService>();
+    private readonly ISkinManagerService _skinManagerService = skinManagerService;
+    private readonly GameBananaCoreService _gameBananaCoreService = gameBananaCoreService;
 
 
-    public GameBananaService(ILogger logger, ISkinManagerService skinManagerService)
+    public async Task<ModPageInfo> GetModInfoAsync(Guid modId, CancellationToken cancellationToken = default)
     {
-        _skinManagerService = skinManagerService;
-        _logger = logger.ForContext<GameBananaService>();
-    }
-
-
-    public async Task<ModPageDataResult> GetModInfoAsync(Guid modId, CancellationToken cancellationToken = default)
-    {
-        if (_cache.TryGetValue(modId, out var cacheInfo))
-        {
-            if (cacheInfo.ModPageInfo is not null && cacheInfo.ModPageInfo.CheckTime + _cacheDuration > DateTime.Now)
-                return cacheInfo.ModPageInfo;
-        }
-
         var mod = _skinManagerService.GetModById(modId);
         if (mod is null)
             throw new InvalidOperationException($"Mod with id {modId} not found");
 
-        var modSettings = await mod.Settings.ReadSettingsAsync();
+        var modSettings = await mod.Settings.ReadSettingsAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
         if (modSettings.ModUrl is null)
             throw new InvalidOperationException("Mod url is null");
 
 
-        var client = App.GetService<IModUpdateChecker>();
+        return await GetModInfoAsync(modSettings.ModUrl, cancellationToken).ConfigureAwait(false);
+    }
 
-        var result = await client.GetModPageDataAsync(modSettings.ModUrl, cancellationToken);
+    public async Task<ModPageInfo> GetModInfoAsync(Uri modUrl, CancellationToken cancellationToken = default)
+    {
+        var modGbId = GetModIdFromUri(modUrl);
 
+        if (modGbId is null)
+            throw new InvalidOperationException($"Invalid GameBanana url: {modUrl}");
 
-        CacheModInfo(modId, result);
+        var result = await _gameBananaCoreService.GetModProfileAsync(new GbModId(modGbId), cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result is null)
+            throw new InvalidOperationException($"Mod with id {modGbId} not found");
 
         return result;
     }
-
-    // Get info about new or updated mods
 
     public async Task<ModsRetrievedResult> GetAvailableMods(Guid modId, CancellationToken cancellationToken = default)
     {
-        if (_cache.TryGetValue(modId, out var cacheInfo))
-        {
-            if (cacheInfo.ModsResult is not null && cacheInfo.ModsResult.CheckTime + _cacheDuration > DateTime.Now)
-                return cacheInfo.ModsResult;
-        }
-
-
         var mod = _skinManagerService.GetModById(modId);
         if (mod is null)
             throw new InvalidOperationException($"Mod with id {modId} not found");
 
 
-        var modSettings = await mod.Settings.ReadSettingsAsync();
+        var modSettings = await mod.Settings.ReadSettingsAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
 
         if (modSettings.ModUrl is null)
             throw new InvalidOperationException("Mod url is null");
 
+        var modGbId = GetModIdFromUri(modSettings.ModUrl);
 
-        var client = App.GetService<IModUpdateChecker>();
+        if (modGbId is null)
+            throw new InvalidOperationException($"Invalid GameBanana url: {modSettings.ModUrl}");
 
-        var result = await client.CheckForUpdatesAsync(modSettings.ModUrl, modSettings.LastChecked ?? DateTime.Now,
-            cancellationToken);
+        var result = await _gameBananaCoreService.GetModFilesInfoAsync(new GbModId(modGbId), cancellationToken)
+            .ConfigureAwait(false);
 
-        CacheRetrievedMods(modId, result);
-        return result;
+        if (result is null)
+            throw new InvalidOperationException($"Mod with id {modGbId} not found");
+
+
+        return new ModsRetrievedResult()
+        {
+            ModId = modGbId,
+            LastCheck = modSettings.LastChecked ?? DateTime.MinValue,
+            CheckTime = DateTime.Now,
+            Mods = result,
+            SitePageUrl = modSettings.ModUrl
+        };
     }
 
-
-    public void CacheRetrievedMods(Guid modId, ModsRetrievedResult result)
+    private string? GetModIdFromUri(Uri modUrl)
     {
-        _cache.AddOrUpdate(modId, new ModCacheInfo
-        {
-            ModPageInfo = null,
-            ModsResult = result
-        }, (_, oldValue) => new ModCacheInfo
-        {
-            ModPageInfo = oldValue.ModPageInfo,
-            ModsResult = result
-        });
-    }
+        var segments = modUrl.Segments;
+        if (segments.Length < 2) return null;
 
-    public void CacheModInfo(Guid modId, ModPageDataResult result)
-    {
-        _cache.AddOrUpdate(modId, new ModCacheInfo
-        {
-            ModPageInfo = result,
-            ModsResult = null
-        }, (_, oldValue) => new ModCacheInfo
-        {
-            ModPageInfo = result,
-            ModsResult = oldValue.ModsResult
-        });
+
+        if (!modUrl.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) ||
+            !modUrl.Host.Equals("gamebanana.com", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+
+        var modId = segments.Last();
+        return modId;
     }
 }
 
-public class ModCacheInfo
+public record ModsRetrievedResult
 {
-    public ModPageDataResult? ModPageInfo { get; set; }
-    public ModsRetrievedResult? ModsResult { get; set; }
+    public required string ModId { get; init; }
+
+    public required DateTime CheckTime { get; init; }
+    public required DateTime LastCheck { get; init; }
+    public required Uri SitePageUrl { get; init; } = null!;
+
+    public bool AnyNewMods => Mods.Any(m => m.DateAdded > LastCheck);
+    public required IReadOnlyList<ModFileInfo> Mods { get; init; }
 }

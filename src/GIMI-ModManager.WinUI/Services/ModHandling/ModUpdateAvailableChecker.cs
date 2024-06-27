@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.GamesService.Interfaces;
-using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Newtonsoft.Json;
@@ -222,7 +221,8 @@ public sealed class ModUpdateAvailableChecker
         OnUpdateCheckerEvent?.Invoke(this, new UpdateCheckerEvent(Status));
 
         var stopWatch = Stopwatch.StartNew();
-        var anyModsChecked = await CheckForUpdates(modCheckOperation, cancellationToken: runningCancellationToken).ConfigureAwait(false);
+        var anyModsChecked = await CheckForUpdates(modCheckOperation, cancellationToken: runningCancellationToken)
+            .ConfigureAwait(false);
         stopWatch.Stop();
 
         _logger.Debug("Finished checking for mod updates in {Elapsed}", stopWatch.Elapsed);
@@ -281,7 +281,8 @@ public sealed class ModUpdateAvailableChecker
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var modSettings = await characterSkinEntry.Mod.Settings.ReadSettingsAsync().ConfigureAwait(false);
+            var modSettings = await characterSkinEntry.Mod.Settings
+                .ReadSettingsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (modSettings.ModUrl is null)
                 continue;

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 
 namespace GIMI_ModManager.WinUI.Services.Notifications;
 
