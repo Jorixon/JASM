@@ -241,15 +241,31 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
-    private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        Log.Fatal(e.Exception, "Unhandled exception");
-        await Log.CloseAndFlushAsync();
+        e.Handled = true;
+        Log.Error(e.Exception, """
 
-        if (UnhandledExceptionHandled)
-            return;
-
-        await GetService<IWindowManagerService>().CloseWindowsAsync();
+                               --------------------------------------------------------------------
+                                    _   _    ____  __  __                                        
+                                   | | / \  / ___||  \/  |                                       
+                                _  | |/ _ \ \___ \| |\/| |                                       
+                               | |_| / ___ \ ___) | |  | |                                       
+                                \___/_/   \_\____/|_|  |_| _ _   _ _____ _____ ____  _____ ____  
+                               | ____| \ | |/ ___/ _ \| | | | \ | |_   _| ____|  _ \| ____|  _ \ 
+                               |  _| |  \| | |  | | | | | | |  \| | | | |  _| | |_) |  _| | | | |
+                               | |___| |\  | |__| |_| | |_| | |\  | | | | |___|  _ <| |___| |_| |
+                               |_____|_|_\_|\____\___/_\___/|_|_\_| |_| |_____|_| \_\_____|____/ 
+                                  / \  | \ | | | | | | \ | | |/ / \ | |/ _ \ \      / / \ | |    
+                                 / _ \ |  \| | | | | |  \| | ' /|  \| | | | \ \ /\ / /|  \| |    
+                                / ___ \| |\  | | |_| | |\  | . \| |\  | |_| |\ V  V / | |\  |    
+                               /_/___\_\_| \_|__\___/|_|_\_|_|\_\_| \_|\___/  \_/\_/  |_| \_|    
+                               | ____|  _ \|  _ \ / _ \|  _ \                                    
+                               |  _| | |_) | |_) | | | | |_) |                                   
+                               | |___|  _ <|  _ <| |_| |  _ <                                    
+                               |_____|_| \_\_| \_\\___/|_| \_\                                   
+                               --------------------------------------------------------------------
+                               """);
 
         // show error dialog
         var window = new ErrorWindow(e.Exception)
@@ -258,11 +274,14 @@ public partial class App : Application
             Title = "JASM - Unhandled Exception",
             SystemBackdrop = new MicaBackdrop()
         };
+
         window.Activate();
         window.CenterOnScreen();
-        MainWindow.Hide();
-        e.Handled = true;
-        UnhandledExceptionHandled = true;
+
+        GetService<NotificationManager>()
+            .ShowNotification("An error occured!",
+                "JASM may be in an unstable state could crash at any moment. It is suggested to restart the app.",
+                TimeSpan.FromMinutes(60));
     }
 
 
