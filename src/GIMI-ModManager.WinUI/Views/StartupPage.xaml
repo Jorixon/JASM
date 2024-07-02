@@ -24,18 +24,20 @@
             <TextBlock
                 Grid.Row="0"
                 HorizontalAlignment="Left"
-                l:Uids.Uid="Startup_Title"
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="First time startup" />
+                Text="First time startup"
+                l:Uids.Uid="/Startup/Startup_Header" />
 
             <ComboBox
+                x:Name="GameSelectorBox"
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 ItemsSource="{x:Bind ViewModel.Games}"
                 SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
                 SelectionChanged="GameSelector_OnSelectionChanged"
-                ToolTipService.ToolTip="Select the game you want to manage mods for. This can be changed at any time on the settings page" />
+                ToolTipService.ToolTip="Select the game you want to manage mods for. This can be changed at any time on the settings page"
+                l:Uids.Uid="/Startup/GameSelectorBox" />
         </Grid>
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
@@ -52,10 +54,11 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0">
                         <TextBlock
-                            l:Uids.Uid="Startup1"
                             IsTextSelectionEnabled="True"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            TextWrapping="WrapWholeWords" />
+                            TextWrapping="WrapWholeWords"
+                            Text="As part of the first time setup you will need to select a Model-Importer folder (3dmigoto) and its connected Mods folder. The 3dmigoto folder contains 3DMigoto Loader.exe/3DMigotoLoader.exe and a Mods folder. If you have not set up the model importer yet, please do so now, see link below. I find most mods on Gamebanana but Nexusmods also has some."
+                            l:Uids.Uid="/Startup/Body1" />
                         <StackPanel Orientation="Horizontal">
 
                             <HyperlinkButton NavigateUri="{x:Bind ViewModel.ModelImporterUrl, Mode=OneWay}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">
@@ -74,18 +77,19 @@
                     <TextBlock
                         Grid.Row="1"
                         Margin="0,8,0,0"
-                        l:Uids.Uid="Startup2"
                         IsTextSelectionEnabled="True"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        Text="Once the settings are saved the application will create a folder for each character within the 'Mods' folder. Mod folders outside of these character folders are ignored. This application enables and disables mods by prefixing mod folders with 'DISABLED_'.  JASM also supports exporting Mods managed by it if you wish to use them with other applications."
+                        l:Uids.Uid="/Startup/Body2" />
 
                     <TextBlock
                         Grid.Row="2"
                         Margin="0,4,0,0"
-                        l:Uids.Uid="Startup3"
                         IsTextSelectionEnabled="True"
                         Style="{ThemeResource BodyStrongTextBlockStyle}"
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        l:Uids.Uid="/Startup/BackupWarning" />
 
                 </Grid>
 
@@ -109,8 +113,8 @@
                     <TextBlock
                         Margin="0,8,0,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="Unloading of Mods is currently not implemented. However, once implemented it will be possible to unload select mods to an unloaded mods folder."
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        Text="Unloading of Mods is currently not implemented. However, once implemented it will be possible to unload select mods to an unloaded mods folder." />
                 </Grid>
                 <controls:FolderSelector
                     Title="Unloaded Mods Folder (Optional)"
@@ -138,20 +142,23 @@
 
                                     <TextBlock
                                         Margin="0,8,0,4"
-                                        l:Uids.Uid="Startup/Tooltip1"
                                         Style="{ThemeResource BodyTextBlockStyle}"
-                                        TextWrapping="WrapWholeWords" />
+                                        TextWrapping="WrapWholeWords"
+                                        Text="Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters. Any mods that can't be reasonably matched will be placed in an 'Others' folder."
+                                        l:Uids.Uid="/Startup/ReorganizeTooltip1" />
 
                                     <TextBlock
-                                        l:Uids.Uid="Startup/Tooltip2"
                                         Style="{ThemeResource BodyTextBlockStyle}"
-                                        TextWrapping="WrapWholeWords" />
+                                        TextWrapping="WrapWholeWords"
+                                        Text="A mod folder containing multiple character names may be wrongly moved to a character's directory. This assumes a flat mod structure, where skin folders are loosely stored in the mods folder. If you have a custom folder structure, there is a high chance that JASM will incorrectly identify your skins. This also the case if you have nested folders with skins inside of them."
+                                        l:Uids.Uid="/Startup/ReorganizeTooltip2" />
 
                                     <TextBlock
                                         Margin="0,8,0,4"
-                                        l:Uids.Uid="Startup/Tooltip3"
                                         Style="{ThemeResource BaseTextBlockStyle}"
-                                        TextWrapping="WrapWholeWords" />
+                                        TextWrapping="WrapWholeWords"
+                                        Text="This can be activated later in the settings page."
+                                        l:Uids.Uid="/Startup/ReorganizeTooltip3" />
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>
@@ -180,8 +187,9 @@
                                     <TextBlock
                                         Margin="0,8,0,4"
                                         Style="{ThemeResource BodyTextBlockStyle}"
+                                        TextWrapping="WrapWholeWords"
                                         Text="Prepend DISABLED_ to all mods so that they are disabled"
-                                        TextWrapping="WrapWholeWords" />
+                                        l:Uids.Uid="/Startup/DisableModsTooltip" />
 
                                 </StackPanel>
                             </Flyout>

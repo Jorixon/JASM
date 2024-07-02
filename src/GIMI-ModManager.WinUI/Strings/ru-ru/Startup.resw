@@ -117,115 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>JASM - Just Another Skin Manager</value>
+  <data name="BackupWarning.Text" xml:space="preserve">
+    <value>Всегда рекомендуется делать резервные копии ваших файлов/модов перед использованием приложений, которые взаимодействуют с вашими файлами.</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>JASM - Just Another Skin Manager</value>
+  <data name="Body1.Text" xml:space="preserve">
+    <value>В рамках первоначальной настройки вам нужно будет выбрать папку Model-Importer (3dmigoto) и связанную с ней папку Mods. Папка 3dmigoto содержит 3DMigoto Loader.exe/3DMigotoLoader.exe и папку Mods. Если вы еще не настроили импортёр моделей, пожалуйста, сделайте это сейчас, воспользуйтесь ссылкой ниже. Большинство модов я нахожу на Gamebanana, но также можно использовать Nexusmods.</value>
   </data>
-  <data name="Startup1.Text" xml:space="preserve">
-    <value>As part of the first time setup you will need to select a Model-Importer folder (3dmigoto) and its connected Mods folder. The 3dmigoto folder contains 3DMigoto Loader.exe/3DMigotoLoader.exe and a Mods folder. If you have not set up the model importer yet, please do so now, see link below. I find most mods on Gamebanana but Nexusmods also has some.</value>
-    <comment>[No longer in use]</comment>
+  <data name="Body2.Text" xml:space="preserve">
+    <value>После сохранения настроек приложение создаст папку для каждого персонажа внутри папки 'Mods'. Папки модов, находящиеся вне этих папок персонажей, игнорируются. Это приложение включает и отключает моды, добавляя префикс 'DISABLED_' к папкам модов. JASM также поддерживает экспорт модов, управляемых им, если вы захотите использовать их с другими приложениями.</value>
   </data>
-  <data name="Startup2.Text" xml:space="preserve">
-    <value>Once the settings are saved the application will create a folder for each character within the 'Mods' folder. Mod folders outside of these character folders are ignored. This application enables and disables mods by prefixing mod folders with 'DISABLED_'.  JASM also supports exporting Mods managed by it if you wish to use them with other applications.</value>
-    <comment>[No longer in use]</comment>
+  <data name="DisableModsTooltip.Text" xml:space="preserve">
+    <value>Добавьте префикс DISABLED_ ко всем модам, чтобы они были отключены</value>
   </data>
-  <data name="Startup3.Text" xml:space="preserve">
-    <value>It is always a good idea to backup your files/mods before using applications that interact with your files</value>
-    <comment>[No longer in use]</comment>
+  <data name="GameSelectorBox.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Выберите игру, для которой вы хотите управлять модами. Это можно изменить в любое время на странице настроек.</value>
   </data>
-  <data name="ShellMenuItem_Views_Main.Text" xml:space="preserve">
-    <value>Main</value>
+  <data name="ReorganizeTooltip1.Text" xml:space="preserve">
+    <value>Включение этой опции заставит приложение сортировать существующие моды по папкам, назначенным соответствующим персонажам. Любые моды, которые не могут быть разумно сопоставлены, будут помещены в папку "Others" (Другие).</value>
   </data>
-  <data name="Main_Title.Text" xml:space="preserve">
-    <value>Main</value>
-    <comment>Page title for MainPage</comment>
+  <data name="ReorganizeTooltip2.Text" xml:space="preserve">
+    <value>Папка модов, содержащая имена нескольких персонажей, может быть ошибочно перемещена в директорию одного из персонажей. Это предполагает плоскую структуру модов, где папки скинов свободно хранятся в папке модов. Если у вас есть собственная структура папок, существует высокая вероятность того, что JASM неправильно определит ваши скины. Это также относится к случаю, если у вас есть вложенные папки со скинами внутри них.</value>
   </data>
-  <data name="ShellMenuItem_Views_Startup.Text" xml:space="preserve">
-    <value>Startup</value>
+  <data name="ReorganizeTooltip3.Text" xml:space="preserve">
+    <value>Это можно активировать позже на странице настроек</value>
   </data>
-  <data name="Startup_Title.Text" xml:space="preserve">
-    <value>First time startup</value>
-    <comment>[No longer in use]</comment>
-  </data>
-  <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>Personalization</value>
-  </data>
-  <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>Theme</value>
-  </data>
-  <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
-  </data>
-  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
-  </data>
-  <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Default</value>
-  </data>
-  <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>The goal of JASM is to make it easy to organize a larger amount of skin mods</value>
-  </data>
-  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
-    <value>Privacy Statement</value>
-  </data>
-  <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>https://YourPrivacyUrlGoesHere/</value>
-  </data>
-  <data name="ShellMenuBarSettingsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
-    <value>Settings</value>
-    <comment>Page title for SettingsPage</comment>
-  </data>
-  <data name="Startup/Tooltip1.Text" xml:space="preserve">
-    <value>Enabling this option will prompt the application to sort existing mods into folders assigned to their respective characters. Any mods that can't be reasonably matched will be placed in an 'Others' folder.</value>
-    <comment>[No longer in use]</comment>
-  </data>
-  <data name="Startup/Tooltip2.Text" xml:space="preserve">
-    <value>A mod folder containing multiple character names may be wrongly moved to a character's directory. This assumes a flat mod structure, where skin folders are loosely stored in the mods folder. If you have a custom folder structure, there is a high chance that JASM will incorrectly identify your skins. This also the case if you have nested folders with skins inside of them.</value>
-    <comment>[No longer in use]</comment>
-  </data>
-  <data name="Startup/Tooltip3.Text" xml:space="preserve">
-    <value>This can be activated later in the settings page.</value>
-    <comment>[No longer in use]</comment>
-  </data>
-  <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
-  </data>
-  <data name="Settings_ComboBox_Header.Text" xml:space="preserve">
-    <value>Select Display Language:</value>
-  </data>
-  <data name="Settings_ExportDialog.Text" xml:space="preserve">
-    <value>This will export all mods that JASM is managing to a an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder.</value>
-  </data>
-  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
-    <value>Export</value>
-  </data>
-  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
-    <value>Change status of exported mods</value>
-  </data>
-  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
-    <value>Keep folder structure of CharacterName/Mods in export folder</value>
-  </data>
-  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
-    <value>Removes JASM configuration files from the exported Mods</value>
-  </data>
-  <data name="Settings_Export_Button.Text" xml:space="preserve">
-    <value>Export Mods</value>
-  </data>
-  <data name="Settings_Export_Title.Text" xml:space="preserve">
-    <value>Export/Backup Mods</value>
-  </data>
-  <data name="Settings_Language.Text" xml:space="preserve">
-    <value>Language</value>
-  </data>
-  <data name="Settings_Language_TexBlock.Text" xml:space="preserve">
-    <value>Language options are currently limited. It is a work in progress.</value>
+  <data name="Startup_Header.Text" xml:space="preserve">
+    <value>Запуск приложения</value>
   </data>
 </root>

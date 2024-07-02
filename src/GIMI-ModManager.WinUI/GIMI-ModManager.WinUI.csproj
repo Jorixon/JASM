@@ -1034,10 +1034,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PRIResource Remove="Strings\en-us\Resources.resw" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PRIResource Remove="Mappers\**" />
 	</ItemGroup>
 
