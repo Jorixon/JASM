@@ -241,6 +241,10 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
+    // Incremented when an error window is opened, decremented when it is closed
+    // Just avoid spamming the user with error windows
+    private int _ErrorWindowsOpen = 0;
+
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         e.Handled = true;
@@ -268,7 +272,7 @@ public partial class App : Application
                                """);
 
         // show error dialog
-        var window = new ErrorWindow(e.Exception)
+        var window = new ErrorWindow(e.Exception, () => _ErrorWindowsOpen--)
         {
             IsAlwaysOnTop = true,
             Title = "JASM - Unhandled Exception",
@@ -276,12 +280,20 @@ public partial class App : Application
         };
 
         window.Activate();
+        _ErrorWindowsOpen++;
         window.CenterOnScreen();
 
         GetService<NotificationManager>()
             .ShowNotification("An error occured!",
                 "JASM may be in an unstable state could crash at any moment. It is suggested to restart the app.",
                 TimeSpan.FromMinutes(60));
+
+        if (_ErrorWindowsOpen > 4)
+        {
+            // If there are too many error windows open, just close the app
+            // This is to prevent the app from spamming the user with error windows
+            Environment.Exit(1);
+        }
     }
 
 

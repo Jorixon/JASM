@@ -9,12 +9,14 @@ public sealed partial class ErrorWindow : WindowEx
     public ErrorWindowViewModel ViewModel { get; }
 
 
-    public ErrorWindow(Exception exception)
+    public ErrorWindow(Exception exception, Action onErrorWindowClose)
     {
         if (App.MainWindow is not null)
         {
             App.MainWindow.Closed += (sender, args) => Close();
         }
+
+        Closed += (sender, args) => onErrorWindowClose();
 
         InitializeComponent();
         ViewModel = new ErrorWindowViewModel(exception);
