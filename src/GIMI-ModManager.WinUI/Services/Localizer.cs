@@ -107,4 +107,19 @@ public class Localizer : ILanguageLocalizer
             return uid;
         }
     }
+
+    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null)
+    {
+        try
+        {
+            var text = _localizer.GetLocalizedString(uid);
+            if (string.IsNullOrWhiteSpace(text))
+                return defaultValue;
+            return text;
+        }
+        catch (Exception)
+        {
+            return defaultValue;
+        }
+    }
 }

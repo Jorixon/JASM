@@ -100,14 +100,16 @@
                     BrowseCommand="{x:Bind ViewModel.BrowseGimiModFolderCommand}"
                     PathChangedEvent="GimiFolder_OnPathChangedEvent"
                     SelectedFolderValue="{x:Bind ViewModel.PathToGIMIFolderPicker.Path, Mode=TwoWay}"
-                    ValidationErrorText="{x:Bind ViewModel.PathToGIMIFolderPicker.ValidationMessages, Mode=OneWay}" />
+                    ValidationErrorText="{x:Bind ViewModel.PathToGIMIFolderPicker.ValidationMessages, Mode=OneWay}"
+                    l:Uids.Uid="/Settings/3dmigotoFolderSelector" />
                 <controls:FolderSelector
                     Title="Mods Folder "
                     Margin="4,8,4,8"
                     BrowseCommand="{x:Bind ViewModel.BrowseModsFolderCommand}"
                     PathChangedEvent="ModsFolder_OnPathChangedEvent"
                     SelectedFolderValue="{x:Bind ViewModel.PathToModsFolderPicker.Path, Mode=TwoWay}"
-                    ValidationErrorText="{x:Bind ViewModel.PathToModsFolderPicker.ValidationMessages, Mode=OneWay}" />
+                    ValidationErrorText="{x:Bind ViewModel.PathToModsFolderPicker.ValidationMessages, Mode=OneWay}"
+                    l:Uids.Uid="/Settings/ModsFolderSelector" />
 
                 <Grid Margin="{StaticResource SmallTopBottomMargin}" Visibility="Collapsed">
                     <TextBlock

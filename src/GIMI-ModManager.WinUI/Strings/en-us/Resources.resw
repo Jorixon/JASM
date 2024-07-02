@@ -166,6 +166,7 @@
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>The goal of JASM is to make it easy to organize a larger amount of skin mods</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
     <value>Privacy Statement</value>
@@ -194,33 +195,43 @@
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ComboBox_Header.Text" xml:space="preserve">
     <value>Select Display Language:</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ExportDialog.Text" xml:space="preserve">
     <value>This will export all mods that JASM is managing to a an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder.</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
     <value>Cancel</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
     <value>Export</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
     <value>Change status of exported mods</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
     <value>Keep folder structure of CharacterName/Mods in export folder</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
     <value>Removes JASM configuration files from the exported Mods</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_Export_Button.Text" xml:space="preserve">
     <value>Export Mods</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_Export_Title.Text" xml:space="preserve">
     <value>Export/Backup Mods</value>
+    <comment>[No longer in use]</comment>
   </data>
   <data name="Settings_Language.Text" xml:space="preserve">
     <value>Language</value>
