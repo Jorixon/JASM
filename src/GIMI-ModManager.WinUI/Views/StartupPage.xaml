@@ -89,6 +89,7 @@
                         IsTextSelectionEnabled="True"
                         Style="{ThemeResource BodyStrongTextBlockStyle}"
                         TextWrapping="WrapWholeWords"
+                        Text="It is always a good idea to backup your files/mods before using applications that interact with your files"
                         l:Uids.Uid="/Startup/BackupWarning" />
 
                 </Grid>
