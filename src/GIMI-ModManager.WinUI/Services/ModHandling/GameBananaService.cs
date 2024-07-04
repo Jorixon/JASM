@@ -47,7 +47,8 @@ public class GameBananaService(
         return result;
     }
 
-    public async Task<ModsRetrievedResult> GetAvailableMods(Guid modId, CancellationToken cancellationToken = default)
+    public async Task<ModsRetrievedResult> GetAvailableModFiles(Guid modId, bool ignoreCache = false,
+        CancellationToken cancellationToken = default)
     {
         var mod = _skinManagerService.GetModById(modId);
         if (mod is null)
@@ -65,7 +66,8 @@ public class GameBananaService(
         if (modGbId is null)
             throw new InvalidOperationException($"Invalid GameBanana url: {modSettings.ModUrl}");
 
-        var result = await _gameBananaCoreService.GetModFilesInfoAsync(new GbModId(modGbId), cancellationToken)
+        var result = await _gameBananaCoreService
+            .GetModFilesInfoAsync(new GbModId(modGbId), ignoreCache: ignoreCache, ct: cancellationToken)
             .ConfigureAwait(false);
 
         if (result is null)

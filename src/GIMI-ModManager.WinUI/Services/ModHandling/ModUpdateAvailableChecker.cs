@@ -287,8 +287,11 @@ public sealed class ModUpdateAvailableChecker
             if (modSettings.ModUrl is null)
                 continue;
 
+            var ignoreCache = modCheckOperation.ModCheckRequest.IgnoreLastCheckedTime;
+
             var fetchTask = Task.Run(
-                () => _gameBananaService.GetAvailableMods(characterSkinEntry.Id, cancellationToken),
+                () => _gameBananaService.GetAvailableModFiles(characterSkinEntry.Id, ignoreCache: ignoreCache,
+                    cancellationToken),
                 cancellationToken);
 
             tasks.Add(fetchTask);
