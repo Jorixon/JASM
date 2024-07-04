@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace GIMI_ModManager.Core.Contracts.Services;
 
@@ -15,6 +16,9 @@ public interface ILanguageLocalizer
     public Task SetLanguageAsync(string languageCode);
 
     public string GetLocalizedString(string uid);
+
+    [return: NotNullIfNotNull(nameof(defaultValue))]
+    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null);
 }
 
 public interface ILanguage : IEquatable<ILanguage>, IEquatable<CultureInfo>

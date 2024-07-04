@@ -117,102 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>JASM - Just Another Skin Manager</value>
+  <data name="BackupWarning.Text" xml:space="preserve">
+    <value>Всегда рекомендуется делать резервные копии ваших файлов/модов перед использованием приложений, которые взаимодействуют с вашими файлами.</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>JASM - Just Another Skin Manager</value>
+  <data name="Body1.Text" xml:space="preserve">
+    <value>В рамках первоначальной настройки вам нужно будет выбрать папку Model-Importer (3dmigoto) и связанную с ней папку Mods. Папка 3dmigoto содержит 3DMigoto Loader.exe/3DMigotoLoader.exe и папку Mods. Если вы еще не настроили импортёр моделей, пожалуйста, сделайте это сейчас, воспользуйтесь ссылкой ниже. Большинство модов я нахожу на Gamebanana, но также можно использовать Nexusmods.</value>
   </data>
-  <data name="Startup1.Text" xml:space="preserve">
-    <value>作为首次设置的一部分，您需要选择原神模型导入器（GIMI）文件夹及其关联的模组文件夹。GIMI/3dmigoto文件夹包含3DMigoto Loader.exe和一个模组文件夹。如果您尚未设置GIMI，请立即执行此操作，请参见下面的链接。我发现大多数模组在Gamebanana上，但Nexusmods也有一些。</value>
+  <data name="Body2.Text" xml:space="preserve">
+    <value>После сохранения настроек приложение создаст папку для каждого персонажа внутри папки 'Mods'. Папки модов, находящиеся вне этих папок персонажей, игнорируются. Это приложение включает и отключает моды, добавляя префикс 'DISABLED_' к папкам модов. JASM также поддерживает экспорт модов, управляемых им, если вы захотите использовать их с другими приложениями.</value>
   </data>
-  <data name="Startup2.Text" xml:space="preserve">
-    <value>保存设置后，应用程序将在模组文件夹内为每个角色创建一个模组文件夹。该应用程序通过在模组文件夹前缀中添加“DISABLED_”来启用和禁用模组。JASM还支持导出由其管理的模组，如果您希望将其与其他应用程序一起使用。目前，只有这个页面和部分设置页面已经翻译完成。翻译是通过ChatGPT进行的，可能包含错误。</value>
+  <data name="DisableModsTooltip.Text" xml:space="preserve">
+    <value>Добавьте префикс DISABLED_ ко всем модам, чтобы они были отключены</value>
   </data>
-  <data name="Startup3.Text" xml:space="preserve">
-    <value>在使用与您的文件交互的应用程序之前，备份您的文件/模组总是一个好主意。</value>
+  <data name="GameSelectorBox.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Выберите игру, для которой вы хотите управлять модами. Это можно изменить в любое время на странице настроек.</value>
   </data>
-  <data name="Startup/Tooltip1.Text" xml:space="preserve">
-    <value>启用此选项将提示应用程序将现有的模组按其各自角色分配的文件夹进行排序。任何无法合理匹配的模组将放入“其他”文件夹。</value>
+  <data name="ReorganizeTooltip1.Text" xml:space="preserve">
+    <value>Включение этой опции заставит приложение сортировать существующие моды по папкам, назначенным соответствующим персонажам. Любые моды, которые не могут быть разумно сопоставлены, будут помещены в папку "Others" (Другие).</value>
   </data>
-  <data name="Startup/Tooltip2.Text" xml:space="preserve">
-    <value>一个包含多个角色名称的模组文件夹可能会错误地移到一个角色的目录中。</value>
+  <data name="ReorganizeTooltip2.Text" xml:space="preserve">
+    <value>Папка модов, содержащая имена нескольких персонажей, может быть ошибочно перемещена в директорию одного из персонажей. Это предполагает плоскую структуру модов, где папки скинов свободно хранятся в папке модов. Если у вас есть собственная структура папок, существует высокая вероятность того, что JASM неправильно определит ваши скины. Это также относится к случаю, если у вас есть вложенные папки со скинами внутри них.</value>
   </data>
-  <data name="Startup/Tooltip3.Text" xml:space="preserve">
-    <value>这可以在设置页面中稍后激活。</value>
+  <data name="ReorganizeTooltip3.Text" xml:space="preserve">
+    <value>Это можно активировать позже на странице настроек</value>
   </data>
-  <data name="Startup_Title.Text" xml:space="preserve">
-    <value>首次启动</value>
-    <comment>启动页面的页面标题</comment>
-  </data>
-  <data name="Settings_About.Text" xml:space="preserve">
-    <value>关于此应用程序</value>
-  </data>
-  <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>JASM的目标是使组织大量皮肤模组变得更容易</value>
-  </data>
-  <data name="Settings_ComboBox_Header.Text" xml:space="preserve">
-    <value>选择显示语言：</value>
-  </data>
-  <data name="Settings_Language_TexBlock.Text" xml:space="preserve">
-    <value>语言选项目前有限。这是一个正在进行中的工作。这是由ChatGPT翻译的。</value>
-  </data>
-  <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>个性化</value>
-  </data>
-  <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>主题</value>
-  </data>
-  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>深色</value>
-  </data>
-  <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>默认</value>
-  </data>
-  <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>浅色</value>
-  </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
-    <value>设置</value>
-    <comment>设置页面的页面标题</comment>
-  </data>
-  <data name="Settings_ExportDialog.Text" xml:space="preserve">
-    <value>这将导出JASM管理的所有模组到您选择的导出文件夹。模组将被复制到导出文件夹，而不会从原始文件夹中删除。</value>
-  </data>
-  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
-    <value>取消</value>
-  </data>
-  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
-    <value>导出</value>
-  </data>
-  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
-    <value>更改导出的模组状态</value>
-  </data>
-  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
-    <value>在导出文件夹中保留CharacterName/Mods的文件夹结构</value>
-  </data>
-  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
-    <value>从导出的模组中移除JASM配置文件</value>
-  </data>
-  <data name="Settings_Export_Button.Text" xml:space="preserve">
-    <value>导出模组</value>
-  </data>
-  <data name="Settings_Export_Title.Text" xml:space="preserve">
-    <value>导出/备份模组</value>
-  </data>
-  <data name="Settings_Language.Text" xml:space="preserve">
-    <value>语言</value>
-  </data>
-  <data name="Stopped" xml:space="preserve">
-    <value>停止</value>
-  </data>
-  <data name="Waiting" xml:space="preserve">
-    <value>等待</value>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>错误</value>
-  </data>
-  <data name="Running" xml:space="preserve">
-    <value>运行中</value>
+  <data name="Startup_Header.Text" xml:space="preserve">
+    <value>Запуск приложения</value>
   </data>
 </root>

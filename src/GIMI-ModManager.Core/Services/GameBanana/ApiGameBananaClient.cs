@@ -189,13 +189,6 @@ public sealed class ApiGameBananaClient(
         return new Uri(ApiUrl + gbModId + "/ProfilePage");
     }
 
-    private static void ValidateGameBananaUrl(Uri url)
-    {
-        if (!url.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) ||
-            !url.Host.Equals("gamebanana.com", StringComparison.OrdinalIgnoreCase))
-            throw new ArgumentException($"Invalid GameBanana url: {url}", nameof(url));
-    }
-
     private async Task<HttpResponseMessage> SendRequest(Uri downloadsApiUrl, CancellationToken cancellationToken)
     {
         HttpResponseMessage response;

@@ -72,13 +72,16 @@ public sealed class GameBananaCoreService(
     /// Gets the files info of a mod from GameBanana. Uses caching to reduce the number of API calls. Is more lightweight than <see cref="GetModProfileAsync"/>>
     /// </summary>
     /// <param name="modId"></param>
+    /// <param name="ignoreCache"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    public async Task<IReadOnlyList<ModFileInfo>?> GetModFilesInfoAsync(GbModId modId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<ModFileInfo>?> GetModFilesInfoAsync(GbModId modId, bool ignoreCache = false,
+        CancellationToken ct = default)
     {
         var apiGameBananaClient = CreateApiGameBananaClient();
 
-        var modFilesInfo = await GetModFilesInfoAsync(apiGameBananaClient, modId, ct: ct).ConfigureAwait(false);
+        var modFilesInfo = await GetModFilesInfoAsync(apiGameBananaClient, modId, ignoreCache: ignoreCache, ct: ct)
+            .ConfigureAwait(false);
 
         if (modFilesInfo == null)
             return null;
