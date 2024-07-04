@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.Core.Contracts.Services;
+﻿using System.Text.Json.Serialization;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
 using Serilog;
@@ -76,7 +77,7 @@ public class GameBananaService(
             ModId = modGbId,
             LastCheck = modSettings.LastChecked ?? DateTime.MinValue,
             CheckTime = DateTime.Now,
-            Mods = result,
+            ModFiles = result,
             SitePageUrl = modSettings.ModUrl
         };
     }
@@ -104,7 +105,6 @@ public record ModsRetrievedResult
     public required DateTime CheckTime { get; init; }
     public required DateTime LastCheck { get; init; }
     public required Uri SitePageUrl { get; init; } = null!;
-
-    public bool AnyNewMods => Mods.Any(m => m.DateAdded > LastCheck);
-    public required IReadOnlyList<ModFileInfo> Mods { get; init; }
+    [JsonIgnore] public bool AnyNewMods => ModFiles.Any(m => m.DateAdded > LastCheck);
+    public required IReadOnlyList<ModFileInfo> ModFiles { get; init; }
 }

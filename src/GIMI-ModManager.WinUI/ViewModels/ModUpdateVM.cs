@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
@@ -217,7 +218,9 @@ public partial class ModUpdateVM : ObservableRecipient
             fileInfoVm.FileId != x.FileId && x.Status == ModFileInfoVm.InstallStatus.Downloading);
 
         var canDownload = IsNotBusy && !fileInfoVm.IsBusy && fileInfoVm.Status == ModFileInfoVm.InstallStatus.NotStarted
-                          && !anyOtherDownloading && fileInfoVm.ArchiveFile is null;
+                          && !anyOtherDownloading && fileInfoVm.ArchiveFile is null &&
+                          !fileInfoVm.ModId.IsNullOrEmpty() && !fileInfoVm.FileId.IsNullOrEmpty();
+
 
         return canDownload;
     }

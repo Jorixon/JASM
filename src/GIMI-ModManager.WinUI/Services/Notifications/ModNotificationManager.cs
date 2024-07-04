@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -27,6 +28,7 @@ public class ModNotificationManager(
         WriteIndented = true
     };
 
+
     private async Task InitializeAsync()
     {
         if (_isInitialized)
@@ -43,33 +45,20 @@ public class ModNotificationManager(
         {
             var fileStream = _modNotificationsFile.Create();
 
-            await JsonSerializer.SerializeAsync(fileStream, new ModNotificationsRoot(), _jsonSerializerOptions)
+            await JsonSerializer.SerializeAsync(fileStream, new ModNotificationsRoot("1.0"), _jsonSerializerOptions)
                 .ConfigureAwait(false);
             await fileStream.DisposeAsync().ConfigureAwait(false);
             return;
         }
 
-        var stream = _modNotificationsFile.OpenRead();
-        ModNotificationsRoot? modNotificationRoot = null;
-        try
-        {
-            modNotificationRoot =
-                await JsonSerializer.DeserializeAsync<ModNotificationsRoot>(stream, _jsonSerializerOptions) ??
-                new ModNotificationsRoot();
-        }
-        catch (Exception e)
-        {
-            logger.Error(e, "Error while reading mod notifications file. Deleting file and creating a new one");
-        }
-        finally
-        {
-            await stream.DisposeAsync().ConfigureAwait(false);
-        }
+        var fileContent = await File.ReadAllTextAsync(_modNotificationsFile.FullName);
+        var modNotificationRoot = ParseModNotificationsRoot(fileContent);
 
         if (modNotificationRoot is null)
         {
+            logger.Warning("Mod notifications file is in an invalid format. Creating a new one");
             _modNotificationsFile.Delete();
-            modNotificationRoot = new ModNotificationsRoot();
+            modNotificationRoot = new ModNotificationsRoot("1.0");
             var fileStream = _modNotificationsFile.Create();
             await JsonSerializer.SerializeAsync(fileStream, modNotificationRoot, _jsonSerializerOptions)
                 .ConfigureAwait(false);
@@ -83,11 +72,57 @@ public class ModNotificationManager(
         _isInitialized = true;
     }
 
+    private ModNotificationsRoot? ParseModNotificationsRoot(string jsonContent)
+    {
+        try
+        {
+            var root = JsonSerializer.Deserialize<ModNotificationsRoot>(jsonContent, _jsonSerializerOptions);
+            if (root?.Version is not null)
+                return root;
+        }
+        catch (Exception e)
+        {
+            logger.Error(e, "Error while reading mod notifications file. Checking Legacy format");
+        }
+
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        ModNotificationsRootLegacy? modNotificationsRootLegacy = null;
+        try
+        {
+            modNotificationsRootLegacy =
+                JsonSerializer.Deserialize<ModNotificationsRootLegacy>(jsonContent, _jsonSerializerOptions);
+        }
+        catch (Exception e)
+        {
+            logger.Error(e, "Error while reading mod notifications file in legacy format");
+            // ignored
+            // We don't care if the file is not in the legacy format
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
+
+
+        if (modNotificationsRootLegacy is not null && modNotificationsRootLegacy.Version is null)
+        {
+            try
+            {
+                return modNotificationsRootLegacy.ConvertToModNotificationsRoot();
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error while converting legacy mod notifications to new format");
+            }
+        }
+
+
+        return null;
+    }
+
     private async Task SaveModNotificationsAsync()
     {
         await InitializeAsync();
 
-        var modNotificationsRoot = new ModNotificationsRoot
+        var modNotificationsRoot = new ModNotificationsRoot("1.0")
         {
             ModNotifications = _modNotifications.ToArray()
         };
@@ -282,5 +317,22 @@ public class ModNotificationManager(
 
 public class ModNotificationsRoot
 {
-    public ModNotification[] ModNotifications { get; set; } = Array.Empty<ModNotification>();
+    public ModNotificationsRoot(string version)
+    {
+        Version = version;
+    }
+
+    /// <summary>
+    /// For serialization
+    /// </summary>
+    [JsonConstructor]
+    [Obsolete("This constructor is for serialization purposes only.")]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public ModNotificationsRoot()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    {
+    }
+
+    public string Version { get; set; }
+    public ModNotification[] ModNotifications { get; set; } = [];
 }
