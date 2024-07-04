@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.11.0](https://github.com/Jorixon/JASM/compare/v2.10.1...v2.11.0) (2024-07-04)
+
+
+### Features
+
+* Non-fatal exceptions no longer close the main window ([#203](https://github.com/Jorixon/JASM/issues/203)) ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+
+
+### Miscellaneous
+
+* Added some Russian translations. Thanks for the help Haosy ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+* Updated most app packages including WinAppSdk ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+
+
+### Code Refactoring
+
+* Removed old code that was used to make api calls and check for mod updates ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+
 ## [2.10.1](https://github.com/Jorixon/JASM/compare/v2.10.0...v2.10.1) (2024-06-06)
 
 
