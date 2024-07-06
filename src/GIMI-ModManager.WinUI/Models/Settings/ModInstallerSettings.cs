@@ -7,4 +7,6 @@ internal class ModInstallerSettings
     [JsonIgnore] public const string Key = "ModInstallerSettings";
     public bool EnableModOnInstall { get; set; }
     public bool ModInstallerWindowOnTop { get; set; }
+
+    public bool IsDialogMode { get; set; } = true;
 }

@@ -13,8 +13,11 @@ using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Serilog;
+using static GIMI_ModManager.WinUI.Views.ModInstallerPage;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
@@ -25,30 +28,155 @@ public class ModInstallerService(
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly IWindowManagerService _windowManagerService = windowManagerService;
 
-    public async Task<InstallMonitor> StartModInstallationAsync(DirectoryInfo modFolder, ICharacterModList modList,
-        ICharacterSkin? inGameSkin = null, Action<InstallOptions>? setup = null)
+
+    public async Task<InstallMonitor> StartModInstallAsync(DirectoryInfo modFolder,
+        ICharacterModList modList, WindowEx? window = null, ICharacterSkin? inGameSkin = null,
+        Action<InstallOptions>? setup = null)
     {
         ArgumentNullException.ThrowIfNull(modFolder);
         ArgumentNullException.ThrowIfNull(modList);
 
+        EnsureModObjectIsCharacterIfInGameSkin(modList, inGameSkin);
 
-        if (inGameSkin is not null && modList.Character is not ICharacter)
-            throw new ArgumentException("The mod list must be a character mod list if inGameSkin is not null");
-
-        var dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainWindow.DispatcherQueue;
+        var dispatcherQueue = window?.DispatcherQueue ?? App.MainWindow.DispatcherQueue;
 
         var modOptions = new InstallOptions();
         setup?.Invoke(modOptions);
 
 
-        var monitor =
-            await dispatcherQueue.EnqueueAsync(() => InternalStartAsync(modFolder, modList, inGameSkin, modOptions));
+        var installMonitor = await dispatcherQueue.EnqueueAsync(async () =>
+        {
+            var (modTitle, installerPage, settings, viewMode) =
+                await InitModPageAsync(modFolder, modList, inGameSkin, modOptions, window is null);
+
+            return viewMode switch
+            {
+                ViewMode.Dialog => await InternalDialogInstallAsync(dispatcherQueue, modTitle,
+                    installerPage, window!),
+                ViewMode.Window => await InternalWindowInstallAsync(dispatcherQueue, modTitle, modList,
+                    installerPage, settings),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        });
+
+        return installMonitor;
+    }
+
+
+    private async Task<InstallMonitor> InternalWindowInstallAsync(DispatcherQueue dispatcherQueue, string modTitle,
+        ICharacterModList modList, ModInstallerPage installerPage, ModInstallerSettings settings)
+    {
+        var monitor = await dispatcherQueue.EnqueueAsync(() =>
+        {
+            var modInstallWindow = new WindowEx()
+            {
+                SystemBackdrop = new MicaBackdrop(),
+                Title = $"Mod Installer Helper: {modTitle}",
+                Content = installerPage,
+                Width = 1200,
+                Height = 750,
+                MinHeight = 415,
+                MinWidth = 1024,
+                IsAlwaysOnTop = settings.ModInstallerWindowOnTop
+            };
+            _windowManagerService.CreateWindow(modInstallWindow, modList);
+
+            var installMonitor = new InstallMonitor(installerPage, modInstallWindow.Close);
+
+
+            modInstallWindow.Closed += (_, _) => installMonitor.CancelHandler();
+            return Task.FromResult(installMonitor);
+        });
+
 
         return monitor;
     }
 
-    private async Task<InstallMonitor> InternalStartAsync(DirectoryInfo modFolder, ICharacterModList modList,
-        ICharacterSkin? inGameSkin = null, InstallOptions? options = null)
+
+    private XamlRoot GetXamlRoot(WindowEx window)
+    {
+        if (window.Content is Page element)
+        {
+            return element.XamlRoot;
+        }
+
+        if (window.WindowContent is Page page)
+        {
+            return page.XamlRoot;
+        }
+
+        throw new InvalidOperationException("Could not get XamlRoot from window");
+    }
+
+    private Task<InstallMonitor> InternalDialogInstallAsync(DispatcherQueue dispatcherQueue, string modTitle,
+        ModInstallerPage installerPage, WindowEx window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        var contentDialog = new ContentDialog
+        {
+            Title = $"Mod Installer Helper: {modTitle}",
+            Content = installerPage,
+            Width = 1200,
+            Height = 750,
+            MinHeight = 415,
+            MinWidth = 1024
+        };
+
+        var _ = dispatcherQueue.EnqueueAsync(async () =>
+        {
+            contentDialog.XamlRoot = GetXamlRoot(window);
+            contentDialog.Resources["ContentDialogMaxWidth"] = 8000;
+            contentDialog.Resources["ContentDialogMaxHeight"] = 4000;
+
+            contentDialog.SizeChanged += (s, e) =>
+            {
+                var width = window.Width;
+                var height = window.Height;
+
+                if (window.Content is FrameworkElement element)
+                {
+                    width = element.ActualWidth;
+                    height = element.ActualHeight;
+                }
+
+                width = 0.8 * width;
+
+                height = 0.8 * height;
+
+
+                int hOffset = (width < 1300) ? 100 : 300;
+                installerPage.MinWidth = width - hOffset;
+                installerPage.MinHeight = height - 100;
+                installerPage.MaxWidth = width - hOffset;
+                installerPage.MaxHeight = height - 100;
+            };
+
+
+            await contentDialog.ShowAsync();
+            contentDialog.Content = null;
+        });
+
+        var installMonitor = new InstallMonitor(installerPage, contentDialog.Hide);
+
+        contentDialog.Closed += (_, _) => installMonitor.CancelHandler();
+
+
+        return Task.FromResult(installMonitor);
+    }
+
+
+    private void EnsureModObjectIsCharacterIfInGameSkin(ICharacterModList modList, ICharacterSkin? inGameSkin)
+    {
+        if (inGameSkin is not null && modList.Character is not ICharacter)
+            throw new ArgumentException("The mod list must be a character mod list if inGameSkin is not null");
+    }
+
+
+    private async Task<(string modTitle, ModInstallerPage installerPage, ModInstallerSettings settings,
+            ModInstallerPage.ViewMode viewMode)>
+        InitModPageAsync(DirectoryInfo modFolder, ICharacterModList modList,
+            ICharacterSkin? inGameSkin = null, InstallOptions? options = null, bool isWindowNull = false)
     {
         var modTitle = Guid.TryParse(modFolder.Name, out _)
             ? modFolder.EnumerateDirectories().FirstOrDefault()?.Name
@@ -59,21 +187,15 @@ public class ModInstallerService(
         var modInstallerSettings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModInstallerSettings>(ModInstallerSettings.Key);
 
-        var modInstallPage = new ModInstallerPage(modList, modFolder, inGameSkin, options);
-        var modInstallWindow = new WindowEx()
-        {
-            SystemBackdrop = new MicaBackdrop(),
-            Title = $"Mod Installer Helper: {modTitle}",
-            Content = modInstallPage,
-            Width = 1200,
-            Height = 750,
-            MinHeight = 415,
-            MinWidth = 1024,
-            IsAlwaysOnTop = modInstallerSettings.ModInstallerWindowOnTop
-        };
-        _windowManagerService.CreateWindow(modInstallWindow, modList);
+        var viewMode = modInstallerSettings.IsDialogMode && !isWindowNull
+            ? ModInstallerPage.ViewMode.Dialog
+            : ModInstallerPage.ViewMode.Window;
 
-        return new InstallMonitor(modInstallPage, modInstallWindow);
+        var modInstallPage = new ModInstallerPage(modList, modFolder, viewMode, inGameSkin, options);
+
+        return new ValueTuple<string, ModInstallerPage, ModInstallerSettings, ModInstallerPage.ViewMode>(modTitle,
+            modInstallPage,
+            modInstallerSettings, viewMode);
     }
 }
 
@@ -86,27 +208,32 @@ public sealed class InstallMonitor : IDisposable
 {
     private readonly TaskCompletionSource<CloseRequestedArgs> _taskCompletionSource = new();
     private readonly ModInstallerPage _modInstallerPage;
-    private readonly WindowEx _modInstallerWindow;
+    private readonly Action _closeFunc;
     private CancellationTokenRegistration? _cancellationTokenRegistration;
 
 
-    public InstallMonitor(ModInstallerPage modInstallerPage, WindowEx modInstallerWindow)
+    public InstallMonitor(ModInstallerPage modInstallerPage, Action closeFunc)
     {
         _modInstallerPage = modInstallerPage;
-        _modInstallerWindow = modInstallerWindow;
+        _closeFunc = closeFunc;
 
         _modInstallerPage.CloseRequested += (_, e) =>
         {
             _taskCompletionSource.SetResult(e);
-            _modInstallerWindow.Close();
-        };
-
-        _modInstallerWindow.Closed += (_, _) =>
-        {
-            if (!_taskCompletionSource.Task.IsCompleted)
-                _taskCompletionSource.TrySetResult(new CloseRequestedArgs(CloseRequestedArgs.CloseReasons.Canceled));
+            _closeFunc();
         };
     }
+
+    /// <summary>
+    /// Get the cancel handler. This will cancel the task. Should be called when the window is closed or the dialog is closed.
+    /// </summary>
+    public Action CancelHandler => () =>
+    {
+        if (!_taskCompletionSource.Task.IsCompleted)
+        {
+            _taskCompletionSource.TrySetResult(new CloseRequestedArgs(CloseRequestedArgs.CloseReasons.Canceled));
+        }
+    };
 
     public Task<CloseRequestedArgs> WaitForCloseAsync(CancellationToken cancellationToken = default)
     {
@@ -115,7 +242,7 @@ public sealed class InstallMonitor : IDisposable
             if (!_taskCompletionSource.Task.IsCompleted)
             {
                 _taskCompletionSource.TrySetCanceled();
-                _modInstallerWindow.Close();
+                _closeFunc();
             }
         });
 

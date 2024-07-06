@@ -314,7 +314,8 @@ public partial class ModUpdateVM : ObservableRecipient
 
                 var modUrl = _modPageInfo?.ModPageUrl;
 
-                using var task = await _modInstallerService.StartModInstallationAsync(zipRoot, _characterModList,
+                using var task = await _modInstallerService.StartModInstallAsync(zipRoot, _characterModList,
+                    window: _window,
                     setup: options => options.ModUrl = modUrl).ConfigureAwait(false);
 
                 return await task.WaitForCloseAsync(_ct).ConfigureAwait(false);

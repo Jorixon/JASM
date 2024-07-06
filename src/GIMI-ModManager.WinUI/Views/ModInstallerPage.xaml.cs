@@ -15,7 +15,7 @@ public sealed partial class ModInstallerPage : Page, IDisposable
     public event EventHandler<CloseRequestedArgs>? CloseRequested;
     public ModInstallerVM ViewModel { get; } = App.GetService<ModInstallerVM>();
 
-    public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall,
+    public ModInstallerPage(ICharacterModList characterModList, DirectoryInfo modToInstall, ViewMode viewMode,
         ICharacterSkin? inGameSkin = null, InstallOptions? options = null)
     {
         InitializeComponent();
@@ -23,7 +23,8 @@ public sealed partial class ModInstallerPage : Page, IDisposable
         ViewModel.InstallerFinished += (_, _) => { DispatcherQueue.TryEnqueue(() => { IsEnabled = false; }); };
         Loading += (_, _) =>
         {
-            _ = ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue, inGameSkin, options);
+            _ = ViewModel.InitializeAsync(characterModList, modToInstall, DispatcherQueue, viewMode, inGameSkin,
+                options);
         };
 
         ViewModel.CloseRequested += (_, e) => { CloseRequested?.Invoke(this, e); };
@@ -78,6 +79,13 @@ public sealed partial class ModInstallerPage : Page, IDisposable
     public void Dispose()
     {
         ViewModel.Dispose();
+    }
+
+
+    public enum ViewMode
+    {
+        Window,
+        Dialog
     }
 }
 

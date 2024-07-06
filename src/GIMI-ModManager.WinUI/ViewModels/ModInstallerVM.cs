@@ -19,6 +19,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Dispatching;
 using Serilog;
 using Constants = GIMI_ModManager.Core.Helpers.Constants;
@@ -41,6 +42,13 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     private ICharacterModList _characterModList = null!;
     private ICharacterSkin? _inGameSkin = null;
     private DispatcherQueue? _dispatcherQueue;
+
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsDialog), nameof(IsWindow))]
+    private ModInstallerPage.ViewMode _viewMode;
+
+    public bool IsDialog => _viewMode == ModInstallerPage.ViewMode.Dialog;
+    public bool IsWindow => _viewMode == ModInstallerPage.ViewMode.Window;
 
 
     private IAsyncRelayCommand? _addModDialogCommand;
@@ -125,12 +133,15 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     }
 
     public async Task InitializeAsync(ICharacterModList characterModList, DirectoryInfo modToInstall,
-        DispatcherQueue dispatcherQueue, ICharacterSkin? inGameSkin = null, InstallOptions? options = null)
+        DispatcherQueue dispatcherQueue, ModInstallerPage.ViewMode viewMode, ICharacterSkin? inGameSkin = null,
+        InstallOptions? options = null)
     {
         _characterModList = characterModList;
         ModCharacterName = characterModList.Character.DisplayName;
         _modInstallation = ModInstallation.Start(modToInstall, _characterModList);
         _dispatcherQueue = dispatcherQueue;
+        _inGameSkin = inGameSkin;
+        ViewMode = viewMode;
 
         RootFolder.Clear();
         RootFolder.Add(new RootFolder(modToInstall));

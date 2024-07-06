@@ -70,7 +70,7 @@ public class ModDragAndDropService
                 var extractResult = scanner.ScanAndGetContents(storageItem.Path);
 
 
-                await _modInstallerService.StartModInstallationAsync(
+                await _modInstallerService.StartModInstallAsync(
                     new DirectoryInfo(extractResult.ExtractedFolder.FullPath), modList);
 
                 continue;
@@ -129,7 +129,8 @@ public class ModDragAndDropService
                 throw;
             }
 
-            await _modInstallerService.StartModInstallationAsync(destDirectoryInfo.Parent!, modList)
+            await _modInstallerService
+                .StartModInstallAsync(destDirectoryInfo.Parent!, modList)
                 .ConfigureAwait(false);
         }
 
