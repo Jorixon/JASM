@@ -112,10 +112,11 @@ public class GameService : IGameService
         Initialized?.Invoke(this, EventArgs.Empty);
     }
 
-    public async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
+    public static async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
     {
-        var gameFilePath = Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString(),
-            FileNames.GameSettingsFileName);
+        var gameAssetDir = Path.Combine(AppContext.BaseDirectory, "Assets", "Games", game.ToString());
+
+        var gameFilePath = Path.Combine(gameAssetDir, "game.json");
 
         if (!File.Exists(gameFilePath))
             return null;
@@ -126,8 +127,7 @@ public class GameService : IGameService
         if (jsonGameInfo is null)
             throw new InvalidOperationException($"{gameFilePath} file is empty");
 
-        return new GameInfo(jsonGameInfo,
-            new DirectoryInfo(Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString())));
+        return new GameInfo(jsonGameInfo, new DirectoryInfo(gameAssetDir));
     }
 
     public async Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory)

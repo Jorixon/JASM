@@ -1,0 +1,22 @@
+[
+  {
+    "InternalName": "Anomaly",
+    "DisplayName": "Anomaly"
+  },
+  {
+    "InternalName": "Attack",
+    "DisplayName": "Attack"
+  },
+  {
+    "InternalName": "Defense",
+    "DisplayName": "Defense"
+  },
+  {
+    "InternalName": "Stun",
+    "DisplayName": "Stun"
+  },
+  {
+    "InternalName": "Support",
+    "DisplayName": "Support"
+  }
+]

@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using ABI.Windows.ApplicationModel.Calls.Background;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
@@ -34,35 +36,26 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly ModArchiveRepository _modArchiveRepository;
 
 
-    private const string _genshinModelImporterName = "Genshin-Impact-Model-Importer";
-    private const string _genshinModelImporterShortName = "GIMI";
-    private readonly Uri _genshinGameBananaUrl = new("https://gamebanana.com/games/8552");
-    private readonly Uri _genshinModelImporterUrl = new("https://github.com/SilentNightSound/GI-Model-Importer");
-
-    private const string _honkaiModelImporterName = "Star-Rail-Model-Importer";
-    private const string _honkaiModelImporterShortName = "SRMI";
-    private readonly Uri _honkaiGameBananaUrl = new("https://gamebanana.com/games/18366");
-    private readonly Uri _honkaiModelImporterUrl = new("https://github.com/SilentNightSound/SR-Model-Importer");
-
     public PathPicker PathToGIMIFolderPicker { get; }
+
     public PathPicker PathToModsFolderPicker { get; }
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
-    [ObservableProperty] private string _selectedGame = SelectedGameService.Genshin;
+    [ObservableProperty] private GameComboBoxEntryVM _selectedGame = new GameComboBoxEntryVM(SupportedGames.Genshin)
+    {
+        GameName = "Genshin Impact",
+        GameShortName = SupportedGames.Genshin.ToString(),
+        GameIconPath = null!
+    };
 
-    [ObservableProperty] private string _modelImporterName = _genshinModelImporterName;
-    [ObservableProperty] private string _modelImporterShortName = _genshinModelImporterShortName;
+    [ObservableProperty] private string _modelImporterName = "Genshin-Impact-Model-Importer";
+    [ObservableProperty] private string _modelImporterShortName = "GIMI";
     [ObservableProperty] private Uri _gameBananaUrl = new("https://gamebanana.com/games/8552");
 
     [ObservableProperty] private Uri _modelImporterUrl = new("https://github.com/SilentNightSound");
 
-    public ObservableCollection<string> Games { get; } = new()
-    {
-        SelectedGameService.Genshin,
-        SelectedGameService.Honkai,
-        SelectedGameService.WuWa
-    };
+    public ObservableCollection<GameComboBoxEntryVM> Games { get; } = new();
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
@@ -79,7 +72,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _userPreferencesService = userPreferencesService;
         _modArchiveRepository = modArchiveRepository;
 
-        PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
+        PathToGIMIFolderPicker = new PathPicker([]);
 
         PathToModsFolderPicker =
             new PathPicker(ModsFolderValidator.Validators);
@@ -104,7 +97,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             UnloadedModsFolderPath = null
         };
 
-        await _selectedGameService.SetSelectedGame(SelectedGame);
+        await _selectedGameService.SetSelectedGame(SelectedGame.Value.ToString());
 
         await _gameService.InitializeAsync(
             Path.Combine(App.ASSET_DIR, "Games", await _selectedGameService.GetSelectedGameAsync()),
@@ -144,7 +137,9 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         App.GetService<NotificationManager>().ShowNotification("Startup settings saved",
             $"Startup settings saved successfully to '{_localSettingsService.SettingsLocation}'",
             TimeSpan.FromSeconds(7));
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(async () =>
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         {
             await Task.Delay(TimeSpan.FromSeconds(7));
             App.GetService<NotificationManager>().ShowNotification("JASM is still in alpha",
@@ -176,10 +171,11 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
-        SetPaths(settings);
+        await SetGameComboBoxValues();
 
-        SelectedGame = await _selectedGameService.GetSelectedGameAsync();
-        SetGameInfo(SelectedGame);
+        SetSelectedGame(await _selectedGameService.GetSelectedGameAsync());
+        await SetGameInfo(SelectedGame.Value.ToString());
+        SetPaths(settings);
         ReorganizeModsOnStartup = true;
     }
 
@@ -190,39 +186,55 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             return;
 
         await _selectedGameService.SetSelectedGame(game);
-        SelectedGame = game;
+        SetSelectedGame(game);
 
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
+        await SetGameInfo(game);
         SetPaths(settings);
-        SetGameInfo(game);
     }
 
 
-    private void SetGameInfo(string game)
+    private async Task SetGameInfo(string game)
     {
-        switch (game)
+        var gameInfo = await GameService.GetGameInfoAsync(Enum.Parse<SupportedGames>(game));
+
+        if (gameInfo is null)
         {
-            case SelectedGameService.Genshin:
-                ModelImporterName = _genshinModelImporterName;
-                ModelImporterShortName = _genshinModelImporterShortName;
-                GameBananaUrl = _genshinGameBananaUrl;
-                ModelImporterUrl = _genshinModelImporterUrl;
-                break;
-            case SelectedGameService.Honkai:
-                ModelImporterName = _honkaiModelImporterName;
-                ModelImporterShortName = _honkaiModelImporterShortName;
-                GameBananaUrl = _honkaiGameBananaUrl;
-                ModelImporterUrl = _honkaiModelImporterUrl;
-                break;
-            case SelectedGameService.WuWa:
-                ModelImporterName = _genshinModelImporterName;
-                ModelImporterShortName = _genshinModelImporterShortName;
-                GameBananaUrl = new Uri("https://gamebanana.com/games/20357");
-                ModelImporterUrl = _genshinModelImporterUrl;
-                break;
+            _logger.Error("Game info for {Game} is null", game);
+            return;
         }
+
+        ModelImporterName = gameInfo.GameModelImporterName;
+        ModelImporterShortName = gameInfo.GameModelImporterShortName;
+        GameBananaUrl = gameInfo.GameBananaUrl;
+        ModelImporterUrl = gameInfo.GameModelImporterUrl;
+        PathToGIMIFolderPicker.SetValidators(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
+    }
+
+    private async Task SetGameComboBoxValues()
+    {
+        foreach (var supportedGame in Enum.GetValues<SupportedGames>())
+        {
+            var gameInfo = await GameService.GetGameInfoAsync(supportedGame);
+            if (gameInfo is null)
+                continue;
+
+            Games.Add(new GameComboBoxEntryVM(supportedGame)
+            {
+                GameIconPath = new Uri(gameInfo.GameIcon),
+                GameName = gameInfo.GameName,
+                GameShortName = gameInfo.GameShortName
+            });
+        }
+    }
+
+    private void SetSelectedGame(string game)
+    {
+        var selectedGame = Games.FirstOrDefault(g => g.Value.ToString() == game);
+        if (selectedGame is not null)
+            SelectedGame = selectedGame;
     }
 
 

@@ -159,13 +159,14 @@ DebugItem.Visibility = Visibility.Collapsed;
 
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
-            if (await ViewModel.SelectedGameService.GetSelectedGameAsync() == SelectedGameService.WuWa)
+            var selectedGame = await ViewModel.SelectedGameService.GetSelectedGameAsync();
+            if (selectedGame == SupportedGames.WuWa.ToString() || selectedGame == SupportedGames.ZZZ.ToString())
                 return;
 
             var notSelectedGame = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
 
 
-            var gameInfo = await ViewModel.GameService.GetGameInfoAsync(notSelectedGame.First());
+            var gameInfo = await GameService.GetGameInfoAsync(notSelectedGame.First());
 
             if (gameInfo is null)
                 return;
