@@ -529,6 +529,15 @@
 		<Content Remove="Assets\Games\WuWa\regions.json" />
 		<Content Remove="Assets\Games\WuWa\weaponClasses.json" />
 		<Content Remove="Assets\Games\WuWa\weapons.json" />
+		<Content Remove="Assets\Games\ZZZ\characters.json" />
+		<Content Remove="Assets\Games\ZZZ\elements.json" />
+		<Content Remove="Assets\Games\ZZZ\game.json" />
+		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
+		<Content Remove="Assets\Games\ZZZ\npcs.json" />
+		<Content Remove="Assets\Games\ZZZ\objects.json" />
+		<Content Remove="Assets\Games\ZZZ\regions.json" />
+		<Content Remove="Assets\Games\ZZZ\weaponClasses.json" />
+		<Content Remove="Assets\Games\ZZZ\weapons.json" />
 		<Content Remove="Assets\Icon_Inventory_Weapons.webp" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />

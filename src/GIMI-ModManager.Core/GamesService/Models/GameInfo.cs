@@ -9,13 +9,16 @@ public record GameInfo
         GameName = jsonGame.GameName?.Trim() ?? "";
         GameShortName = jsonGame.GameShortName?.Trim() ?? "";
         GameIcon = Path.Combine(assetsDirectoryInfo.FullName, "Images", jsonGame.GameIcon?.Trim() ?? "Start_Game.png");
-        GameBananaUrl = Uri.TryCreate(jsonGame?.GameBananaUrl, UriKind.Absolute, out var gameBananaUrl)
+        GameBananaUrl = Uri.TryCreate(jsonGame.GameBananaUrl, UriKind.Absolute, out var gameBananaUrl)
             ? gameBananaUrl
             : new Uri("https://gamebanana.com/");
         GameModelImporterUrl =
-            Uri.TryCreate(jsonGame?.GameModelImporterUrl, UriKind.Absolute, out var gameModelImporterUrl)
+            Uri.TryCreate(jsonGame.GameModelImporterUrl, UriKind.Absolute, out var gameModelImporterUrl)
                 ? gameModelImporterUrl
                 : new Uri("https://github.com/SilentNightSound");
+
+        GameModelImporterName = jsonGame.GameModelImporterName ?? "";
+        GameModelImporterShortName = jsonGame.GameModelImporterShortName ?? "";
     }
 
     public string GameName { get; }
@@ -23,4 +26,6 @@ public record GameInfo
     public string GameIcon { get; }
     public Uri GameBananaUrl { get; }
     public Uri GameModelImporterUrl { get; }
+    public string GameModelImporterName { get; }
+    public string GameModelImporterShortName { get; }
 }

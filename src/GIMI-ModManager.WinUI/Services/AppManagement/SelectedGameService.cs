@@ -19,9 +19,10 @@ public class SelectedGameService
     private const string ConfigFile = "game.json";
     private readonly string _configPath;
 
-    public const string Genshin = "Genshin";
-    public const string Honkai = "Honkai";
-    public const string WuWa = "WuWa";
+    private const string Genshin = "Genshin";
+    private const string Honkai = "Honkai";
+    private const string WuWa = "WuWa";
+    private const string ZZZ = "ZZZ";
 
 
     public SelectedGameService(ILocalSettingsService localSettingsService, ILogger logger)
@@ -83,9 +84,10 @@ public class SelectedGameService
 
         return selectedGame switch
         {
-            Genshin => [SupportedGames.Honkai, SupportedGames.WuWa],
-            Honkai => [SupportedGames.Genshin, SupportedGames.Honkai],
-            WuWa => [SupportedGames.Honkai, SupportedGames.Genshin],
+            Genshin => [SupportedGames.Honkai, SupportedGames.WuWa, SupportedGames.ZZZ],
+            Honkai => [SupportedGames.Genshin, SupportedGames.Honkai, SupportedGames.ZZZ],
+            WuWa => [SupportedGames.Honkai, SupportedGames.Genshin, SupportedGames.ZZZ],
+            ZZZ => [SupportedGames.WuWa, SupportedGames.Honkai, SupportedGames.Genshin],
             _ => throw new ArgumentOutOfRangeException()
         };
     }

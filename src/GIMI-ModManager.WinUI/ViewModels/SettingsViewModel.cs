@@ -76,7 +76,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     {
         SupportedGames.Genshin.ToString(),
         SupportedGames.Honkai.ToString(),
-        SupportedGames.WuWa.ToString()
+        SupportedGames.WuWa.ToString(),
+        SupportedGames.ZZZ.ToString()
     };
 
     [ObservableProperty] private string _selectedGame = string.Empty;

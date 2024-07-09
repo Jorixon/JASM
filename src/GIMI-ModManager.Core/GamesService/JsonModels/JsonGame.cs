@@ -8,4 +8,7 @@ internal class JsonGame
     public string RarityName { get; set; } = string.Empty;
     public string GameBananaUrl { get; set; } = string.Empty;
     public string GameModelImporterUrl { get; set; } = string.Empty;
+    public string GameModelImporterName { get; set; } = string.Empty;
+
+    public string GameModelImporterShortName { get; set; } = string.Empty;
 }

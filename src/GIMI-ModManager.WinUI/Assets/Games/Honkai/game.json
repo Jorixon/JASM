@@ -3,5 +3,8 @@
   "GameShortName": "Honkai",
   "RarityName": "Rarity",
   "GameIcon": "Start_Game.webp",
-  "GameBananaUrl": "https://gamebanana.com/games/18366"
+  "GameBananaUrl": "https://gamebanana.com/games/18366",
+  "GameModelImporterUrl": "https://github.com/SilentNightSound/SR-Model-Importer",
+  "GameModelImporterName": "Star-Rail-Model-Importer",
+  "GameModelImporterShortName": "SRMI"
 }

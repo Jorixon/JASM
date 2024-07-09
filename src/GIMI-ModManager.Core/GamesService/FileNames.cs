@@ -21,5 +21,6 @@ public enum SupportedGames
 {
     Genshin,
     Honkai,
-    WuWa
+    WuWa,
+    ZZZ
 }

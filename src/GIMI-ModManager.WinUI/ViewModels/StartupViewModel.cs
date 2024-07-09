@@ -49,7 +49,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
-    [ObservableProperty] private string _selectedGame = SelectedGameService.Genshin;
+    [ObservableProperty] private string _selectedGame = SupportedGames.Genshin.ToString();
 
     [ObservableProperty] private string _modelImporterName = _genshinModelImporterName;
     [ObservableProperty] private string _modelImporterShortName = _genshinModelImporterShortName;
@@ -57,12 +57,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private Uri _modelImporterUrl = new("https://github.com/SilentNightSound");
 
-    public ObservableCollection<string> Games { get; } = new()
-    {
-        SelectedGameService.Genshin,
-        SelectedGameService.Honkai,
-        SelectedGameService.WuWa
-    };
+    public ObservableCollection<string> Games { get; } = new(Enum.GetNames<SupportedGames>());
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
@@ -144,7 +139,9 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         App.GetService<NotificationManager>().ShowNotification("Startup settings saved",
             $"Startup settings saved successfully to '{_localSettingsService.SettingsLocation}'",
             TimeSpan.FromSeconds(7));
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(async () =>
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         {
             await Task.Delay(TimeSpan.FromSeconds(7));
             App.GetService<NotificationManager>().ShowNotification("JASM is still in alpha",
@@ -179,7 +176,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         SetPaths(settings);
 
         SelectedGame = await _selectedGameService.GetSelectedGameAsync();
-        SetGameInfo(SelectedGame);
+        await SetGameInfo(Enum.Parse<SupportedGames>(SelectedGame));
         ReorganizeModsOnStartup = true;
     }
 
@@ -196,33 +193,24 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
         SetPaths(settings);
-        SetGameInfo(game);
+        await SetGameInfo(Enum.Parse<SupportedGames>(game)).ConfigureAwait(false);
     }
 
 
-    private void SetGameInfo(string game)
+    private async Task SetGameInfo(SupportedGames game)
     {
-        switch (game)
+        var gameInfo = await GameService.GetGameInfoAsync(game);
+
+        if (gameInfo == null)
         {
-            case SelectedGameService.Genshin:
-                ModelImporterName = _genshinModelImporterName;
-                ModelImporterShortName = _genshinModelImporterShortName;
-                GameBananaUrl = _genshinGameBananaUrl;
-                ModelImporterUrl = _genshinModelImporterUrl;
-                break;
-            case SelectedGameService.Honkai:
-                ModelImporterName = _honkaiModelImporterName;
-                ModelImporterShortName = _honkaiModelImporterShortName;
-                GameBananaUrl = _honkaiGameBananaUrl;
-                ModelImporterUrl = _honkaiModelImporterUrl;
-                break;
-            case SelectedGameService.WuWa:
-                ModelImporterName = _genshinModelImporterName;
-                ModelImporterShortName = _genshinModelImporterShortName;
-                GameBananaUrl = new Uri("https://gamebanana.com/games/20357");
-                ModelImporterUrl = _genshinModelImporterUrl;
-                break;
+            _logger.Error("Game info for {Game} is null", game.ToString());
+            return;
         }
+
+        ModelImporterName = gameInfo.GameModelImporterName;
+        ModelImporterShortName = gameInfo.GameModelImporterShortName;
+        GameBananaUrl = gameInfo.GameBananaUrl;
+        ModelImporterUrl = gameInfo.GameModelImporterUrl;
     }
 
 
