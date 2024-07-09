@@ -11,4 +11,6 @@ internal class JsonGame
     public string GameModelImporterName { get; set; } = string.Empty;
 
     public string GameModelImporterShortName { get; set; } = string.Empty;
+
+    public string[] GameModelImporterExeName { get; set; } = [];
 }

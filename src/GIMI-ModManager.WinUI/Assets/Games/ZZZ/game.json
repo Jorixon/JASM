@@ -6,5 +6,6 @@
   "GameBananaUrl": "https://gamebanana.com/games/19567",
   "GameModelImporterUrl": "https://gamebanana.com/tools/games/19567?",
   "GameModelImporterName": "ZZZ-Impact-Model-Importer",
-  "GameModelImporterShortName": "ZZZIMI"
+  "GameModelImporterShortName": "ZZZIMI",
+  "GameModelImporterExeName": [ "3DMigoto Loader.exe", "ZZZ3dmLoader.exe" ]
 }

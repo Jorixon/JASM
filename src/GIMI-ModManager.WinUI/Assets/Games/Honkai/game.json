@@ -6,5 +6,6 @@
   "GameBananaUrl": "https://gamebanana.com/games/18366",
   "GameModelImporterUrl": "https://github.com/SilentNightSound/SR-Model-Importer",
   "GameModelImporterName": "Star-Rail-Model-Importer",
-  "GameModelImporterShortName": "SRMI"
+  "GameModelImporterShortName": "SRMI",
+  "GameModelImporterExeName": [ "3DMigotoLoader.exe" ]
 }

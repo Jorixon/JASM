@@ -19,6 +19,7 @@ public record GameInfo
 
         GameModelImporterName = jsonGame.GameModelImporterName ?? "";
         GameModelImporterShortName = jsonGame.GameModelImporterShortName ?? "";
+        GameModelImporterExeNames = jsonGame.GameModelImporterExeName.ToList() ?? [];
     }
 
     public string GameName { get; }
@@ -28,4 +29,6 @@ public record GameInfo
     public Uri GameModelImporterUrl { get; }
     public string GameModelImporterName { get; }
     public string GameModelImporterShortName { get; }
+
+    public IReadOnlyList<string> GameModelImporterExeNames { get; }
 }

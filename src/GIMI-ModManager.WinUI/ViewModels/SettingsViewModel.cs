@@ -94,7 +94,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private Dictionary<string, string> _nameToLangCode = new();
 
-    public PathPicker PathToGIMIFolderPicker { get; }
+    [ObservableProperty] private PathPicker _pathToGIMIFolderPicker;
     public PathPicker PathToModsFolderPicker { get; }
 
 
@@ -145,7 +145,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
 
         _modManagerOptions = localSettingsService.ReadSetting<ModManagerOptions>(ModManagerOptions.Section);
-        PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
+        PathToGIMIFolderPicker = new PathPicker();
         PathToModsFolderPicker = new PathPicker(ModsFolderValidator.Validators);
 
         CharacterAsSkinsCheckbox = _modManagerOptions?.CharacterSkinsAsCharacters ?? false;
@@ -748,6 +748,14 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 BackGroundModCheckerSettings.Key);
 
         IsModUpdateCheckerEnabled = modUpdateCheckerOptions.Enabled;
+        var gameInfo = await GameService.GetGameInfoAsync(Enum.Parse<SupportedGames>(SelectedGame));
+
+        if (gameInfo is not null)
+        {
+            PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
+        }
+
+
     }
 
     [ObservableProperty] private string _maxCacheSizeString = string.Empty;

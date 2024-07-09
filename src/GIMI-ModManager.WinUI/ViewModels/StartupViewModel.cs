@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using ABI.Windows.ApplicationModel.Calls.Background;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
@@ -44,8 +46,10 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly Uri _honkaiGameBananaUrl = new("https://gamebanana.com/games/18366");
     private readonly Uri _honkaiModelImporterUrl = new("https://github.com/SilentNightSound/SR-Model-Importer");
 
-    public PathPicker PathToGIMIFolderPicker { get; }
-    public PathPicker PathToModsFolderPicker { get; }
+    [ObservableProperty]
+    private PathPicker _pathToGIMIFolderPicker;
+
+    [ObservableProperty] private PathPicker _pathToModsFolderPicker;
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
@@ -74,7 +78,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _userPreferencesService = userPreferencesService;
         _modArchiveRepository = modArchiveRepository;
 
-        PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
+        PathToGIMIFolderPicker = new PathPicker([]);
 
         PathToModsFolderPicker =
             new PathPicker(ModsFolderValidator.Validators);
@@ -173,10 +177,9 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
-        SetPaths(settings);
-
         SelectedGame = await _selectedGameService.GetSelectedGameAsync();
-        await SetGameInfo(Enum.Parse<SupportedGames>(SelectedGame));
+        await SetGameInfo(SelectedGame);
+        SetPaths(settings);
         ReorganizeModsOnStartup = true;
     }
 
@@ -192,16 +195,17 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
+        await SetGameInfo(game);
         SetPaths(settings);
-        await SetGameInfo(Enum.Parse<SupportedGames>(game)).ConfigureAwait(false);
     }
 
 
-    private async Task SetGameInfo(SupportedGames game)
+    private async Task SetGameInfo(string game)
     {
-        var gameInfo = await GameService.GetGameInfoAsync(game);
 
-        if (gameInfo == null)
+        var gameInfo = await GameService.GetGameInfoAsync(Enum.Parse<SupportedGames>(game));
+
+        if (gameInfo is null)
         {
             _logger.Error("Game info for {Game} is null", game.ToString());
             return;
@@ -211,6 +215,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         ModelImporterShortName = gameInfo.GameModelImporterShortName;
         GameBananaUrl = gameInfo.GameBananaUrl;
         ModelImporterUrl = gameInfo.GameModelImporterUrl;
+        PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
     }
 
 

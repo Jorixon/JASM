@@ -1092,4 +1092,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties assets_4games_4zzz_4game_1json__JsonSchema="json" /></VisualStudio></ProjectExtensions>
 </Project>
