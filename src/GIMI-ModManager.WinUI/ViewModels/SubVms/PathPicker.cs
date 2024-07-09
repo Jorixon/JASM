@@ -37,6 +37,13 @@ public partial class PathPicker : ObservableRecipient
         _validators.AddRange(validators);
     }
 
+    public void SetValidators(IEnumerable<AbstractValidator<PathPicker>> validators)
+    {
+        _validators.Clear();
+        _validators.AddRange(validators);
+        Validate();
+    }
+
 
     public void Validate(string? pathToSett = null)
     {

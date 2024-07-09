@@ -94,7 +94,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private Dictionary<string, string> _nameToLangCode = new();
 
-    [ObservableProperty] private PathPicker _pathToGIMIFolderPicker;
+    public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
 
 
@@ -752,7 +752,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         if (gameInfo is not null)
         {
-            PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
+            PathToGIMIFolderPicker.SetValidators(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
         }
 
 

@@ -36,32 +36,26 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly ModArchiveRepository _modArchiveRepository;
 
 
-    private const string _genshinModelImporterName = "Genshin-Impact-Model-Importer";
-    private const string _genshinModelImporterShortName = "GIMI";
-    private readonly Uri _genshinGameBananaUrl = new("https://gamebanana.com/games/8552");
-    private readonly Uri _genshinModelImporterUrl = new("https://github.com/SilentNightSound/GI-Model-Importer");
+    public PathPicker PathToGIMIFolderPicker { get; }
 
-    private const string _honkaiModelImporterName = "Star-Rail-Model-Importer";
-    private const string _honkaiModelImporterShortName = "SRMI";
-    private readonly Uri _honkaiGameBananaUrl = new("https://gamebanana.com/games/18366");
-    private readonly Uri _honkaiModelImporterUrl = new("https://github.com/SilentNightSound/SR-Model-Importer");
-
-    [ObservableProperty]
-    private PathPicker _pathToGIMIFolderPicker;
-
-    [ObservableProperty] private PathPicker _pathToModsFolderPicker;
+    public PathPicker PathToModsFolderPicker { get; }
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
-    [ObservableProperty] private string _selectedGame = SupportedGames.Genshin.ToString();
+    [ObservableProperty] private GameComboBoxEntryVM _selectedGame = new GameComboBoxEntryVM(SupportedGames.Genshin)
+    {
+        GameName = "Genshin Impact",
+        GameShortName = SupportedGames.Genshin.ToString(),
+        GameIconPath = null!
+    };
 
-    [ObservableProperty] private string _modelImporterName = _genshinModelImporterName;
-    [ObservableProperty] private string _modelImporterShortName = _genshinModelImporterShortName;
+    [ObservableProperty] private string _modelImporterName = "Genshin-Impact-Model-Importer";
+    [ObservableProperty] private string _modelImporterShortName = "GIMI";
     [ObservableProperty] private Uri _gameBananaUrl = new("https://gamebanana.com/games/8552");
 
     [ObservableProperty] private Uri _modelImporterUrl = new("https://github.com/SilentNightSound");
 
-    public ObservableCollection<string> Games { get; } = new(Enum.GetNames<SupportedGames>());
+    public ObservableCollection<GameComboBoxEntryVM> Games { get; } = new();
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
@@ -103,7 +97,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             UnloadedModsFolderPath = null
         };
 
-        await _selectedGameService.SetSelectedGame(SelectedGame);
+        await _selectedGameService.SetSelectedGame(SelectedGame.Value.ToString());
 
         await _gameService.InitializeAsync(
             Path.Combine(App.ASSET_DIR, "Games", await _selectedGameService.GetSelectedGameAsync()),
@@ -177,8 +171,10 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
 
-        SelectedGame = await _selectedGameService.GetSelectedGameAsync();
-        await SetGameInfo(SelectedGame);
+        await SetGameComboBoxValues();
+
+        SetSelectedGame(await _selectedGameService.GetSelectedGameAsync());
+        await SetGameInfo(SelectedGame.Value.ToString());
         SetPaths(settings);
         ReorganizeModsOnStartup = true;
     }
@@ -190,7 +186,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             return;
 
         await _selectedGameService.SetSelectedGame(game);
-        SelectedGame = game;
+        SetSelectedGame(game);
 
         var settings =
             await _localSettingsService.ReadOrCreateSettingAsync<ModManagerOptions>(ModManagerOptions.Section);
@@ -202,12 +198,11 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     private async Task SetGameInfo(string game)
     {
-
         var gameInfo = await GameService.GetGameInfoAsync(Enum.Parse<SupportedGames>(game));
 
         if (gameInfo is null)
         {
-            _logger.Error("Game info for {Game} is null", game.ToString());
+            _logger.Error("Game info for {Game} is null", game);
             return;
         }
 
@@ -215,7 +210,31 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         ModelImporterShortName = gameInfo.GameModelImporterShortName;
         GameBananaUrl = gameInfo.GameBananaUrl;
         ModelImporterUrl = gameInfo.GameModelImporterUrl;
-        PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
+        PathToGIMIFolderPicker.SetValidators(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
+    }
+
+    private async Task SetGameComboBoxValues()
+    {
+        foreach (var supportedGame in Enum.GetValues<SupportedGames>())
+        {
+            var gameInfo = await GameService.GetGameInfoAsync(supportedGame);
+            if (gameInfo is null)
+                continue;
+
+            Games.Add(new GameComboBoxEntryVM(supportedGame)
+            {
+                GameIconPath = new Uri(gameInfo.GameIcon),
+                GameName = gameInfo.GameName,
+                GameShortName = gameInfo.GameShortName
+            });
+        }
+    }
+
+    private void SetSelectedGame(string game)
+    {
+        var selectedGame = Games.FirstOrDefault(g => g.Value.ToString() == game);
+        if (selectedGame is not null)
+            SelectedGame = selectedGame;
     }
 
 

@@ -558,6 +558,7 @@
 		<None Remove="Views\CharactersPage.xaml" />
 		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
+		<None Remove="Views\Controls\DataTemplates.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
 		<None Remove="Views\Controls\LinkButton.xaml" />
@@ -1079,6 +1080,9 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\Controls\DataTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\CharacterGalleryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

@@ -9,6 +9,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Controls/DataTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
 
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
@@ -31,8 +39,10 @@
             <ComboBox
                 x:Name="GameSelectorBox"
                 Grid.Column="1"
+                MinWidth="180"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
+                ItemTemplate="{StaticResource GameComboBoxEntryTemplate}"
                 ItemsSource="{x:Bind ViewModel.Games}"
                 SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
                 SelectionChanged="GameSelector_OnSelectionChanged"

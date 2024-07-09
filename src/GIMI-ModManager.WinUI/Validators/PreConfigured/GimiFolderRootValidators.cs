@@ -9,6 +9,7 @@ public static class GimiFolderRootValidators
     {
         return new AbstractValidator<PathPicker>[]
         {
+            new IsValidPathFormat(),
             new FolderExists(),
             new ContainsAnyFileSystemEntryWithNames(validMiExeFilenames, warning: true)
         };
