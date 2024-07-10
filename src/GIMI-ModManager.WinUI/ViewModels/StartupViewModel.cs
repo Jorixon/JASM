@@ -5,10 +5,12 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -29,6 +31,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly ModPresetService _modPresetService;
     private readonly UserPreferencesService _userPreferencesService;
     private readonly SelectedGameService _selectedGameService;
+    private readonly ModArchiveRepository _modArchiveRepository;
 
 
     private const string _genshinModelImporterName = "Genshin-Impact-Model-Importer";
@@ -57,13 +60,14 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<string> Games { get; } = new()
     {
         SelectedGameService.Genshin,
-        SelectedGameService.Honkai
+        SelectedGameService.Honkai,
+        SelectedGameService.WuWa
     };
 
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
         SelectedGameService selectedGameService, IGameService gameService, ModPresetService modPresetService,
-        UserPreferencesService userPreferencesService)
+        UserPreferencesService userPreferencesService, ModArchiveRepository modArchiveRepository)
     {
         _navigationService = navigationService;
         _localSettingsService = localSettingsService;
@@ -73,6 +77,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _gameService = gameService;
         _modPresetService = modPresetService;
         _userPreferencesService = userPreferencesService;
+        _modArchiveRepository = modArchiveRepository;
 
         PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
 
@@ -112,10 +117,15 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         await _skinManagerService.InitializeAsync(modManagerOptions.ModsFolderPath!, null,
             modManagerOptions.GimiRootFolderPath);
 
+        var modArchiveSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModArchiveSettings>(ModArchiveSettings.Key);
+
         var tasks = new List<Task>
         {
             _userPreferencesService.InitializeAsync(),
-            _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder)
+            _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder),
+            _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder,
+                o => o.MaxDirectorySizeGb = modArchiveSettings.MaxLocalArchiveCacheSizeGb)
         };
 
         await Task.WhenAll(tasks);
@@ -192,19 +202,26 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
 
     private void SetGameInfo(string game)
     {
-        if (game == SelectedGameService.Genshin)
+        switch (game)
         {
-            ModelImporterName = _genshinModelImporterName;
-            ModelImporterShortName = _genshinModelImporterShortName;
-            GameBananaUrl = _genshinGameBananaUrl;
-            ModelImporterUrl = _genshinModelImporterUrl;
-        }
-        else if (game == SelectedGameService.Honkai)
-        {
-            ModelImporterName = _honkaiModelImporterName;
-            ModelImporterShortName = _honkaiModelImporterShortName;
-            GameBananaUrl = _honkaiGameBananaUrl;
-            ModelImporterUrl = _honkaiModelImporterUrl;
+            case SelectedGameService.Genshin:
+                ModelImporterName = _genshinModelImporterName;
+                ModelImporterShortName = _genshinModelImporterShortName;
+                GameBananaUrl = _genshinGameBananaUrl;
+                ModelImporterUrl = _genshinModelImporterUrl;
+                break;
+            case SelectedGameService.Honkai:
+                ModelImporterName = _honkaiModelImporterName;
+                ModelImporterShortName = _honkaiModelImporterShortName;
+                GameBananaUrl = _honkaiGameBananaUrl;
+                ModelImporterUrl = _honkaiModelImporterUrl;
+                break;
+            case SelectedGameService.WuWa:
+                ModelImporterName = _genshinModelImporterName;
+                ModelImporterShortName = _genshinModelImporterShortName;
+                GameBananaUrl = new Uri("https://gamebanana.com/games/20357");
+                ModelImporterUrl = _genshinModelImporterUrl;
+                break;
         }
     }
 

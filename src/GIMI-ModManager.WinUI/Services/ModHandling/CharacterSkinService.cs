@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
@@ -87,6 +88,16 @@ public class CharacterSkinService
         var mods = modList.Mods.Select(entry => entry.Mod).ToArray();
         await foreach (var skinMod in FilterModsToSkinAsync(skin, mods, ignoreUndetectableMods))
             yield return skinMod;
+    }
+
+    public async IAsyncEnumerable<CharacterSkinEntry> GetCharacterSkinEntriesForSkinAsync(ICharacterSkin skin,
+        bool ignoreUndetectableMods = false)
+    {
+        var modList = _skinManagerService.GetCharacterModList(skin.Character);
+
+        var mods = modList.Mods.ToArray();
+        await foreach (var skinMod in FilterModsToSkinAsync(skin, mods.Select(ske => ske.Mod), ignoreUndetectableMods))
+            yield return mods.First(m => m.Id == skinMod.Id);
     }
 
 

@@ -115,4 +115,9 @@ public class MockLocalizer : ILanguageLocalizer
     {
         return uid;
     }
+
+    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null)
+    {
+        return uid;
+    }
 }

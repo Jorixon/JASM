@@ -203,4 +203,16 @@
   <data name="Settings_Language.Text" xml:space="preserve">
     <value>语言</value>
   </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Waiting" xml:space="preserve">
+    <value>等待</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>运行中</value>
+  </data>
 </root>

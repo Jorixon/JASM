@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+    xmlns:charactersViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharactersViewModels"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,6 +12,7 @@
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:subVms="using:GIMI_ModManager.WinUI.ViewModels.SubVms"
     xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
+    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -160,46 +162,86 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer HorizontalScrollBarVisibility="Auto">
 
-                <GridView
-                    Padding="0,0,0,4"
-                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                    CornerRadius="8"
-                    IsItemClickEnabled="True"
-                    IsMultiSelectCheckBoxEnabled="False"
-                    ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=TwoWay}"
-                    SelectionChanged="Selector_OnSelectionChanged"
-                    SelectionMode="Multiple"
-                    Visibility="{x:Bind ViewModel.DockPanelVM.IsInitialized, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="subVms:ElementIcon">
-                            <ItemContainer
-                                Width="60"
-                                MaxWidth="80"
-                                MaxHeight="40"
-                                IsSelected="{x:Bind IsSelected, Mode=TwoWay}"
-                                ToolTipService.ToolTip="{x:Bind Name}">
-                                <Grid Padding="4,0" HorizontalAlignment="Center">
-                                    <Image
-                                        VerticalAlignment="Center"
-                                        ImageFailed="BitmapImage_OnImageFailed"
-                                        Source="{x:Bind ImageUri}" />
-                                </Grid>
-                            </ItemContainer>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-            </ScrollViewer>
-
-
+            <StackPanel
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                CornerRadius="8"
+                Orientation="Horizontal">
+                <CommandBar DefaultLabelPosition="Right" IsOpen="False">
+                    <AppBarButton Label="Mod Presets">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="&#xEA41;" />
+                        </AppBarButton.Icon>
+                        <AppBarButton.Flyout>
+                            <Flyout Placement="Bottom">
+                                <ScrollViewer Margin="-4">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="Apply Preset:" />
+                                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModPresets}">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Orientation="Vertical" Spacing="8" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate x:DataType="charactersViewModels:ModPresetEntryVm">
+                                                    <Button HorizontalAlignment="Stretch">
+                                                        <TextBlock Text="{x:Bind Name}" />
+                                                        <Button.Flyout>
+                                                            <Flyout Placement="Right">
+                                                                <Button Command="{x:Bind ApplyPresetCommand}" CommandParameter="{x:Bind}">
+                                                                    <TextBlock Text="Confirm" />
+                                                                </Button>
+                                                            </Flyout>
+                                                        </Button.Flyout>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton
+                        Icon="Filter"
+                        IsEnabled="False"
+                        Label="Filters:" />
+                </CommandBar>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <GridView
+                        IsItemClickEnabled="True"
+                        IsMultiSelectCheckBoxEnabled="False"
+                        ItemsSource="{x:Bind ViewModel.DockPanelVM.Elements, Mode=TwoWay}"
+                        SelectionChanged="Selector_OnSelectionChanged"
+                        SelectionMode="Multiple"
+                        Visibility="{x:Bind ViewModel.DockPanelVM.IsInitialized, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="subVms:ElementIcon">
+                                <ItemContainer
+                                    Width="60"
+                                    MaxWidth="80"
+                                    MaxHeight="40"
+                                    IsSelected="{x:Bind IsSelected, Mode=TwoWay}"
+                                    ToolTipService.ToolTip="{x:Bind Name}">
+                                    <Grid Padding="4,0" HorizontalAlignment="Center">
+                                        <Image
+                                            VerticalAlignment="Center"
+                                            ImageFailed="BitmapImage_OnImageFailed"
+                                            Source="{x:Bind ImageUri}" />
+                                    </Grid>
+                                </ItemContainer>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </ScrollViewer>
+            </StackPanel>
             <Grid
                 x:Name="DragAndDropArea"
-                Grid.Column="1"
+                Grid.Column="2"
                 AllowDrop="True"
                 Background="Transparent"
                 BorderBrush="{ThemeResource AccentTextFillColorPrimaryBrush}"
@@ -219,7 +261,7 @@
             </Grid>
 
             <StackPanel
-                Grid.Column="2"
+                Grid.Column="3"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
                 <ToggleButton

@@ -17,6 +17,7 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
@@ -76,19 +77,21 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private ObservableCollection<string> _games = new()
     {
         SupportedGames.Genshin.ToString(),
-        SupportedGames.Honkai.ToString()
+        SupportedGames.Honkai.ToString(),
+        SupportedGames.WuWa.ToString()
     };
 
     [ObservableProperty] private string _selectedGame = string.Empty;
 
-    [ObservableProperty]
-    private ModUpdateAvailableChecker.RunningState _modCheckerStatus = ModUpdateAvailableChecker.RunningState.Waiting;
+    [ObservableProperty] private string _modCheckerStatus = ModUpdateAvailableChecker.RunningState.Waiting.ToString();
 
     [ObservableProperty] private bool _isModUpdateCheckerEnabled = false;
 
     [ObservableProperty] private DateTime? _nextModCheckTime = null;
 
     [ObservableProperty] private bool _characterAsSkinsCheckbox = false;
+
+    [ObservableProperty] private int _maxCacheLimit;
 
     private Dictionary<string, string> _nameToLangCode = new();
 
@@ -171,6 +174,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         };
         ElevatorService.CheckStatus();
 
+        MaxCacheLimit = localSettingsService.ReadSetting<ModArchiveSettings>(ModArchiveSettings.Key)
+            ?.MaxLocalArchiveCacheSizeGb ?? new ModArchiveSettings().MaxLocalArchiveCacheSizeGb;
+        SetCacheString(MaxCacheLimit);
 
         var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
         cultures = cultures.Append(new CultureInfo("zh-cn")).ToArray();
@@ -189,13 +195,15 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 SelectedLanguage = culture.NativeName;
         }
 
-        ModCheckerStatus = _modUpdateAvailableChecker.Status;
+        ModCheckerStatus = _localizer.GetLocalizedStringOrDefault(_modUpdateAvailableChecker.Status.ToString(),
+            _modUpdateAvailableChecker.Status.ToString());
         NextModCheckTime = _modUpdateAvailableChecker.NextRunAt;
         _modUpdateAvailableChecker.OnUpdateCheckerEvent += (sender, args) =>
         {
             App.MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
-                ModCheckerStatus = args.State;
+                ModCheckerStatus = _localizer.GetLocalizedStringOrDefault(_modUpdateAvailableChecker.Status.ToString(),
+                    _modUpdateAvailableChecker.Status.ToString());
                 NextModCheckTime = args.NextRunAt;
             });
         };
@@ -391,20 +399,22 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         var text = new TextBlock
         {
             TextWrapping = TextWrapping.WrapWholeWords,
-            Text =
-                "Press Start to launch the Elevator. The Elevator is an elevated (admin) process that is used for communication with the Genshin game process.\n\n" +
-                "While the Elevator is active, you can press F10 within this App to refresh active mods in Genshin.\n\n" +
-                "Enabling and disabling mods will also automatically refresh active mods in Genshin " +
-                "The Elevator process should automatically close when this program is closed.\n\n" +
-                "After pressing Start, a User Account Control (UAC) prompt will appear to confirm the elevation.\n\n" +
-                "(This requires that Genshin and that 3Dmigoto is running, when pressing F10",
-            Margin = new Thickness(0, 0, 0, 12)
+            Text = _localizer.GetLocalizedStringOrDefault("/Settings/StartElevatorDialogText") ??
+                   "Press Start to launch the Elevator. The Elevator is an elevated (admin) process that is used for communication with the Genshin game process.\n\n" +
+                   "While the Elevator is active, you can press F10 within this App to refresh active mods in Genshin.\n\n" +
+                   "Enabling and disabling mods will also automatically refresh active mods in Genshin " +
+                   "The Elevator process should automatically close when this program is closed.\n\n" +
+                   "After pressing Start, a User Account Control (UAC) prompt will appear to confirm the elevation.\n\n" +
+                   "(This requires that Genshin and that 3Dmigoto is running, when pressing F10",
+            Margin = new Thickness(0, 0, 0, 12),
+            IsTextSelectionEnabled = true
         };
 
 
         var doNotShowAgainCheckBox = new CheckBox
         {
-            Content = "Don't Show this Again",
+            Content = _localizer.GetLocalizedStringOrDefault("/Settings/StartElevatorDialogDontShowContent") ??
+                      "Don't Show this Again",
             IsChecked = false
         };
 
@@ -420,7 +430,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         var dialog = new ContentDialog
         {
-            Title = "Start Elevator Process?",
+            Title = _localizer.GetLocalizedStringOrDefault("/Settings/StartElevatorDialogTitle") ??
+                    "Start Elevator Process?",
             Content = stackPanel,
             DefaultButton = ContentDialogButton.Primary,
             CloseButtonText = "Cancel",
@@ -585,11 +596,42 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             if (langCode == _localizer.CurrentLanguage.LanguageCode)
                 return;
 
+            var restartDialog = new ContentDialog()
+            {
+                Title = "Restart Required",
+                Content = new TextBlock()
+                {
+                    Text = _localizer.GetLocalizedStringOrDefault("/Settings/ChangeLanguageDialogText",
+                        defaultValue:
+                        "Changing the language requires a restart of the application.\n" +
+                        "This is required to ensure that the application is configured correctly for the selected language.\n\n" +
+                        "Do you want to change the language?"),
+                    TextWrapping = TextWrapping.WrapWholeWords,
+                    IsTextSelectionEnabled = true
+                },
+                PrimaryButtonText = "Change Language and restart",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            var result = await _windowManagerService.ShowDialogAsync(restartDialog);
+
+            var currentLanguage = _localizer.CurrentLanguage.LanguageName;
+            if (result != ContentDialogResult.Primary)
+            {
+                SelectedLanguage = currentLanguage;
+                return;
+            }
+
             await _localizer.SetLanguageAsync(langCode);
 
             var appSettings = await _localSettingsService.ReadOrCreateSettingAsync<AppSettings>(AppSettings.Key);
             appSettings.Language = langCode;
             await _localSettingsService.SaveSettingAsync(AppSettings.Key, appSettings);
+            currentLanguage = _localizer.CurrentLanguage.LanguageName;
+            SelectedLanguage = currentLanguage;
+
+            await RestartAppAsync();
         }
     }
 
@@ -716,6 +758,27 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 BackGroundModCheckerSettings.Key);
 
         IsModUpdateCheckerEnabled = modUpdateCheckerOptions.Enabled;
+    }
+
+    [ObservableProperty] private string _maxCacheSizeString = string.Empty;
+
+    private void SetCacheString(int value)
+    {
+        MaxCacheSizeString = $"{value} GB";
+    }
+
+    [RelayCommand]
+    private async Task SetCacheLimit(int maxValue)
+    {
+        var modArchiveSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ModArchiveSettings>(ModArchiveSettings.Key);
+
+        modArchiveSettings.MaxLocalArchiveCacheSizeGb = maxValue;
+
+        await _localSettingsService.SaveSettingAsync(ModArchiveSettings.Key, modArchiveSettings);
+
+        MaxCacheLimit = maxValue;
+        SetCacheString(maxValue);
     }
 
 

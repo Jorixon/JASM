@@ -18,6 +18,7 @@ using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views;
 using Serilog;
@@ -36,6 +37,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ModCrawlerService _modCrawlerService;
     private readonly ModSettingsService _modSettingsService;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
+    private readonly ModPresetHandlerService _modPresetHandlerService;
+    private readonly BusyService _busyService;
 
     public readonly GenshinProcessManager GenshinProcessManager;
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
@@ -52,7 +55,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     private IReadOnlyList<CharacterGridItemModel> _backendCharacters = new List<CharacterGridItemModel>();
     public ObservableCollection<CharacterGridItemModel> SuggestionsBox { get; } = new();
-
+    public ObservableCollection<CharactersViewModels.ModPresetEntryVm> ModPresets { get; } = new();
     public ObservableCollection<CharacterGridItemModel> Characters { get; } = new();
 
     private string _searchText = string.Empty;
@@ -74,6 +77,12 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private string _modToggleText = string.Empty;
     [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    [NotifyCanExecuteChangedFor(nameof(ApplyPresetCommand))]
+    private bool _isBusy;
+
+    public bool IsNotBusy => !IsBusy;
 
     private bool _isNavigating = true;
 
@@ -83,7 +92,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
         ModCrawlerService modCrawlerService, ModSettingsService modSettingsService,
-        ModUpdateAvailableChecker modUpdateAvailableChecker)
+        ModUpdateAvailableChecker modUpdateAvailableChecker, ModPresetHandlerService modPresetHandlerService,
+        BusyService busyService)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -99,6 +109,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modCrawlerService = modCrawlerService;
         _modSettingsService = modSettingsService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
+        _modPresetHandlerService = modPresetHandlerService;
+        _busyService = busyService;
 
         ElevatorService.PropertyChanged += (_, args) =>
         {
@@ -123,6 +135,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 return Task.CompletedTask;
             });
         };
+
+        IsBusy = _busyService.IsPageBusy(this);
     }
 
     public event EventHandler<ScrollToCharacterArgs>? OnScrollToCharacter;
@@ -182,15 +196,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public bool SuggestionBox_Chosen(CharacterGridItemModel? character)
+    public async Task SuggestionBox_Chosen(CharacterGridItemModel? character)
     {
         if (character == NoCharacterFound || character is null)
-            return false;
+            return;
 
 
-        _navigationService.SetListDataItemForNextConnectedAnimation(character);
-        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
-        return true;
+        await CharacterClicked(character);
     }
 
     private void ResetContent()
@@ -292,6 +304,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             category = _gameService.GetCategories().First();
         }
 
+        _busyService.BusyChanged += OnBusyChangedHandler;
 
         _category = category;
         CategoryPageTitle = $"{category.DisplayName} Overview";
@@ -429,79 +442,15 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             DockPanelVM.FilterElementSelected += FilterElementSelected;
         }
 
+        var modPresets = await _modPresetHandlerService.GetModPresetsAsync();
+        modPresets.ForEach(preset =>
+            ModPresets.Add(new CharactersViewModels.ModPresetEntryVm(preset.Name, ApplyPresetCommand)));
 
         // Add notifications
         await RefreshNotificationsAsync();
 
         // Character Ids where more than 1 skin is enabled
-        var charactersWithMultipleMods = _skinManagerService.CharacterModLists
-            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
-
-        var charactersWithMultipleActiveSkins = new List<string>();
-        await Task.Run(async () =>
-        {
-            foreach (var modList in charactersWithMultipleMods)
-            {
-                if (_gameService.IsMultiMod(modList.Character))
-                    continue;
-
-                if (modList.Character is ICharacter character)
-                {
-                    var addWarning = false;
-                    var subSkinsFound = new List<ICharacterSkin>();
-                    foreach (var characterSkinEntry in modList.Mods)
-                    {
-                        if (!characterSkinEntry.IsEnabled) continue;
-
-                        var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
-                        var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
-
-
-                        var mod = ModModel.FromMod(characterSkinEntry);
-
-
-                        if (modSettingsResult.IsT0)
-                            mod.WithModSettings(modSettingsResult.AsT0);
-
-                        if (!mod.CharacterSkinOverride.IsNullOrEmpty())
-                            subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
-                                .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
-
-                        if (subSkin is null)
-                            continue;
-
-
-                        if (subSkinsFound.All(foundSubSkin =>
-                                !subSkin.InternalNameEquals(foundSubSkin)))
-                        {
-                            subSkinsFound.Add(subSkin);
-                            continue;
-                        }
-
-
-                        addWarning = true;
-                        break;
-                    }
-
-                    if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
-                        charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
-                }
-                else if (modList.Mods.Count(modEntry => modEntry.IsEnabled) >= 2)
-                {
-                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
-                }
-            }
-        });
-
-
-        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
-                     charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
-        {
-            if (_gameService.IsMultiMod(characterGridItemModel.Character))
-                continue;
-
-            characterGridItemModel.Warning = true;
-        }
+        await RefreshMultipleModsWarningAsync();
 
 
         if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
@@ -558,6 +507,78 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    private async Task RefreshMultipleModsWarningAsync()
+    {
+        var charactersWithMultipleMods = _skinManagerService.CharacterModLists
+            .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
+
+        var charactersWithMultipleActiveSkins = new List<string>();
+        await Task.Run(async () =>
+        {
+            foreach (var modList in charactersWithMultipleMods)
+            {
+                if (_gameService.IsMultiMod(modList.Character))
+                    continue;
+
+                if (modList.Character is ICharacter { Skins.Count: > 1 } character)
+                {
+                    var addWarning = false;
+                    var subSkinsFound = new List<ICharacterSkin>();
+                    foreach (var characterSkinEntry in modList.Mods)
+                    {
+                        if (!characterSkinEntry.IsEnabled) continue;
+
+                        var subSkin = _modCrawlerService.GetFirstSubSkinRecursive(characterSkinEntry.Mod.FullPath);
+                        var modSettingsResult = await _modSettingsService.GetSettingsAsync(characterSkinEntry.Id);
+
+
+                        var mod = ModModel.FromMod(characterSkinEntry);
+
+
+                        if (modSettingsResult.IsT0)
+                            mod.WithModSettings(modSettingsResult.AsT0);
+
+                        if (!mod.CharacterSkinOverride.IsNullOrEmpty())
+                            subSkin = _gameService.GetCharacterByIdentifier(character.InternalName)?.Skins
+                                .FirstOrDefault(x => SkinVM.FromSkin(x).InternalNameEquals(mod.CharacterSkinOverride));
+
+                        if (subSkin is null)
+                            continue;
+
+
+                        if (subSkinsFound.All(foundSubSkin =>
+                                !subSkin.InternalNameEquals(foundSubSkin)))
+                        {
+                            subSkinsFound.Add(subSkin);
+                            continue;
+                        }
+
+
+                        addWarning = true;
+                        break;
+                    }
+
+                    if (addWarning || subSkinsFound.Count > 1 && character.Skins.Count == 1)
+                        charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+                }
+                else if (modList.Mods.Count(modEntry => modEntry.IsEnabled) >= 2)
+                {
+                    charactersWithMultipleActiveSkins.Add(modList.Character.InternalName);
+                }
+            }
+        });
+
+
+        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
+                     charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
+        {
+            if (_gameService.IsMultiMod(characterGridItemModel.Character))
+                continue;
+
+            characterGridItemModel.Warning = true;
+        }
+    }
+
     private async Task RefreshNotificationsAsync()
     {
         foreach (var character in _characters)
@@ -594,12 +615,23 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public void OnNavigatedFrom()
     {
+        _busyService.BusyChanged -= OnBusyChangedHandler;
     }
 
     [RelayCommand]
-    private void CharacterClicked(CharacterGridItemModel characterModel)
+    private async Task CharacterClicked(CharacterGridItemModel characterModel)
     {
         _navigationService.SetListDataItemForNextConnectedAnimation(characterModel);
+
+        var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
+            CharacterDetailsSettings.Key);
+
+        if (settings.GalleryView)
+        {
+            _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, characterModel);
+            return;
+        }
+
         _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
     }
 
@@ -899,6 +931,35 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
         }
+    }
+
+
+    [RelayCommand(CanExecute = nameof(IsNotBusy))]
+    private async Task ApplyPreset(object? modPresetObject)
+    {
+        if (modPresetObject is not CharactersViewModels.ModPresetEntryVm modPresetEntryVm)
+            return;
+
+        var presetName = modPresetEntryVm.Name;
+
+        using var _ = _busyService.SetPageBusy(this);
+
+        var result = await Task.Run(() => _modPresetHandlerService.ApplyModPresetAsync(presetName));
+        await RefreshMultipleModsWarningAsync();
+        ResetContent();
+
+        if (result.Notification is not null)
+            NotificationManager.ShowNotification(result.Notification);
+    }
+
+
+    private void OnBusyChangedHandler(object? sender, BusyChangedEventArgs args)
+    {
+        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (args.IsKey(this))
+                IsBusy = args.IsBusy;
+        });
     }
 }
 

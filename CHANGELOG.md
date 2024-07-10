@@ -1,5 +1,89 @@
 # Changelog
 
+## [2.11.0](https://github.com/Jorixon/JASM/compare/v2.10.1...v2.11.0) (2024-07-04)
+
+
+### Features
+
+* Non-fatal exceptions no longer close the main window ([#203](https://github.com/Jorixon/JASM/issues/203)) ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+
+
+### Miscellaneous
+
+* Added some Russian translations. Thanks for the help Haosy ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+* Updated most app packages including WinAppSdk ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+
+
+### Code Refactoring
+
+* Removed old code that was used to make api calls and check for mod updates ([8c7bd16](https://github.com/Jorixon/JASM/commit/8c7bd164cf582740ca7b3d08e1fc1e63df6f6369))
+
+## [2.10.1](https://github.com/Jorixon/JASM/compare/v2.10.0...v2.10.1) (2024-06-06)
+
+
+### Miscellaneous
+
+* Updated "reorganize mods" tooltip on startup page ([4288708](https://github.com/Jorixon/JASM/commit/42887087cba0ca8f164b1664a78f58de7469cba9))
+
+## [2.10.0](https://github.com/Jorixon/JASM/compare/v2.9.1...v2.10.0) (2024-06-05)
+
+
+### Features
+
+* Wuthering Waves support ([#192](https://github.com/Jorixon/JASM/issues/192)) ([697ccf7](https://github.com/Jorixon/JASM/commit/697ccf745434b402e022f2ccc9d442ae0b41fdef))
+
+## [2.9.1](https://github.com/Jorixon/JASM/compare/v2.9.0...v2.9.1) (2024-06-03)
+
+
+### Miscellaneous
+
+* **Genshin:** Moved Clorinde and Sigewinne to characters, added Sethos character and added missing weapons ([#190](https://github.com/Jorixon/JASM/issues/190)) ([1c11e31](https://github.com/Jorixon/JASM/commit/1c11e31ff650276ee501ae9d65313c8dcc102764))
+* Updated WinAppSdk to 1.5.3 ([b8c8d61](https://github.com/Jorixon/JASM/commit/b8c8d61754ce60645ee42bb10ed53b9348bbb004))
+
+## [2.9.0](https://github.com/Jorixon/JASM/compare/v2.8.0...v2.9.0) (2024-05-05)
+
+
+### Features
+
+* Added first iteration of the mod gallery view ([#180](https://github.com/Jorixon/JASM/issues/180)) ([461a91f](https://github.com/Jorixon/JASM/commit/461a91fa3caf97877673cfa15c9b69e0eff03229))
+
+
+### Miscellaneous
+
+* Added HSR 2.2-2.3 characters ([#182](https://github.com/Jorixon/JASM/issues/182)) ([3c519cc](https://github.com/Jorixon/JASM/commit/3c519ccff7d59f91b826a2fab7df66e2cbdefb5d))
+* **ModInstaller:** "Enable only this mod" checkbox defaults to off for multi mod characters ([9aa90a9](https://github.com/Jorixon/JASM/commit/9aa90a9fb1217029051599b3e00146e293bc7ccd))
+
+## [2.8.0](https://github.com/Jorixon/JASM/compare/v2.7.0...v2.8.0) (2024-04-21)
+
+
+### Features
+
+* Now possible to download mods directly in the "Update available" / "New mod files" window ([#177](https://github.com/Jorixon/JASM/issues/177)) ([8c7ed5f](https://github.com/Jorixon/JASM/commit/8c7ed5f3fe81f347d6da03c29906f28430b15cac))
+
+## [2.7.0](https://github.com/Jorixon/JASM/compare/v2.6.3...v2.7.0) (2024-04-20)
+
+
+### Features
+
+* Now possible to quickly switch presets from the characters overview page ([#176](https://github.com/Jorixon/JASM/issues/176)) ([9731655](https://github.com/Jorixon/JASM/commit/9731655d86ae70b079d0c24b87c8beb490541983))
+
+
+### Miscellaneous
+
+* Updated WinAppSdk and a few other packages ([#174](https://github.com/Jorixon/JASM/issues/174)) ([4289cda](https://github.com/Jorixon/JASM/commit/4289cda936d9c4d88fabb4d2f9caf981a1e5f360))
+
+
+### Continuous Integration
+
+* Added Self Contained build to releases ([9731655](https://github.com/Jorixon/JASM/commit/9731655d86ae70b079d0c24b87c8beb490541983))
+
+## [2.6.3](https://github.com/Jorixon/JASM/compare/v2.6.2...v2.6.3) (2024-04-01)
+
+
+### Miscellaneous
+
+* Improved mod enabling logic during mod install ([#167](https://github.com/Jorixon/JASM/issues/167)) ([7498afb](https://github.com/Jorixon/JASM/commit/7498afb83948ad4967c50266b3d354637909c601)) Thanks @Davoleo 
+
 ## [2.6.2](https://github.com/Jorixon/JASM/compare/v2.6.1...v2.6.2) (2024-03-31)
 
 

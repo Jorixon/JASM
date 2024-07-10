@@ -38,26 +38,31 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock
-                            l:Uids.Uid="Settings_ExportDialog"
                             IsTextSelectionEnabled="True"
-                            TextWrapping="WrapWholeWords" />
+                            TextWrapping="WrapWholeWords"
+                            Text="This will export all mods that JASM is managing to an export folder of your choice. The mods will be copied to the export folder and will not be removed from the original folder."
+                            l:Uids.Uid="Settings_ExportDialog" />
 
                         <StackPanel
                             Grid.Row="1"
                             Orientation="Horizontal"
-                            ToolTipService.ToolTip="Keeps the jasm mod folder structure. I.e. Diluc/SomeDilucSkinMod">
+                            ToolTipService.ToolTip="Keeps the jasm mod folder structure. I.e. Characters/Diluc/SomeDilucSkinMod">
                             <CheckBox IsChecked="{x:Bind KeepFolderStructure, Mode=TwoWay}" />
                             <TextBlock
-                                l:Uids.Uid="Settings_ExportDialog_KeepStructure"
                                 IsTextSelectionEnabled="True"
-                                TextWrapping="WrapWholeWords" />
+                                TextWrapping="WrapWholeWords"
+                                Text="Keep folder structure of CharacterName/Mods in export folder"
+                                l:Uids.Uid="Settings_ExportDialog_KeepStructure" />
                         </StackPanel>
                         <StackPanel
                             Grid.Row="2"
                             Orientation="Horizontal"
                             ToolTipService.ToolTip="This is recursive and removes all files AND folders starting with .JASM_">
                             <CheckBox IsChecked="{x:Bind RemoveJasmSettings, Mode=TwoWay}" />
-                            <TextBlock l:Uids.Uid="Settings_ExportDialog_RemoveJasm" IsTextSelectionEnabled="True" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Text="Removes JASM configuration files from the exported Mods"
+                                l:Uids.Uid="Settings_ExportDialog_RemoveJasm" />
                         </StackPanel>
 
                         <StackPanel
@@ -67,8 +72,9 @@
                             <ComboBox ItemsSource="{x:Bind SetModStatuses, Mode=TwoWay}" SelectedItem="{x:Bind SetModStatus, Mode=TwoWay}" />
                             <TextBlock
                                 VerticalAlignment="Center"
-                                l:Uids.Uid="Settings_ExportDialog_ChangeStatus"
-                                IsTextSelectionEnabled="True" />
+                                IsTextSelectionEnabled="True"
+                                Text="Change status of exported mods"
+                                l:Uids.Uid="Settings_ExportDialog_ChangeStatus" />
                         </StackPanel>
 
                     </Grid>
@@ -78,41 +84,48 @@
 
         <TextBlock
             Grid.Row="0"
-            l:Uids.Uid="Settings_Title"
-            Style="{StaticResource PageTitleStyle}" />
+            Style="{StaticResource PageTitleStyle}"
+            Text="Settings"
+            l:Uids.Uid="Settings_Title" />
         <ScrollViewer Grid.Row="1">
-            <StackPanel x:Name="ContentArea" Padding="0,0,20,0">
-                <TextBlock l:Uids.Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <StackPanel x:Name="ContentArea">
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Personalization"
+                    l:Uids.Uid="Settings_Personalization" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
-                    <TextBlock l:Uids.Uid="Settings_Theme" />
+                    <TextBlock Text="Theme" l:Uids.Uid="Settings_Theme" />
 
                     <StackPanel Margin="{StaticResource XSmallTopMargin}">
                         <RadioButton
-                            l:Uids.Uid="Settings_Theme_Light"
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                            Content="Light"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
+                            l:Uids.Uid="Settings_Theme_Light">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Light</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
                         </RadioButton>
                         <RadioButton
-                            l:Uids.Uid="Settings_Theme_Dark"
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                            Content="Dark"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
+                            l:Uids.Uid="Settings_Theme_Dark">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Dark</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
                         </RadioButton>
                         <RadioButton
-                            l:Uids.Uid="Settings_Theme_Default"
                             Command="{x:Bind ViewModel.SwitchThemeCommand}"
+                            Content="Default"
                             FontSize="15"
                             GroupName="AppTheme"
-                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
+                            IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}"
+                            l:Uids.Uid="Settings_Theme_Default">
                             <RadioButton.CommandParameter>
                                 <xaml:ElementTheme>Default</xaml:ElementTheme>
                             </RadioButton.CommandParameter>
@@ -120,45 +133,60 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock l:Uids.Uid="Settings_Language" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Language"
+                    l:Uids.Uid="/Settings/LanguageSelectionSectionHeader" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock
                         Margin="0,0,0,8"
-                        l:Uids.Uid="Settings_Language_TexBlock"
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        Text="Language options are currently limited. It is a work in progress."
+                        l:Uids.Uid="/Settings/LanguageSelectorTitle" />
 
                     <ComboBox
                         x:Name="LanguageSelectorComboBox"
-                        l:Uids.Uid="Settings_ComboBox_Header"
-                        ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
-                        SelectionChanged="LanguageSelectorComboBox_OnSelectionChanged" />
+                        Header="Select Display Language:"
+                        ItemsSource="{x:Bind ViewModel.Languages, Mode=TwoWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}"
+                        SelectionChanged="LanguageSelectorComboBox_OnSelectionChanged"
+                        l:Uids.Uid="/Settings/LanguageSelectorComboBox" />
                 </StackPanel>
 
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Game" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Game"
+                    l:Uids.Uid="/Settings/GameSelectorSectionHeader" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock
                         Margin="0,0,0,8"
+                        TextWrapping="WrapWholeWords"
                         Text="JASM supports Genshin Impact and Honkai Star Rail"
-                        TextWrapping="WrapWholeWords" />
+                        l:Uids.Uid="/Settings/GameSelectorTitle" />
 
                     <ComboBox
                         x:Name="GameSelectorComboBox"
                         Header="Selected Game:"
                         ItemsSource="{x:Bind ViewModel.Games}"
                         SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
-                        SelectionChanged="GameSelectorComboBox_OnSelectionChanged" />
+                        SelectionChanged="GameSelectorComboBox_OnSelectionChanged"
+                        l:Uids.Uid="/Settings/GameSelectorComboBox" />
                 </StackPanel>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Elevator Process" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Elevator Process"
+                    l:Uids.Uid="/Settings/ElevatorSectionHeader" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                         <TextBlock
                             Margin="0,0,8,0"
                             VerticalAlignment="Center"
+                            IsTextSelectionEnabled="True"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="Elevator Status:" />
+                            Text="Elevator Status:"
+                            l:Uids.Uid="/Settings/ElevatorStatusTitle" />
                         <Border
                             Background="{ThemeResource ControlAltFillColorDisabledBrush}"
                             BorderBrush="{ThemeResource ControlAltFillColorDisabledBrush}"
@@ -174,36 +202,52 @@
                     <Button
                         Margin="0,4,0,0"
                         Command="{x:Bind ViewModel.StartElevatorCommand}"
-                        Content="Start Elevator Process..." />
+                        Content="Start Elevator Process..."
+                        l:Uids.Uid="/Settings/StartElevatorButton" />
                 </StackPanel>
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Mod Update Checker" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Mod Update Checker"
+                    l:Uids.Uid="/Settings/ModUpdateCheckerSectionHeader" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox
                             Command="{x:Bind ViewModel.ToggleModUpdateCheckerCommand}"
                             Content="Mod Auto Update Checker:"
-                            IsChecked="{x:Bind ViewModel.IsModUpdateCheckerEnabled, Mode=OneWay}" />
+                            IsChecked="{x:Bind ViewModel.IsModUpdateCheckerEnabled, Mode=OneWay}"
+                            l:Uids.Uid="/Settings/ModUpdateCheckerCheckBox" />
                         <TextBlock
                             Margin="8,0,0,0"
                             Padding="0,0,0,4"
                             VerticalAlignment="Center"
+                            IsTextSelectionEnabled="True"
                             Text="{x:Bind ViewModel.ModCheckerStatus, Mode=OneWay}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center" Text="Next Check at: " />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            IsTextSelectionEnabled="True"
+                            Text="Next Check at: "
+                            l:Uids.Uid="/Settings/ModUpdateCheckerNextText" />
                         <TextBlock Margin="8,0,0,0" Text="{x:Bind ViewModel.NextModCheckTime, Mode=OneWay}" />
                     </StackPanel>
 
                     <TextBlock
                         Margin="0,8"
                         VerticalAlignment="Center"
+                        IsTextSelectionEnabled="True"
+                        TextWrapping="WrapWholeWords"
                         Text="The Mod Update Checker checks for updates on startup and periodically in the background, only support for GameBanana.&#x0a;Does a check every 30 minutes when enabled, however, it only checks mods that have not been checked in at least 15 minutes.&#x0a;Manually checking for updates always checks GameBanana directly"
-                        TextWrapping="WrapWholeWords" />
+                        l:Uids.Uid="/Settings/ModUpdateCheckerDescription" />
 
                 </StackPanel>
 
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Folders"
+                    l:Uids.Uid="/Settings/FolderSectionHeader" />
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Folders" />
                 <controls1:SettingsCard
                     Command="{x:Bind ViewModel.NavigateToCharacterDetailsSettingsCommand}"
@@ -224,13 +268,15 @@
                         BrowseCommand="{x:Bind ViewModel.BrowseGimiFolderCommand}"
                         PathChangedEvent="GimiFolder_OnPathChangedEvent"
                         SelectedFolderValue="{x:Bind ViewModel.PathToGIMIFolderPicker.Path, Mode=TwoWay}"
-                        ValidationErrorText="{x:Bind ViewModel.PathToGIMIFolderPicker.ValidationMessages, Mode=OneWay}" />
+                        ValidationErrorText="{x:Bind ViewModel.PathToGIMIFolderPicker.ValidationMessages, Mode=OneWay}"
+                        l:Uids.Uid="/Settings/3dmigotoFolderSelector" />
                     <controls:FolderSelector
                         Title="Mods Folder"
                         BrowseCommand="{x:Bind ViewModel.BrowseModsFolderCommand}"
                         PathChangedEvent="ModsFolder_OnPathChangedEvent"
                         SelectedFolderValue="{x:Bind ViewModel.PathToModsFolderPicker.Path, Mode=TwoWay}"
-                        ValidationErrorText="{x:Bind ViewModel.PathToModsFolderPicker.ValidationMessages, Mode=OneWay}" />
+                        ValidationErrorText="{x:Bind ViewModel.PathToModsFolderPicker.ValidationMessages, Mode=OneWay}"
+                        l:Uids.Uid="/Settings/ModsFolderSelector" />
 
                     <StackPanel Orientation="Horizontal">
                         <Button Command="{x:Bind ViewModel.SaveSettingsCommand}" ToolTipService.ToolTip="Update folder path(s)?">Update</Button>
@@ -251,14 +297,14 @@
                             Content="Reset 3Dmigoto Exe Path">
                             <ToolTipService.ToolTip>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                                    <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" />
                                 </StackPanel>
                             </ToolTipService.ToolTip>
                         </Button>
                         <Button Command="{x:Bind ViewModel.ResetGenshinExePathCommand}" Content="Reset Genshin Exe Path">
                             <ToolTipService.ToolTip>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                                    <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" />
                                 </StackPanel>
                             </ToolTipService.ToolTip>
                         </Button>
@@ -271,9 +317,32 @@
                             Content="Treat Character Skins as separate characters"
                             IsChecked="{x:Bind ViewModel.CharacterAsSkinsCheckbox, Mode=TwoWay}" />
                     </StackPanel>
+
+                    <StackPanel Margin="0,16,0,0" Spacing="8">
+                        <TextBlock
+                            MaxWidth="600"
+                            HorizontalAlignment="Left"
+                            IsTextSelectionEnabled="True"
+                            TextWrapping="WrapWholeWords"
+                            Text="When using JASM to download mods, it automatically caches the archives or zip files. You can specify a maximum limit in gigabytes for the cache directory, and JASM will keep the cache size under the limit when starting up." />
+
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+
+                            <Slider
+                                x:Name="LocalCacheSlider"
+                                Width="200"
+                                ValueChanged="LocalCacheSlider_OnValueChanged"
+                                Value="{x:Bind ViewModel.MaxCacheLimit, Mode=OneWay}" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.MaxCacheSizeString, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
                 </StackPanel>
 
-                <TextBlock l:Uids.Uid="Settings_Export_Title" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Export/Backup Mods"
+                    l:Uids.Uid="Settings_Export_Title" />
 
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}" Orientation="Horizontal">
                     <Button Command="{x:Bind ViewModel.ExportModsCommand}" CommandParameter="{x:Bind ExportDialog}">
@@ -281,6 +350,7 @@
                             <TextBlock
                                 Margin="0,0,8,0"
                                 VerticalAlignment="Center"
+                                Text="Export Mods"
                                 l:Uids.Uid="Settings_Export_Button" />
                             <FontIcon
                                 VerticalAlignment="Bottom"
@@ -297,20 +367,24 @@
                         Value="{x:Bind ViewModel.ExportProgress, Mode=OneWay}" />
                     <TextBlock
                         Margin="0,0,8,0"
-                        Text="{x:Bind ViewModel.ExportProgressText, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" />
-                    <TextBlock Text="{x:Bind ViewModel.CurrentModName, Mode=OneWay}" Visibility="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" />
+                        Visibility="{x:Bind ViewModel.ExportingMods, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.ExportProgressText, Mode=OneWay}" />
+                    <TextBlock Visibility="{x:Bind ViewModel.ExportingMods, Mode=OneWay}" Text="{x:Bind ViewModel.CurrentModName, Mode=OneWay}" />
                 </StackPanel>
 
 
-                <TextBlock l:Uids.Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="About this application"
+                    l:Uids.Uid="Settings_About" />
                 <StackPanel Margin="{StaticResource XSmallTopMargin}">
                     <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
 
                     <TextBlock
                         Margin="{StaticResource XSmallTopMargin}"
-                        l:Uids.Uid="Settings_AboutDescription"
-                        Style="{ThemeResource BodyTextBlockStyle}" />
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="The goal of JASM is to make it easy to organize a larger amount of skin mods"
+                        l:Uids.Uid="Settings_AboutDescription" />
                     <HyperlinkButton
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                         Content="Just Another Skin Manager Github"
@@ -337,7 +411,7 @@
                             <Button.Flyout>
                                 <Flyout ShouldConstrainToRootBounds="False">
                                     <StackPanel>
-                                        <TextBlock Text="JASM will exit and the update will start. Do you want to continue?" TextWrapping="WrapWholeWords" />
+                                        <TextBlock TextWrapping="WrapWholeWords" Text="JASM will exit and the update will start. Do you want to continue?" />
                                         <Button Command="{x:Bind ViewModel.UpdateJasmCommand}" Content="Yes, Update JASM 😎" />
                                     </StackPanel>
                                 </Flyout>

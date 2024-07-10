@@ -218,9 +218,10 @@ public partial class ElevatorService : ObservableRecipient
         }
     }
 
-    public void CheckStatus()
+    public ElevatorStatus CheckStatus()
     {
         ElevatorStatus = _elevatorProcess is { HasExited: false } ? ElevatorStatus.Running : ElevatorStatus.NotRunning;
+        return ElevatorStatus;
     }
 }
 

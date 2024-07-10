@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BackupWarning.Text" xml:space="preserve">
+    <value>在使用与您的文件交互的应用程序之前备份您的文件或修改通常是一个很好的主意</value>
+  </data>
+  <data name="Body1.Text" xml:space="preserve">
+    <value>作为首次设置的一部分，您需要选择一个 Model-Importer 文件夹（3dmigoto）及其连接的 Mods 文件夹。3dmigoto 文件夹包含 3DMigoto Loader.exe 或 3DMigotoLoader.exe 以及一个 Mods 文件夹。如果您尚未设置模型导入程序，请立即进行设置，请参阅下方链接。我通常在 Gamebanana 上找到大多数修改，但 Nexusmods 也有一些。</value>
+  </data>
+  <data name="Body2.Text" xml:space="preserve">
+    <value>保存设置后，应用程序将在“Mods”文件夹中为每个角色创建一个文件夹。位于这些角色文件夹之外的修改文件夹将被忽略。此应用程序通过在修改文件夹前加上“DISABLED_”来启用和禁用修改。JASM 还支持导出由其管理的修改，如果您希望将它们用于其他应用程序。</value>
+  </data>
+  <data name="DisableModsTooltip.Text" xml:space="preserve">
+    <value>在所有修改的名称前添加“DISABLED_”，以便将它们禁用</value>
+  </data>
+  <data name="GameSelectorBox.ToolTipService.ToolTip" xml:space="preserve">
+    <value>选择您希望管理修改的游戏。您可以随时在设置页面更改此选项</value>
+  </data>
+  <data name="ReorganizeTooltip1.Text" xml:space="preserve">
+    <value>启用此选项将提示应用程序将现有的修改整理到分配给它们各自角色的文件夹中。任何无法合理匹配的修改将被放置在一个“其他”文件夹中。</value>
+  </data>
+  <data name="ReorganizeTooltip2.Text" xml:space="preserve">
+    <value>一个包含多个角色名称的修改文件夹可能会错误地被移动到某个角色的目录中。这假设了一个扁平的修改结构，其中皮肤文件夹松散地存储在修改文件夹中。如果你有自定义的文件夹结构，那么 JASM 可能会错误地识别你的皮肤。这也适用于包含皮肤的嵌套文件夹的情况。</value>
+  </data>
+  <data name="ReorganizeTooltip3.Text" xml:space="preserve">
+    <value>这可以在后续的设置页面中激活</value>
+  </data>
+  <data name="Startup_Header.Text" xml:space="preserve">
+    <value>首次启动时可以进行设置</value>
+  </data>
+</root>

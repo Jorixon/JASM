@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="3dmigotoFolderSelector.Title" xml:space="preserve">
+    <value>3dMigoto 文件夹选择器</value>
+  </data>
+  <data name="ChangeLanguageDialogText" xml:space="preserve">
+    <value>更改语言需要重新启动应用程序。
+这是为了正确配置应用程序以适应所选语言。
+是否要更改语言？</value>
+  </data>
+  <data name="ElevatorSectionHeader.Text" xml:space="preserve">
+    <value>同步进程</value>
+  </data>
+  <data name="ElevatorStatusTitle.Text" xml:space="preserve">
+    <value>同步状态</value>
+  </data>
+  <data name="FolderSectionHeader.Text" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="GameSelectorComboBox.Header" xml:space="preserve">
+    <value>选择游戏：</value>
+  </data>
+  <data name="GameSelectorSectionHeader.Text" xml:space="preserve">
+    <value>游戏</value>
+  </data>
+  <data name="GameSelectorTitle.Text" xml:space="preserve">
+    <value>JASM 支持原神和崩坏星铁道</value>
+  </data>
+  <data name="LanguageSelectionSectionHeader.Text" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="LanguageSelectorComboBox.Header" xml:space="preserve">
+    <value>选择显示语言：</value>
+  </data>
+  <data name="LanguageSelectorTitle.Text" xml:space="preserve">
+    <value>目前语言选项有限。我们正在继续改进。</value>
+  </data>
+  <data name="ModsFolderSelector.Title" xml:space="preserve">
+    <value>修改文件夹</value>
+  </data>
+  <data name="ModUpdateCheckerCheckBox.Content" xml:space="preserve">
+    <value>自动检查修改更新</value>
+  </data>
+  <data name="ModUpdateCheckerDescription.Text" xml:space="preserve">
+    <value>修改更新检查器会在启动时和后台定期检查修改的更新。
+启用后每30分钟检查一次，但只检查至少15分钟未检查的修改。
+手动检查总是直接检查 GameBanana。</value>
+  </data>
+  <data name="ModUpdateCheckerNextText.Text" xml:space="preserve">
+    <value>下次检查时间：</value>
+  </data>
+  <data name="ModUpdateCheckerSectionHeader.Text" xml:space="preserve">
+    <value>修改更新检查</value>
+  </data>
+  <data name="StartElevatorButton.Content" xml:space="preserve">
+    <value>开始同步进程</value>
+  </data>
+  <data name="StartElevatorDialogDontShowContent" xml:space="preserve">
+    <value>不再显示此消息</value>
+  </data>
+  <data name="StartElevatorDialogText" xml:space="preserve">
+    <value>点击“开始”按钮启动同步进程。同步是一种管理进程，用于与3DMigoto和游戏通信。
+
+同步进程运行时，您可以在应用程序中按F10键更新游戏中的活动修改。
+
+启用或禁用修改也会自动更新游戏中的3DMigoto工作。同步进程应在关闭程序后自动完成。
+
+按下“开始”按钮后，将出现用户帐户控制（UAC）请求，以管理员身份进行授权。
+
+（要求游戏和3Dmigoto已启动，按F10）</value>
+  </data>
+  <data name="StartElevatorDialogTitle" xml:space="preserve">
+    <value>启动同步进程？</value>
+  </data>
+</root>

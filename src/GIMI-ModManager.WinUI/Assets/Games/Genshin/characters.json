@@ -1625,5 +1625,56 @@
     "InGameSkins": [],
     "InternalName": "Arlecchino",
     "DisplayName": "Arlecchino"
+  },
+  {
+    "Keys": [
+      "Clorinde"
+    ],
+    "ReleaseDate": "2024-06-05T00:00:00",
+    "Image": "Character_Clorinde_Thumb.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Sword",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Clorinde",
+    "InGameSkins": [],
+    "InternalName": "Clorinde",
+    "DisplayName": "Clorinde"
+  },
+  {
+    "Keys": [
+      "Sigewinne"
+    ],
+    "ReleaseDate": "2024-06-05T00:00:00",
+    "Image": "Character_Sigewinne_Thumb.webp",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Bow",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Sigewinne",
+    "InGameSkins": [],
+    "InternalName": "Sigewinne",
+    "DisplayName": "Sigewinne"
+  },
+  {
+    "Keys": [
+      "Sethos"
+    ],
+    "ReleaseDate": "2024-06-05T00:00:00",
+    "Image": "Character_Sethos_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Bow",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Sethos",
+    "InGameSkins": [],
+    "InternalName": "Sethos",
+    "DisplayName": "Sethos"
   }
 ]

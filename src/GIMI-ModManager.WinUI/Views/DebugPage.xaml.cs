@@ -1,5 +1,6 @@
-using GIMI_ModManager.Core.Services;
-using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.Core.Services.GameBanana;
+using GIMI_ModManager.Core.Services.GameBanana.Models;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -7,22 +8,31 @@ namespace GIMI_ModManager.WinUI.Views;
 
 public sealed partial class DebugPage : Page
 {
-    public DebugViewModel ViewModel { get; } = App.GetService<DebugViewModel>();
+    private readonly IApiGameBananaClient _apiGameBananaClient = App.GetService<IApiGameBananaClient>();
+    private readonly ModArchiveRepository _modArchiveRepository = App.GetService<ModArchiveRepository>();
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly GameBananaCoreService _gameBananaCoreService = App.GetService<GameBananaCoreService>();
 
-    public UserPreferencesService UserPreferencesService { get; } = App.GetService<UserPreferencesService>();
+    public string ModId { get; set; } = "495878";
 
     public DebugPage()
     {
         InitializeComponent();
+        _ = Task.Run(() => _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder));
     }
 
-    private async void ButtonBase_OnClickSave(object sender, RoutedEventArgs e)
+    private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        await UserPreferencesService.SaveModPreferencesAsync().ConfigureAwait(false);
-    }
+        var cts = new CancellationTokenSource();
 
-    private async void ButtonBase_OnClickApply(object sender, RoutedEventArgs e)
-    {
-        await UserPreferencesService.SetModPreferencesAsync().ConfigureAwait(false);
+        var modId = new GbModId(ModId);
+
+        var modInfos = await _apiGameBananaClient.GetModFilesInfoAsync(modId, cts.Token);
+
+        var mod = modInfos!.Files.First();
+        var modFileIdentifier = new GbModFileIdentifier(modId, new GbModFileId(mod.FileId));
+
+        var path = await Task.Run(() => _gameBananaCoreService.DownloadModAsync(modFileIdentifier, ct: cts.Token),
+            cts.Token);
     }
 }

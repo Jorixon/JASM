@@ -375,7 +375,7 @@
                         Margin="8,0"
                         Command="{x:Bind ViewModel.EnableOnlyToggleCommand}"
                         Content="Enable this mod and disable others?"
-                        IsChecked="{x:Bind ViewModel.EnableThisMod, Mode=TwoWay}"
+                        IsChecked="{x:Bind ViewModel.EnableThisMod, Mode=OneWay}"
                         ToolTipService.ToolTip="This will enable this mod and disable all other mods. If a character then it will only disable for that characters skin" />
 
                     <Button

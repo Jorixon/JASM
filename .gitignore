@@ -663,5 +663,6 @@ fabric.properties
 Testing/
 .Publish/
 Testing_honkai/
+Testing_wuwa/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,csharp,rider

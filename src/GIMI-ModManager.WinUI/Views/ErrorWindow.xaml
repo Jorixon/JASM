@@ -67,14 +67,6 @@
                     Link="{x:Bind ViewModel.JASM_GITHUB}"
                     Text="GitHub"
                     TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="OR" />
-                <controls:LinkButton
-                    Link="{x:Bind ViewModel.JASM_GAMEBANANA}"
-                    Text="GameBanana"
-                    TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
             </StackPanel>
 
         </Grid>
@@ -86,7 +78,7 @@
                     Margin="0,0,0,8"
                     FontSize="18"
                     Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="An unhanded exception has occurred. The application ran into a problem that it didn't know how to handle. If you want to help us fix this issue, please send us the following information:" />
+                    Text="An unhanded exception has occurred. The application ran into a problem that it didn't know how to handle. JASM may be in an unstable state, and it is recommended to restart JASM. If you want to help us fix this issue, please send us the following information:" />
 
                 <TextBlock
                     Margin="0,4"

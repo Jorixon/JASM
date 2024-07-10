@@ -109,9 +109,9 @@
                         Orientation="Horizontal"
                         Spacing="16">
                         <CheckBox
+                            Command="{x:Bind ViewModel.ToggleAutoSyncCommand}"
                             Content="Auto sync Mod Preferences when switching presets"
-                            IsChecked="{x:Bind ViewModel.AutoSync3DMigotoConfig, Mode=TwoWay}"
-                            IsEnabled="{x:Bind ViewModel.ElevatorIsRunning, Mode=OneWay}"
+                            IsChecked="{x:Bind ViewModel.AutoSync3DMigotoConfig, Mode=OneWay}"
                             ToolTipService.ToolTip="If checked, then JASM will automatically sync preferences when creating presets and when switching between presets" />
                         <Button
                             Command="{x:Bind ViewModel.StartElevatorCommand}"

@@ -119,6 +119,7 @@ public class NavigationService : INavigationService
             var navigated = transitionInfo is null
                 ? _frame.Navigate(pageType, parameter)
                 : _frame.Navigate(pageType, parameter, transitionInfo);
+
             if (navigated)
             {
                 _lastParameterUsed = parameter;

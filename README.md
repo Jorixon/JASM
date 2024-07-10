@@ -59,8 +59,8 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 
 
 ### Limitations and Acknowledgements
-- The Json file that stores the Genshin characters is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and some of the images are also from the same repository.
-- The Json file that stores the Genshin weapons is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/94d55e8b88d5580d84e6b0991ce82e2798220d44/data/weapons.json) and the weapon images are also from the same repository.
+- The Json file that stores the the game characters is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/3d10e411a411b8ed532356ccb45fcd80b6b2383b/data/characters.json) and some of the images are also from the same repository.
+- The Json file that stores the weapons is a modified and stripped down version of this [genshin-impact-tools ](https://github.com/tokafew420/genshin-impact-tools/blob/94d55e8b88d5580d84e6b0991ce82e2798220d44/data/weapons.json) and the weapon images are also from the same repository.
 - 7-Zip is bundled with the app, 7-Zip is licensed under the GNU Lesser General Public License (LGPL). You can find the full license details and source code at [www.7-zip.org](https://www.7-zip.org/).
 - SharpCompress is used if the bundled 7-zip is not found. SharpCompress is licensed under the MIT license. You can find the full license details and source code at [SharpCompress's GitHub Page](https://github.com/adamhathcock/sharpcompress)
 - WinUI3Localizer is used for localization. WinUI3Localizer is licensed under the MIT license. You can find the full license details and source code at [WinUI3Localizer's GitHub Page](https://github.com/AndrewKeepCoding/WinUI3Localizer)
@@ -89,21 +89,8 @@ The code has progressively gotten more spaghettified over time ;_;
 
 ## FAQ
 
-### I Get the error: An error occurred while adding the storage items. Mod may have been partially copied. Could not find a part of the path "C:\Users\\AppData\Local\Temp\7z..." When draging mods from 7z
-This still seems to happen with certain mods, though an alternative is to use the “Add Archive…” command or drag and drop the entire archive file. Just note that it is not smart enough to detect a skin nested inside a “Mods/” folder, at least not yet.
+### JASM does not start anymore
 
-#### The short reason for why this happens:
-
-There seems to be some odd behavior between WinUI/WinAppSdk frameworks and the way 7zip extracts files. Currently I don’t have a quick fix.
-
-#### Long Version:
-
-For some reason when you drag and drop 7z contents into, let’s say file explorer, the archive is first extracted to a “C:\Users\\AppData\Local\Temp\7z…” folder. The folder is then moved/copied to where you dropped the files. The temp 7z folder is deleted once this process finishes. At least that’s how I understand it when it comes to drag and drop into file explorer. The exact details might be a little different.
-
-This process is similar for this application. The problem is that for some reason 7z seems to delete the extracted contents in “/Temp/7z…” before JASM can copy/move the files to the mod’s directory. This took quite a while to debug and a lot of trial and error until I got to something that worked (during development?).
-
-I believe it has something to do with IPC (Inter Process Communication) between 7z process and JASM. I’ve read some posts on Github of others having similar problems with drag and drop.
-
-At the moment I don’t know what makes it sometimes fail, but I know it happens sometimes. I would really like to fix this, I just don’t how yet.
+I believe this is due to some oddity with WinAppSdk not installing correctly. I do not know what causes this. A temporary (permanent?) solution is to use the self contained version of JASM that does not require WinAppSdk or .NET. See the releases page [SelfContainted_JASM_vx.x.x.7z](https://github.com/Jorixon/JASM/releases). Ref [#72](https://github.com/Jorixon/JASM/issues/72) and [#171](https://github.com/Jorixon/JASM/issues/171)
 
 
