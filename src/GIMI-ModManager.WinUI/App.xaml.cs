@@ -240,6 +240,7 @@ public partial class App : Application
                 services.AddTransient<CharacterDetailsSettingsPage>();
                 services.AddTransient<CommandsSettingsViewModel>();
                 services.AddTransient<CommandsSettingsPage>();
+                services.AddTransient<CommandProcessViewerViewModel>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

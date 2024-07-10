@@ -8,5 +8,9 @@ public class CommandContext
 
     public DateTime? StartTime { get; internal set; }
 
-    public string? TargetPath { get; init; }
+    public DateTime? EndTime { get; internal set; }
+
+    public required string DisplayName { get; init; }
+
+    public required string? TargetPath { get; init; }
 }

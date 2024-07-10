@@ -600,6 +600,7 @@
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
+		<None Remove="Views\CommandProcessViewer.xaml" />
 		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
 		<None Remove="Views\Controls\DataTemplates.xaml" />
@@ -1132,6 +1133,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <Page Update="Views\Controls\DataTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\CommandProcessViewer.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\CharacterGalleryPage.xaml">
