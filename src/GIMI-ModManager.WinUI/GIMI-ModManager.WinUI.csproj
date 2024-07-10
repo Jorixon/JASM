@@ -532,6 +532,7 @@
 		<Content Remove="Assets\Games\ZZZ\characters.json" />
 		<Content Remove="Assets\Games\ZZZ\elements.json" />
 		<Content Remove="Assets\Games\ZZZ\game.json" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\ZZZ\npcs.json" />
 		<Content Remove="Assets\Games\ZZZ\objects.json" />

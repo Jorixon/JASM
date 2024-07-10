@@ -5,7 +5,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Belle.webp",
-    "Rarity": "0",
+    "Rarity": 0,
     "Element": "None",
     "Class": "None",
     "Region": [
@@ -22,7 +22,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Wise.webp",
-    "Rarity": "0",
+    "Rarity": 0,
     "Element": "None",
     "Class": "None",
     "Region": [
@@ -40,7 +40,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Rina.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Electric",
     "Class": "Support",
     "Region": [
@@ -57,7 +57,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Ellen.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Ice",
     "Class": "Attack",
     "Region": [
@@ -74,7 +74,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Grace.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Electric",
     "Class": "Anomoly",
     "Region": [
@@ -91,7 +91,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Koleda.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Fire",
     "Class": "Stun",
     "Region": [
@@ -109,7 +109,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Nekomata.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Physical",
     "Class": "Attack",
     "Region": [
@@ -125,8 +125,8 @@
       "soldier11"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
-    "Image": "Soldier11.webp",
-    "Rarity": "5",
+    "Image": "Soldier11.png",
+    "Rarity": 5,
     "Element": "Fire",
     "Class": "Attack",
     "Region": [
@@ -143,7 +143,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Lycaon.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Ice",
     "Class": "Stun",
     "Region": [
@@ -159,8 +159,8 @@
       "zhuyuan"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
-    "Image": "Zhu Yuan.webp",
-    "Rarity": "5",
+    "Image": "ZhuYuan.webp",
+    "Rarity": 5,
     "Element": "Ether",
     "Class": "Attack",
     "Region": [
@@ -177,7 +177,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Anby.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Electric",
     "Class": "Support",
     "Region": [
@@ -194,7 +194,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Anton.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Electric",
     "Class": "Attack",
     "Region": [
@@ -211,7 +211,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Ben.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Fire",
     "Class": "Defense",
     "Region": [
@@ -228,7 +228,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Billy.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Physical",
     "Class": "Attack",
     "Region": [
@@ -245,7 +245,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Corin.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Physical",
     "Class": "Attack",
     "Region": [
@@ -263,7 +263,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Lucy.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Fire",
     "Class": "Support",
     "Region": [
@@ -280,7 +280,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Nicole.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Ether",
     "Class": "Support",
     "Region": [
@@ -297,7 +297,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Piper.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Physical",
     "Class": "Anomoly",
     "Region": [
@@ -314,7 +314,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Soukaku.webp",
-    "Rarity": "4",
+    "Rarity": 4,
     "Element": "Ice",
     "Class": "Support",
     "Region": [
@@ -331,7 +331,7 @@
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Miyabi.webp",
-    "Rarity": "5",
+    "Rarity": 5,
     "Element": "Ice",
     "Class": "Attack",
     "Region": [
