@@ -20,16 +20,16 @@ public sealed class CommandService(ILogger logger)
     {
         var commandContext = new CommandContext
         {
-            TargetPath = options.TargetPath
+            TargetPath = options.TargetPath,
+            DisplayName = options.DisplayName
         };
 
         options.ExecutionOptions.IsReadOnly = true;
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = options.ExecutionOptions.Command.Replace(SpecialVariables.TargetPath, options.TargetPath),
-            Arguments =
-                options.ExecutionOptions.Arguments?.Replace(SpecialVariables.TargetPath, options.TargetPath),
+            FileName = SpecialVariables.ReplaceVariables(options.ExecutionOptions.Command, options.TargetPath),
+            Arguments = SpecialVariables.ReplaceVariables(options.ExecutionOptions.Arguments, options.TargetPath),
             WorkingDirectory = options.ExecutionOptions.WorkingDirectory,
             UseShellExecute = options.ExecutionOptions.UseShellExecute,
             CreateNoWindow = !options.ExecutionOptions.CreateWindow,
@@ -38,7 +38,8 @@ public sealed class CommandService(ILogger logger)
 
         var process = new Process
         {
-            StartInfo = startInfo
+            StartInfo = startInfo,
+            EnableRaisingEvents = true
         };
 
 
@@ -66,6 +67,12 @@ internal class CreateCommandOptions
 {
     // Replace with actual path
     public required string TargetPath { get; set; }
+
+    private string? _displayName;
+
+    public string DisplayName => _displayName ??=
+        SpecialVariables.ReplaceVariables(ExecutionOptions.Command + " " + ExecutionOptions.Arguments, TargetPath);
+
     public required CommandExecutionOptions ExecutionOptions { get; set; }
 }
 
@@ -78,6 +85,8 @@ public sealed class ProcessCommand : IDisposable
 
     internal CommandContext Context { get; }
     public CommandExecutionOptions Options { get; }
+
+    public string DisplayName => Context.DisplayName;
 
     internal ProcessCommand(Process process, CommandExecutionOptions options, CommandContext context)
     {
@@ -93,7 +102,7 @@ public sealed class ProcessCommand : IDisposable
     public bool HasExited => _process.HasExited;
     public int ExitCode => _process.ExitCode;
 
-
+    public event EventHandler? Exited;
     public event EventHandler<DataReceivedEventArgs>? OutputDataReceived;
     public event EventHandler<DataReceivedEventArgs>? ErrorDataReceived;
 
@@ -104,20 +113,26 @@ public sealed class ProcessCommand : IDisposable
             throw new InvalidOperationException("Cannot start a command that has already been started");
 
         HasBeenStarted = true;
+        _process.Exited += (_, args) =>
+        {
+            Context.EndTime = DateTime.Now;
+            _process.Refresh();
+            Exited?.Invoke(this, args);
+        };
 
         Context.StartTime = DateTime.Now;
         var result = _process.Start();
 
         if (CanWriteInputReadOutput)
         {
-            _process.OutputDataReceived += (sender, args) => OutputDataReceived?.Invoke(sender, args);
-            _process.ErrorDataReceived += (sender, args) => ErrorDataReceived?.Invoke(sender, args);
+            _process.OutputDataReceived += (_, args) => OutputDataReceived?.Invoke(this, args);
+            _process.ErrorDataReceived += (_, args) => ErrorDataReceived?.Invoke(this, args);
 
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
         }
 
-
+        _process.Refresh();
         return result;
     }
 

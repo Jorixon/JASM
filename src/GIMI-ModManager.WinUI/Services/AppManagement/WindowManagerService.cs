@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.WinUI.Contracts.Services;
+﻿using CommunityToolkitWrapper;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Settings;
 using Microsoft.Graphics.Display;
 using Microsoft.UI;
@@ -151,6 +152,60 @@ public class WindowManagerService : IWindowManagerService
         return result;
     }
 
+
+    public async Task<ContentDialogResult> ShowFullScreenDialogAsync(FrameworkElement content, XamlRoot xamlRoot,
+        WindowEx window)
+    {
+        if (_windowDialogOpen.Contains(window))
+            throw new InvalidOperationException("Window already has a dialog open.");
+
+
+        _windowDialogOpen.Add(window);
+
+        var dialog = new ContentDialog
+        {
+            Content = content,
+            XamlRoot = xamlRoot,
+            RequestedTheme = _themeSelectorService.Theme,
+            Resources =
+            {
+                ["ContentDialogMaxWidth"] = 8000,
+                ["ContentDialogMaxHeight"] = 4000
+            },
+            CloseButtonText = "Close"
+        };
+
+        dialog.SizeChanged += (s, e) =>
+        {
+            const int margin = 300;
+            content.MinWidth = window.Width - margin;
+            content.MinHeight = window.Height - margin;
+            content.MaxWidth = window.Width - margin;
+            content.MaxHeight = window.Height - margin;
+        };
+
+        if (content is IDisposable element)
+        {
+            dialog.Closed += (_, _) => element.Dispose();
+        }
+
+
+        return await window.DispatcherQueue.EnqueueAsync(async () =>
+        {
+            try
+            {
+                var result = await dialog.ShowAsync();
+                dialog.Content = null;
+                return result;
+            }
+            finally
+            {
+                _windowDialogOpen.Remove(window);
+            }
+        }).ConfigureAwait(false);
+    }
+
+
     public Task CloseWindowsAsync()
     {
         var task = new TaskCompletionSource();
@@ -209,6 +264,9 @@ public interface IWindowManagerService
     void CreateWindow(WindowEx window, object? identifier, bool activate = true);
     WindowEx? GetWindow(object identifier);
     Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog, WindowEx? window = null);
+
+    Task<ContentDialogResult> ShowFullScreenDialogAsync(FrameworkElement content, XamlRoot xamlRoot,
+        WindowEx window);
 
     Task CloseWindowsAsync();
 }

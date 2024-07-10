@@ -238,6 +238,7 @@ public partial class App : Application
                 services.AddTransient<CommandsSettingsPage>();
                 services.AddTransient<CharacterGalleryPage>();
                 services.AddTransient<CharacterGalleryViewModel>();
+                services.AddTransient<CommandProcessViewerViewModel>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(
