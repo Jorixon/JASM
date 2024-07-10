@@ -244,20 +244,19 @@
 
                 </StackPanel>
 
-                <TextBlock
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Folders"
-                    l:Uids.Uid="/Settings/FolderSectionHeader" />
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Folders" />
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Commands" />
                 <controls1:SettingsCard
-                    Command="{x:Bind ViewModel.NavigateToCharacterDetailsSettingsCommand}"
-                    Description="Settings related to mod details overview"
-                    Header="Mod Details Settings"
+                    Command="{x:Bind ViewModel.NavigateToCommandsSettingsCommand}"
+                    Description="Commands (scripts) can be defined and then be run on specified mods"
+                    Header="Create Custom Commands"
                     HeaderIcon="{ui:FontIcon Glyph=&#xE716;}"
                     IsClickEnabled="True" />
 
 
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Folders" />
+                <TextBlock
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Folders"
+                    l:Uids.Uid="/Settings/FolderSectionHeader" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
 
 

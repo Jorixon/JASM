@@ -725,9 +725,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private Task NavigateToCharacterDetailsSettings()
+    private Task NavigateToCommandsSettings()
     {
-        _navigationService.NavigateTo(typeof(CharacterDetailsSettingsViewModel).FullName!,
+        _navigationService.NavigateTo(typeof(CommandsSettingsViewModel).FullName!,
             transitionInfo: new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         return Task.CompletedTask;
     }

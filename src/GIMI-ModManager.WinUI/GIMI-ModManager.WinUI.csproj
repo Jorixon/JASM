@@ -618,7 +618,7 @@
 		<None Remove="Views\NotificationsPage.xaml" />
 		<None Remove="Views\PresetDetailsPage.xaml" />
 		<None Remove="Views\PresetPage.xaml" />
-		<None Remove="Views\Settings\CharacterDetailsSettingsPage.xaml" />
+		<None Remove="Views\Settings\CommandsSettingsPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -1137,7 +1137,7 @@
 	  <Page Update="Views\CharacterGalleryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <Page Update="Views\Settings\CharacterDetailsSettingsPage.xaml">
+	  <Page Update="Views\Settings\CommandsSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\ModSelector.xaml">

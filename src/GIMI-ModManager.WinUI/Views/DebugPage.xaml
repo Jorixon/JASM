@@ -14,7 +14,6 @@
 
 
     <StackPanel>
-        <TextBox Text="{x:Bind ModId, Mode=TwoWay}" />
-        <Button Click="ButtonBase_OnClick">Run</Button>
+        <Button Content="Run Command" Click="ButtonBase_OnClick"></Button>
     </StackPanel>
 </Page>
