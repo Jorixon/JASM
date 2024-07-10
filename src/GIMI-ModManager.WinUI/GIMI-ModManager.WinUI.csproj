@@ -540,9 +540,6 @@
 		<Content Remove="Assets\Games\ZZZ\weaponClasses.json" />
 		<Content Remove="Assets\Games\ZZZ\weapons.json" />
 		<Content Remove="Assets\Icon_Inventory_Weapons.webp" />
-		<Content Remove="Assets\Games\ZZZ\characters.json" />
-		<Content Remove="Assets\Games\ZZZ\elements.json" />
-		<Content Remove="Assets\Games\ZZZ\game.json" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Anby.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Anton.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Belle.webp" />
@@ -568,11 +565,6 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ice.svg" />
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Physical.svg" />
 		<Content Remove="Assets\Games\ZZZ\Images\Star_Game.png" />
-		<Content Remove="Assets\Games\ZZZ\npcs.json" />
-		<Content Remove="Assets\Games\ZZZ\objects.json" />
-		<Content Remove="Assets\Games\ZZZ\regions.json" />
-		<Content Remove="Assets\Games\ZZZ\weaponClasses.json" />
-		<Content Remove="Assets\Games\ZZZ\weapons.json" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 
