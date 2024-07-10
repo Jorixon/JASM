@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Page
-    x:Class="GIMI_ModManager.WinUI.Views.Settings.CharacterDetailsSettingsPage"
+    x:Class="GIMI_ModManager.WinUI.Views.Settings.CommandsSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"

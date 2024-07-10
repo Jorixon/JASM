@@ -31,7 +31,7 @@ public class PageService : IPageService
         Configure<PresetDetailsViewModel, PresetDetailsPage>();
         Configure<ModSelectorViewModel, ModSelector>();
         Configure<CharacterGalleryViewModel, CharacterGalleryPage>();
-        Configure<CharacterDetailsSettingsViewModel, CharacterDetailsSettingsPage>();
+        Configure<CommandsSettingsViewModel, CommandsSettingsPage>();
     }
 
     public Type GetPageType(string key)

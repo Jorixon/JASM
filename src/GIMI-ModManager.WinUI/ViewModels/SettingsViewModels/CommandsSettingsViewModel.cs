@@ -2,6 +2,6 @@
 
 namespace GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 
-public sealed partial class CharacterDetailsSettingsViewModel : ObservableRecipient
+public sealed partial class CommandsSettingsViewModel : ObservableRecipient
 {
 }

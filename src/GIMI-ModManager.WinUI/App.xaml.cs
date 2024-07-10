@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.RateLimiting;
+using GIMI_ModManager.Core.CommandService;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
@@ -145,6 +146,7 @@ public partial class App : Application
                 services.AddSingleton<ArchiveService>();
                 services.AddSingleton<ModArchiveRepository>();
                 services.AddSingleton<GameBananaCoreService>();
+                services.AddSingleton<CommandService>();
 
                 services.AddSingleton<GameBananaService>();
 
@@ -232,8 +234,8 @@ public partial class App : Application
                 services.AddTransient<PresetDetailsPage>();
                 services.AddTransient<ModSelectorViewModel>();
                 services.AddTransient<ModSelector>();
-                services.AddTransient<CharacterDetailsSettingsViewModel>();
-                services.AddTransient<CharacterDetailsSettingsPage>();
+                services.AddTransient<CommandsSettingsViewModel>();
+                services.AddTransient<CommandsSettingsPage>();
                 services.AddTransient<CharacterGalleryPage>();
                 services.AddTransient<CharacterGalleryViewModel>();
 
