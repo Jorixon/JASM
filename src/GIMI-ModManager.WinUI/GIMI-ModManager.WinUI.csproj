@@ -529,7 +529,43 @@
 		<Content Remove="Assets\Games\WuWa\regions.json" />
 		<Content Remove="Assets\Games\WuWa\weaponClasses.json" />
 		<Content Remove="Assets\Games\WuWa\weapons.json" />
+		<Content Remove="Assets\Games\ZZZ\characters.json" />
+		<Content Remove="Assets\Games\ZZZ\elements.json" />
+		<Content Remove="Assets\Games\ZZZ\game.json" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Character_Others.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
+		<Content Remove="Assets\Games\ZZZ\npcs.json" />
+		<Content Remove="Assets\Games\ZZZ\objects.json" />
+		<Content Remove="Assets\Games\ZZZ\regions.json" />
+		<Content Remove="Assets\Games\ZZZ\weaponClasses.json" />
+		<Content Remove="Assets\Games\ZZZ\weapons.json" />
 		<Content Remove="Assets\Icon_Inventory_Weapons.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Anby.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Anton.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Belle.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ben.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Billy.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Corin.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ellen.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Grace.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Koleda.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lucy.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lycaon.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Miyabi.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nekomata.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nicole.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Piper.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Rina.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soukaku.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Wise.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\ZhuYuan.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Electric.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ether.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Fire.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ice.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Physical.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Star_Game.png" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 
@@ -549,6 +585,7 @@
 		<None Remove="Views\CharactersPage.xaml" />
 		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
+		<None Remove="Views\Controls\DataTemplates.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
 		<None Remove="Views\Controls\LinkButton.xaml" />
@@ -1070,6 +1107,9 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\Controls\DataTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\CharacterGalleryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -1083,4 +1123,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties assets_4games_4zzz_4game_1json__JsonSchema="json" /></VisualStudio></ProjectExtensions>
 </Project>
