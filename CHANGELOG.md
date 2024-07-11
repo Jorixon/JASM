@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.12.0](https://github.com/Jorixon/JASM/compare/v2.11.0...v2.12.0) (2024-07-11)
+
+
+### Features
+
+* Added ZZZ support ([#205](https://github.com/Jorixon/JASM/issues/205)) Thanks @Pyrageis ([41b2497](https://github.com/Jorixon/JASM/commit/41b24979f8e86a4a245f45a699101ce582d26403))
+
+
+### Bug Fixes
+
+* Mod update notification would always be shown for first update check for new mod ([#205](https://github.com/Jorixon/JASM/issues/205)) ([86a96e5](https://github.com/Jorixon/JASM/commit/86a96e5214b6d828d9306e5e0940b96f84c8c094))
+
+
+### Miscellaneous
+
+* Added logging to auto updater ([86f0697](https://github.com/Jorixon/JASM/commit/86f06975a0303cfabf61e079f627ea503391cda4))
+* Changed validation check for model import loader exe name ([#205](https://github.com/Jorixon/JASM/issues/205)) ([86a96e5](https://github.com/Jorixon/JASM/commit/86a96e5214b6d828d9306e5e0940b96f84c8c094))
+
 ## [2.11.0](https://github.com/Jorixon/JASM/compare/v2.10.1...v2.11.0) (2024-07-04)
 
 
