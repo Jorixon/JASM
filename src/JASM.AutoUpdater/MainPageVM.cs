@@ -113,6 +113,7 @@ public partial class MainPageVM : ObservableRecipient
         catch (Exception e)
         {
             Log("An error occurred!", e.Message);
+            Serilog.Log.Error(e, "An error occurred! Full error");
             Stop(e.Message);
         }
         finally
