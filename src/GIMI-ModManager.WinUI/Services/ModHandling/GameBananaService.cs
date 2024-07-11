@@ -77,7 +77,7 @@ public class GameBananaService(
         return new ModsRetrievedResult()
         {
             ModId = modGbId,
-            LastCheck = modSettings.LastChecked ?? DateTime.MinValue,
+            LastCheck = modSettings.LastChecked ?? modSettings.DateAdded ?? DateTime.MinValue,
             CheckTime = DateTime.Now,
             ModFiles = result,
             SitePageUrl = modSettings.ModUrl
