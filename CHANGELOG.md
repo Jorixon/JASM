@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.12.2](https://github.com/Jorixon/JASM/compare/v2.12.1...v2.12.2) (2024-07-23)
+
+
+### Miscellaneous
+
+* Added all supported games to the quick switch menu (https://github.com/Jorixon/JASM/issues/210) Thanks [@jeffvli](https://github.com/jeffvli) ([afcd8a8](https://github.com/Jorixon/JASM/commit/afcd8a8ea850373477ed67394aed05d73e4832e4))
+
+
+### Code Refactoring
+
+* Limited the number of active tasks queued at the same time in ModUpdateAvailableChecker. This should improve performance when checking for mod updates with a large number of mods. ([#214](https://github.com/Jorixon/JASM/issues/214)) ([8364204](https://github.com/Jorixon/JASM/commit/8364204fd2fc873f8eb96c05584760325ac3bc1e))
+
 ## [2.12.1](https://github.com/Jorixon/JASM/compare/v2.12.0...v2.12.1) (2024-07-23)
 
 
