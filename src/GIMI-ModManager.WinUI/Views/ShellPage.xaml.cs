@@ -1,4 +1,4 @@
-﻿using Windows.System;
+using Windows.System;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -65,8 +65,8 @@ public sealed partial class ShellPage : Page
         ViewModel.GameService.Initialized += GameServiceOnInitialized;
 
 #if RELEASE
-// Hide debug menu in release mode
-DebugItem.Visibility = Visibility.Collapsed;
+        // Hide debug menu in release mode
+        DebugItem.Visibility = Visibility.Collapsed;
 
 #endif
     }
@@ -159,23 +159,20 @@ DebugItem.Visibility = Visibility.Collapsed;
 
         App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
         {
-            var selectedGame = await ViewModel.SelectedGameService.GetSelectedGameAsync();
-            if (selectedGame == SupportedGames.WuWa.ToString() || selectedGame == SupportedGames.ZZZ.ToString())
-                return;
-
             var notSelectedGame = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
 
-
-            var gameInfo = await GameService.GetGameInfoAsync(notSelectedGame.First());
-
-            if (gameInfo is null)
-                return;
-
-
+            for (var i = notSelectedGame.Length - 1; i >= 0; i--)
+            {
             var content = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
+
+                var game = notSelectedGame[i];
+                var gameInfo = await GameService.GetGameInfoAsync(game);
+
+                if (gameInfo is null)
+                    return;
 
             content.Children.Add(new Grid()
             {
@@ -202,7 +199,7 @@ DebugItem.Visibility = Visibility.Collapsed;
             {
                 Name = "SwitchGameButton",
                 Content = content,
-                Tag = "SwitchGame"
+                    Tag = $"{gameInfo.GameShortName}"
             };
 
             NavigationViewControl.FooterMenuItems.Insert(0, navigationItem);
@@ -214,6 +211,7 @@ DebugItem.Visibility = Visibility.Collapsed;
             };
 
             ToolTipService.SetToolTip(navigationItem, toolTip);
+            }
         });
     }
 
