@@ -381,6 +381,14 @@
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wolf%27s_Gravestone.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wolf-Fang.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Xiphos%27_Moonlight.png" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\categories.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\characters.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\elements.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\npcs.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\objects.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\regions.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\weaponClasses.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\weapons.json" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\characters.json" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\elements.json" />
 		<Content Remove="Assets\Games\Genshin\npcs.json" />

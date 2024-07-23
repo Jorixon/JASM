@@ -1,98 +1,32 @@
-﻿using GIMI_ModManager.Core.Entities.Genshin;
+﻿using System.Reflection;
 using GIMI_ModManager.Core.GamesService.JsonModels;
+using GIMI_ModManager.Core.Helpers;
 using Newtonsoft.Json;
 
-const string JsonPath = "..\\..\\..\\..\\characters.json";
-const string JsonNewPath = "..\\..\\..\\..\\charactersNew.json";
+var toolDir = new DirectoryInfo(Assembly.GetEntryAssembly()!.Location + @"..\..\..\..\..\..\");
 
-var characters = JsonConvert.DeserializeObject<GenshinCharacter[]>(File.ReadAllText(JsonPath))!.ToList();
+Console.WriteLine(toolDir.FullName);
 
-CheckDisplayNameIsUnique(characters);
-CheckIdsAreUnique(characters);
+var jsonPath = $"{toolDir.FullName}\\characters.json";
+var jsonNewPath = $"{toolDir.FullName}\\charactersNew.json";
 
 
-var newFormat = new List<JsonCharacter>();
-foreach (var genshinCharacter in characters)
+var json = File.ReadAllText(jsonPath);
+
+var characters = JsonConvert.DeserializeObject<List<JsonOverride>>(json);
+
+
+characters!.ForEach(c =>
 {
-    var characterJson = new JsonCharacter()
+    c.Image = null;
+    c.Keys = null;
+    (c.InGameSkins ?? []).ForEach(s => { s.Image = null; });
+
+    if (c.InGameSkins != null && c.InGameSkins.Count == 0)
     {
-        Id = genshinCharacter.Id,
-        DisplayName = genshinCharacter.DisplayName,
-        InternalName = genshinCharacter.DisplayName,
-        Rarity = genshinCharacter.Rarity,
-        ModFilesName = genshinCharacter.InGameSkins.First(skin => skin.DefaultSkin).Name,
-        ReleaseDate = genshinCharacter.ReleaseDate.ToString("yyyy-MM-ddTHH:mm:ss"),
-        Keys = genshinCharacter.Keys.ToArray(),
-        Image = genshinCharacter.ImageUri,
-        Element = genshinCharacter.Element.ToString(),
-        Class = genshinCharacter.Weapon.ToString(),
-        Region = genshinCharacter.Region.Select(r => r.ToString()).ToArray()
-    };
-
-    var skins = new List<JsonCharacterSkin>();
-
-    foreach (var skin in genshinCharacter.InGameSkins)
-    {
-        if (skin.DefaultSkin)
-            continue;
-
-        var skinJson = new JsonCharacterSkin()
-        {
-            ModFilesName = skin.Name,
-            DisplayName = skin.DisplayName,
-            InternalName = skin.DisplayName,
-            Image = skin.ImageUri
-        };
-
-        skins.Add(skinJson);
+        c.InGameSkins = null;
     }
-
-    characterJson.InGameSkins = skins.ToArray();
-
-
-    newFormat.Add(characterJson);
-}
+});
 
 
-var newJson = JsonConvert.SerializeObject(newFormat.OrderBy(ch => ch.DisplayName), Formatting.Indented);
-
-File.WriteAllText(JsonNewPath, newJson);
-
-Console.WriteLine();
-
-string ImageUri(string name, string fileType = "webp")
-{
-    return $"Character_{name}_Thumb.{fileType}";
-}
-
-
-void CheckIdsAreUnique(ICollection<GenshinCharacter> characters)
-{
-    var groupedIds = characters.GroupBy(ch => ch.Id).ToArray();
-    // check for duplicate ids
-    foreach (var g in groupedIds)
-        if (g.Count() > 1)
-            throw new InvalidOperationException($"Duplicate Id: {g.Key}");
-}
-
-void CheckDisplayNameIsUnique(ICollection<GenshinCharacter> characters)
-{
-    var groupedIds = characters.GroupBy(ch => ch.DisplayName).ToArray();
-    // check for duplicate ids
-    foreach (var g in groupedIds)
-        if (g.Count() > 1)
-            throw new InvalidOperationException($"Duplicate DisplayName: {g.Key}");
-}
-
-void CheckInGameSkinsAreValid(ICollection<GenshinCharacter> characters)
-{
-    foreach (var genshinCharacter in characters)
-    {
-        if (!genshinCharacter.InGameSkins.Any(s => s.DefaultSkin))
-            throw new InvalidOperationException($"No Default skin found for character {genshinCharacter.DisplayName}");
-
-        if (genshinCharacter.InGameSkins.Count(skin => skin.DefaultSkin) > 1)
-            throw new InvalidOperationException(
-                $"Multiple Default skins found for character {genshinCharacter.DisplayName}");
-    }
-}
+File.WriteAllText(jsonNewPath, JsonConvert.SerializeObject(characters, Formatting.Indented));

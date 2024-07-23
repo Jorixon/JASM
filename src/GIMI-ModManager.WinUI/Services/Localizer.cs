@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
 using WinUI3Localizer;
 
@@ -108,18 +109,25 @@ public class Localizer : ILanguageLocalizer
         }
     }
 
-    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null)
+    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null,
+        bool? useUidAsDefaultValue = null)
     {
+        if (useUidAsDefaultValue == true && !defaultValue.IsNullOrEmpty())
+            throw new ArgumentException(
+                $"{nameof(defaultValue)} and {nameof(useUidAsDefaultValue)} cannot be set at the same time");
+
         try
         {
             var text = _localizer.GetLocalizedString(uid);
             if (string.IsNullOrWhiteSpace(text))
-                return defaultValue;
+                return useUidAsDefaultValue == true ? uid : defaultValue;
+
+
             return text;
         }
         catch (Exception)
         {
-            return defaultValue;
+            return useUidAsDefaultValue == true ? uid : defaultValue;
         }
     }
 }

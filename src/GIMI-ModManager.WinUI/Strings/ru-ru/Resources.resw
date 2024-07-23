@@ -120,6 +120,9 @@
   <data name="Error" xml:space="preserve">
     <value>Ошибка</value>
   </data>
+  <data name="Overview" xml:space="preserve">
+    <value>обзор</value>
+  </data>
   <data name="Running" xml:space="preserve">
     <value>Запущен</value>
   </data>
