@@ -49,7 +49,7 @@ public sealed class ApiGameBananaClient(
 
         var modPageApiUrl = GetModInfoUrl(modId);
 
-        var response = await SendRequest(modPageApiUrl, cancellationToken).ConfigureAwait(false);
+        using var response = await SendRequest(modPageApiUrl, cancellationToken).ConfigureAwait(false);
 
         _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
         await using var contentStream =
@@ -77,7 +77,7 @@ public sealed class ApiGameBananaClient(
 
         var requestUrl = GetModFilesInfoUrl(modId);
 
-        var response = await SendRequest(requestUrl, cancellationToken).ConfigureAwait(false);
+        using var response = await SendRequest(requestUrl, cancellationToken).ConfigureAwait(false);
 
         _logger.Debug("Got response from GameBanana: {response}", response.StatusCode);
         await using var contentStream =
@@ -114,7 +114,7 @@ public sealed class ApiGameBananaClient(
 
         var requestUrl = GetAltUrlForModInfo(modFileId);
 
-        var response = await SendRequest(requestUrl, cancellationToken).ConfigureAwait(false);
+        using var response = await SendRequest(requestUrl, cancellationToken).ConfigureAwait(false);
 
         var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
@@ -196,9 +196,15 @@ public sealed class ApiGameBananaClient(
         try
         {
             await Task.Delay(200, cancellationToken).ConfigureAwait(false);
+
+            // Use anonymous state object to avoid closure allocation
+            var state = new { url = downloadsApiUrl, httpClient = _httpClient };
+
+
             response = await _resiliencePipeline.ExecuteAsync(
-                    (ct) => new ValueTask<HttpResponseMessage>(_httpClient.GetAsync(downloadsApiUrl, ct)),
-                    cancellationToken)
+                    async (context, token) => await context.httpClient.GetAsync(context.url, token)
+                        .ConfigureAwait(false),
+                    state, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (RateLimiterRejectedException e)
@@ -218,6 +224,8 @@ public sealed class ApiGameBananaClient(
             throw new HttpRequestException(
                 $"Failed to get mod info from GameBanana. Reason: {response?.ReasonPhrase ?? "Unknown"} | Url: {downloadsApiUrl}");
         }
+
+        _logger.Debug("Response received {0} | {1}", DateTime.Now, downloadsApiUrl);
 
         return response;
     }
