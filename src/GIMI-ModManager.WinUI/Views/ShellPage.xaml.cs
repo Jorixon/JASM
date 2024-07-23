@@ -343,17 +343,12 @@ public sealed partial class ShellPage : Page
         e.Handled = true;
         await Task.Delay(200);
 
-        if (sender is FrameworkElement element)
+        if (sender is FrameworkElement { Tag: string gameName })
         {
-            var elementTag = element.Tag;
-
-            if (elementTag.GetType() == typeof(string))
-            {
-                var gameName = (string) elementTag;
-                await App.GetService<LifeCycleService>().RestartAsync(notifyOnError: true,
+            await App.GetService<LifeCycleService>()
+                .RestartAsync(notifyOnError: true,
                     postShutdownLogic: () => ViewModel.SelectedGameService.SetSelectedGame(gameName))
                     .ConfigureAwait(false);
-            }
         }
     }
 }
