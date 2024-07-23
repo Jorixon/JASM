@@ -1,0 +1,730 @@
+[
+  {
+    "InternalName": "Others_Weapons",
+    "DisplayName": "Другие Оружия"
+  },
+  {
+    "InternalName": "The Catch",
+    "DisplayName": "Улов"
+  },
+  {
+    "InternalName": "A Thousand Floating Dreams",
+    "DisplayName": "Сновидения тысячи ночей"
+  },
+  {
+    "InternalName": "Akuoumaru",
+    "DisplayName": "Акуомару"
+  },
+  {
+    "InternalName": "Alley Hunter",
+    "DisplayName": "Охотник во тьме"
+  },
+  {
+    "InternalName": "Amenoma Kageuchi",
+    "DisplayName": "Амэнома Кагэути"
+  },
+  {
+    "InternalName": "Amos' Bow",
+    "DisplayName": "Лук Амоса"
+  },
+  {
+    "InternalName": "Apprentice's Notes",
+    "DisplayName": "Записи ученика"
+  },
+  {
+    "InternalName": "Aqua Simulacra",
+    "DisplayName": "Аква симулякрум"
+  },
+  {
+    "InternalName": "Aquila Favonia",
+    "DisplayName": "Меч Сокола"
+  },
+  {
+    "InternalName": "Ballad of the Boundless Blue",
+    "DisplayName": "Песнь необъятной лазури"
+  },
+  {
+    "InternalName": "Ballad of the Fjords",
+    "DisplayName": "Баллада фьордов"
+  },
+  {
+    "InternalName": "Beacon of the Reed Sea",
+    "DisplayName": "Маяк тростникового моря"
+  },
+  {
+    "InternalName": "Beginner's Protector",
+    "DisplayName": "Копьё новичка"
+  },
+  {
+    "InternalName": "Black Tassel",
+    "DisplayName": "Чёрный меч"
+  },
+  {
+    "InternalName": "Blackcliff Agate",
+    "DisplayName": "Черногорский агат"
+  },
+  {
+    "InternalName": "Blackcliff Longsword",
+    "DisplayName": "Черногорский длинный меч"
+  },
+  {
+    "InternalName": "Blackcliff Pole",
+    "DisplayName": "Черногорская пика"
+  },
+  {
+    "InternalName": "Blackcliff Slasher",
+    "DisplayName": "Черногорская бритва"
+  },
+  {
+    "InternalName": "Blackcliff Warbow",
+    "DisplayName": "Черногорский боевой лук"
+  },
+  {
+    "InternalName": "Bloodtainted Greatsword",
+    "DisplayName": "Меч драконьей крови"
+  },
+  {
+    "InternalName": "Calamity Queller",
+    "DisplayName": "Усмиритель бед"
+  },
+  {
+    "InternalName": "Cashflow Supervision",
+    "DisplayName": "Казначейский надзор"
+  },
+  {
+    "InternalName": "Cinnabar Spindle",
+    "DisplayName": "Киноварное веретено"
+  },
+  {
+    "InternalName": "Compound Bow",
+    "DisplayName": "Составной лук"
+  },
+  {
+    "InternalName": "Cool Steel",
+    "DisplayName": "Холодное лезвие"
+  },
+  {
+    "InternalName": "Crescent Pike",
+    "DisplayName": "Пика полумесяца"
+  },
+  {
+    "InternalName": "Dark Iron Sword",
+    "DisplayName": "Тёмный железный меч"
+  },
+  {
+    "InternalName": "Deathmatch",
+    "DisplayName": "Смертельный бой"
+  },
+  {
+    "InternalName": "Debate Club",
+    "DisplayName": "Дубина переговоров"
+  },
+  {
+    "InternalName": "Dodoco Tales",
+    "DisplayName": "Истории Додоко"
+  },
+  {
+    "InternalName": "Dragon's Bane",
+    "DisplayName": "Гроза драконов"
+  },
+  {
+    "InternalName": "Dragonspine Spear",
+    "DisplayName": "Копьё Драконьего хребта"
+  },
+  {
+    "InternalName": "Dull Blade",
+    "DisplayName": "Тупой меч"
+  },
+  {
+    "InternalName": "Elegy for the End",
+    "DisplayName": "Элегия погибели"
+  },
+  {
+    "InternalName": "Emerald Orb",
+    "DisplayName": "Изумрудный шар"
+  },
+  {
+    "InternalName": "End of the Line",
+    "DisplayName": "Иссушитель"
+  },
+  {
+    "InternalName": "Engulfing Lightning",
+    "DisplayName": "Сияющая жатва"
+  },
+  {
+    "InternalName": "Everlasting Moonglow",
+    "DisplayName": "Вечное лунное сияние"
+  },
+  {
+    "InternalName": "Eye of Perception",
+    "DisplayName": "Око сознания"
+  },
+  {
+    "InternalName": "Fading Twilight",
+    "DisplayName": "Гаснущие сумерки"
+  },
+  {
+    "InternalName": "Favonius Codex",
+    "DisplayName": "Кодекс Фавония"
+  },
+  {
+    "InternalName": "Favonius Greatsword",
+    "DisplayName": "Двуручный меч Фавония"
+  },
+  {
+    "InternalName": "Favonius Lance",
+    "DisplayName": "Копьё Фавония"
+  },
+  {
+    "InternalName": "Favonius Sword",
+    "DisplayName": "Меч Фавония"
+  },
+  {
+    "InternalName": "Favonius Warbow",
+    "DisplayName": "Боевой лук Фавония"
+  },
+  {
+    "InternalName": "Ferrous Shadow",
+    "DisplayName": "Металлическая тень"
+  },
+  {
+    "InternalName": "Festering Desire",
+    "DisplayName": "Осквернённое желание"
+  },
+  {
+    "InternalName": "Fillet Blade",
+    "DisplayName": "Филейный нож"
+  },
+  {
+    "InternalName": "Finale of the Deep",
+    "DisplayName": "Грандиозный финал глубин"
+  },
+  {
+    "InternalName": "Fleuve Cendre Ferryman",
+    "DisplayName": "Перевозчик Флёв Сандр"
+  },
+  {
+    "InternalName": "Flowing Purity",
+    "DisplayName": "Сверкание чистых вод"
+  },
+  {
+    "InternalName": "Forest Regalia",
+    "DisplayName": "Регалия леса"
+  },
+  {
+    "InternalName": "Freedom-Sworn",
+    "DisplayName": "Клятва свободы"
+  },
+  {
+    "InternalName": "Frostbearer",
+    "DisplayName": "Плод вечной мерзлоты"
+  },
+  {
+    "InternalName": "Fruit of Fulfillment",
+    "DisplayName": "Плод восполнения"
+  },
+  {
+    "InternalName": "Hakushin Ring",
+    "DisplayName": "Кольцо Хакусин"
+  },
+  {
+    "InternalName": "Halberd",
+    "DisplayName": "Алебарда Миллелита"
+  },
+  {
+    "InternalName": "Hamayumi",
+    "DisplayName": "Хамаюми"
+  },
+  {
+    "InternalName": "Haran Geppaku Futsu",
+    "DisplayName": "Харан гэппаку фуцу"
+  },
+  {
+    "InternalName": "Harbinger of Dawn",
+    "DisplayName": "Предвестник зари"
+  },
+  {
+    "InternalName": "Hunter's Bow",
+    "DisplayName": "Лук охотника"
+  },
+  {
+    "InternalName": "Hunter's Path",
+    "DisplayName": "Охотничья тропа"
+  },
+  {
+    "InternalName": "Iron Point",
+    "DisplayName": "Железный наконечник"
+  },
+  {
+    "InternalName": "Iron Sting",
+    "DisplayName": "Стальное жало"
+  },
+  {
+    "InternalName": "Jadefall's Splendor",
+    "DisplayName": "Великолепие лазурного свода"
+  },
+  {
+    "InternalName": "Kagotsurube Isshin",
+    "DisplayName": "Кагоцурубэ Иссин"
+  },
+  {
+    "InternalName": "Katsuragikiri Nagamasa",
+    "DisplayName": "Кацурагикири Нагамаса"
+  },
+  {
+    "InternalName": "Kagura's Verity",
+    "DisplayName": "Истина кагура"
+  },
+  {
+    "InternalName": "Key of Khaj-Nisut",
+    "DisplayName": "Ключ Хадж-нисут"
+  },
+  {
+    "InternalName": "King's Squire",
+    "DisplayName": "Приближённый короля"
+  },
+  {
+    "InternalName": "Kitain Cross Spear",
+    "DisplayName": "Крест-копьё Китаин"
+  },
+  {
+    "InternalName": "Light of Foliar Incision",
+    "DisplayName": "Свет лиственного разреза"
+  },
+  {
+    "InternalName": "Lion's Roar",
+    "DisplayName": "Драконий рык"
+  },
+  {
+    "InternalName": "Lithic Blade",
+    "DisplayName": "Каменный меч"
+  },
+  {
+    "InternalName": "Lithic Spear",
+    "DisplayName": "Каменное копьё"
+  },
+  {
+    "InternalName": "Lost Prayer to the Sacred Winds",
+    "DisplayName": "Молитва святым ветрам"
+  },
+  {
+    "InternalName": "Luxurious Sea-Lord",
+    "DisplayName": "Благодатный владыка вод"
+  },
+  {
+    "InternalName": "Magic Guide",
+    "DisplayName": "Руководство по магии"
+  },
+  {
+    "InternalName": "Mailed Flower",
+    "DisplayName": "Двуручный меч Фавония"
+  },
+  {
+    "InternalName": "Makhaira Aquamarine",
+    "DisplayName": "Аквамарин Махайры"
+  },
+  {
+    "InternalName": "Mappa Mare",
+    "DisplayName": "Морской атлас"
+  },
+  {
+    "InternalName": "Memory of Dust",
+    "DisplayName": "Память о пыли"
+  },
+  {
+    "InternalName": "Messenger",
+    "DisplayName": "Посыльный"
+  },
+  {
+    "InternalName": "Missive Windspear",
+    "DisplayName": "Копьё послания ветров"
+  },
+  {
+    "InternalName": "Mistsplitter Reforged",
+    "DisplayName": "Рассекающий туман"
+  },
+  {
+    "InternalName": "Mitternachts Waltz",
+    "DisplayName": "Вальс Нирваны Ночи"
+  },
+  {
+    "InternalName": "Moonpiercer",
+    "DisplayName": "Пронзающий луну"
+  },
+  {
+    "InternalName": "Mouun's Moon",
+    "DisplayName": "Луна Моун"
+  },
+  {
+    "InternalName": "Oathsworn Eye",
+    "DisplayName": "Око клятвы"
+  },
+  {
+    "InternalName": "Old Merc's Pal",
+    "DisplayName": "Лучший друг наёмника"
+  },
+  {
+    "InternalName": "Otherworldly Story",
+    "DisplayName": "Потусторонняя история"
+  },
+  {
+    "InternalName": "Pocket Grimoire",
+    "DisplayName": "Карманный гримуар"
+  },
+  {
+    "InternalName": "Polar Star",
+    "DisplayName": "Полярная звезда"
+  },
+  {
+    "InternalName": "Portable Power Saw",
+    "DisplayName": "Переносная мотопила"
+  },
+  {
+    "InternalName": "Predator",
+    "DisplayName": "Хищник"
+  },
+  {
+    "InternalName": "Primordial Jade Cutter",
+    "DisplayName": "Драгоценный омут"
+  },
+  {
+    "InternalName": "Primordial Jade Winged-Spear",
+    "DisplayName": "Нефритовый коршун"
+  },
+  {
+    "InternalName": "Prospector's Drill",
+    "DisplayName": "Бур рудоискателя"
+  },
+  {
+    "InternalName": "Prototype Amber",
+    "DisplayName": "Прототип: Янтарь"
+  },
+  {
+    "InternalName": "Prototype Archaic",
+    "DisplayName": "Прототип: Архаичный"
+  },
+  {
+    "InternalName": "Prototype Crescent",
+    "DisplayName": "Прототип: Полумесяц"
+  },
+  {
+    "InternalName": "Prototype Rancour",
+    "DisplayName": "Прототип: Злоба"
+  },
+  {
+    "InternalName": "Prototype Starglitter",
+    "DisplayName": "Прототип: Звёздный блеск"
+  },
+  {
+    "InternalName": "Rainslasher",
+    "DisplayName": "Дождерез"
+  },
+  {
+    "InternalName": "Range Gauge",
+    "DisplayName": "Дальномер"
+  },
+  {
+    "InternalName": "Raven Bow",
+    "DisplayName": "Лук ворона"
+  },
+  {
+    "InternalName": "Recurve Bow",
+    "DisplayName": "Изогнутый лук"
+  },
+  {
+    "InternalName": "Redhorn Stonethresher",
+    "DisplayName": "Краснорогий камнеруб"
+  },
+  {
+    "InternalName": "Rightful Reward",
+    "DisplayName": "Справедливая награда"
+  },
+  {
+    "InternalName": "Royal Bow",
+    "DisplayName": "Королевский лук"
+  },
+  {
+    "InternalName": "Royal Greatsword",
+    "DisplayName": "Королевский двуручный меч"
+  },
+  {
+    "InternalName": "Royal Grimoire",
+    "DisplayName": "Цветок в латах"
+  },
+  {
+    "InternalName": "Royal Longsword",
+    "DisplayName": "Меч аристократов"
+  },
+  {
+    "InternalName": "Royal Spear",
+    "DisplayName": "Королевское копьё"
+  },
+  {
+    "InternalName": "Rust",
+    "DisplayName": "Ржавый лук"
+  },
+  {
+    "InternalName": "Sacrificial Bow",
+    "DisplayName": "Церемониальный лук"
+  },
+  {
+    "InternalName": "Sacrificial Fragments",
+    "DisplayName": "Церемониальные мемуары"
+  },
+  {
+    "InternalName": "Sacrificial Greatsword",
+    "DisplayName": "Церемониальный двуручный меч"
+  },
+  {
+    "InternalName": "Sacrificial Jade",
+    "DisplayName": "Жертвенный нефрит"
+  },
+  {
+    "InternalName": "Sacrificial Sword",
+    "DisplayName": "Церемониальный меч"
+  },
+  {
+    "InternalName": "Sapwood Blade",
+    "DisplayName": "Деревянный клинок"
+  },
+  {
+    "InternalName": "Scion of the Blazing Sun",
+    "DisplayName": "Наследник слепящего солнца"
+  },
+  {
+    "InternalName": "Seasoned Hunter's Bow",
+    "DisplayName": "Лук опытного охотника"
+  },
+  {
+    "InternalName": "Serpent Spine",
+    "DisplayName": "Меч драконьей кости"
+  },
+  {
+    "InternalName": "Sharpshooter's Oath",
+    "DisplayName": "Клятва стрелка"
+  },
+  {
+    "InternalName": "Silver Sword",
+    "DisplayName": "Серебряный меч"
+  },
+  {
+    "InternalName": "Skyrider Greatsword",
+    "DisplayName": "Большой меч небесного всадника"
+  },
+  {
+    "InternalName": "Skyrider Sword",
+    "DisplayName": "Меч небесного всадника"
+  },
+  {
+    "InternalName": "Skyward Atlas",
+    "DisplayName": "Небесный атлас"
+  },
+  {
+    "InternalName": "Skyward Blade",
+    "DisplayName": "Небесный меч"
+  },
+  {
+    "InternalName": "Skyward Harp",
+    "DisplayName": "Небесное крыло"
+  },
+  {
+    "InternalName": "Skyward Pride",
+    "DisplayName": "Небесное величие"
+  },
+  {
+    "InternalName": "Skyward Spine",
+    "DisplayName": "Небесная ось"
+  },
+  {
+    "InternalName": "Slingshot",
+    "DisplayName": "Рогатка"
+  },
+  {
+    "InternalName": "Snow-Tombed Starsilver",
+    "DisplayName": "Заснеженное звёздное серебро"
+  },
+  {
+    "InternalName": "Solar Pearl",
+    "DisplayName": "Солнечная жемчужина"
+  },
+  {
+    "InternalName": "Song of Broken Pines",
+    "DisplayName": "Песнь разбитых сосен"
+  },
+  {
+    "InternalName": "Song of Stillness",
+    "DisplayName": "Мелодия покоя"
+  },
+  {
+    "InternalName": "Splendor of Tranquil Waters",
+    "DisplayName": "Блеск тихих вод"
+  },
+  {
+    "InternalName": "Staff of Homa",
+    "DisplayName": "Посох Хомы"
+  },
+  {
+    "InternalName": "Staff of the Scarlet Sands",
+    "DisplayName": "Посох алых песков"
+  },
+  {
+    "InternalName": "Summit Shaper",
+    "DisplayName": "Кромсатель пиков"
+  },
+  {
+    "InternalName": "Sword of Descension",
+    "DisplayName": "Меч нисхождения"
+  },
+  {
+    "InternalName": "Sword of Narzissenkreuz",
+    "DisplayName": "Меч Нарциссенкрейца"
+  },
+  {
+    "InternalName": "Talking Stick",
+    "DisplayName": "Говорящая палица"
+  },
+  {
+    "InternalName": "The Alley Flash",
+    "DisplayName": "Вспышка во тьме"
+  },
+  {
+    "InternalName": "The Bell",
+    "DisplayName": "Меч-колокол"
+  },
+  {
+    "InternalName": "The Black Sword",
+    "DisplayName": "Чёрный меч"
+  },
+  {
+    "InternalName": "The Dockhand's Assistant",
+    "DisplayName": "Верфь"
+  },
+  {
+    "InternalName": "The First Great Magic",
+    "DisplayName": "Первый великий фокус"
+  },
+  {
+    "InternalName": "The Flute",
+    "DisplayName": "Меч-флейта"
+  },
+  {
+    "InternalName": "The Stringless",
+    "DisplayName": "Бесструнный"
+  },
+  {
+    "InternalName": "The Unforged",
+    "DisplayName": "Некованый"
+  },
+  {
+    "InternalName": "The Viridescent Hunt",
+    "DisplayName": "Зелёный лук"
+  },
+  {
+    "InternalName": "The Widsith",
+    "DisplayName": "Песнь странника"
+  },
+  {
+    "InternalName": "Thrilling Tales of Dragon Slayers",
+    "DisplayName": "Эпос о драконоборцах"
+  },
+  {
+    "InternalName": "Thundering Pulse",
+    "DisplayName": "Громовой пульс"
+  },
+  {
+    "InternalName": "Tidal Shadow",
+    "DisplayName": "Тень волны"
+  },
+  {
+    "InternalName": "Tome of the Eternal Flow",
+    "DisplayName": "Обряд вечного течения"
+  },
+  {
+    "InternalName": "Toukabou Shigure",
+    "DisplayName": "Токабо сигурэ"
+  },
+  {
+    "InternalName": "Traveler's Handy Sword",
+    "DisplayName": "Меч путешественника"
+  },
+  {
+    "InternalName": "Tulaytullah's Remembrance",
+    "DisplayName": "Воспоминания Тулайтуллы"
+  },
+  {
+    "InternalName": "Twin Nephrite",
+    "DisplayName": "Парный нефрит"
+  },
+  {
+    "InternalName": "Vortex Vanquisher",
+    "DisplayName": "Покоритель вихря"
+  },
+  {
+    "InternalName": "Wandering Evenstar",
+    "DisplayName": "Скитающаяся звезда"
+  },
+  {
+    "InternalName": "Waster Greatsword",
+    "DisplayName": "Двуручный меч богатыря"
+  },
+  {
+    "InternalName": "Wavebreaker's Fin",
+    "DisplayName": "Режущий волны плавник"
+  },
+  {
+    "InternalName": "White Iron Greatsword",
+    "DisplayName": "Меч из белого железа"
+  },
+  {
+    "InternalName": "White Tassel",
+    "DisplayName": "Белая кисть"
+  },
+  {
+    "InternalName": "Whiteblind",
+    "DisplayName": "Белая тень"
+  },
+  {
+    "InternalName": "Windblume Ode",
+    "DisplayName": "Ода анемонии"
+  },
+  {
+    "InternalName": "Wine and Song",
+    "DisplayName": "Вино и песни"
+  },
+  {
+    "InternalName": "Wolf's Gravestone",
+    "DisplayName": "Волчья погибель"
+  },
+  {
+    "InternalName": "Wolf-Fang",
+    "DisplayName": "Волчий клык"
+  },
+  {
+    "InternalName": "Xiphos' Moonlight",
+    "DisplayName": "Лунное сияние ксифоса"
+  },
+  {
+    "InternalName": "Verdict",
+    "DisplayName": "Вердикт"
+  },
+  {
+    "InternalName": "Crimson Moon's Semblance",
+    "DisplayName": "Очертания алой луны"
+  },
+  {
+    "InternalName": "Absolution",
+    "DisplayName": "Отпущение грехов"
+  },
+  {
+    "InternalName": "Silvershower Heartstrings",
+    "DisplayName": "Сердечные струны дождя"
+  },
+  {
+    "InternalName": "Uraku Misugiri",
+    "DisplayName": "Ураку мисугири"
+  },
+  {
+    "InternalName": "Crane's Echoing Call",
+    "DisplayName": "Звонкий клич журавля"
+  }
+]

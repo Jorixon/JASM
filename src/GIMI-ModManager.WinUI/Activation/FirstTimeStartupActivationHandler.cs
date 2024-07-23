@@ -1,6 +1,5 @@
 ﻿using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
-using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
@@ -88,6 +87,7 @@ public class FirstTimeStartupActivationHandler : ActivationHandler<LaunchActivat
         });
 
 
-        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, Category.CreateForCharacter(), true);
+        _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!,
+            _gameService.GetCategories().First(c => c.InternalNameEquals("Character")), true);
     }
 }

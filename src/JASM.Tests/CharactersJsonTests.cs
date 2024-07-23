@@ -116,7 +116,8 @@ public class MockLocalizer : ILanguageLocalizer
         return uid;
     }
 
-    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null)
+    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null,
+        bool? useUidAsDefaultValue = null)
     {
         return uid;
     }
