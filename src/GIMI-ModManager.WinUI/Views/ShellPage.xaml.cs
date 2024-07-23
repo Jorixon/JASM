@@ -1,4 +1,4 @@
-using Windows.System;
+﻿using Windows.System;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -163,10 +163,10 @@ public sealed partial class ShellPage : Page
 
             for (var i = notSelectedGame.Length - 1; i >= 0; i--)
             {
-            var content = new StackPanel()
-            {
-                Orientation = Orientation.Horizontal
-            };
+                var content = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal
+                };
 
                 var game = notSelectedGame[i];
                 var gameInfo = await GameService.GetGameInfoAsync(game);
@@ -174,43 +174,43 @@ public sealed partial class ShellPage : Page
                 if (gameInfo is null)
                     return;
 
-            content.Children.Add(new Grid()
-            {
-                Width = 20,
-                Height = 20,
-                CornerRadius = new CornerRadius(8),
-                Children =
+                content.Children.Add(new Grid()
+                {
+                    Width = 20,
+                    Height = 20,
+                    CornerRadius = new CornerRadius(8),
+                    Children =
                 {
                     new Image()
                     {
                         Source = new BitmapImage(new Uri(gameInfo.GameIcon)) { DecodePixelWidth = 20 }
                     }
                 }
-            });
+                });
 
-            content.Children.Add(new TextBlock()
-            {
-                Text = gameInfo.GameName,
-                Margin = new Thickness(16, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            });
+                content.Children.Add(new TextBlock()
+                {
+                    Text = gameInfo.GameName,
+                    Margin = new Thickness(16, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                });
 
-            var navigationItem = new NavigationViewItem()
-            {
-                Name = "SwitchGameButton",
-                Content = content,
+                var navigationItem = new NavigationViewItem()
+                {
+                    Name = "SwitchGameButton",
+                    Content = content,
                     Tag = $"{gameInfo.GameShortName}"
-            };
+                };
 
-            NavigationViewControl.FooterMenuItems.Insert(0, navigationItem);
-            navigationItem.DoubleTapped += SwitchGameButtonOnDoubleTapped;
+                NavigationViewControl.FooterMenuItems.Insert(0, navigationItem);
+                navigationItem.DoubleTapped += SwitchGameButtonOnDoubleTapped;
 
-            var toolTip = new ToolTip
-            {
-                Content = $"Double click to switch to {gameInfo.GameName}"
-            };
+                var toolTip = new ToolTip
+                {
+                    Content = $"Double click to switch to {gameInfo.GameName}"
+                };
 
-            ToolTipService.SetToolTip(navigationItem, toolTip);
+                ToolTipService.SetToolTip(navigationItem, toolTip);
             }
         });
     }
@@ -343,9 +343,18 @@ public sealed partial class ShellPage : Page
             return;
         e.Handled = true;
         await Task.Delay(200);
-        var game = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
-        await App.GetService<LifeCycleService>().RestartAsync(notifyOnError: true,
-                postShutdownLogic: () => ViewModel.SelectedGameService.SetSelectedGame(game.First().ToString()))
-            .ConfigureAwait(false);
+
+        if (sender is FrameworkElement element)
+        {
+            var elementTag = element.Tag;
+
+            if (elementTag.GetType() == typeof(string))
+            {
+                var gameName = (string) elementTag;
+                await App.GetService<LifeCycleService>().RestartAsync(notifyOnError: true,
+                    postShutdownLogic: () => ViewModel.SelectedGameService.SetSelectedGame(gameName))
+                    .ConfigureAwait(false);
+            }
+        }
     }
 }
