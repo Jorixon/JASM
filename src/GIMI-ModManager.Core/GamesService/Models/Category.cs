@@ -37,7 +37,7 @@ public class Category : ICategory
         return InternalName.Equals(other.InternalName);
     }
 
-    public static ICategory CreateForCharacter()
+    internal static ICategory CreateForCharacter()
     {
         var internalName = new InternalName("Character");
 

@@ -1,0 +1,30 @@
+[
+	{
+		"InternalName": "Pyro",
+		"DisplayName": "Пиро"
+	},
+	{
+		"InternalName": "Hydro",
+		"DisplayName": "Гидро"
+	},
+	{
+		"InternalName": "Anemo",
+		"DisplayName": "Анэмо"
+	},
+	{
+		"InternalName": "Electro",
+		"DisplayName": "Электро"
+	},
+	{
+		"InternalName": "Dendro",
+		"DisplayName": "Дендро"
+	},
+	{
+		"InternalName": "Cryo",
+		"DisplayName": "Крио"
+	},
+	{
+		"InternalName": "Geo",
+		"DisplayName": "Гео"
+	}
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "InternalName": "Others_NPC",
+    "DisplayName": "Другие НПС"
+  },
+  {
+    "InternalName": "Katheryne",
+    "DisplayName": "Катерина"
+  },
+  {
+    "InternalName": "Hilichurl",
+    "DisplayName": "Хиличурл"
+  },
+  {
+    "InternalName": "Slimes",
+    "DisplayName": "Слайм"
+  },
+  {
+    "InternalName": "Fungus",
+    "DisplayName": "Фунгус"
+  },
+  {
+    "InternalName": "Treasure Hoarders",
+    "DisplayName": "Похитители Сокровищ"
+  },
+  {
+    "InternalName": "Fatui",
+    "DisplayName": "Фатуи"
+  },
+  {
+    "InternalName": "Ruin Machines",
+    "DisplayName": "Руинный Охотник"
+  },
+  {
+    "InternalName": "Skirk",
+    "DisplayName": "Скирк"
+  },
+  {
+    "InternalName": "Sorush",
+    "DisplayName": "Соруш"
+  },
+  {
+    "InternalName": "Liloupar",
+    "DisplayName": "Лилупар"
+  },
+  {
+    "InternalName": "Mikoto",
+    "DisplayName": "Микото Наруками"
+  },
+  {
+    "InternalName": "Signora",
+    "DisplayName": "Синьёра"
+  }
+]
