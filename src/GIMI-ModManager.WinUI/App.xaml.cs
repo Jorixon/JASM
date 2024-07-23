@@ -166,8 +166,8 @@ public partial class App : Application
                 {
                     var limiter = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions()
                     {
-                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                        QueueLimit = 0,
+                        QueueProcessingOrder = QueueProcessingOrder.NewestFirst,
+                        QueueLimit = 20,
                         TokenLimit = 5,
                         AutoReplenishment = true,
 #if DEBUG

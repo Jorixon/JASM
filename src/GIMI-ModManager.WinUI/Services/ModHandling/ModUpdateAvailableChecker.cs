@@ -210,10 +210,11 @@ public sealed class ModUpdateAvailableChecker
 
     private async Task RunCheckerAsync(ModCheckOperation modCheckOperation, CancellationToken runningCancellationToken)
     {
-        if (!modCheckOperation.ModCheckRequest.ScheduledCheck && !modCheckOperation.ModsToCheck.Any())
+        if (!modCheckOperation.ModsToCheck.Any())
         {
-            _notificationManager.ShowNotification("No mods to check for updates",
-                $"None of the mods were valid, therefore no check has been performed", TimeSpan.FromSeconds(4));
+            if (!modCheckOperation.ModCheckRequest.ScheduledCheck)
+                _notificationManager.ShowNotification("No mods to check for updates",
+                    $"None of the mods were valid, therefore no check has been performed", TimeSpan.FromSeconds(4));
             return;
         }
 
@@ -275,40 +276,25 @@ public sealed class ModUpdateAvailableChecker
         var modEntries = modCheckOperation.ModsToCheck;
 
 
-        var tasks = new List<Task<ModsRetrievedResult>>();
+        var runningTasks = new List<Task<ModsRetrievedResult>>();
+        var queuedMods = new Queue<CharacterSkinEntry>(modEntries);
         var taskToMod = new Dictionary<Task<ModsRetrievedResult>, CharacterSkinEntry>();
-        foreach (var characterSkinEntry in modEntries)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
 
-            var modSettings = await characterSkinEntry.Mod.Settings
-                .ReadSettingsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            if (modSettings.ModUrl is null)
-                continue;
+        await DeQueueApiTasksAsync(modCheckOperation, queuedMods, runningTasks, taskToMod, cancellationToken)
+            .ConfigureAwait(false);
 
-            var ignoreCache = modCheckOperation.ModCheckRequest.IgnoreLastCheckedTime;
-
-            var fetchTask = Task.Run(
-                () => _gameBananaService.GetAvailableModFiles(characterSkinEntry.Id, ignoreCache: ignoreCache,
-                    cancellationToken),
-                cancellationToken);
-
-            tasks.Add(fetchTask);
-            taskToMod.Add(fetchTask, characterSkinEntry);
-        }
-
-        if (!tasks.Any())
+        if (runningTasks.Count == 0)
         {
             _logger.Debug("No mods to check for updates");
             return false;
         }
 
 
-        while (tasks.Any())
+        while (runningTasks.Count != 0)
         {
-            var finishedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
-            tasks.Remove(finishedTask);
+            var finishedTask = await Task.WhenAny(runningTasks).ConfigureAwait(false);
+            runningTasks.Remove(finishedTask);
             var characterSkinEntry = taskToMod[finishedTask];
             try
             {
@@ -327,10 +313,43 @@ public sealed class ModUpdateAvailableChecker
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            await DeQueueApiTasksAsync(modCheckOperation, queuedMods, runningTasks, taskToMod, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         modCheckOperation.RequestFinished();
         return true;
+    }
+
+    private async Task DeQueueApiTasksAsync(ModCheckOperation modCheckOperation,
+        Queue<CharacterSkinEntry> queuedMods, List<Task<ModsRetrievedResult>> runningTasks,
+        Dictionary<Task<ModsRetrievedResult>, CharacterSkinEntry> taskToMod, CancellationToken cancellationToken)
+    {
+        const int maxQueueSize = 20;
+
+        while (runningTasks.Count < maxQueueSize)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (queuedMods.Count == 0)
+                break;
+
+            var characterSkinEntry = queuedMods.Dequeue();
+
+            var modSettings = await characterSkinEntry.Mod.Settings
+                .ReadSettingsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            if (modSettings.ModUrl is null)
+                continue;
+
+            var ignoreCache = modCheckOperation.ModCheckRequest.IgnoreLastCheckedTime;
+
+            var fetchTask = _gameBananaService.GetAvailableModFiles(characterSkinEntry.Id, ignoreCache: ignoreCache,
+                cancellationToken);
+
+            runningTasks.Add(fetchTask);
+            taskToMod.Add(fetchTask, characterSkinEntry);
+        }
     }
 
     private Task AddModNotifications(CharacterSkinEntry characterSkinEntry, ModsRetrievedResult result)
