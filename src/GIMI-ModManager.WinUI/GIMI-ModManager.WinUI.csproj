@@ -446,6 +446,9 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Start_Game.webp" />
+		<Content Remove="Assets\Games\Honkai\Languages\ru-ru\categories.json" />
+		<Content Remove="Assets\Games\Honkai\Languages\ru-ru\characters.json" />
+		<Content Remove="Assets\Games\Honkai\Languages\ru-ru\elements.json" />
 		<Content Remove="Assets\Games\Honkai\npcs.json" />
 		<Content Remove="Assets\Games\Honkai\objects.json" />
 		<Content Remove="Assets\Games\Honkai\regions.json" />

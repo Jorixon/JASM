@@ -1,0 +1,34 @@
+[
+	{
+		"InternalName": "Adaptive",
+		"DisplayName": "Адаптивный"
+	},
+	{
+		"InternalName": "Imaginary",
+		"DisplayName": "Мнимый"
+	},
+	{
+		"InternalName": "Quantum",
+		"DisplayName": "Квантовый"
+	},
+	{
+		"InternalName": "Wind",
+		"DisplayName": "Ветряной"
+	},
+	{
+		"InternalName": "Lightning",
+		"DisplayName": "Электрический"
+	},
+	{
+		"InternalName": "Ice",
+		"DisplayName": "Ледяной"
+	},
+	{
+		"InternalName": "Fire",
+		"DisplayName": "Огненный"
+	},
+	{
+		"InternalName": "Physical",
+		"DisplayName": "Физический"
+	}
+]
