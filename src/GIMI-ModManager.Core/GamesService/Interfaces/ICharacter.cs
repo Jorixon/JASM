@@ -7,6 +7,9 @@ namespace GIMI_ModManager.Core.GamesService.Interfaces;
 /// </summary>
 public interface ICharacter : IRarity, IDateSupport, IModdableObject, IEquatable<ICharacter>
 {
+    /// <summary>
+    /// Unmodified version of the character.
+    /// </summary>
     [Newtonsoft.Json.JsonIgnore]
     [JsonIgnore]
     public ICharacter DefaultCharacter { get; }

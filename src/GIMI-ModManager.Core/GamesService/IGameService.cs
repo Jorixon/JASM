@@ -80,6 +80,9 @@ public class InitializationOptions
     public bool CharacterSkinsAsCharacters { get; set; }
 }
 
+/// <summary>
+/// Some ModdableObjects can be disabled by the user, this enum allows to filter them
+/// </summary>
 public enum GetOnly
 {
     Enabled,
@@ -124,27 +127,6 @@ public interface IImageSupport
 public interface IDateSupport
 {
     public DateTime? ReleaseDate { get; internal set; }
-}
-
-/// <summary>
-/// Base Interface that allows identification by internal name
-/// </summary>
-public interface INameable : IEquatable<INameable>
-{
-    /// <summary>
-    /// Is displayed to the user.
-    /// Can also be customized by user
-    /// </summary>
-    public string DisplayName { get; internal set; }
-
-    /// <summary>
-    /// Should not be changed. Is used to identify the object
-    /// </summary>
-    public InternalName InternalName { get; internal init; }
-
-    public bool InternalNameEquals(string? other) => InternalName.Equals(other);
-
-    public bool InternalNameEquals(INameable other) => InternalNameEquals(other.InternalName);
 }
 
 public interface IUi : IModdableObject
