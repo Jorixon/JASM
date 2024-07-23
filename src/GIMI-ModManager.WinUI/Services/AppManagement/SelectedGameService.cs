@@ -85,9 +85,9 @@ public class SelectedGameService
         return selectedGame switch
         {
             Genshin => [SupportedGames.Honkai, SupportedGames.WuWa, SupportedGames.ZZZ],
-            Honkai => [SupportedGames.Genshin, SupportedGames.Honkai, SupportedGames.ZZZ],
-            WuWa => [SupportedGames.Honkai, SupportedGames.Genshin, SupportedGames.ZZZ],
-            ZZZ => [SupportedGames.WuWa, SupportedGames.Honkai, SupportedGames.Genshin],
+            Honkai => [SupportedGames.Genshin, SupportedGames.WuWa, SupportedGames.ZZZ],
+            WuWa => [SupportedGames.Genshin, SupportedGames.Honkai, SupportedGames.ZZZ],
+            ZZZ => [SupportedGames.Genshin, SupportedGames.Honkai, SupportedGames.WuWa],
             _ => throw new ArgumentOutOfRangeException()
         };
     }
