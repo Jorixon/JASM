@@ -7,7 +7,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 public partial class CharacterGalleryViewModel
 {
     private bool CanOpenModFolder(ModGridItemVm? vm) =>
-        vm is not null && !IsNavigating && !IsBusy && !vm.FolderPath.IsNullOrEmpty();
+        vm is not null && !IsNavigating && !IsBusy && !vm.FolderPath.IsNullOrEmpty() && Directory.Exists(vm.FolderPath);
 
     [RelayCommand(CanExecute = nameof(CanOpenModFolder))]
     private async Task OpenModFolder(ModGridItemVm vm)
@@ -22,5 +22,16 @@ public partial class CharacterGalleryViewModel
     private async Task OpenModUrl(ModGridItemVm vm)
     {
         await Launcher.LaunchUriAsync(vm.ModUrl);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenModFolder))]
+    private async Task DeleteMod(ModGridItemVm vm)
+    {
+        if (this._modList is null)
+        {
+            return;
+        }
+        this._modList.DeleteModBySkinEntryId(vm.Id);
+        await this.ReloadModsAsync();
     }
 }

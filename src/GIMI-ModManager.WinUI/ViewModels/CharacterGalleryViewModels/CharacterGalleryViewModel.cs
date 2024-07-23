@@ -70,7 +70,8 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ToggleViewCommand), nameof(ToggleModCommand),
         nameof(ToggleSingleSelectionCommand), nameof(SetHeightWidthCommand), nameof(OpenModFolderCommand),
-        nameof(OpenModUrlCommand), nameof(NavigateToModObjectCommand), nameof(ToggleNavPaneCommand))]
+        nameof(OpenModUrlCommand), nameof(NavigateToModObjectCommand), nameof(ToggleNavPaneCommand),
+        nameof(DeleteModCommand))]
     private bool _isBusy;
 
     private bool _isNavigating;
@@ -338,7 +339,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
             modModel.SetKeySwaps(keySwaps);
         }
 
-        return new ModGridItemVm(modModel, ToggleModCommand, OpenModFolderCommand, OpenModUrlCommand);
+        return new ModGridItemVm(modModel, ToggleModCommand, OpenModFolderCommand, OpenModUrlCommand, DeleteModCommand);
     }
 
 
