@@ -1,4 +1,4 @@
-﻿using Windows.System;
+using Windows.System;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -161,14 +161,13 @@ public sealed partial class ShellPage : Page
         {
             var notSelectedGame = await ViewModel.SelectedGameService.GetNotSelectedGameAsync();
 
-            for (var i = notSelectedGame.Length - 1; i >= 0; i--)
+            foreach (var game in notSelectedGame.Reverse())
             {
                 var content = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal
                 };
 
-                var game = notSelectedGame[i];
                 var gameInfo = await GameService.GetGameInfoAsync(game);
 
                 if (gameInfo is null)
