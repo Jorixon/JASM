@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.1](https://github.com/Jorixon/JASM/compare/v2.12.0...v2.12.1) (2024-07-23)
+
+
+### Miscellaneous
+
+* Added Russian translation to Genshin and Honkai game related text ([d7f7751](https://github.com/Jorixon/JASM/commit/d7f77512a74105911ee1ad249c8134ec27b8eccc))
+
 ## [2.12.0](https://github.com/Jorixon/JASM/compare/v2.11.0...v2.12.0) (2024-07-11)
 
 
