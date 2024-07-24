@@ -191,8 +191,8 @@
                 <TextBox
                     x:Name="ModSearchBox"
                     Height="32"
-                    MinWidth="320"
-                    MaxWidth="400"
+                    MinWidth="200"
+                    MaxWidth="320"
                     PlaceholderText="Search Mods..."
                     TextChanged="ModSearchBox_OnTextChanged" />
 
