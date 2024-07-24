@@ -1,7 +1,8 @@
 ﻿using Windows.Storage;
+using Windows.Win32;
+using Windows.Win32.Media.Audio;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Services;
-using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using Serilog;
 using static GIMI_ModManager.WinUI.Services.ModHandling.ModDragAndDropService.DragAndDropFinishedArgs;
@@ -55,8 +56,10 @@ public class ModDragAndDropService
                 $"Please finish adding the mod for '{modList.Character.DisplayName}' first",
                 $"JASM does not support multiple mod installs for the same character",
                 TimeSpan.FromSeconds(8));
-            Win32.PlaySound("SystemAsterisk", nuint.Zero,
-                (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
+
+            PInvoke.PlaySound("SystemAsterisk", null,
+                SND_FLAGS.SND_ASYNC | SND_FLAGS.SND_ALIAS | SND_FLAGS.SND_NODEFAULT);
+
             App.MainWindow.DispatcherQueue.TryEnqueue(() => window.Activate());
             return;
         }

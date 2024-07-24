@@ -1,6 +1,8 @@
-﻿using System.Runtime.InteropServices;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 using Windows.Graphics;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.WindowsAndMessaging;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -132,13 +134,14 @@ public class ActivationService : IActivationService
         }
 
         if (processHandle == null) return;
-        var hWnd = processHandle.Value;
+        var hWnd = new HWND(processHandle.Value);
         _logger.Information("JASM is already running, exiting...");
         try
         {
-            Win32.ShowWindowAsync(new HandleRef(null, hWnd), Win32.SW_RESTORE);
-            Win32.SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0, Win32.SWP_NOSIZE | Win32.SWP_NOZORDER);
-            Win32.SetForegroundWindow(hWnd);
+            PInvoke.ShowWindow(hWnd, SHOW_WINDOW_CMD.SW_RESTORE);
+            PInvoke.SetWindowPos(hWnd, new HWND(IntPtr.Zero), 0, 0, 0, 0,
+                SET_WINDOW_POS_FLAGS.SWP_NOSIZE | SET_WINDOW_POS_FLAGS.SWP_NOZORDER);
+            PInvoke.SetForegroundWindow(hWnd);
         }
         catch (Exception e)
         {
