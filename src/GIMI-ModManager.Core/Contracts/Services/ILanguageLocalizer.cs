@@ -18,7 +18,8 @@ public interface ILanguageLocalizer
     public string GetLocalizedString(string uid);
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null);
+    public string? GetLocalizedStringOrDefault(string uid, string? defaultValue = null,
+        bool? useUidAsDefaultValue = null);
 }
 
 public interface ILanguage : IEquatable<ILanguage>, IEquatable<CultureInfo>

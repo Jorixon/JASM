@@ -32,6 +32,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
     private readonly ISkinManagerService _skinManagerService;
     private readonly ILocalSettingsService _localSettingsService;
+    private readonly ILanguageLocalizer _localizer;
     private readonly ModDragAndDropService _modDragAndDropService;
     private readonly ModNotificationManager _modNotificationManager;
     private readonly ModCrawlerService _modCrawlerService;
@@ -93,7 +94,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
         ModCrawlerService modCrawlerService, ModSettingsService modSettingsService,
         ModUpdateAvailableChecker modUpdateAvailableChecker, ModPresetHandlerService modPresetHandlerService,
-        BusyService busyService)
+        BusyService busyService, ILanguageLocalizer localizer)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -111,6 +112,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
         _modPresetHandlerService = modPresetHandlerService;
         _busyService = busyService;
+        _localizer = localizer;
 
         ElevatorService.PropertyChanged += (_, args) =>
         {
@@ -307,7 +309,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _busyService.BusyChanged += OnBusyChangedHandler;
 
         _category = category;
-        CategoryPageTitle = $"{category.DisplayName} Overview";
+        CategoryPageTitle =
+            $"{category.DisplayName} {_localizer.GetLocalizedStringOrDefault("Overview", useUidAsDefaultValue: true)}";
         ModToggleText = $"Show only {category.DisplayNamePlural} with Mods";
         SearchBoxPlaceHolder = $"Search {category.DisplayNamePlural}...";
 

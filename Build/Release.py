@@ -79,14 +79,14 @@ print()
 print("Finished copying Elevator to release directory")
 
 print("Copying JASM to output...")
-shutil.copytree(JASM_OUTPUT, JASM_RELEASE_DIR, ignore=shutil.ignore_patterns("*.pdb"), dirs_exist_ok=True)
+shutil.copytree(JASM_OUTPUT, JASM_RELEASE_DIR, dirs_exist_ok=True)
 print()
 print("Finished copying JASM to release directory")
 
 if (SelfContained == False):
 	print("Copying JASM - Auto Updater to output...")
 	os.mkdir(JASM_RELEASE_DIR + "\\" + JASM_Updater_FolderName)
-	shutil.copytree(JASM_Updater_OUTPUT, JASM_RELEASE_DIR + "\\" + JASM_Updater_FolderName, ignore=shutil.ignore_patterns("*.pdb"), dirs_exist_ok=True)
+	shutil.copytree(JASM_Updater_OUTPUT, JASM_RELEASE_DIR + "\\" + JASM_Updater_FolderName, dirs_exist_ok=True)
 	print()
 	print("Finished copying JASM - Auto Updater to release directory")
 

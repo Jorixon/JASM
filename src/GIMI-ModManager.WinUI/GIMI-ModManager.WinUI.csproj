@@ -16,7 +16,7 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<BaseOutputPath></BaseOutputPath>
 		<!-- x-release-please-start-version -->
-		<VersionPrefix>2.11.0</VersionPrefix>
+		<VersionPrefix>2.12.2</VersionPrefix>
 		<!-- x-release-please-end -->
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
@@ -381,6 +381,14 @@
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wolf%27s_Gravestone.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Wolf-Fang.png" />
 		<Content Remove="Assets\Games\Genshin\Images\Weapons\Weapon_Xiphos%27_Moonlight.png" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\categories.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\characters.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\elements.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\npcs.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\objects.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\regions.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\weaponClasses.json" />
+		<Content Remove="Assets\Games\Genshin\Languages\ru-ru\weapons.json" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\characters.json" />
 		<Content Remove="Assets\Games\Genshin\Languages\zh-cn\elements.json" />
 		<Content Remove="Assets\Games\Genshin\npcs.json" />
@@ -438,6 +446,9 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Npcs\Npc_Others.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Start_Game.webp" />
+		<Content Remove="Assets\Games\Honkai\Languages\ru-ru\categories.json" />
+		<Content Remove="Assets\Games\Honkai\Languages\ru-ru\characters.json" />
+		<Content Remove="Assets\Games\Honkai\Languages\ru-ru\elements.json" />
 		<Content Remove="Assets\Games\Honkai\npcs.json" />
 		<Content Remove="Assets\Games\Honkai\objects.json" />
 		<Content Remove="Assets\Games\Honkai\regions.json" />
@@ -529,7 +540,43 @@
 		<Content Remove="Assets\Games\WuWa\regions.json" />
 		<Content Remove="Assets\Games\WuWa\weaponClasses.json" />
 		<Content Remove="Assets\Games\WuWa\weapons.json" />
+		<Content Remove="Assets\Games\ZZZ\characters.json" />
+		<Content Remove="Assets\Games\ZZZ\elements.json" />
+		<Content Remove="Assets\Games\ZZZ\game.json" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Character_Others.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
+		<Content Remove="Assets\Games\ZZZ\npcs.json" />
+		<Content Remove="Assets\Games\ZZZ\objects.json" />
+		<Content Remove="Assets\Games\ZZZ\regions.json" />
+		<Content Remove="Assets\Games\ZZZ\weaponClasses.json" />
+		<Content Remove="Assets\Games\ZZZ\weapons.json" />
 		<Content Remove="Assets\Icon_Inventory_Weapons.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Anby.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Anton.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Belle.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ben.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Billy.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Corin.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ellen.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Grace.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Koleda.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lucy.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lycaon.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Miyabi.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nekomata.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nicole.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Piper.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Rina.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soukaku.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Wise.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\ZhuYuan.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Electric.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ether.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Fire.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ice.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Elements\Physical.svg" />
+		<Content Remove="Assets\Games\ZZZ\Images\Star_Game.png" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 
@@ -550,6 +597,7 @@
 		<None Remove="Views\CommandProcessViewer.xaml" />
 		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
+		<None Remove="Views\Controls\DataTemplates.xaml" />
 		<None Remove="Views\Controls\EditableTextBlock.xaml" />
 		<None Remove="Views\Controls\FolderSelector.xaml" />
 		<None Remove="Views\Controls\LinkButton.xaml" />
@@ -584,6 +632,10 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.6" />
+		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
 		<PackageReference Include="OneOf" Version="3.0.271" />
@@ -599,6 +651,7 @@
 		<PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
 		<PackageReference Include="Serilog.Sinks.EventLog" Version="4.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="System.Memory" Version="4.5.5" />
 		<PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
 		<PackageReference Include="WinUI3Localizer" Version="2.2.0" />
 		<PackageReference Include="WinUIEx" Version="2.3.4" />
@@ -1073,6 +1126,9 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\Controls\DataTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\CommandProcessViewer.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -1092,4 +1148,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties assets_4games_4zzz_4game_1json__JsonSchema="json" /></VisualStudio></ProjectExtensions>
 </Project>

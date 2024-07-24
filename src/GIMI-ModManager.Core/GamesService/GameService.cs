@@ -106,16 +106,20 @@ public class GameService : IGameService
 
         await InitializeWeaponsAsync().ConfigureAwait(false);
 
+        await MapCategoriesLanguageOverrideAsync().ConfigureAwait(false);
+
         CheckIfDuplicateInternalNameExists();
 
         _initialized = true;
         Initialized?.Invoke(this, EventArgs.Empty);
     }
 
-    public async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
+
+    public static async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
     {
-        var gameFilePath = Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString(),
-            FileNames.GameSettingsFileName);
+        var gameAssetDir = Path.Combine(AppContext.BaseDirectory, "Assets", "Games", game.ToString());
+
+        var gameFilePath = Path.Combine(gameAssetDir, "game.json");
 
         if (!File.Exists(gameFilePath))
             return null;
@@ -126,8 +130,7 @@ public class GameService : IGameService
         if (jsonGameInfo is null)
             throw new InvalidOperationException($"{gameFilePath} file is empty");
 
-        return new GameInfo(jsonGameInfo,
-            new DirectoryInfo(Path.Combine(_assetsDirectory.Parent!.FullName, game.ToString())));
+        return new GameInfo(jsonGameInfo, new DirectoryInfo(gameAssetDir));
     }
 
     public async Task<ICollection<InternalName>> PreInitializedReadModObjectsAsync(string assetsDirectory)
@@ -618,6 +621,14 @@ public class GameService : IGameService
             await MapDisplayNames(elementsFileName, Elements.AllElements).ConfigureAwait(false);
     }
 
+    private async Task MapCategoriesLanguageOverrideAsync()
+    {
+        const string categoriesFileName = "categories.json";
+
+        if (LanguageOverrideAvailable())
+            await MapDisplayNames(categoriesFileName, GetCategories()).ConfigureAwait(false);
+    }
+
     [MemberNotNullWhen(true, nameof(_languageOverrideDirectory))]
     private bool LanguageOverrideAvailable()
     {
@@ -756,7 +767,7 @@ public class GameService : IGameService
 
         foreach (var nameable in nameables)
         {
-            var jsonOverride = json.FirstOrDefault(x => x.InternalName == nameable.InternalName);
+            var jsonOverride = json.FirstOrDefault(x => nameable.InternalNameEquals(x.InternalName));
             if (jsonOverride is null)
             {
                 _logger.Debug("Nameable {NameableName} not found in {FilePath}", nameable.InternalName, filePath);
@@ -770,7 +781,12 @@ public class GameService : IGameService
 
 
             if (nameable is IImageSupport imageSupportedValue && !jsonOverride.Image.IsNullOrEmpty())
-                _logger.Debug("Image override is not implemented");
+                _logger.Warning("Image override is not implemented");
+
+            if (nameable is ICategory category && !jsonOverride.DisplayNamePlural.IsNullOrEmpty())
+            {
+                category.DisplayNamePlural = jsonOverride.DisplayNamePlural;
+            }
 
             if (nameable is not ICharacter character) continue;
 
@@ -779,7 +795,7 @@ public class GameService : IGameService
                 var skinOverride =
                     jsonOverride?.InGameSkins?.FirstOrDefault(x =>
                         x.InternalName is not null &&
-                        x.InternalName.Equals(skin.InternalName, StringComparison.OrdinalIgnoreCase));
+                        skin.InternalNameEquals(x.InternalName));
 
                 if (skinOverride is null)
                 {
@@ -792,12 +808,13 @@ public class GameService : IGameService
                 skin.DisplayName = skinOverride.DisplayName;
 
                 if (skinOverride.Image.IsNullOrEmpty()) return;
-                _logger.Debug("Image override is not implemented");
+                _logger.Warning("Image override is not implemented for character skins");
             });
 
-            if (jsonOverride.OverrideKeys is not null && jsonOverride.Keys is not null && jsonOverride.Keys.Any())
+            if (jsonOverride.RemoveExistingKeys is not null && jsonOverride.Keys is not null &&
+                jsonOverride.Keys.Count != 0)
             {
-                if (jsonOverride.OverrideKeys.Value)
+                if (jsonOverride.RemoveExistingKeys.Value)
                 {
                     character.Keys.Clear();
                 }

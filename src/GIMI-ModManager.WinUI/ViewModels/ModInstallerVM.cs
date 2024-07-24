@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
+using Windows.Win32;
+using Windows.Win32.Media.Audio;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkitWrapper;
@@ -13,7 +15,6 @@ using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
-using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
@@ -732,11 +733,14 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     private void ErrorOccurred(Exception e)
     {
         InstallerFinished?.Invoke(this, EventArgs.Empty);
-        Win32.PlaySound("SystemAsterisk", nuint.Zero,
-            (uint)(Win32.SoundFlags.SND_ALIAS | Win32.SoundFlags.SND_NODEFAULT));
+
+        PInvoke.PlaySound("SystemAsterisk", null,
+            SND_FLAGS.SND_ASYNC | SND_FLAGS.SND_ALIAS | SND_FLAGS.SND_NODEFAULT);
+
         _notificationManager.ShowNotification("An error occurred",
             "An error occurred while adding the mod. See logs for more details",
             TimeSpan.FromSeconds(10));
+
         CloseRequested?.Invoke(this, new CloseRequestedArgs(CloseReasons.Error, e));
     }
 

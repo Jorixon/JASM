@@ -78,7 +78,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     {
         SupportedGames.Genshin.ToString(),
         SupportedGames.Honkai.ToString(),
-        SupportedGames.WuWa.ToString()
+        SupportedGames.WuWa.ToString(),
+        SupportedGames.ZZZ.ToString()
     };
 
     [ObservableProperty] private string _selectedGame = string.Empty;
@@ -147,7 +148,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
 
         _modManagerOptions = localSettingsService.ReadSetting<ModManagerOptions>(ModManagerOptions.Section);
-        PathToGIMIFolderPicker = new PathPicker(GimiFolderRootValidators.Validators);
+        PathToGIMIFolderPicker = new PathPicker();
         PathToModsFolderPicker = new PathPicker(ModsFolderValidator.Validators);
 
         CharacterAsSkinsCheckbox = _modManagerOptions?.CharacterSkinsAsCharacters ?? false;
@@ -758,6 +759,14 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 BackGroundModCheckerSettings.Key);
 
         IsModUpdateCheckerEnabled = modUpdateCheckerOptions.Enabled;
+        var gameInfo = await GameService.GetGameInfoAsync(Enum.Parse<SupportedGames>(SelectedGame));
+
+        if (gameInfo is not null)
+        {
+            PathToGIMIFolderPicker.SetValidators(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
+        }
+
+
     }
 
     [ObservableProperty] private string _maxCacheSizeString = string.Empty;

@@ -9,6 +9,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Controls/DataTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
 
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
@@ -31,8 +39,10 @@
             <ComboBox
                 x:Name="GameSelectorBox"
                 Grid.Column="1"
+                MinWidth="180"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
+                ItemTemplate="{StaticResource GameComboBoxEntryTemplate}"
                 ItemsSource="{x:Bind ViewModel.Games}"
                 SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
                 SelectionChanged="GameSelector_OnSelectionChanged"
@@ -57,15 +67,14 @@
                             IsTextSelectionEnabled="True"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             TextWrapping="WrapWholeWords"
-                            Text="As part of the first time setup you will need to select a Model-Importer folder (3dmigoto) and its connected Mods folder. The 3dmigoto folder contains 3DMigoto Loader.exe/3DMigotoLoader.exe and a Mods folder. If you have not set up the model importer yet, please do so now, see link below. I find most mods on Gamebanana but Nexusmods also has some."
+                            Text="As part of the first time setup you will need to select a Model-Importer folder (3dmigoto) and its connected Mods folder. The 3dmigoto folder usually contains 3DMigoto Loader.exe/3DMigotoLoader.exe and a Mods folder. If you have not set up the model importer yet, please do so now, see link below. I find most mods on Gamebanana but Nexusmods also has some."
                             l:Uids.Uid="/Startup/Body1" />
                         <StackPanel Orientation="Horizontal">
 
                             <HyperlinkButton NavigateUri="{x:Bind ViewModel.ModelImporterUrl, Mode=OneWay}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri, Mode=OneWay}">
                                 <HyperlinkButton.Content>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Margin="0,0,4,0" Text="{x:Bind ViewModel.ModelImporterName, Mode=OneWay}" />
-                                        <TextBlock Text="(GitHub)" />
+                                        <TextBlock Text="{x:Bind ViewModel.ModelImporterName, Mode=OneWay}" />
                                     </StackPanel>
                                 </HyperlinkButton.Content>
                             </HyperlinkButton>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:subVms="using:GIMI_ModManager.WinUI.ViewModels.SubVms">
+
+    <!--
+        x:DataType="subVms:GameComboBoxEntryVM"
+        Get this error when trying to use x:DataType.
+        WMC0612 The XAML Binary Format (XBF) generator reported syntax error '0x09C4' : Property Not Found
+    -->
+    <DataTemplate x:Key="GameComboBoxEntryTemplate">
+
+        <Grid ColumnSpacing="8">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock HorizontalAlignment="Left" Text="{Binding Mode=OneWay, Path=GameName}" />
+            <Grid
+                Grid.Column="1"
+                Width="16"
+                Height="16"
+                HorizontalAlignment="Right"
+                CornerRadius="8">
+                <Image>
+                    <Image.Source>
+                        <BitmapImage DecodePixelWidth="16" UriSource="{Binding Mode=OneWay, Path=GameIconPath}" />
+                    </Image.Source>
+                </Image>
+            </Grid>
+        </Grid>
+
+
+    </DataTemplate>
+
+</ResourceDictionary>

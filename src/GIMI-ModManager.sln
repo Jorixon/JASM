@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JASM.AutoUpdater", "JASM.Au
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommunityToolkitWrapper", "CommunityToolkitWrapper\CommunityToolkitWrapper.csproj", "{39EB6AA5-26F0-469B-BD0F-63A9BEA764B4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinGenerator", "GenshinGenerator\GenshinGenerator.csproj", "{54470D47-5BFC-4601-B827-9A6AF67993A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,12 +139,29 @@ Global
 		{39EB6AA5-26F0-469B-BD0F-63A9BEA764B4}.Release|x64.Build.0 = Release|Any CPU
 		{39EB6AA5-26F0-469B-BD0F-63A9BEA764B4}.Release|x86.ActiveCfg = Release|Any CPU
 		{39EB6AA5-26F0-469B-BD0F-63A9BEA764B4}.Release|x86.Build.0 = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|arm64.Build.0 = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|x64.Build.0 = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Debug|x86.Build.0 = Debug|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|arm64.ActiveCfg = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|arm64.Build.0 = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|x64.ActiveCfg = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|x64.Build.0 = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|x86.ActiveCfg = Release|Any CPU
+		{54470D47-5BFC-4601-B827-9A6AF67993A9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{992DF5F9-CBB9-4483-A71D-C0083C173B1C} = {4E3DE2B1-EF6D-4E01-BCAB-3505C3B9E365}
+		{54470D47-5BFC-4601-B827-9A6AF67993A9} = {22904DAB-4694-4115-B76D-9029CCADB992}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E01F4EA5-3B64-4C68-9474-CB87A51AF7D9}

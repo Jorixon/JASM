@@ -113,6 +113,7 @@ public partial class MainPageVM : ObservableRecipient
         catch (Exception e)
         {
             Log("An error occurred!", e.Message);
+            Serilog.Log.Error(e, "An error occurred! Full error");
             Stop(e.Message);
         }
         finally
@@ -390,6 +391,8 @@ public partial class MainPageVM : ObservableRecipient
 
     private async Task<ApiGitHubRelease?> GetLatestVersionAsync(CancellationToken cancellationToken)
     {
+        Serilog.Log.Information("Checking for latest version...");
+
         using var httpClient = CreateHttpClient();
 
         var result = await httpClient.GetAsync(ReleasesApiUrl, cancellationToken);
@@ -446,6 +449,9 @@ public partial class MainPageVM : ObservableRecipient
 
     private void Log(string logMessage, string? footer = null)
     {
+        Serilog.Log.Information("Install Step {StepIndex} | Msg: {Message} | footer: {Footer}", (ProgressLog.Count + 1),
+            logMessage, footer);
+
         var logEntry = new LogEntry
         {
             Message = logMessage,

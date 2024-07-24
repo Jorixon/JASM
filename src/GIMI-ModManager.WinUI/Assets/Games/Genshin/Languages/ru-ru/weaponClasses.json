@@ -1,0 +1,22 @@
+[
+  {
+    "InternalName": "Sword",
+    "DisplayName": "Мечь"
+  },
+  {
+    "InternalName": "Bow",
+    "DisplayName": "Лук"
+  },
+  {
+    "InternalName": "Claymore",
+    "DisplayName": "Двуручный Мечь"
+  },
+  {
+    "InternalName": "Polearm",
+    "DisplayName": "Копьё"
+  },
+  {
+    "InternalName": "Catalyst",
+    "DisplayName": "Катализатор"
+  }
+]

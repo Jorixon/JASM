@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using GIMI_ModManager.WinUI.Views.Controls;
 using Microsoft.UI.Xaml.Controls;
 
@@ -24,6 +25,6 @@ public sealed partial class StartupPage : Page
     private async void GameSelector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count == 0) return;
-        await ViewModel.SetGameCommand.ExecuteAsync((string)e.AddedItems[0]!).ConfigureAwait(false);
+        await ViewModel.SetGameCommand.ExecuteAsync(((GameComboBoxEntryVM)e.AddedItems[0]!).Value.ToString()).ConfigureAwait(false);
     }
 }
