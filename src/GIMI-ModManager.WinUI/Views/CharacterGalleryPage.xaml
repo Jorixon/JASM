@@ -110,6 +110,40 @@
                 </StackPanel>
             </StackPanel>
 
+           <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+
+                <TextBlock
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Text="Sort by:"
+                    TextWrapping="WrapWholeWords" />
+
+                <ComboBox
+                    x:Name="SortingComboBox"
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Sort Mods..."
+                    SelectionChanged="SortingComboBox_OnSelectionChanged"
+                    SelectionChangedTrigger="Committed">
+                    <ComboBoxItem Content="Date Added" Tag="DateAdded" />
+                    <ComboBoxItem Content="Enabled" Tag="Enabled" />
+                    <ComboBoxItem Content="Folder Name" Tag="FolderName" />
+                    <ComboBoxItem Content="Name" Tag="Name" />
+                </ComboBox>
+
+                <ToggleButton
+                    Margin="0,0,16,0"
+                    Checked="SortByDescendingToggleButton_OnChecked"
+                    Unchecked="SortByDescendingToggleButton_OnUnchecked"
+                    IsChecked="{x:Bind ViewModel.SortByDescending, Mode=TwoWay}">
+                    <ToggleButton.Content>
+                        <FontIcon Glyph="&#xE8CB;" />
+                    </ToggleButton.Content>
+                </ToggleButton>
+            </StackPanel>
 
             <StackPanel
                 Grid.Column="2"
