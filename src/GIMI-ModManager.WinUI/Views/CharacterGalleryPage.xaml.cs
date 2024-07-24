@@ -125,4 +125,22 @@ public sealed partial class CharacterGalleryPage : Page
             ModGridViewColDef.Width = new GridLength(1, GridUnitType.Star);
         }
     }
+
+    private void SortingComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (SortingComboBox.SelectedItem is ComboBoxItem { Tag: string sortBy })
+        {
+            ViewModel.OnSortComboBoxSelectionChanged(sortBy);
+        }
+    }
+
+    private void SortByDescendingToggleButton_OnChecked(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OnSortToggleButtonChanged(true);
+    }
+
+    private void SortByDescendingToggleButton_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OnSortToggleButtonChanged(false);
+    }
 }
