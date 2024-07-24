@@ -25,6 +25,17 @@ public sealed partial class CharacterGalleryPage : Page
         InitializeComponent();
         Loaded += CharacterGalleryPage_Loaded;
         ViewModel.Initialized += ViewModel_Initialized;
+
+        var comboBoxItems = SortingComboBox.Items.OfType<ComboBoxItem>();
+        foreach (var item in comboBoxItems)
+        {
+            var itemTag = item.Tag.ToString();
+            if (itemTag == ViewModel.SelectedSortingMethod)
+            {
+                SortingComboBox.SelectedItem = item;
+                break;
+            }
+        }
     }
 
 
