@@ -122,7 +122,7 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         _gridItemHeight = settings.ItemHeight;
         _gridItemWidth = settings.ItemDesiredWidth;
         _isSingleSelection = settings.IsSingleSelection;
-        _selectedSortingMethod = settings.SortingMethod;
+        _selectedSortingMethod = settings.SortingMethod ?? "Name";
         _sortByDescending = settings.SortByDescending;
         IsNavPaneVisible = settings.IsNavPaneOpen;
     }
