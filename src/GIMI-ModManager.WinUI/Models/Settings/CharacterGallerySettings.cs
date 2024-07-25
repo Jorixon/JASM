@@ -13,4 +13,6 @@ public class CharacterGallerySettings
     public bool IsSingleSelection { get; set; } = true;
 
     public bool IsNavPaneOpen { get; set; } = false;
+
+    public bool CanDeleteDialogPrompt { get; set; } = true;
 }

@@ -7,6 +7,7 @@ using Windows.Storage;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
+using GIMI_ModManager.WinUI.Models.Settings;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 
@@ -32,7 +33,7 @@ public partial class CharacterGalleryViewModel
 
     /// <summary>
     /// return the result of the dialog and if the checkbox "Do not ask again" is checked
-    /// 
+    /// </summary>
     private async Task<(ContentDialogResult, bool)> PromptDeleteDialog(ModGridItemVm vm)
     {
         var windowManager = App.GetService<IWindowManagerService>();
@@ -74,18 +75,20 @@ public partial class CharacterGalleryViewModel
     [RelayCommand(CanExecute = nameof(CanOpenModFolder))]
     private async Task DeleteMod(ModGridItemVm vm)
     {
-        if (this._modList is null) {return;}
+        if (_modList is null) {return;}
 
-        var notificationManager = App.GetService<NotificationManager>();
-        var localSettings = App.GetService<ILocalSettingsService>();
-        var doNotShowPrompt = localSettings.ReadSetting<bool>("DoNotShowDeletePromptAgain");
+        var notificationManager = App.GetService<NotificationManager>();        
+        var settings = 
+            await _localSettingsService
+                .ReadOrCreateSettingAsync<CharacterGallerySettings>(CharacterGallerySettings.Key);
 
-        if (doNotShowPrompt != true)
+        if (settings.CanDeleteDialogPrompt)
         {
             var (result, doNotAskAgainChecked) = await PromptDeleteDialog(vm);
             if (doNotAskAgainChecked)
             {
-                await localSettings.SaveSettingAsync("DoNotShowDeletePromptAgain", true);
+                settings.CanDeleteDialogPrompt = false;
+                await _localSettingsService.SaveSettingAsync(CharacterGallerySettings.Key, settings);
             }
 
             if (result != ContentDialogResult.Primary)
@@ -96,13 +99,14 @@ public partial class CharacterGalleryViewModel
 
         try
         {
-            this._modList.DeleteModBySkinEntryId(vm.Id);
-            await this.ReloadModsAsync();
+            _modList.DeleteModBySkinEntryId(vm.Id);
+            await ReloadModsAsync();
         }
         catch (Exception e)
         {
             _logger.Error(e, "Failed to delete mod");
             notificationManager.ShowNotification("Failed to delete mod", e.Message, TimeSpan.FromSeconds(10));
+            return;
         }
 
         notificationManager.ShowNotification("Mod deleted", $"{vm.Name} has been deleted", TimeSpan.FromSeconds(5));
