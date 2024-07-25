@@ -64,21 +64,21 @@ public partial class CharacterGalleryViewModel
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Primary,
         };
-        
+
         // get result and check if checkbox is checked
         var result = await windowManager.ShowDialogAsync(dialog);
         var doNotAskAgain = doNotAskAgainCheckBox.IsChecked == true;
-        
+
         return (result, doNotAskAgain);
     }
 
     [RelayCommand(CanExecute = nameof(CanOpenModFolder))]
     private async Task DeleteMod(ModGridItemVm vm)
     {
-        if (_modList is null) {return;}
+        if (_modList is null) { return; }
 
-        var notificationManager = App.GetService<NotificationManager>();        
-        var settings = 
+        var notificationManager = App.GetService<NotificationManager>();
+        var settings =
             await _localSettingsService
                 .ReadOrCreateSettingAsync<CharacterGallerySettings>(CharacterGallerySettings.Key);
 

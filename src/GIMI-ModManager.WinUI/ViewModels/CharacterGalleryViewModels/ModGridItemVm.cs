@@ -64,9 +64,9 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
         }
 
         public ModGridItemVm(
-            ModModel modModel, 
+            ModModel modModel,
             IAsyncRelayCommand toggleModCommand,
-            IAsyncRelayCommand openModFolderCommand, 
+            IAsyncRelayCommand openModFolderCommand,
             IAsyncRelayCommand openModUrlCommand,
             IAsyncRelayCommand deleteModCommand
         )
