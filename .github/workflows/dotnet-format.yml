@@ -1,0 +1,30 @@
+name: .NET format
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  dotnet-format:
+
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./src
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+  
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Format
+      run: dotnet format --verify-no-changes

@@ -1,10 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using ABI.Windows.ApplicationModel.Calls.Background;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
-using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
@@ -42,7 +40,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
-    [ObservableProperty] private GameComboBoxEntryVM _selectedGame = new GameComboBoxEntryVM(SupportedGames.Genshin)
+    [ObservableProperty]
+    private GameComboBoxEntryVM _selectedGame = new GameComboBoxEntryVM(SupportedGames.Genshin)
     {
         GameName = "Genshin Impact",
         GameShortName = SupportedGames.Genshin.ToString(),

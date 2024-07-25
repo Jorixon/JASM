@@ -91,7 +91,8 @@ public class SkinModSettingsManager
 
         var settings = new JsonModSettings()
         {
-            Id = newId.ToString(), ImagePath = image?.LocalPath,
+            Id = newId.ToString(),
+            ImagePath = image?.LocalPath,
             DateAdded = DateTime.Now.ToString(CultureInfo.CurrentCulture)
         };
         var json = JsonSerializer.Serialize(settings, _serializerOptions);

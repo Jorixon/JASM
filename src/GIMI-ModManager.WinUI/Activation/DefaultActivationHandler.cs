@@ -1,5 +1,4 @@
 ﻿using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 

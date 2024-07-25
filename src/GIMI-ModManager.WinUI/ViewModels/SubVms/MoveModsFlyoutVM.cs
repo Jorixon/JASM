@@ -25,7 +25,8 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
 
     private IModdableObject _shownCharacter = null!;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(MoveModsCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteModsCommand), nameof(MoveModsCommand))]
     private IModdableObject? _selectedCharacter = null;
 
     [ObservableProperty]

@@ -193,7 +193,8 @@ public sealed partial class CharacterDetailsPage : Page
             //Implement sort on the column "Range" using LINQ
             if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
                     orderby modEntry.Name ascending
                     select modEntry;
 
@@ -205,7 +206,8 @@ public sealed partial class CharacterDetailsPage : Page
             }
             else
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
                     orderby modEntry.Name descending
                     select modEntry;
 
@@ -222,7 +224,8 @@ public sealed partial class CharacterDetailsPage : Page
             //Implement sort on the column "Range" using LINQ
             if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
                     orderby modEntry.FolderName ascending
                     select modEntry;
 
@@ -234,7 +237,8 @@ public sealed partial class CharacterDetailsPage : Page
             }
             else
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
                     orderby modEntry.FolderName descending
                     select modEntry;
 
