@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -264,8 +264,8 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
 
     public async void OnSortToggleButtonChanged(bool sortByDescending)
     {
-       SortByDescending = sortByDescending;
-       ResetContent();
+        SortByDescending = sortByDescending;
+        ResetContent();
 
         var settings = await ReadCharacterGallerySettings();
         settings.SortByDescending = sortByDescending;
@@ -293,39 +293,39 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
 
         switch (SelectedSortingMethod)
         {
-           case "Name":
-               if (SortByDescending)
-                   gridItemVms.Sort((a, b) => string.Compare(b.Name, a.Name, StringComparison.Ordinal));
-               else
-                   gridItemVms.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
-               break;
-           case "DateAdded":
-               if (SortByDescending)
+            case "Name":
+                if (SortByDescending)
+                    gridItemVms.Sort((a, b) => string.Compare(b.Name, a.Name, StringComparison.Ordinal));
+                else
+                    gridItemVms.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+                break;
+            case "DateAdded":
+                if (SortByDescending)
                     gridItemVms.Sort((a, b) =>
                     {
                         var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
                         return dateComparison != 0 ? dateComparison : string.Compare(b.Name, a.Name, StringComparison.Ordinal);
                     });
-               else
+                else
                     gridItemVms.Sort((a, b) =>
                     {
                         var dateComparison = a.DateAdded.CompareTo(b.DateAdded);
                         return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
                     });
-               break;
-           case "FolderName":
-               if (SortByDescending)
-                   gridItemVms.Sort((a, b) => string.Compare(b.FolderName, a.FolderName, StringComparison.Ordinal));
-               else
-                   gridItemVms.Sort((a, b) => string.Compare(a.FolderName, b.FolderName, StringComparison.Ordinal));
-               break;
-           default:
-               gridItemVms.Sort((a, b) =>
-               {
-                   var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
-                   return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
-               });
-               break;
+                break;
+            case "FolderName":
+                if (SortByDescending)
+                    gridItemVms.Sort((a, b) => string.Compare(b.FolderName, a.FolderName, StringComparison.Ordinal));
+                else
+                    gridItemVms.Sort((a, b) => string.Compare(a.FolderName, b.FolderName, StringComparison.Ordinal));
+                break;
+            default:
+                gridItemVms.Sort((a, b) =>
+                {
+                    var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
+                    return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                });
+                break;
         }
 
         var enabledMods = gridItemVms.Where(m => m.IsEnabled);
