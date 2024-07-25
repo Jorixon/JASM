@@ -1,4 +1,4 @@
-# Contributing
+# Contributing Code Changes
 
 Contributions are appreciated. As a mostly single developer of this project there are too many things that I'd like to do. But I don't have time to implement/fix everything and burnout is a thing. There is a lot of code, some good some bad. Newer code is generally of a better quality.
 
