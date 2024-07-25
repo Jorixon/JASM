@@ -19,34 +19,41 @@ public sealed partial class DebugPage : Page
 
     private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        var options = new CommandExecutionOptions()
+        var execOptions = new CommandExecutionOptions()
         {
-            CreateWindow = true,
-            Command = "powershell.exe",
-            Arguments =
-                "dir {{TargetPath}};$null = read-host"
+            UseShellExecute = true,
+            RunAsAdmin = true,
+            Command = "E:\\Genshin Impact\\Genshin Impact game\\GenshinImpact.exe"
         };
 
-        using var command = CommandService.CreateCommand("C:\\Users", options);
+
+        var command = CommandService.CreateCommand("", new CreateCommandOptions()
+        {
+            KillOnMainAppExit = false,
+            ExecutionOptions = execOptions
+        });
 
         command.Start();
 
         await command.WaitForExitAsync().ConfigureAwait(false);
     }
 
-    private async void ButtonBase_OnClickOpenDialog(object sender, RoutedEventArgs e)
+    private void ButtonBase_OnClickOpenDialog(object sender, RoutedEventArgs e)
     {
         var window = App.MainWindow;
 
-        var options = new CommandExecutionOptions()
+        var execOptions = new CommandExecutionOptions()
         {
-            CreateWindow = false,
+            CreateWindow = true,
             Command = "python",
-            WorkingDirectory = "C:\\Users\\reee\\Projects\\JASM\\Testing\\Mods",
-            Arguments = "C:\\Users\\reee\\Projects\\JASM\\Testing\\Mods\\genshin_update_mods_45.py"
+            Arguments = "-u F:\\test.py"
         };
 
-        var command = CommandService.CreateCommand("C:\\Users", options);
+        var command = CommandService.CreateCommand("", new CreateCommandOptions()
+        {
+            KillOnMainAppExit = true,
+            ExecutionOptions = execOptions
+        });
 
         var page = new CommandProcessViewer(command);
 

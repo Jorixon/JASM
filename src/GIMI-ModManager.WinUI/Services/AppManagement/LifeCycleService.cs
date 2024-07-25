@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using CommunityToolkitWrapper;
+using GIMI_ModManager.Core.CommandService;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Settings;
@@ -14,29 +15,24 @@ using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services.AppManagement;
 
-public class LifeCycleService
+public class LifeCycleService(
+    ILogger logger,
+    NotificationManager notificationManager,
+    ILocalSettingsService localSettingsService,
+    ModNotificationManager modNotificationManager,
+    IWindowManagerService windowManagerService,
+    UpdateChecker updateChecker,
+    ModUpdateAvailableChecker modUpdateAvailableChecker,
+    CommandService commandService)
 {
-    private readonly ILogger _logger;
-    private readonly Notifications.NotificationManager _notificationManager;
-    private readonly ILocalSettingsService _localSettingsService;
-    private ModNotificationManager _modNotificationManager;
-    private readonly IWindowManagerService _windowManagerService;
-    private readonly UpdateChecker _updateChecker;
-    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
-
-    public LifeCycleService(ILogger logger, NotificationManager notificationManager,
-        ILocalSettingsService localSettingsService, ModNotificationManager modNotificationManager,
-        IWindowManagerService windowManagerService, UpdateChecker updateChecker,
-        ModUpdateAvailableChecker modUpdateAvailableChecker)
-    {
-        _notificationManager = notificationManager;
-        _localSettingsService = localSettingsService;
-        _modNotificationManager = modNotificationManager;
-        _windowManagerService = windowManagerService;
-        _updateChecker = updateChecker;
-        _modUpdateAvailableChecker = modUpdateAvailableChecker;
-        _logger = logger.ForContext<LifeCycleService>();
-    }
+    private readonly ILogger _logger = logger.ForContext<LifeCycleService>();
+    private readonly NotificationManager _notificationManager = notificationManager;
+    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
+    private ModNotificationManager _modNotificationManager = modNotificationManager;
+    private readonly IWindowManagerService _windowManagerService = windowManagerService;
+    private readonly UpdateChecker _updateChecker = updateChecker;
+    private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker = modUpdateAvailableChecker;
+    private readonly CommandService _commandService = commandService;
 
     /// <summary>
     /// This method will try to restart the app using the suggested method from Microsoft.
@@ -202,6 +198,7 @@ public class LifeCycleService
             _modUpdateAvailableChecker.CancelAndStop();
             _updateChecker.CancelAndStop();
             _notificationManager.CancelAndStop();
+            commandService.Cleanup();
         });
 
         await notificationCleanupTask;
