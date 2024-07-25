@@ -395,7 +395,8 @@ public partial class ModFileInfoVm : ObservableObject
 
     [ObservableProperty] private int _downloadProgress;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(InstallCommand), nameof(DownloadCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(InstallCommand), nameof(DownloadCommand))]
     private FileInfo? _archiveFile;
 
     public IProgress<int> Progress { get; }

@@ -52,7 +52,8 @@ public sealed partial class PresetDetailsViewModel(
 
     public bool IsNotBusy => !IsBusy;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(GetPageTitle))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(GetPageTitle))]
     private string _presetName = string.Empty;
 
     [ObservableProperty] private string _searchText = string.Empty;
@@ -130,12 +131,12 @@ public sealed partial class PresetDetailsViewModel(
 
                 var presetModEntryVm = new ModPresetEntryDetailedVm(modPresetEntry,
                         modSettings.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
-                    {
-                        NavigateToModCommand = NavigateToModCommand,
-                        RemoveModFromPresetCommand = RemoveModFromPresetCommand,
-                        ReplaceMissingModCommand = ReplaceMissingModCommand,
-                        ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
-                    }
+                {
+                    NavigateToModCommand = NavigateToModCommand,
+                    RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+                    ReplaceMissingModCommand = ReplaceMissingModCommand,
+                    ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
+                }
                     .WithModdableObject(characterSkinEntry.ModList.Character);
 
                 if (modSettings.ModUrl is not null && presetModEntryVm.SourceUrl is null)
@@ -457,12 +458,12 @@ public sealed partial class PresetDetailsViewModel(
 
         var presetModEntryVm = new ModPresetEntryDetailedVm(modPresetEntry,
                 modSettings?.ImagePath ?? _imageHandlerService.PlaceholderImageUri)
-            {
-                NavigateToModCommand = NavigateToModCommand,
-                RemoveModFromPresetCommand = RemoveModFromPresetCommand,
-                ReplaceMissingModCommand = ReplaceMissingModCommand,
-                ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
-            }
+        {
+            NavigateToModCommand = NavigateToModCommand,
+            RemoveModFromPresetCommand = RemoveModFromPresetCommand,
+            ReplaceMissingModCommand = ReplaceMissingModCommand,
+            ReadAndSavePreferencesCommand = ReadAndSavePreferencesCommand
+        }
             .WithModdableObject(characterSkinEntry.ModList.Character);
 
         if (modSettings?.ModUrl is not null && presetModEntryVm.SourceUrl is null)

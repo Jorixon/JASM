@@ -436,7 +436,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             if (distinctReleaseDates == 1 &&
                 SortingMethods.FirstOrDefault(x => x.SortingMethodType == Sorter.ReleaseDateSortName) is
-                    { } releaseDateSortingMethod)
+                { } releaseDateSortingMethod)
             {
                 SortingMethods.Remove(releaseDateSortingMethod);
             }

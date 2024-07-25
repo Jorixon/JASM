@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Input;
-using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

@@ -18,7 +18,8 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     [ObservableProperty] private bool _notification;
     [ObservableProperty] private AttentionType _notificationType;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(HasMods))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasMods))]
     private int _modCount;
 
     [ObservableProperty] private bool _hasMods;

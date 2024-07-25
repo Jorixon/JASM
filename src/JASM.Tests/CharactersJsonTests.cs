@@ -28,7 +28,7 @@ public class CharactersJsonTests : IDisposable
     }
 
     [Fact]
-    public async void CheckFor_DuplicateCharacterIds()
+    public async Task CheckFor_DuplicateCharacterIds()
     {
         var genshinService = await InitGenshinService();
         var characters = genshinService.GetCharacters();
@@ -40,7 +40,7 @@ public class CharactersJsonTests : IDisposable
 
 
     [Fact]
-    public async void CheckFor_DuplicateNames()
+    public async Task CheckFor_DuplicateNames()
     {
         var genshinService = await InitGenshinService();
         var characters = genshinService.GetCharacters();
@@ -53,7 +53,7 @@ public class CharactersJsonTests : IDisposable
 
 
     [Fact]
-    public async void CheckFor_DuplicateSubSkinNames()
+    public async Task CheckFor_DuplicateSubSkinNames()
     {
         var genshinService = await InitGenshinService();
         var characters = genshinService.GetCharacters();

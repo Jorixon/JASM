@@ -283,7 +283,7 @@ public class LifeCycleService
         _logger.Debug($"Saving Window size: {width}x{height} | IsFullscreen: {isFullScreen}");
 
         var newWindowSettings = new ScreenSizeSettings(width, height)
-            { IsFullScreen = isFullScreen, XPosition = xPosition, YPosition = yPosition };
+        { IsFullScreen = isFullScreen, XPosition = xPosition, YPosition = yPosition };
 
         await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, newWindowSettings)
             .ConfigureAwait(false);
