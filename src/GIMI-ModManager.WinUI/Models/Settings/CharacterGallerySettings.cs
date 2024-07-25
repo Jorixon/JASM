@@ -15,4 +15,8 @@ public class CharacterGallerySettings
     public bool IsNavPaneOpen { get; set; } = false;
 
     public bool CanDeleteDialogPrompt { get; set; } = true;
+
+    public bool SortByDescending { get; set; } = false;
+
+    public string? SortingMethod { get; set; }
 }

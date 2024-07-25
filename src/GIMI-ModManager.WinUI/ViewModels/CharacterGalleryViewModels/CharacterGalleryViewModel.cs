@@ -44,6 +44,9 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
 
     public ObservableCollection<SelectableModdableObjectVm> ModdableObjectVms { get; } = new();
 
+    [ObservableProperty] private string _selectedSortingMethod;
+    [ObservableProperty] private bool _sortByDescending;
+
     public bool MultipleCharacterSkins => CharacterSkins.Count > 1;
 
     public string ModdableObjectName
@@ -93,6 +96,12 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         }
     }
 
+    private Task<CharacterGallerySettings> ReadCharacterGallerySettings() =>
+        _localSettingsService.ReadOrCreateSettingAsync<CharacterGallerySettings>(CharacterGallerySettings.Key);
+
+    private Task SaveCharacterGallerySettings(CharacterGallerySettings settings) =>
+        _localSettingsService.SaveSettingAsync(CharacterGallerySettings.Key, settings);
+
     public CharacterGalleryViewModel(IGameService gameService,
         INavigationService navigationService,
         ISkinManagerService skinManagerService,
@@ -113,6 +122,8 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         _gridItemHeight = settings.ItemHeight;
         _gridItemWidth = settings.ItemDesiredWidth;
         _isSingleSelection = settings.IsSingleSelection;
+        _selectedSortingMethod = settings.SortingMethod ?? "Name";
+        _sortByDescending = settings.SortByDescending;
         IsNavPaneVisible = settings.IsNavPaneOpen;
     }
 
@@ -241,6 +252,26 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
         ResetContent();
     }
 
+    public async void OnSortComboBoxSelectionChanged(string sortingMethod)
+    {
+        SelectedSortingMethod = sortingMethod;
+        ResetContent();
+
+        var settings = await ReadCharacterGallerySettings();
+        settings.SortingMethod = sortingMethod;
+        await SaveCharacterGallerySettings(settings).ConfigureAwait(false);
+    }
+
+    public async void OnSortToggleButtonChanged(bool sortByDescending)
+    {
+        SortByDescending = sortByDescending;
+        ResetContent();
+
+        var settings = await ReadCharacterGallerySettings();
+        settings.SortByDescending = sortByDescending;
+        await SaveCharacterGallerySettings(settings).ConfigureAwait(false);
+    }
+
     public void OnSearchBoxTextChanged(string? searchText)
     {
         SearchText = searchText.IsNullOrEmpty() ? string.Empty : searchText;
@@ -260,12 +291,50 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
                    m.Author.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
 
 
-        gridItemVms.Sort((a, b) =>
+        switch (SelectedSortingMethod)
         {
-            var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
-            return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
-        });
+            case "Name":
+                if (SortByDescending)
+                    gridItemVms.Sort((a, b) => string.Compare(b.Name, a.Name, StringComparison.Ordinal));
+                else
+                    gridItemVms.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+                break;
+            case "DateAdded":
+                if (SortByDescending)
+                    gridItemVms.Sort((a, b) =>
+                    {
+                        var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
+                        return dateComparison != 0 ? dateComparison : string.Compare(b.Name, a.Name, StringComparison.Ordinal);
+                    });
+                else
+                    gridItemVms.Sort((a, b) =>
+                    {
+                        var dateComparison = a.DateAdded.CompareTo(b.DateAdded);
+                        return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                    });
+                break;
+            case "FolderName":
+                if (SortByDescending)
+                    gridItemVms.Sort((a, b) => string.Compare(b.FolderName, a.FolderName, StringComparison.Ordinal));
+                else
+                    gridItemVms.Sort((a, b) => string.Compare(a.FolderName, b.FolderName, StringComparison.Ordinal));
+                break;
+            default:
+                gridItemVms.Sort((a, b) =>
+                {
+                    var dateComparison = b.DateAdded.CompareTo(a.DateAdded);
+                    return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                });
+                break;
+        }
 
+        var enabledMods = gridItemVms.Where(m => m.IsEnabled);
+
+        foreach (var mod in enabledMods.Reverse())
+        {
+            gridItemVms.Remove(mod);
+            gridItemVms.Insert(0, mod);
+        }
 
         var currentMods = Mods.ToArray();
 
