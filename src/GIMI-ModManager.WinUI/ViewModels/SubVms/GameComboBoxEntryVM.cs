@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using GIMI_ModManager.Core.GamesService;
+﻿using GIMI_ModManager.Core.GamesService;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 

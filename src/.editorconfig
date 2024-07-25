@@ -16,7 +16,6 @@ trim_trailing_whitespace = true
 [*]
 
 # Microsoft .NET properties
-csharp_new_line_before_members_in_object_initializers = false
 csharp_preferred_modifier_order = public, private, protected, internal, file, new, static, abstract, virtual, sealed, readonly, override, extern, unsafe, volatile, async, required:suggestion
 csharp_style_prefer_utf8_string_literals = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
@@ -51,6 +50,31 @@ dotnet_style_prefer_inferred_tuple_names = true
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true
 dotnet_style_prefer_simplified_boolean_expressions = true
 dotnet_style_prefer_simplified_interpolation = true
+
+
+# Field preferences
+dotnet_style_readonly_field = true
+
+# Parameter preferences
+dotnet_code_quality_unused_parameters = all
+
+# Suppression preferences
+dotnet_remove_unnecessary_suppression_exclusions = none
+
+#### C# Formatting Rules ####
+
+# New line preferences
+csharp_new_line_before_catch = true
+csharp_new_line_before_else = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_before_members_in_object_initializers = false
+csharp_new_line_before_open_brace = all
+csharp_new_line_between_query_expression_clauses = true
+
+# 'using' directive preferences
+csharp_using_directive_placement = outside_namespace
+dotnet_diagnostic.IDE0005.severity  = error
 
 # ReSharper properties
 resharper_enforce_line_ending_style = true
