@@ -30,7 +30,7 @@ public static partial class DuplicateModAffixHelper
             return name;
         }
 
-    end:
+        end:
         return name + "__1";
     }
 }

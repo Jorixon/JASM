@@ -990,7 +990,10 @@ internal abstract class BaseMapper<T> where T : class, INameable, new()
                 throw new InvalidOperationException($"{Name} has invalid data");
 
             var newValue = new T()
-            { DisplayName = value.DisplayName, InternalName = new InternalName(value.InternalName) };
+            {
+                DisplayName = value.DisplayName,
+                InternalName = new InternalName(value.InternalName)
+            };
 
             // check if T is of type IImageSupport
             if (newValue is IImageSupport imageSupport && value is JsonElement element &&

@@ -193,9 +193,10 @@ public sealed partial class CharacterDetailsPage : Page
             //Implement sort on the column "Range" using LINQ
             if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
-                                 orderby modEntry.Name ascending
-                                 select modEntry;
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
+                    orderby modEntry.Name ascending
+                    select modEntry;
 
                 ViewModel.ModListVM.ReplaceMods(sortedMods);
 
@@ -205,9 +206,10 @@ public sealed partial class CharacterDetailsPage : Page
             }
             else
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
-                                 orderby modEntry.Name descending
-                                 select modEntry;
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
+                    orderby modEntry.Name descending
+                    select modEntry;
 
                 ViewModel.ModListVM.ReplaceMods(sortedMods);
 
@@ -222,9 +224,10 @@ public sealed partial class CharacterDetailsPage : Page
             //Implement sort on the column "Range" using LINQ
             if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
-                                 orderby modEntry.FolderName ascending
-                                 select modEntry;
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
+                    orderby modEntry.FolderName ascending
+                    select modEntry;
 
                 ViewModel.ModListVM.ReplaceMods(sortedMods);
 
@@ -234,9 +237,10 @@ public sealed partial class CharacterDetailsPage : Page
             }
             else
             {
-                var sortedMods = from modEntry in ViewModel.ModListVM.BackendMods
-                                 orderby modEntry.FolderName descending
-                                 select modEntry;
+                var sortedMods =
+                    from modEntry in ViewModel.ModListVM.BackendMods
+                    orderby modEntry.FolderName descending
+                    select modEntry;
 
                 ViewModel.ModListVM.ReplaceMods(sortedMods);
 

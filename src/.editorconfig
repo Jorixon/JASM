@@ -31,6 +31,7 @@ dotnet_style_qualification_for_field = false:suggestion
 dotnet_style_qualification_for_method = false:suggestion
 dotnet_style_qualification_for_property = false:suggestion
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+csharp_indent_labels = no_change
 
 # Expression-level preferences
 dotnet_style_coalesce_expression = true
