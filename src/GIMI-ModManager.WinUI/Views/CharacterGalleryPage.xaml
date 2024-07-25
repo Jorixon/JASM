@@ -290,6 +290,14 @@
                                                                 <FontIcon Glyph="&#xE8A7;" />
                                                             </MenuFlyoutItem.Icon>
                                                         </MenuFlyoutItem>
+                                                        <MenuFlyoutItem
+                                                            Command="{x:Bind DeleteModCommand}"
+                                                            CommandParameter="{x:Bind Mode=OneWay}"
+                                                            Text="Delete Mod">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE74D;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
                                                     </MenuFlyout>
                                                 </Button.Flyout>
                                             </Button>
