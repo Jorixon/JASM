@@ -129,7 +129,6 @@
                     SelectionChanged="SortingComboBox_OnSelectionChanged"
                     SelectionChangedTrigger="Committed">
                     <ComboBoxItem Content="Date Added" Tag="DateAdded" />
-                    <ComboBoxItem Content="Enabled" Tag="Enabled" />
                     <ComboBoxItem Content="Folder Name" Tag="FolderName" />
                     <ComboBoxItem Content="Name" Tag="Name" />
                 </ComboBox>

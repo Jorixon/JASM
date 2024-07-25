@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -312,12 +312,6 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
                         var dateComparison = a.DateAdded.CompareTo(b.DateAdded);
                         return dateComparison != 0 ? dateComparison : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
                     });
-               break;
-           case "Enabled":
-               if (SortByDescending)
-                   gridItemVms.Sort((a, b) => a.IsEnabled.CompareTo(b.IsEnabled));
-               else
-                   gridItemVms.Sort((a, b) => b.IsEnabled.CompareTo(a.IsEnabled));
                break;
            case "FolderName":
                if (SortByDescending)
