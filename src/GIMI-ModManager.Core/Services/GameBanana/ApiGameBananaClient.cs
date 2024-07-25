@@ -192,7 +192,7 @@ public sealed class ApiGameBananaClient(
     private async Task<HttpResponseMessage> SendRequest(Uri downloadsApiUrl, CancellationToken cancellationToken)
     {
         HttpResponseMessage response;
-        retry:
+    retry:
         try
         {
             await Task.Delay(200, cancellationToken).ConfigureAwait(false);

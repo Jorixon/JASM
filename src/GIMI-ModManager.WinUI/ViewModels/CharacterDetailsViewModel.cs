@@ -319,7 +319,8 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
         _elevatorService.RefreshGenshinMods();
     }
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(GoToGalleryScreenCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(GoToGalleryScreenCommand))]
     private bool _isAddingModFolder = false;
 
     [RelayCommand]
