@@ -328,6 +328,14 @@ public partial class CharacterGalleryViewModel : ObservableRecipient, INavigatio
                break;
         }
 
+        var enabledMods = gridItemVms.Where(m => m.IsEnabled);
+
+        foreach (var mod in enabledMods.Reverse())
+        {
+            gridItemVms.Remove(mod);
+            gridItemVms.Insert(0, mod);
+        }
+
         var currentMods = Mods.ToArray();
 
         foreach (var mod in currentMods)
