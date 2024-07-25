@@ -75,7 +75,7 @@ csharp_new_line_between_query_expression_clauses = true
 
 # 'using' directive preferences
 csharp_using_directive_placement = outside_namespace
-dotnet_diagnostic.IDE0005.severity  = error
+dotnet_diagnostic.IDE0005.severity  = warning
 
 # ReSharper properties
 resharper_enforce_line_ending_style = true
