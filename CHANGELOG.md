@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.13.0](https://github.com/Jorixon/JASM/compare/v2.12.2...v2.13.0) (2024-07-25)
+
+
+### Features
+
+* Add sort options to character gallery view ([#215](https://github.com/Jorixon/JASM/issues/215)) Thanks [@jeffvli](https://github.com/jeffvli) ([c4c02f3](https://github.com/Jorixon/JASM/commit/c4c02f3f273458d8dae2c35c4d771c1eb1a4c802))
+* Support deleting mod in gallery view ([#213](https://github.com/Jorixon/JASM/issues/213)) Thanks [@yuukidach](https://github.com/yuukidach) ([4a1744e](https://github.com/Jorixon/JASM/commit/4a1744ec8705290c55d6aa81336b4a63c5551c55))
+
 ## [2.12.2](https://github.com/Jorixon/JASM/compare/v2.12.1...v2.12.2) (2024-07-23)
 
 
