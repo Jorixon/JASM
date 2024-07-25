@@ -1,11 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.CommandService;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -13,7 +15,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace GIMI_ModManager.WinUI.Views;
 
-public sealed partial class CommandProcessViewer : UserControl, IDisposable
+public sealed partial class CommandProcessViewer : UserControl
 {
     public CommandProcessViewerViewModel ViewModel { get; } = App.GetService<CommandProcessViewerViewModel>();
 
@@ -27,25 +29,33 @@ public sealed partial class CommandProcessViewer : UserControl, IDisposable
             {
                 OutputTextBlock.Inlines.Add(eNewItem);
             }
+
+            if (ViewModel.IsAutoScroll)
+            {
+                OutputScrollViewer.ScrollToVerticalOffset(OutputScrollViewer.ScrollableHeight);
+            }
         };
 
         Loading += async (_, _) => await ViewModel.InitializeAsync(command, DispatcherQueue).ConfigureAwait(false);
         Loaded += async (_, _) => await ViewModel.StartAsync().ConfigureAwait(false);
     }
 
-    public void Dispose()
+    private void OutputTextBlock_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        ViewModel.Dispose();
     }
 }
 
-public partial class CommandProcessViewerViewModel : ObservableObject, IDisposable
+public partial class CommandProcessViewerViewModel : ObservableObject
 {
     private ProcessCommand? _command;
     private DispatcherQueue? _dispatcherQueue;
 
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(KillProcessCommand))]
+    private bool _isRunning;
 
     [ObservableProperty] private string _commandDisplayName = string.Empty;
+
+    [ObservableProperty] private bool _isAutoScroll = true;
 
     public ObservableCollection<Inline> OutputTextLines { get; } = new();
 
@@ -57,7 +67,7 @@ public partial class CommandProcessViewerViewModel : ObservableObject, IDisposab
         return Task.CompletedTask;
     }
 
-    [MemberNotNull(nameof(_command))]
+    [MemberNotNull(nameof(_command), nameof(_dispatcherQueue))]
     private void EnsureInitialized()
     {
         if (_command is null)
@@ -73,6 +83,7 @@ public partial class CommandProcessViewerViewModel : ObservableObject, IDisposab
         _dispatcherQueue!.TryEnqueue(() =>
         {
             var exitCode = _command!.ExitCode;
+            IsRunning = _command!.IsRunning;
 
             OutputTextLines.Add(new Run()
             {
@@ -113,11 +124,17 @@ public partial class CommandProcessViewerViewModel : ObservableObject, IDisposab
         _command.Exited += (_, _) => { OnProcessExit(); };
 
         _command.Start();
+        IsRunning = _command.IsRunning;
     }
 
-    public void Dispose()
+
+    [RelayCommand(CanExecute = nameof(IsRunning))]
+    private async Task KillProcessAsync()
     {
-        _command?.Dispose();
+        if (_command is null)
+            return;
+
+        await _command.KillAsync().ConfigureAwait(false);
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using Serilog;
 
 namespace GIMI_ModManager.Core.CommandService;
@@ -7,16 +8,23 @@ public sealed class CommandService(ILogger logger)
 {
     private readonly ILogger _logger = logger.ForContext<CommandService>();
 
+    private readonly ConcurrentDictionary<Guid, ProcessCommand> _runningCommands = [];
+
     public bool IsInitialized { get; private set; }
 
     public Task InitializeAsync()
+    {
+        return EnsureInitializedAsync();
+    }
+
+    private Task EnsureInitializedAsync()
     {
         IsInitialized = true;
         return Task.CompletedTask;
     }
 
 
-    private ProcessCommand InternalCreateCommand(CreateCommandOptions options)
+    private ProcessCommand InternalCreateCommand(InternalCreateCommandOptions options)
     {
         var commandContext = new CommandContext
         {
@@ -50,20 +58,47 @@ public sealed class CommandService(ILogger logger)
             process.StartInfo.RedirectStandardInput = true;
         }
 
-        return new ProcessCommand(process, options.ExecutionOptions, commandContext);
+        var command = new ProcessCommand(process, options, commandContext);
+
+        if (!_runningCommands.TryAdd(commandContext.Id, command))
+            throw new InvalidOperationException("Failed to add command to running commands");
+
+        command.Exited += (_, _) => _runningCommands.TryRemove(commandContext.Id, out _);
+
+        return command;
     }
 
-    public ProcessCommand CreateCommand(string targetPath, CommandExecutionOptions options)
+    public ProcessCommand CreateCommand(string targetPath, CreateCommandOptions createOptions)
     {
-        return InternalCreateCommand(new CreateCommandOptions
+        return InternalCreateCommand(new InternalCreateCommandOptions
         {
+            KillOnMainAppExit = createOptions.KillOnMainAppExit,
             TargetPath = targetPath,
-            ExecutionOptions = options
+            ExecutionOptions = createOptions.ExecutionOptions
         });
+    }
+
+
+    public void Cleanup()
+    {
+        var runningCommands = _runningCommands.Values.ToArray();
+
+        foreach (var command in runningCommands)
+        {
+            if (command is { IsRunning: true, InternalCreateOptions.KillOnMainAppExit: true })
+                _ = command.KillAsync();
+        }
     }
 }
 
-internal class CreateCommandOptions
+public class CreateCommandOptions
+{
+    // If true, the process will be killed when tha application closes
+    public required bool KillOnMainAppExit { get; init; }
+    public required CommandExecutionOptions ExecutionOptions { get; init; }
+}
+
+internal class InternalCreateCommandOptions
 {
     // Replace with actual path
     public required string TargetPath { get; set; }
@@ -73,34 +108,42 @@ internal class CreateCommandOptions
     public string DisplayName => _displayName ??=
         SpecialVariables.ReplaceVariables(ExecutionOptions.Command + " " + ExecutionOptions.Arguments, TargetPath);
 
+    public bool KillOnMainAppExit { get; init; }
+
     public required CommandExecutionOptions ExecutionOptions { get; set; }
 }
 
 /// <summary>
 /// This is returned when a command is created, is used to track and interact with the process
 /// </summary>
-public sealed class ProcessCommand : IDisposable
+public sealed class ProcessCommand
 {
     private readonly Process _process;
+    private CommandContext Context { get; }
 
-    internal CommandContext Context { get; }
-    public CommandExecutionOptions Options { get; }
+    internal InternalCreateCommandOptions InternalCreateOptions { get; }
+    public CommandExecutionOptions Options => InternalCreateOptions.ExecutionOptions;
 
     public string DisplayName => Context.DisplayName;
 
-    internal ProcessCommand(Process process, CommandExecutionOptions options, CommandContext context)
+    internal ProcessCommand(Process process, InternalCreateCommandOptions options,
+        CommandContext context)
     {
         _process = process;
-        Options = options;
+        InternalCreateOptions = options;
         Context = context;
 
-        CanWriteInputReadOutput = options.CanRedirectInputOutput();
+        CanWriteInputReadOutput = InternalCreateOptions.ExecutionOptions.CanRedirectInputOutput();
     }
 
     public bool HasBeenStarted { get; private set; }
     public bool CanWriteInputReadOutput { get; private set; }
-    public bool HasExited => _process.HasExited;
-    public int ExitCode => _process.ExitCode;
+
+    public bool HasExited { get; private set; }
+
+    public bool IsRunning => !HasExited;
+
+    public int ExitCode { get; private set; } = 1337;
 
     public event EventHandler? Exited;
     public event EventHandler<DataReceivedEventArgs>? OutputDataReceived;
@@ -115,13 +158,16 @@ public sealed class ProcessCommand : IDisposable
         HasBeenStarted = true;
         _process.Exited += (_, args) =>
         {
+            HasExited = true;
+            ExitCode = _process.ExitCode;
             Context.EndTime = DateTime.Now;
-            _process.Refresh();
+            _process.Dispose();
             Exited?.Invoke(this, args);
         };
 
-        Context.StartTime = DateTime.Now;
+
         var result = _process.Start();
+        Context.StartTime = DateTime.Now;
 
         if (CanWriteInputReadOutput)
         {
@@ -131,6 +177,7 @@ public sealed class ProcessCommand : IDisposable
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
         }
+
 
         _process.Refresh();
         return result;
@@ -146,7 +193,7 @@ public sealed class ProcessCommand : IDisposable
     }
 
 
-    public void WriteInput(string? input)
+    public async Task WriteInputAsync(string? input, bool appendNewLine = true)
     {
         if (!CanWriteInputReadOutput)
             throw new InvalidOperationException("Cannot write input to a process that uses shell execute");
@@ -154,11 +201,19 @@ public sealed class ProcessCommand : IDisposable
         if (HasExited)
             throw new InvalidOperationException("Cannot write input to a process that has exited");
 
-        _process.StandardInput.WriteLine(input);
+        var inputToWrite = input + (appendNewLine ? Environment.NewLine : string.Empty);
+
+        await _process.StandardInput.WriteAsync(inputToWrite).ConfigureAwait(false);
     }
 
-    public void Dispose()
+
+    public async Task<int> KillAsync()
     {
-        _process.Dispose();
+        if (HasExited)
+            return ExitCode;
+
+        _process.Kill();
+        await WaitForExitAsync().ConfigureAwait(false);
+        return ExitCode;
     }
 }
