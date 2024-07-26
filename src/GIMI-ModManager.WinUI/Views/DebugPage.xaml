@@ -13,8 +13,12 @@
     mc:Ignorable="d">
 
 
+
+
+
     <StackPanel>
-        <Button Content="Run Command" Click="ButtonBase_OnClick"></Button>
-        <Button Content="OpenDialog" Click="ButtonBase_OnClickOpenDialog"></Button>
+        <Button Click="ButtonBase_OnClick" Content="Run Command" />
+        <Button Click="ButtonBase_OnClickOpenDialog" Content="OpenDialog" />
+        <Button Click="CreateCommand_OnClick" Content="Create Command" />
     </StackPanel>
 </Page>

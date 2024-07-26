@@ -40,16 +40,15 @@
         </Grid>
 
 
+
         <ScrollViewer
             x:Name="OutputScrollViewer"
             Grid.Row="1"
             Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
             VerticalScrollBarVisibility="Visible"
             VerticalScrollMode="Enabled">
-            <TextBlock
-                x:Name="OutputTextBlock"
-                IsTextSelectionEnabled="True"
-                KeyDown="OutputTextBlock_OnKeyDown" />
+            <TextBlock x:Name="OutputTextBlock" IsTextSelectionEnabled="True" />
+
         </ScrollViewer>
         <ProgressBar
             Grid.Row="1"
@@ -59,7 +58,19 @@
 
 
         <Grid Grid.Row="2">
-            <Button Command="{x:Bind ViewModel.KillProcessCommand}" Content="Kill process" />
+            <StackPanel Spacing="8">
+                <TextBox
+                    x:Name="InputTextBox"
+                    AcceptsReturn="False"
+                    Header="Write to Process, press enter to send"
+                    IsEnabled="{x:Bind ViewModel.IsRunning, Mode=OneWay}"
+                    KeyDown="InputTextBox_OnKeyDown"
+                    Text="{x:Bind ViewModel.InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button
+                    HorizontalAlignment="Right"
+                    Command="{x:Bind ViewModel.KillProcessCommand}"
+                    Content="Kill process" />
+            </StackPanel>
         </Grid>
 
     </Grid>
