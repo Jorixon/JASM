@@ -1,14 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.CommandService;
 using Microsoft.UI;
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,8 +41,11 @@ public sealed partial class CommandProcessViewer : UserControl
         Loaded += async (_, _) => await ViewModel.StartAsync().ConfigureAwait(false);
     }
 
-    private void OutputTextBlock_OnKeyDown(object sender, KeyRoutedEventArgs e)
+    private void InputTextBox_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
+        if (e.Key != VirtualKey.Enter || !ViewModel.WriteInputCommand.CanExecute(InputTextBox.Text)) return;
+
+        ViewModel.WriteInputCommand.ExecuteAsync(InputTextBox.Text);
     }
 }
 
@@ -50,12 +54,14 @@ public partial class CommandProcessViewerViewModel : ObservableObject
     private ProcessCommand? _command;
     private DispatcherQueue? _dispatcherQueue;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(KillProcessCommand))]
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(KillProcessCommand), nameof(WriteInputCommand))]
     private bool _isRunning;
 
     [ObservableProperty] private string _commandDisplayName = string.Empty;
 
     [ObservableProperty] private bool _isAutoScroll = true;
+
+    [ObservableProperty] private string? _inputText;
 
     public ObservableCollection<Inline> OutputTextLines { get; } = new();
 
@@ -131,15 +137,22 @@ public partial class CommandProcessViewerViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(IsRunning))]
     private async Task KillProcessAsync()
     {
-        if (_command is null)
-            return;
+        EnsureInitialized();
+
 
         await _command.KillAsync().ConfigureAwait(false);
     }
-}
 
-public class OutputEntryVM
-{
-    public required string Text { get; set; }
-    public required string Color { get; set; }
+    [RelayCommand(CanExecute = nameof(IsRunning))]
+    private async Task WriteInputAsync(string? input)
+    {
+        EnsureInitialized();
+
+        await _command.WriteInputAsync(input);
+        InputText = string.Empty;
+        OutputTextLines.Add(new Run()
+        {
+            Text = ">" + input + Environment.NewLine
+        });
+    }
 }

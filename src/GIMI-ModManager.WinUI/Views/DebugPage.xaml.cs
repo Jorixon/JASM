@@ -1,5 +1,6 @@
 using GIMI_ModManager.Core.CommandService;
 using GIMI_ModManager.WinUI.Services.AppManagement;
+using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -27,8 +28,9 @@ public sealed partial class DebugPage : Page
         };
 
 
-        var command = CommandService.CreateCommand("", new CreateCommandOptions()
+        var command = CommandService.CreateCommand("", new CommandDefinition()
         {
+            CommandDisplayName = "test",
             KillOnMainAppExit = false,
             ExecutionOptions = execOptions
         });
@@ -44,19 +46,29 @@ public sealed partial class DebugPage : Page
 
         var execOptions = new CommandExecutionOptions()
         {
-            CreateWindow = true,
+            CreateWindow = false,
             Command = "python",
             Arguments = "-u F:\\test.py"
         };
 
-        var command = CommandService.CreateCommand("", new CreateCommandOptions()
+        var command = CommandService.CreateCommand("", new CommandDefinition()
         {
+            CommandDisplayName = "test",
             KillOnMainAppExit = true,
             ExecutionOptions = execOptions
         });
 
         var page = new CommandProcessViewer(command);
 
+
+        WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
+    }
+
+    private void CreateCommand_OnClick(object sender, RoutedEventArgs e)
+    {
+        var window = App.MainWindow;
+
+        var page = new CreateCommandView();
 
         WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
     }

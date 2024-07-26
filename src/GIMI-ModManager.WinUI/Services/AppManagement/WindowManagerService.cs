@@ -189,6 +189,10 @@ public class WindowManagerService : IWindowManagerService
             dialog.Closed += (_, _) => element.Dispose();
         }
 
+        if (content is IClosableElement closable)
+        {
+            closable.CloseRequested += (_, _) => dialog.Hide();
+        }
 
         return await window.DispatcherQueue.EnqueueAsync(async () =>
         {
@@ -269,4 +273,9 @@ public interface IWindowManagerService
         WindowEx window);
 
     Task CloseWindowsAsync();
+}
+
+public interface IClosableElement
+{
+    public event EventHandler? CloseRequested;
 }

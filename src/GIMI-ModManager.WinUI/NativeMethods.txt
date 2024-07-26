@@ -2,3 +2,4 @@
 SetWindowPos
 SetForegroundWindow
 PlaySound
+PathFindOnPath
