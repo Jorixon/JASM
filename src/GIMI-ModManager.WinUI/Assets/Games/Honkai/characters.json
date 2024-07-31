@@ -941,5 +941,23 @@
     "InGameSkins": [],
     "InternalName": "Yunli",
     "DisplayName": "Yunli"
+  },
+  {
+    "Id": 51,
+    "Keys": [
+      "jiaoqiu"
+    ],
+    "ReleaseDate": "2024-08-21T00:00:00",
+    "Image": "jiaoqiu.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Jiaoqiu",
+    "InGameSkins": [],
+    "InternalName": "Jiaoqiu",
+    "DisplayName": "Jiaoqiu"
   }
 ]
