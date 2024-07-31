@@ -923,5 +923,23 @@
     "InGameSkins": [],
     "InternalName": "Jade",
     "DisplayName": "Jade"
+  },
+  {
+    "Id": 50,
+    "Keys": [
+      "yunli"
+    ],
+    "ReleaseDate": "2024-07-31T00:00:00",
+    "Image": "yunli.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Zhuming"
+    ],
+    "ModFilesName": "Yunli",
+    "InGameSkins": [],
+    "InternalName": "Yunli",
+    "DisplayName": "Yunli"
   }
 ]
