@@ -1676,5 +1676,22 @@
     "InGameSkins": [],
     "InternalName": "Sethos",
     "DisplayName": "Sethos"
+  },
+  {
+    "Keys": [
+      "Emilie"
+    ],
+    "ReleaseDate": "2024-08-06T00:00:00",
+    "Image": "Character_Emilie_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Polearm",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Emilie",
+    "InGameSkins": [],
+    "InternalName": "Emilie",
+    "DisplayName": "Emilie"
   }
 ]
