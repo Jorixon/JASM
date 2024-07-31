@@ -995,5 +995,23 @@
     "InGameSkins": [],
     "InternalName": "Lingsha",
     "DisplayName": "Lingsha"
+  },
+  {
+    "Id": 54,
+    "Keys": [
+      "Moze"
+    ],
+    "ReleaseDate": "",
+    "Image": "moze.png",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Moze",
+    "InGameSkins": [],
+    "InternalName": "Moze",
+    "DisplayName": "Moze"
   }
 ]

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
@@ -497,6 +497,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\luocha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\lynx.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\march7.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\moze.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\natasha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\pela.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\qingque.webp" />
