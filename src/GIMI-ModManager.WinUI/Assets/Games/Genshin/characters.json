@@ -1710,5 +1710,22 @@
     "InGameSkins": [],
     "InternalName": "Mualani",
     "DisplayName": "Mualani"
+  },
+  {
+    "Keys": [
+      "Kinich"
+    ],
+    "ReleaseDate": "2024-09-18T00:00:00",
+    "Image": "Character_Kinich_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Claymore",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Kinich",
+    "InGameSkins": [],
+    "InternalName": "Kinich",
+    "DisplayName": "Kinich"
   }
 ]
