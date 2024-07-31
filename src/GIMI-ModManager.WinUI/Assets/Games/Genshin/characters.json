@@ -1693,5 +1693,22 @@
     "InGameSkins": [],
     "InternalName": "Emilie",
     "DisplayName": "Emilie"
+  },
+  {
+    "Keys": [
+      "Mualani"
+    ],
+    "ReleaseDate": "2024-08-28T00:00:00",
+    "Image": "Character_Mualani_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Mualani",
+    "InGameSkins": [],
+    "InternalName": "Mualani",
+    "DisplayName": "Mualani"
   }
 ]
