@@ -477,6 +477,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\dangheng.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\DHIL.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\drratio.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\feixiao.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\firefly.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\fuxuan.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\gepard.webp" />

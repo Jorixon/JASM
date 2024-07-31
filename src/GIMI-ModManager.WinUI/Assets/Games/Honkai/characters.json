@@ -959,5 +959,23 @@
     "InGameSkins": [],
     "InternalName": "Jiaoqiu",
     "DisplayName": "Jiaoqiu"
+  },
+  {
+    "Id": 52,
+    "Keys": [
+      "feixiao"
+    ],
+    "ReleaseDate": "2024-09-10T00:00:00",
+    "Image": "feixiao.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Feixiao",
+    "InGameSkins": [],
+    "InternalName": "Feixiao",
+    "DisplayName": "Feixiao"
   }
 ]
