@@ -1727,5 +1727,22 @@
     "InGameSkins": [],
     "InternalName": "Kinich",
     "DisplayName": "Kinich"
+  },
+  {
+    "Keys": [
+      "Kachina"
+    ],
+    "ReleaseDate": "2024-08-06T00:00:00",
+    "Image": "Character_Kachina_Thumb.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Polearm",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Kachina",
+    "InGameSkins": [],
+    "InternalName": "Kachina",
+    "DisplayName": "Kachina"
   }
 ]
