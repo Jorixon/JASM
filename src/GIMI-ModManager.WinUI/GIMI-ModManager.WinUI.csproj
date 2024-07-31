@@ -492,6 +492,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\jingliu.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\jingyuan.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\kafka.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\lingsha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\luka.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\luocha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\lynx.webp" />

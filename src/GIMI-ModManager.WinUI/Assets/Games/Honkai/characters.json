@@ -977,5 +977,23 @@
     "InGameSkins": [],
     "InternalName": "Feixiao",
     "DisplayName": "Feixiao"
+  },
+  {
+    "Id": 53,
+    "Keys": [
+      "Lingsha"
+    ],
+    "ReleaseDate": "2024-10-01T00:00:00",
+    "Image": "lingsha.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofo"
+    ],
+    "ModFilesName": "Lingsha",
+    "InGameSkins": [],
+    "InternalName": "Lingsha",
+    "DisplayName": "Lingsha"
   }
 ]
