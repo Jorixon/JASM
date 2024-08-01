@@ -44,7 +44,7 @@ Latest development release can be downloaded from [Actions Tab](https://github.c
 
 ## Requirements
 - Windows 10, version 1809 or higher ([supposedly](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/))
-- [NET 7.0 Desktop Runtime (v7.0.10)](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win10-x64&apphost_version=7.0.10&gui=true)
+- [NET Desktop Runtime](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win10-x64&apphost_version=8.0.0&gui=true)
 - [Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads)
 
 If you don't have these downloaded the application will prompt you to download necessary dependencies and provide links.
