@@ -23,6 +23,9 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Logs**
+Please provide a snipped of the last entries of the log file as this may greatly help me, help you. The logs file can be found in the root of the application folder `JASM\logs\log.txt`. Exceptions == error. There is not filter on it so your windows username may be shown in file paths.
+
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows 10]
  - Version [e.g. 22h2]
