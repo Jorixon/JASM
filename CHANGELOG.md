@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.13.1](https://github.com/Jorixon/JASM/compare/v2.13.0...v2.13.1) (2024-08-01)
+
+
+### Miscellaneous
+
+* Add characters for Genshin (4.8 - 5.0) and HSR (2.4 - 2.5) ([#224](https://github.com/Jorixon/JASM/issues/224)) Thanks [@jeffvli](https://github.com/jeffvli) ([39b5dd7](https://github.com/Jorixon/JASM/commit/39b5dd7e86f0cefdbe9fc97127dd7007eaee01e6))
+* Update Genshin Game Localization(zh-cn) to 4.8 ([#223](https://github.com/Jorixon/JASM/issues/223)) Thanks [@kanonmelodis](https://github.com/kanonmelodis) ([3ff9e30](https://github.com/Jorixon/JASM/commit/3ff9e305f5dc9439e27178eb4c01556bd82eddd2))
+
 ## [2.13.0](https://github.com/Jorixon/JASM/compare/v2.12.2...v2.13.0) (2024-07-25)
 
 
