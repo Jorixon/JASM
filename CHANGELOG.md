@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.2](https://github.com/Jorixon/JASM/compare/v2.13.1...v2.13.2) (2024-08-02)
+
+
+### Miscellaneous
+
+* Added more error handling to Auto Updater application ([05b3339](https://github.com/Jorixon/JASM/commit/05b3339447c8f0c72b18e117e4247d6144d7346f))
+
 ## [2.13.1](https://github.com/Jorixon/JASM/compare/v2.13.0...v2.13.1) (2024-08-01)
 
 
