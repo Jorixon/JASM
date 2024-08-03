@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
+using static GIMI_ModManager.Core.Services.CommandService.RunningCommandChangedEventArgs;
 
 namespace GIMI_ModManager.Core.Services.CommandService;
 
@@ -16,7 +17,14 @@ public sealed class CommandService(ILogger logger)
 
     private string _jsonCommandFilePath = "";
 
+    private readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        WriteIndented = true
+    };
+
     public bool IsInitialized { get; private set; }
+
+    public event EventHandler<RunningCommandChangedEventArgs> RunningCommandsChanged;
 
     public async Task InitializeAsync(string appDataDirectoryPath)
     {
@@ -30,15 +38,27 @@ public sealed class CommandService(ILogger logger)
 
         if (File.Exists(_jsonCommandFilePath))
         {
-            var json = await File.ReadAllTextAsync(_jsonCommandFilePath).ConfigureAwait(false);
-            var jsonCommands = JsonSerializer.Deserialize<CommandRootJson>(json)?.Commands ?? [];
+            try
+            {
+                var json = await File.ReadAllTextAsync(_jsonCommandFilePath).ConfigureAwait(false);
+                var jsonCommands = JsonSerializer.Deserialize<CommandRootJson>(json)?.Commands ?? [];
 
-            _commands = jsonCommands.Select(CommandDefinition.FromJson).ToList();
+                _commands = jsonCommands.Select(CommandDefinition.FromJson).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to read command root json. Creating new one");
+                File.Move(_jsonCommandFilePath, _jsonCommandFilePath + ".invalid", overwrite: true);
+                await File.WriteAllTextAsync(_jsonCommandFilePath,
+                        JsonSerializer.Serialize(new CommandRootJson(), _jsonOptions))
+                    .ConfigureAwait(false);
+            }
         }
         else
         {
             _logger.Information("No command root json found, creating new one");
-            await File.WriteAllTextAsync(_jsonCommandFilePath, JsonSerializer.Serialize(new CommandRootJson()))
+            await File.WriteAllTextAsync(_jsonCommandFilePath,
+                    JsonSerializer.Serialize(new CommandRootJson(), _jsonOptions))
                 .ConfigureAwait(false);
         }
 
@@ -53,17 +73,19 @@ public sealed class CommandService(ILogger logger)
     {
         var commandContext = new CommandContext
         {
-            TargetPath = options.TargetPath,
-            DisplayName = options.DisplayName
+            SpecialVariables = options.SpecialVariablesInput
         };
 
         options.ExecutionOptions.IsReadOnly = true;
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = SpecialVariables.ReplaceVariables(options.ExecutionOptions.Command, options.TargetPath),
-            Arguments = SpecialVariables.ReplaceVariables(options.ExecutionOptions.Arguments, options.TargetPath),
-            WorkingDirectory = options.ExecutionOptions.WorkingDirectory,
+            FileName = SpecialVariables.ReplaceVariables(options.ExecutionOptions.Command,
+                options.SpecialVariablesInput),
+            Arguments = SpecialVariables.ReplaceVariables(options.ExecutionOptions.Arguments,
+                options.SpecialVariablesInput),
+            WorkingDirectory = SpecialVariables.ReplaceVariables(options.ExecutionOptions.WorkingDirectory,
+                options.SpecialVariablesInput),
             UseShellExecute = options.ExecutionOptions.UseShellExecute,
             CreateNoWindow = !options.ExecutionOptions.CreateWindow,
             Verb = options.ExecutionOptions.RunAsAdmin ? "runas" : null
@@ -85,51 +107,103 @@ public sealed class CommandService(ILogger logger)
 
         var command = new ProcessCommand(process, options, commandContext);
 
-        command.Started += (_, _) => _runningCommands.TryAdd(commandContext.Id, command);
-        command.Exited += (_, _) => _runningCommands.TryRemove(commandContext.Id, out _);
+        command.Started += (_, _) =>
+        {
+            _runningCommands.TryAdd(commandContext.Id, command);
+            RunningCommandsChanged?.Invoke(this,
+                new RunningCommandChangedEventArgs(CommandChangeType.Added, command));
+        };
+        command.Exited += (_, _) =>
+        {
+            var removed = _runningCommands.TryRemove(commandContext.Id, out _);
+            if (removed)
+                RunningCommandsChanged?.Invoke(this,
+                    new RunningCommandChangedEventArgs(CommandChangeType.Removed, command));
+        };
 
         return command;
     }
 
-    public ProcessCommand CreateCommand(string targetPath, CommandDefinition definition)
+    public ProcessCommand CreateCommand(CommandDefinition definition, SpecialVariablesInput? specialVariables = null)
     {
+        if (specialVariables is not null)
+            specialVariables.IsReadOnly = true;
+
         return InternalCreateCommand(new InternalCreateCommandOptions
         {
+            DisplayName = definition.CommandDisplayName,
+            CommandDefinitionId = definition.Id,
             KillOnMainAppExit = definition.KillOnMainAppExit,
-            TargetPath = targetPath,
+            SpecialVariablesInput = specialVariables,
             ExecutionOptions = definition.ExecutionOptions.Clone()
         });
     }
 
-    // TODO: TMP Storage
-    private readonly CommandRootJson _commandRootJson = new();
-
     public Task SaveCommandDefinitionAsync(CommandDefinition commandDefinition)
     {
-        var jsonCommand = new JsonCommandDefinition
-        {
-            Id = commandDefinition.Id,
-            CreateTime = DateTime.Now,
-            DisplayName = commandDefinition.ExecutionOptions.Command,
-            Command = commandDefinition.ExecutionOptions.Command,
-            Arguments = commandDefinition.ExecutionOptions.Arguments,
-            WorkingDirectory = commandDefinition.ExecutionOptions.WorkingDirectory,
-            KillOnMainAppExit = commandDefinition.KillOnMainAppExit,
-            UseShellExecute = commandDefinition.ExecutionOptions.UseShellExecute,
-            CreateWindow = commandDefinition.ExecutionOptions.CreateWindow,
-            RunAsAdmin = commandDefinition.ExecutionOptions.RunAsAdmin
-        };
+        commandDefinition.ExecutionOptions.IsReadOnly = true;
+        _commands.Add(commandDefinition);
 
-        _commandRootJson.Commands = _commandRootJson.Commands.Append(jsonCommand).ToArray();
-
-        return Task.CompletedTask;
+        return SaveCommandsAsync();
     }
 
 
-    public Task<IReadOnlyList<CommandDefinition>> ReadCommandDefinitionsAsync()
+    public Task DeleteCommandDefinitionAsync(Guid commandId)
     {
-        return Task.FromResult<IReadOnlyList<CommandDefinition>>(_commandRootJson.Commands
-            .Select(CommandDefinition.FromJson).ToList());
+        var command = _commands.FirstOrDefault(c => c.Id == commandId);
+
+        if (command is null)
+            return Task.CompletedTask;
+
+        _commands.Remove(command);
+
+        return SaveCommandsAsync();
+    }
+
+    public Task<bool> UpdateCommandDefinitionAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IReadOnlyList<CommandDefinition>> GetCommandDefinitionsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<IReadOnlyList<CommandDefinition>>(_commands.ToList());
+    }
+
+    public Task<CommandDefinition?> GetCommandDefinitionAsync(Guid commandId,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(_commands.FirstOrDefault(c => c.Id == commandId));
+    }
+
+    public Task<IReadOnlyList<ProcessCommand>> GetRunningCommandsAsync()
+    {
+        return Task.FromResult<IReadOnlyList<ProcessCommand>>(_runningCommands.Values.ToList());
+    }
+
+
+    private async Task SaveCommandsAsync()
+    {
+        var jsonRoot = new CommandRootJson
+        {
+            Commands = _commands.Select(c => new JsonCommandDefinition
+            {
+                Id = c.Id,
+                CreateTime = DateTime.Now,
+                DisplayName = c.CommandDisplayName,
+                Command = c.ExecutionOptions.Command,
+                Arguments = c.ExecutionOptions.Arguments,
+                WorkingDirectory = c.ExecutionOptions.WorkingDirectory,
+                UseShellExecute = c.ExecutionOptions.UseShellExecute,
+                CreateWindow = c.ExecutionOptions.CreateWindow,
+                RunAsAdmin = c.ExecutionOptions.RunAsAdmin,
+                KillOnMainAppExit = c.KillOnMainAppExit
+            }).ToArray()
+        };
+
+        await File.WriteAllTextAsync(_jsonCommandFilePath, JsonSerializer.Serialize(jsonRoot, _jsonOptions))
+            .ConfigureAwait(false);
     }
 
     public void Cleanup()
@@ -144,6 +218,22 @@ public sealed class CommandService(ILogger logger)
     }
 }
 
+public class RunningCommandChangedEventArgs(
+    CommandChangeType commandChangeType,
+    ProcessCommand command)
+    : EventArgs
+{
+    public CommandChangeType ChangeType { get; } = commandChangeType;
+
+    public ProcessCommand Command { get; } = command;
+
+    public enum CommandChangeType
+    {
+        Added,
+        Removed
+    }
+}
+
 public class CommandDefinition
 {
     public Guid Id { get; private init; } = Guid.NewGuid();
@@ -153,6 +243,22 @@ public class CommandDefinition
     // If true, the process will be killed when the application closes
     public required bool KillOnMainAppExit { get; init; }
     public required CommandExecutionOptions ExecutionOptions { get; init; }
+
+    /// <summary>
+    /// This will return the full command with all variables replaced
+    /// </summary>
+    public (string FullCommand, string? WorkingDirectory) GetFullCommand(
+        SpecialVariablesInput? specialVariablesInput)
+    {
+        var fullCommand = SpecialVariables.ReplaceVariables(
+            ExecutionOptions.Command + " " + ExecutionOptions.Arguments,
+            specialVariablesInput);
+
+        var workingDirectory = SpecialVariables.ReplaceVariables(ExecutionOptions.WorkingDirectory,
+            specialVariablesInput);
+
+        return (fullCommand, workingDirectory);
+    }
 
 
     internal static CommandDefinition FromJson(JsonCommandDefinition jsonCommandDefinition)
@@ -177,13 +283,22 @@ public class CommandDefinition
 
 internal class InternalCreateCommandOptions
 {
-    // Replace with actual path
-    public required string TargetPath { get; set; }
+    public required Guid CommandDefinitionId { get; init; }
 
-    private string? _displayName;
+    public required SpecialVariablesInput? SpecialVariablesInput { get; init; }
 
-    public string DisplayName => _displayName ??=
-        SpecialVariables.ReplaceVariables(ExecutionOptions.Command + " " + ExecutionOptions.Arguments, TargetPath);
+    private readonly string? _displayName;
+
+    public string DisplayName
+    {
+        get =>
+            _displayName ??
+            SpecialVariables.ReplaceVariables(ExecutionOptions.Command + " " + ExecutionOptions.Arguments,
+                SpecialVariablesInput ?? new SpecialVariablesInput());
+
+        init => _displayName = value;
+    }
+
 
     public bool KillOnMainAppExit { get; init; }
 
@@ -196,19 +311,25 @@ internal class InternalCreateCommandOptions
 public sealed class ProcessCommand
 {
     private readonly Process _process;
-    private CommandContext Context { get; }
+    private readonly CommandContext _context;
 
     internal InternalCreateCommandOptions InternalCreateOptions { get; }
     public CommandExecutionOptions Options => InternalCreateOptions.ExecutionOptions;
 
-    public string DisplayName => Context.DisplayName;
+    public Guid RunId => _context.Id;
+
+    public Guid CommandDefinitionId => InternalCreateOptions.CommandDefinitionId;
+
+    public string DisplayName => InternalCreateOptions.DisplayName;
+
+    public string FullCommand => _process.StartInfo.FileName + " " + _process.StartInfo.Arguments;
 
     internal ProcessCommand(Process process, InternalCreateCommandOptions options,
         CommandContext context)
     {
         _process = process;
         InternalCreateOptions = options;
-        Context = context;
+        _context = context;
 
         CanWriteInputReadOutput = InternalCreateOptions.ExecutionOptions.CanRedirectInputOutput();
     }
@@ -233,19 +354,21 @@ public sealed class ProcessCommand
         if (HasBeenStarted)
             throw new InvalidOperationException("Cannot start a command that has already been started");
 
-        HasBeenStarted = true;
-        _process.Exited += (_, args) =>
+        _process.Exited += ExitHandler;
+
+        bool result;
+        try
         {
-            HasExited = true;
-            ExitCode = _process.ExitCode;
-            Context.EndTime = DateTime.Now;
-            _process.Dispose();
-            Exited?.Invoke(this, args);
-        };
+            result = _process.Start();
+        }
+        catch (Exception e)
+        {
+            _process.Exited -= ExitHandler;
+            throw;
+        }
 
-
-        var result = _process.Start();
-        Context.StartTime = DateTime.Now;
+        HasBeenStarted = true;
+        _context.StartTime = DateTime.Now;
 
         if (CanWriteInputReadOutput)
         {
@@ -260,6 +383,15 @@ public sealed class ProcessCommand
 
         _process.Refresh();
         return result;
+    }
+
+    private void ExitHandler(object? sender, EventArgs args)
+    {
+        HasExited = true;
+        ExitCode = _process.ExitCode;
+        _context.EndTime = DateTime.Now;
+        _process.Dispose();
+        Exited?.Invoke(this, args);
     }
 
     public async Task WaitForExitAsync()

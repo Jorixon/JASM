@@ -28,7 +28,7 @@ public sealed partial class DebugPage : Page
         };
 
 
-        var command = CommandService.CreateCommand("", new CommandDefinition()
+        var command = CommandService.CreateCommand(new CommandDefinition()
         {
             CommandDisplayName = "test",
             KillOnMainAppExit = false,
@@ -40,28 +40,33 @@ public sealed partial class DebugPage : Page
         await command.WaitForExitAsync().ConfigureAwait(false);
     }
 
-    private void ButtonBase_OnClickOpenDialog(object sender, RoutedEventArgs e)
+    private async void ButtonBase_OnClickOpenDialog(object sender, RoutedEventArgs e)
     {
         var window = App.MainWindow;
 
         var execOptions = new CommandExecutionOptions()
         {
-            CreateWindow = false,
+            CreateWindow = true,
             Command = "python",
             Arguments = "-u F:\\test.py"
         };
 
-        var command = CommandService.CreateCommand("", new CommandDefinition()
+        var command = CommandService.CreateCommand(new CommandDefinition()
         {
             CommandDisplayName = "test",
             KillOnMainAppExit = true,
             ExecutionOptions = execOptions
         });
 
-        var page = new CommandProcessViewer(command);
+
+        command.Start();
+        await command.WaitForExitAsync().ConfigureAwait(false);
 
 
-        WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
+        //var page = new CommandProcessViewer(command);
+
+
+        //WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
     }
 
     private void CreateCommand_OnClick(object sender, RoutedEventArgs e)

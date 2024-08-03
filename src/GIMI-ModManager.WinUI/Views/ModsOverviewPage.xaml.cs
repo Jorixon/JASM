@@ -20,6 +20,38 @@ public sealed partial class ModsOverviewPage : Page
     {
         InitializeComponent();
     }
+
+    private void CommandMenuFlyout_OnOpening(object? sender, object e)
+    {
+        var flyout = sender as Flyout;
+        if (flyout is null)
+        {
+            return;
+        }
+
+        var dataContext = ((sender as Flyout)?.Content as Grid)?.DataContext;
+
+        if (dataContext is ModModel mod)
+        {
+            ViewModel.TargetPath = mod.FolderPath;
+        }
+        else if (dataContext is ModdableObjectNode node)
+        {
+            ViewModel.TargetPath = node.FolderPath;
+        }
+        else if (dataContext is CategoryNode category)
+        {
+            ViewModel.TargetPath = category.FolderPath;
+        }
+        else
+            flyout.Hide();
+
+        // Hacky way to show target path in the flyout
+        foreach (var viewModelCommandDefinition in ViewModel.CommandDefinitions)
+        {
+            viewModelCommandDefinition.TargetPath = ViewModel.TargetPath;
+        }
+    }
 }
 
 public class ItemTemplateSelector : DataTemplateSelector

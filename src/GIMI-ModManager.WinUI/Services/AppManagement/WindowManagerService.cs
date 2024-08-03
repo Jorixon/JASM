@@ -186,12 +186,12 @@ public class WindowManagerService : IWindowManagerService
 
         if (content is IDisposable element)
         {
-            dialog.Closed += (_, _) => element.Dispose();
+            dialog.Closed += (_, _) => window.DispatcherQueue.TryEnqueue(() => element.Dispose());
         }
 
         if (content is IClosableElement closable)
         {
-            closable.CloseRequested += (_, _) => dialog.Hide();
+            closable.CloseRequested += (_, _) => window.DispatcherQueue.TryEnqueue(() => dialog.Hide());
         }
 
         return await window.DispatcherQueue.EnqueueAsync(async () =>

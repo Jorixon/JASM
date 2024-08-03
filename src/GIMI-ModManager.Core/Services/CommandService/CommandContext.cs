@@ -10,7 +10,5 @@ public class CommandContext
 
     public DateTime? EndTime { get; internal set; }
 
-    public required string DisplayName { get; init; }
-
-    public required string? TargetPath { get; init; }
+    public SpecialVariablesInput? SpecialVariables { get; init; }
 }

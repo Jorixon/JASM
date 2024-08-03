@@ -109,7 +109,10 @@
                 Header="Command that will be run:"
                 IsReadOnly="True"
                 Text="{x:Bind ViewModel.CommandPreview, Mode=OneWay}" />
-            <Button Command="{x:Bind ViewModel.CreateCommandCommand}" Content="Save Command" />
+            <Button
+                Command="{x:Bind ViewModel.CreateCommandCommand}"
+                Content="Save Command"
+                Style="{ThemeResource AccentButtonStyle}" />
         </StackPanel>
 
 

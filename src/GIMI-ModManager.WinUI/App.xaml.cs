@@ -147,6 +147,7 @@ public partial class App : Application
                 services.AddSingleton<ModArchiveRepository>();
                 services.AddSingleton<GameBananaCoreService>();
                 services.AddSingleton<CommandService>();
+                services.AddSingleton<CommandHandlerService>();
 
                 services.AddSingleton<GameBananaService>();
 

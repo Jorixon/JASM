@@ -98,4 +98,16 @@ public class CommandExecutionOptions
             UseShellExecute = UseShellExecute
         };
     }
+
+    public bool HasAnySpecialVariables(IEnumerable<string>? specialVariables = null)
+    {
+        var strings = new[] { Command, Arguments, WorkingDirectory };
+
+        if (specialVariables is null)
+            return strings.Any(s => SpecialVariables.AllVariables.Contains(s));
+
+        specialVariables = specialVariables.Where(s => SpecialVariables.AllVariables.Contains(s));
+
+        return strings.Where(s => s is not null).Any(s => specialVariables.Any(s!.Contains));
+    }
 }

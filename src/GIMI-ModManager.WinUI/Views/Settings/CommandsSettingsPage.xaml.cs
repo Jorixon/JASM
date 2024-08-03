@@ -1,18 +1,17 @@
+using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace GIMI_ModManager.WinUI.Views.Settings
+namespace GIMI_ModManager.WinUI.Views.Settings;
+
+public sealed partial class CommandsSettingsPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class CommandsSettingsPage : Page
+    public CommandsSettingsViewModel ViewModel { get; } = App.GetService<CommandsSettingsViewModel>();
+
+    public CommandsSettingsPage()
     {
-        public CommandsSettingsPage()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
     }
 }

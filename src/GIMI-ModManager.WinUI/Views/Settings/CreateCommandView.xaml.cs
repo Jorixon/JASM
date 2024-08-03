@@ -117,14 +117,15 @@ public partial class CreateCommandViewModel : ObservableObject
         {
             EffectiveWorkingDirectory = prefix + "Executable location";
         }
-        else if (WorkingDirectory == SpecialVariables.TargetPath || Arguments.Contains(SpecialVariables.TargetPath))
-        {
-            EffectiveWorkingDirectory = prefix + SpecialVariables.TargetPath;
-        }
         else if (Directory.Exists(WorkingDirectory))
         {
             workingDirectory = WorkingDirectory;
             EffectiveWorkingDirectory = prefix + workingDirectory;
+        }
+        else if (WorkingDirectory == SpecialVariables.TargetPath || Arguments.Contains(SpecialVariables.TargetPath))
+        {
+            workingDirectory = SpecialVariables.TargetPath;
+            EffectiveWorkingDirectory = prefix + SpecialVariables.TargetPath;
         }
         else
         {
@@ -220,6 +221,11 @@ public partial class CreateCommandViewModel : ObservableObject
         else
         {
             Command = file.Path;
+        }
+
+        if (WorkingDirectory.IsNullOrEmpty() && file.Name.StartsWith("genshin_update_mods"))
+        {
+            WorkingDirectory = "{{TargetPath}}";
         }
 
         if (WorkingDirectory.IsNullOrEmpty())

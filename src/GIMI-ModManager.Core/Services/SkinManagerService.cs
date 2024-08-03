@@ -553,26 +553,26 @@ public sealed class SkinManagerService : ISkinManagerService
         switch (setModStatus)
         {
             case SetModStatus.EnableAllMods:
+            {
+                foreach (var mod in mods)
                 {
-                    foreach (var mod in mods)
-                    {
-                        var enabledName = mod.Name;
-                        enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
-                        enabledName = enabledName.Replace("DISABLED", "");
-                        if (enabledName != mod.Name)
-                            mod.Rename(enabledName);
-                    }
-
-                    break;
+                    var enabledName = mod.Name;
+                    enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
+                    enabledName = enabledName.Replace("DISABLED", "");
+                    if (enabledName != mod.Name)
+                        mod.Rename(enabledName);
                 }
+
+                break;
+            }
             case SetModStatus.DisableAllMods:
-                {
-                    foreach (var mod in mods)
-                        if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
-                            mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
+            {
+                foreach (var mod in mods)
+                    if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
+                        mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
 
-                    break;
-                }
+                break;
+            }
         }
     }
 
@@ -651,9 +651,14 @@ public sealed class SkinManagerService : ISkinManagerService
 
         foreach (var category in categories)
         {
-            var categoryFolder = new DirectoryInfo(Path.Combine(_activeModsFolder.FullName, category.InternalName));
+            var categoryFolder = GetCategoryFolderPath(category);
             categoryFolder.Create();
         }
+    }
+
+    public DirectoryInfo GetCategoryFolderPath(ICategory category)
+    {
+        return new DirectoryInfo(Path.Combine(_activeModsFolder.FullName, category.InternalName));
     }
 
 
