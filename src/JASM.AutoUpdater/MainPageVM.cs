@@ -178,7 +178,7 @@ public partial class MainPageVM : ObservableRecipient
         return release;
     }
 
-    private void Stop(string stopReason)
+    public void Stop(string stopReason)
     {
         Stopped = true;
         StopReason = stopReason;

@@ -16,7 +16,7 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<BaseOutputPath></BaseOutputPath>
 		<!-- x-release-please-start-version -->
-		<VersionPrefix>2.12.2</VersionPrefix>
+		<VersionPrefix>2.13.2</VersionPrefix>
 		<!-- x-release-please-end -->
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
@@ -396,6 +396,7 @@
 		<Content Remove="Assets\Games\Genshin\regions.json" />
 		<Content Remove="Assets\Games\Genshin\weaponClasses.json" />
 		<Content Remove="Assets\Games\Genshin\weapons.json" />
+		<Content Remove="Assets\Games\Honkai\Images\AltCharacterSkins\Character_Skin_March7Hunt_Thumb.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\acheron.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\argenti.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\arlan.png" />
@@ -476,6 +477,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\dangheng.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\DHIL.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\drratio.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\feixiao.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\firefly.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\fuxuan.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\gepard.webp" />
@@ -486,13 +488,16 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\hook.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\huohuo.png" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\jade.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\jiaoqiu.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\jingliu.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\jingyuan.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\kafka.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\lingsha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\luka.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\luocha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\lynx.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\march7.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\moze.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\natasha.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\pela.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\qingque.webp" />
@@ -510,6 +515,7 @@
 		<Content Remove="Assets\Games\Honkai\Images\Characters\xueyi.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yanqing.webp" />
 		<Content Remove="Assets\Games\Honkai\Images\Characters\yukong.webp" />
+		<Content Remove="Assets\Games\Honkai\Images\Characters\yunli.webp" />
 		<Content Remove="Assets\Games\Honkai\weapons.json" />
 		<Content Remove="Assets\Games\WuWa\characters.json" />
 		<Content Remove="Assets\Games\WuWa\elements.json" />

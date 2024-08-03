@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.13.2](https://github.com/Jorixon/JASM/compare/v2.13.1...v2.13.2) (2024-08-02)
+
+
+### Miscellaneous
+
+* Added more error handling to Auto Updater application ([05b3339](https://github.com/Jorixon/JASM/commit/05b3339447c8f0c72b18e117e4247d6144d7346f))
+
+## [2.13.1](https://github.com/Jorixon/JASM/compare/v2.13.0...v2.13.1) (2024-08-01)
+
+
+### Miscellaneous
+
+* Add characters for Genshin (4.8 - 5.0) and HSR (2.4 - 2.5) ([#224](https://github.com/Jorixon/JASM/issues/224)) Thanks [@jeffvli](https://github.com/jeffvli) ([39b5dd7](https://github.com/Jorixon/JASM/commit/39b5dd7e86f0cefdbe9fc97127dd7007eaee01e6))
+* Update Genshin Game Localization(zh-cn) to 4.8 ([#223](https://github.com/Jorixon/JASM/issues/223)) Thanks [@kanonmelodis](https://github.com/kanonmelodis) ([3ff9e30](https://github.com/Jorixon/JASM/commit/3ff9e305f5dc9439e27178eb4c01556bd82eddd2))
+
+## [2.13.0](https://github.com/Jorixon/JASM/compare/v2.12.2...v2.13.0) (2024-07-25)
+
+
+### Features
+
+* Add sort options to character gallery view ([#215](https://github.com/Jorixon/JASM/issues/215)) Thanks [@jeffvli](https://github.com/jeffvli) ([c4c02f3](https://github.com/Jorixon/JASM/commit/c4c02f3f273458d8dae2c35c4d771c1eb1a4c802))
+* Support deleting mod in gallery view ([#213](https://github.com/Jorixon/JASM/issues/213)) Thanks [@yuukidach](https://github.com/yuukidach) ([4a1744e](https://github.com/Jorixon/JASM/commit/4a1744ec8705290c55d6aa81336b4a63c5551c55))
+
 ## [2.12.2](https://github.com/Jorixon/JASM/compare/v2.12.1...v2.12.2) (2024-07-23)
 
 

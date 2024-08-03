@@ -54,10 +54,12 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly UpdateChecker _updateChecker;
     public ElevatorService ElevatorService;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ResetGenshinExePathCommand))]
     public GenshinProcessManager _genshinProcessManager;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(Reset3DmigotoPathCommand))]
     public ThreeDMigtoProcessManager _threeDMigtoProcessManager;
 
 
@@ -68,13 +70,15 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private string _latestVersion = string.Empty;
     [ObservableProperty] private bool _showNewVersionAvailable = false;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(IgnoreNewVersionCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(IgnoreNewVersionCommand))]
     private bool _CanIgnoreUpdate = false;
 
     [ObservableProperty] private ObservableCollection<string> _languages = new();
     [ObservableProperty] private string _selectedLanguage = string.Empty;
 
-    [ObservableProperty] private ObservableCollection<string> _games = new()
+    [ObservableProperty]
+    private ObservableCollection<string> _games = new()
     {
         SupportedGames.Genshin.ToString(),
         SupportedGames.Honkai.ToString(),

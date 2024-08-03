@@ -68,7 +68,7 @@ public sealed partial class ModSelectorViewModel(ISkinManagerService skinManager
         }, cancellationToken);
 
         modModels.OrderByDescending(m => m.DateAdded).ForEach(Mods.Add);
-        _backendModModels = [..modModels];
+        _backendModModels = [.. modModels];
 
         SelectedMods.CollectionChanged += (sender, args) => SelectModsCommand.NotifyCanExecuteChanged();
     }

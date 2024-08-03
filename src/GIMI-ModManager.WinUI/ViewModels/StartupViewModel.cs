@@ -42,7 +42,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private bool _reorganizeModsOnStartup;
     [ObservableProperty] private bool _disableMods;
 
-    [ObservableProperty] private GameComboBoxEntryVM _selectedGame = new GameComboBoxEntryVM(SupportedGames.Genshin)
+    [ObservableProperty]
+    private GameComboBoxEntryVM _selectedGame = new GameComboBoxEntryVM(SupportedGames.Genshin)
     {
         GameName = "Genshin Impact",
         GameShortName = SupportedGames.Genshin.ToString(),

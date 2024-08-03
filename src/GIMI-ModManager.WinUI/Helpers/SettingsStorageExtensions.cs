@@ -19,7 +19,7 @@ public static class SettingsStorageExtensions
     {
         if (content == null)
             ArgumentNullException.ThrowIfNull(content);
-        
+
         var file = await folder.CreateFileAsync(GetFileName(name), CreationCollisionOption.ReplaceExisting);
         var fileContent = await Json.StringifyAsync(content);
 

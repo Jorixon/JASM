@@ -1,0 +1,23 @@
+[
+  {
+    "InternalName": "Sword",
+    "DisplayName": "单手剑"
+  },
+  {
+    "InternalName": "Bow",
+    "DisplayName": "弓"
+  },
+  {
+    "InternalName": "Claymore",
+    "DisplayName": "双手剑"
+  },
+  {
+    "InternalName": "Polearm",
+    "DisplayName": "长柄武器"
+  },
+  {
+    "InternalName": "Catalyst",
+    "DisplayName": "法器"
+  }
+]
+

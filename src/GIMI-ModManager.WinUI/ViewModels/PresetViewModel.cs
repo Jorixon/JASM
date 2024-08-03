@@ -67,17 +67,20 @@ public partial class PresetViewModel(
 
     [ObservableProperty] private ObservableCollection<ModPresetVm> _presets = new();
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CreatePresetCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CreatePresetCommand))]
     private string _newPresetNameInput = string.Empty;
 
     [ObservableProperty] private bool _createEmptyPresetInput;
 
     [ObservableProperty] private bool _showManualControls;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ToggleAutoSyncCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ToggleAutoSyncCommand))]
     private bool _elevatorIsRunning;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(AutoSync3DMigotoConfigIsDisabled))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AutoSync3DMigotoConfigIsDisabled))]
     private bool _autoSync3DMigotoConfig;
 
     public bool AutoSync3DMigotoConfigIsDisabled => !AutoSync3DMigotoConfig;
@@ -714,7 +717,8 @@ public partial class ModPresetEntryVm : ObservableObject
 
     [ObservableProperty] private string _fullPath;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotMissing))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotMissing))]
     private bool _isMissing;
 
     public bool IsNotMissing => !IsMissing;

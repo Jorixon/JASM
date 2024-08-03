@@ -124,7 +124,7 @@ public class ActivationService : IActivationService
         nint? processHandle;
         try
         {
-             processHandle = await _lifeCycleService.CheckIfAlreadyRunningAsync();
+            processHandle = await _lifeCycleService.CheckIfAlreadyRunningAsync();
 
         }
         catch (Exception e)

@@ -391,7 +391,14 @@
       "Astral Express"
     ],
     "ModFilesName": "March7",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "March7thHunt",
+        "Image": "Character_Skin_March7Hunt_Thumb.png",
+        "InternalName": "March7Hunt",
+        "DisplayName": "March7Hunt"
+      }
+    ],
     "InternalName": "March7",
     "DisplayName": "March 7th"
   },
@@ -916,5 +923,95 @@
     "InGameSkins": [],
     "InternalName": "Jade",
     "DisplayName": "Jade"
+  },
+  {
+    "Id": 50,
+    "Keys": [
+      "yunli"
+    ],
+    "ReleaseDate": "2024-07-31T00:00:00",
+    "Image": "yunli.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Zhuming"
+    ],
+    "ModFilesName": "Yunli",
+    "InGameSkins": [],
+    "InternalName": "Yunli",
+    "DisplayName": "Yunli"
+  },
+  {
+    "Id": 51,
+    "Keys": [
+      "jiaoqiu"
+    ],
+    "ReleaseDate": "2024-08-21T00:00:00",
+    "Image": "jiaoqiu.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Jiaoqiu",
+    "InGameSkins": [],
+    "InternalName": "Jiaoqiu",
+    "DisplayName": "Jiaoqiu"
+  },
+  {
+    "Id": 52,
+    "Keys": [
+      "feixiao"
+    ],
+    "ReleaseDate": "2024-09-10T00:00:00",
+    "Image": "feixiao.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Feixiao",
+    "InGameSkins": [],
+    "InternalName": "Feixiao",
+    "DisplayName": "Feixiao"
+  },
+  {
+    "Id": 53,
+    "Keys": [
+      "Lingsha"
+    ],
+    "ReleaseDate": "2024-10-01T00:00:00",
+    "Image": "lingsha.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofo"
+    ],
+    "ModFilesName": "Lingsha",
+    "InGameSkins": [],
+    "InternalName": "Lingsha",
+    "DisplayName": "Lingsha"
+  },
+  {
+    "Id": 54,
+    "Keys": [
+      "Moze"
+    ],
+    "ReleaseDate": "",
+    "Image": "moze.png",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Moze",
+    "InGameSkins": [],
+    "InternalName": "Moze",
+    "DisplayName": "Moze"
   }
 ]

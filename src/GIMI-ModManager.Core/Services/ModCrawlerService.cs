@@ -128,8 +128,8 @@ public class ModCrawlerService
             yield return fileInfo;
 
         foreach (var directory in directoryInfo.GetDirectories())
-        foreach (var directoryFiles in RecursiveGetFiles(directory))
-            yield return directoryFiles;
+            foreach (var directoryFiles in RecursiveGetFiles(directory))
+                yield return directoryFiles;
     }
 
 

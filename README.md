@@ -44,7 +44,7 @@ Latest development release can be downloaded from [Actions Tab](https://github.c
 
 ## Requirements
 - Windows 10, version 1809 or higher ([supposedly](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/))
-- [NET 7.0 Desktop Runtime (v7.0.10)](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win10-x64&apphost_version=7.0.10&gui=true)
+- [NET Desktop Runtime](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win10-x64&apphost_version=8.0.0&gui=true)
 - [Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads)
 
 If you don't have these downloaded the application will prompt you to download necessary dependencies and provide links.
@@ -73,7 +73,7 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 - Mod specific settings are stored within the mod folder themselves and are prefixed with ```.JASM_```. When exporting mods, these files can be ignored.
 
 ### Contributing
-If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively  learning. 
+If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively learning. Contributing [CONTRIBUTING.md](https://github.com/Jorixon/JASM/blob/main/CONTRIBUTING.md)
 
 The code has progressively gotten more spaghettified over time ;_;
 
@@ -92,5 +92,7 @@ The code has progressively gotten more spaghettified over time ;_;
 ### JASM does not start anymore
 
 I believe this is due to some oddity with WinAppSdk not installing correctly. I do not know what causes this. A temporary (permanent?) solution is to use the self contained version of JASM that does not require WinAppSdk or .NET. See the releases page [SelfContainted_JASM_vx.x.x.7z](https://github.com/Jorixon/JASM/releases). Ref [#72](https://github.com/Jorixon/JASM/issues/72) and [#171](https://github.com/Jorixon/JASM/issues/171)
+
+Another potential fix if JASM used to work, is to delete the JASM user settings folder. This will wipe your settings i.e. presets, folder paths etc. However, your mods will be untouched as well as the mod settings like custom display name and images. JASM settings are stored here: `%localappdata%\JASM` / `C:\Users\<username>\AppData\Local\JASM`. You can start by deleting each game settings folder to see if it helps, alternativly just delete the entire folder. Presets are stored inside the preset folder. Might be a good idea make a backup first.
 
 

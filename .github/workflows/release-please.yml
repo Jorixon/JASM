@@ -1,5 +1,6 @@
 name: Release Please Automatic patch notes
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
