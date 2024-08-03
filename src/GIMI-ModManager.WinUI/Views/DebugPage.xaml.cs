@@ -1,4 +1,4 @@
-using GIMI_ModManager.Core.CommandService;
+using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.UI.Xaml;

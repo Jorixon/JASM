@@ -1,4 +1,4 @@
-﻿namespace GIMI_ModManager.Core.CommandService;
+﻿namespace GIMI_ModManager.Core.Services.CommandService;
 
 public class CommandContext
 {

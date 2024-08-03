@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace GIMI_ModManager.Core.CommandService;
+namespace GIMI_ModManager.Core.Services.CommandService;
 
 public static class SpecialVariables
 {

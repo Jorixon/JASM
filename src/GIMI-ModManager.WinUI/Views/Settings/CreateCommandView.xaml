@@ -25,7 +25,7 @@
                 MinWidth="300"
                 HorizontalAlignment="Left"
                 Header="* Command Name:"
-                PlaceholderText="Friendly Display Name (Required)"
+                PlaceholderText="Command Display Name (Required)"
                 Text="{x:Bind ViewModel.CommandDisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
@@ -79,7 +79,7 @@
                             <CheckBox
                                 Content="Kill Process on JASM exit"
                                 IsChecked="{x:Bind ViewModel.KillProcessOnMainAppExit, Mode=TwoWay}"
-                                ToolTipService.ToolTip="If not checked the process will keep running even when JASM exits" />
+                                ToolTipService.ToolTip="If checked the process will be killed when JASM exits" />
                             <CheckBox
                                 Command="{x:Bind ViewModel.ToggleRunAsAdminCommand}"
                                 Content="Run as Admin"
@@ -94,8 +94,8 @@
                             <CheckBox
                                 Content="Create window"
                                 IsChecked="{x:Bind ViewModel.CreateWindow, Mode=TwoWay}"
-                                IsEnabled="{x:Bind ViewModel.CanToggleCreateWindow, Mode=OneWay}"
-                                ToolTipService.ToolTip="If checked it will be run in a terminal window" />
+                                IsEnabled="False"
+                                ToolTipService.ToolTip="If checked it will be run in an external window" />
                         </StackPanel>
 
                     </StackPanel>

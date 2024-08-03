@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
 
-namespace GIMI_ModManager.Core.CommandService;
+namespace GIMI_ModManager.Core.Services.CommandService;
 
 public sealed class CommandService(ILogger logger)
 {
@@ -14,7 +14,7 @@ public sealed class CommandService(ILogger logger)
 
     private readonly ConcurrentDictionary<Guid, ProcessCommand> _runningCommands = [];
 
-    private string _jsonCommandFile = "";
+    private string _jsonCommandFilePath = "";
 
     public bool IsInitialized { get; private set; }
 
@@ -26,11 +26,11 @@ public sealed class CommandService(ILogger logger)
         if (!Directory.Exists(appDataDirectoryPath))
             Directory.CreateDirectory(appDataDirectoryPath);
 
-        _jsonCommandFile = Path.Combine(appDataDirectoryPath, "commands.json");
+        _jsonCommandFilePath = Path.Combine(appDataDirectoryPath, "commands.json");
 
-        if (File.Exists(_jsonCommandFile))
+        if (File.Exists(_jsonCommandFilePath))
         {
-            var json = await File.ReadAllTextAsync(_jsonCommandFile).ConfigureAwait(false);
+            var json = await File.ReadAllTextAsync(_jsonCommandFilePath).ConfigureAwait(false);
             var jsonCommands = JsonSerializer.Deserialize<CommandRootJson>(json)?.Commands ?? [];
 
             _commands = jsonCommands.Select(CommandDefinition.FromJson).ToList();
@@ -38,12 +38,12 @@ public sealed class CommandService(ILogger logger)
         else
         {
             _logger.Information("No command root json found, creating new one");
-            await File.WriteAllTextAsync(_jsonCommandFile, JsonSerializer.Serialize(new CommandRootJson()))
+            await File.WriteAllTextAsync(_jsonCommandFilePath, JsonSerializer.Serialize(new CommandRootJson()))
                 .ConfigureAwait(false);
         }
 
 
-        Debug.Assert(File.Exists(_jsonCommandFile));
+        Debug.Assert(File.Exists(_jsonCommandFilePath));
 
         IsInitialized = true;
     }

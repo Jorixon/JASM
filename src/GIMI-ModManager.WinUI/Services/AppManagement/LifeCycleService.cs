@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using CommunityToolkitWrapper;
-using GIMI_ModManager.Core.CommandService;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;

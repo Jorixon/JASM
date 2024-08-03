@@ -3,8 +3,8 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GIMI_ModManager.Core.CommandService;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Microsoft.UI.Xaml.Controls;
@@ -74,7 +74,7 @@ public partial class CreateCommandViewModel : ObservableObject
 
     [ObservableProperty] private bool _canToggleCreateWindow = true;
 
-    [ObservableProperty] private bool _createWindow;
+    [ObservableProperty] private bool _createWindow = true;
 
     [ObservableProperty] private bool _killProcessOnMainAppExit;
 
