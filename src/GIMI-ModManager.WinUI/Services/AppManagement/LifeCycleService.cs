@@ -259,6 +259,17 @@ public class LifeCycleService
         var windowSettings = await _localSettingsService
             .ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
 
+        if (windowSettings is { PersistWindowPosition: false, PersistWindowSize: false })
+        {
+            await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, new ScreenSizeSettings()
+            {
+                PersistWindowPosition = false,
+                PersistWindowSize = false
+            })
+                .ConfigureAwait(false);
+            return;
+        }
+
 
         var isFullScreen = App.MainWindow.WindowState == WindowState.Maximized;
 
@@ -283,7 +294,13 @@ public class LifeCycleService
         _logger.Debug($"Saving Window size: {width}x{height} | IsFullscreen: {isFullScreen}");
 
         var newWindowSettings = new ScreenSizeSettings(width, height)
-        { IsFullScreen = isFullScreen, XPosition = xPosition, YPosition = yPosition };
+        {
+            IsFullScreen = isFullScreen,
+            XPosition = xPosition,
+            YPosition = yPosition,
+            PersistWindowPosition = windowSettings.PersistWindowPosition,
+            PersistWindowSize = windowSettings.PersistWindowSize
+        };
 
         await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, newWindowSettings)
             .ConfigureAwait(false);
