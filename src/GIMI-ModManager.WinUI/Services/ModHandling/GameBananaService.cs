@@ -36,7 +36,7 @@ public class GameBananaService(
         var modGbId = GetModIdFromUri(modUrl);
 
         if (modGbId is null)
-            throw new InvalidOperationException($"Invalid GameBanana url: {modUrl}");
+            throw new InvalidGameBananaUrlException($"Invalid GameBanana url: {modUrl}");
 
         var result = await _gameBananaCoreService.GetModProfileAsync(new GbModId(modGbId), cancellationToken)
             .ConfigureAwait(false);
@@ -64,7 +64,8 @@ public class GameBananaService(
         var modGbId = GetModIdFromUri(modSettings.ModUrl);
 
         if (modGbId is null)
-            throw new InvalidOperationException($"Invalid GameBanana url: {modSettings.ModUrl}");
+            throw new InvalidGameBananaUrlException(
+                $"Invalid GameBanana url: {modSettings.ModUrl} | For mod {mod.FullPath}");
 
         var result = await _gameBananaCoreService
             .GetModFilesInfoAsync(new GbModId(modGbId), ignoreCache: ignoreCache, ct: cancellationToken)

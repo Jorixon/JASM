@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Newtonsoft.Json;
@@ -306,10 +307,14 @@ public sealed class ModUpdateAvailableChecker
                     _logger.Information("New or updated mods are available for {ModName}", characterSkinEntry.Mod.Name);
                 }
             }
+            catch (InvalidGameBananaUrlException e)
+            {
+                _logger.Debug(e, "Invalid GameBanana url for {ModName}", characterSkinEntry.Mod.FullPath);
+            }
             catch (Exception e)
             {
                 _logger.Error(e, "An error occurred while checking for mod update for {ModName}",
-                    characterSkinEntry.Mod.Name);
+                    characterSkinEntry.Mod.FullPath);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
