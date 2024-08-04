@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.3](https://github.com/Jorixon/JASM/compare/v2.13.2...v2.13.3) (2024-08-04)
+
+
+### Miscellaneous
+
+* Now possible to toggle whether JASM remembers window size and window position ([#229](https://github.com/Jorixon/JASM/issues/229)) ([79f901f](https://github.com/Jorixon/JASM/commit/79f901f31b44bda2c8be468adfe94a474894d3ca))
+
 ## [2.13.2](https://github.com/Jorixon/JASM/compare/v2.13.1...v2.13.2) (2024-08-02)
 
 

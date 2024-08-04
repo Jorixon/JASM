@@ -98,6 +98,10 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private int _maxCacheLimit;
 
+    [ObservableProperty] private bool _persistWindowSize = false;
+
+    [ObservableProperty] private bool _persistWindowPosition = false;
+
     private Dictionary<string, string> _nameToLangCode = new();
 
     public PathPicker PathToGIMIFolderPicker { get; }
@@ -244,6 +248,28 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 null);
             await RestartAppAsync();
         }
+    }
+
+    [RelayCommand]
+    private async Task WindowSizePositionToggle(string? type)
+    {
+        if (type != "size" && type != "position") return;
+
+        var windowSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
+
+        if (type == "size")
+        {
+            PersistWindowSize = !PersistWindowSize;
+            windowSettings.PersistWindowSize = PersistWindowSize;
+        }
+        else
+        {
+            PersistWindowPosition = !PersistWindowPosition;
+            windowSettings.PersistWindowPosition = PersistWindowPosition;
+        }
+
+        await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, windowSettings).ConfigureAwait(false);
     }
 
     private static string GetVersionDescription()
@@ -770,7 +796,11 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
             PathToGIMIFolderPicker.SetValidators(GimiFolderRootValidators.Validators(gameInfo.GameModelImporterExeNames));
         }
 
+        var windowSettings =
+            await _localSettingsService.ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
 
+        PersistWindowSize = windowSettings.PersistWindowSize;
+        PersistWindowPosition = windowSettings.PersistWindowPosition;
     }
 
     [ObservableProperty] private string _maxCacheSizeString = string.Empty;
