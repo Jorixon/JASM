@@ -59,7 +59,8 @@ public class ActivationService : IActivationService
         ILanguageLocalizer languageLocalizer, SelectedGameService selectedGameService,
         ModUpdateAvailableChecker modUpdateAvailableChecker, ILogger logger,
         ModNotificationManager modNotificationManager, INavigationViewService navigationViewService,
-        ISkinManagerService skinManagerService, NotificationManager notificationManager, LifeCycleService lifeCycleService)
+        ISkinManagerService skinManagerService, NotificationManager notificationManager,
+        LifeCycleService lifeCycleService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
@@ -125,7 +126,6 @@ public class ActivationService : IActivationService
         try
         {
             processHandle = await _lifeCycleService.CheckIfAlreadyRunningAsync();
-
         }
         catch (Exception e)
         {
@@ -151,7 +151,6 @@ public class ActivationService : IActivationService
 
         Application.Current.Exit();
         await Task.Delay(-1);
-
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -200,11 +199,17 @@ public class ActivationService : IActivationService
     private async Task SetWindowSettings()
     {
         var screenSize = await _localSettingsService.ReadSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
-        if (screenSize != null)
+        if (screenSize == null)
+            return;
+
+        if (screenSize.PersistWindowSize && screenSize.Width != 0 && screenSize.Height != 0)
         {
             _logger.Debug($"Window size loaded: {screenSize.Width}x{screenSize.Height}");
             App.MainWindow.SetWindowSize(screenSize.Width, screenSize.Height);
+        }
 
+        if (screenSize.PersistWindowPosition)
+        {
             if (screenSize.XPosition != 0 && screenSize.YPosition != 0 &&
                 screenSize.XPosition != MinimizedPosition && screenSize.YPosition != MinimizedPosition)
                 App.MainWindow.AppWindow.Move(new PointInt32(screenSize.XPosition, screenSize.YPosition));
@@ -426,7 +431,6 @@ public class ActivationService : IActivationService
         {
         }
     }
-
 
 
     private async Task SetLanguage()

@@ -17,9 +17,12 @@ public class ScreenSizeSettings
 
     [JsonIgnore] public const string Key = "ScreenSize";
 
+    public bool PersistWindowSize { get; set; } = true;
+
     public int Width { get; set; }
     public int Height { get; set; }
 
+    public bool PersistWindowPosition { get; set; } = true;
     public int XPosition { get; set; }
     public int YPosition { get; set; }
     public bool IsFullScreen { get; set; }

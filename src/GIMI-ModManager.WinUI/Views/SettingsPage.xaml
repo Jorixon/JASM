@@ -129,6 +129,23 @@
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>
+
+                    <StackPanel Margin="0,8,0,0">
+                        <TextBlock Text="Window" />
+                        <CheckBox
+                            Command="{x:Bind ViewModel.WindowSizePositionToggleCommand}"
+                            CommandParameter="size"
+                            Content="Remember window size"
+                            IsChecked="{x:Bind ViewModel.PersistWindowSize, Mode=OneWay}"
+                            ToolTipService.ToolTip="If checked then the main window size is saved when JASM exits" />
+                        <CheckBox
+                            Command="{x:Bind ViewModel.WindowSizePositionToggleCommand}"
+                            CommandParameter="position"
+                            Content="Remember window position"
+                            IsChecked="{x:Bind ViewModel.PersistWindowPosition, Mode=OneWay}"
+                            ToolTipService.ToolTip="If checked then the main window position is saved when JASM exits" />
+                    </StackPanel>
+
                 </StackPanel>
 
                 <TextBlock
@@ -158,10 +175,14 @@
                     l:Uids.Uid="/Settings/GameSelectorSectionHeader" />
                 <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                     <TextBlock
-                        Margin="0,0,0,8"
+                        IsTextSelectionEnabled="True"
                         TextWrapping="WrapWholeWords"
-                        Text="JASM supports Genshin Impact and Honkai Star Rail"
+                        Text="JASM supports Genshin Impact, Honkai Star Rail, Wuthering Waves and Zenless Zone Zero."
                         l:Uids.Uid="/Settings/GameSelectorTitle" />
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        IsTextSelectionEnabled="True"
+                        Text="Settings are saved independently for each selected game." />
 
                     <ComboBox
                         x:Name="GameSelectorComboBox"
