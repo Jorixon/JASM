@@ -262,10 +262,10 @@ public class LifeCycleService
         if (windowSettings is { PersistWindowPosition: false, PersistWindowSize: false })
         {
             await _localSettingsService.SaveSettingAsync(ScreenSizeSettings.Key, new ScreenSizeSettings()
-                {
-                    PersistWindowPosition = false,
-                    PersistWindowSize = false
-                })
+            {
+                PersistWindowPosition = false,
+                PersistWindowSize = false
+            })
                 .ConfigureAwait(false);
             return;
         }
