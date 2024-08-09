@@ -5,14 +5,17 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
+using ScrollViewer = Microsoft.UI.Xaml.Controls.ScrollViewer;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
 
@@ -32,10 +35,15 @@ public partial class ModsOverviewVM(
     private readonly CommandHandlerService _commandHandlerService = commandHandlerService;
     private readonly NotificationManager _notificationManager = notificationManager;
 
+    public static ModOverviewPageState PageState { get; } = new();
+    public TaskCompletionSource<bool> ViewModelLoading { get; } = new();
 
     public ObservableCollection<CategoryNode> Categories { get; } = new();
 
     public ObservableCollection<ModOverviewCommandVM> CommandDefinitions { get; } = new();
+
+    private string _searchText = string.Empty;
+    public BaseNode? GoToNode { get; private set; }
 
     [ObservableProperty] private string _targetPath = string.Empty;
 
@@ -43,10 +51,74 @@ public partial class ModsOverviewVM(
     {
         await Refresh();
         await LoadCommands().ConfigureAwait(false);
+
+        var goToId = default(InternalName);
+
+        if (parameter is InternalName internalName)
+        {
+            goToId = internalName;
+        }
+
+
+        if (goToId is not null && GetAllNodes().FirstOrDefault(n => n.Id == goToId) is { } node)
+        {
+            if (node is ModModelNode modModelNode)
+            {
+                var moddableObjectNode = modModelNode.ParentModdableObject;
+                var categoryNode = moddableObjectNode.ParentCategory;
+
+                categoryNode.IsExpanded = true;
+                moddableObjectNode.IsExpanded = true;
+                GoToNode = modModelNode;
+            }
+            else if (node is ModdableObjectNode moddableObjectNode)
+            {
+                var categoryNode = moddableObjectNode.ParentCategory;
+
+                categoryNode.IsExpanded = true;
+                moddableObjectNode.IsExpanded = true;
+                GoToNode = moddableObjectNode;
+            }
+            else if (node is CategoryNode categoryNode)
+            {
+                categoryNode.IsExpanded = true;
+            }
+
+
+            ViewModelLoading.SetResult(false);
+        }
+        else
+        {
+            ViewModelLoading.SetResult(true);
+        }
+    }
+
+    public async Task RestoreState(ScrollViewer? scrollViewer)
+    {
+        SearchTextChangedHandler(PageState.SearchText);
+
+        foreach (var node in GetAllNodes())
+        {
+            if (!PageState.NodesState.TryGetValue(node.Id, out var stateNode))
+                continue;
+
+
+            node.IsExpanded = stateNode.IsExpanded;
+            node.IsVisible = stateNode.IsVisible;
+        }
+
+        if (scrollViewer is not null)
+        {
+            await Task.Delay(200);
+            scrollViewer.ChangeView(null, PageState.ScrollPosition, null);
+        }
     }
 
     public void OnNavigatedFrom()
     {
+        PageState.SearchText = _searchText;
+
+        PageState.NodesState = GetAllNodes().ToDictionary(node => node.Id, node => node);
     }
 
     private async Task LoadCommands()
@@ -87,6 +159,32 @@ public partial class ModsOverviewVM(
         await Launcher.LaunchFolderPathAsync(TargetPath);
     }
 
+    [RelayCommand]
+    private async Task CloseOpenAll(string? option)
+    {
+        var categories = Categories.ToArray();
+        Categories.Clear();
+        await Task.Delay(100);
+
+        if (option == "Close")
+        {
+            foreach (var baseNode in GetAllNodes(categories).Where(n => n is { IsVisible: true, IsExpanded: true })
+                         .Reverse())
+            {
+                baseNode.IsExpanded = false;
+            }
+        }
+        else
+        {
+            foreach (var baseNode in GetAllNodes(categories).Where(n => n is { IsVisible: true, IsExpanded: false }))
+            {
+                baseNode.IsExpanded = true;
+            }
+        }
+
+        Categories.AddRange(categories);
+    }
+
     private async Task Refresh()
     {
         Categories.Clear();
@@ -96,13 +194,14 @@ public partial class ModsOverviewVM(
         foreach (var category in categories)
         {
             var modObjects = _gameService.GetModdableObjects(category);
-            var categoryNode = new CategoryNode(category.DisplayNamePlural,
+            var categoryNode = new CategoryNode(category,
                 _skinManagerService.GetCategoryFolderPath(category).FullName);
 
             foreach (var moddableObject in modObjects)
             {
                 var modList = _skinManagerService.GetCharacterModList(moddableObject);
-                var moddableObjectNode = new ModdableObjectNode(moddableObject, modList.AbsModsFolderPath);
+                var moddableObjectNode =
+                    new ModdableObjectNode(moddableObject, modList.AbsModsFolderPath, categoryNode);
 
                 var mods = new List<ModModel>();
                 foreach (var skinEntry in modList.Mods)
@@ -122,7 +221,7 @@ public partial class ModsOverviewVM(
                 }
 
                 foreach (var modModel in mods.OrderByDescending(mod => mod.DateAdded))
-                    moddableObjectNode.Mods.Add(modModel);
+                    moddableObjectNode.Mods.Add(new ModModelNode(modModel, moddableObjectNode));
 
 
                 if (moddableObjectNode.Mods.Count > 0)
@@ -131,6 +230,85 @@ public partial class ModsOverviewVM(
 
             Categories.Add(categoryNode);
         }
+    }
+
+
+    public void SearchTextChangedHandler(string? text)
+    {
+        _searchText = (text ?? string.Empty).Trim();
+
+        if (_searchText.IsNullOrEmpty())
+        {
+            foreach (var category in Categories)
+            {
+                category.IsVisible = true;
+                category.IsExpanded = false;
+
+                foreach (var moddableObject in category.ModdableObjects)
+                {
+                    moddableObject.IsVisible = true;
+                    moddableObject.IsExpanded = false;
+
+                    foreach (var mod in moddableObject.Mods)
+                    {
+                        mod.IsVisible = true;
+                    }
+                }
+            }
+
+            return;
+        }
+
+        foreach (var category in Categories)
+        {
+            foreach (var moddableObject in category.ModdableObjects)
+            {
+                foreach (var mod in moddableObject.Mods)
+                {
+                    var isMatch = mod.Mod.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+
+                    mod.IsVisible = isMatch;
+                }
+
+                var modChildMatch = moddableObject.Mods.Any(mod => mod.IsVisible);
+                moddableObject.IsVisible = modChildMatch;
+                moddableObject.IsExpanded = modChildMatch;
+            }
+
+            var modObjectMatch = category.ModdableObjects.Any(mod => mod.IsVisible);
+            category.IsVisible = modObjectMatch;
+            category.IsExpanded = modObjectMatch;
+        }
+    }
+
+
+    private IEnumerable<BaseNode> GetAllNodes(IEnumerable<CategoryNode>? categoryNodes = null)
+    {
+        foreach (var categoryNode in categoryNodes ?? Categories)
+        {
+            yield return categoryNode;
+
+            foreach (var moddableObjectNode in categoryNode.ModdableObjects)
+            {
+                yield return moddableObjectNode;
+
+                foreach (var modModelNode in moddableObjectNode.Mods)
+                {
+                    yield return modModelNode;
+                }
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void GoToCharacter(object? characterObj)
+    {
+        if (characterObj is not IModdableObject character)
+        {
+            return;
+        }
+
+        App.GetService<INavigationService>().NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
     }
 }
 
@@ -160,46 +338,80 @@ public partial class ModOverviewCommandVM : ObservableObject
     [ObservableProperty] private string _targetPath = string.Empty;
 }
 
-public class CategoryNode : ObservableObject
+public partial class BaseNode : ObservableObject
+{
+    public string Id { get; }
+
+    [ObservableProperty] private bool _isVisible = true;
+    [ObservableProperty] private bool _isExpanded;
+
+    public BaseNode(string id)
+    {
+        Id = id;
+    }
+}
+
+public interface IHasChildItems<out T> where T : BaseNode
+{
+    public IEnumerable<T> ChildItems { get; }
+}
+
+public partial class CategoryNode : BaseNode, IHasChildItems<ModdableObjectNode>
 {
     public string DisplayName { get; init; }
 
     public ObservableCollection<ModdableObjectNode> ModdableObjects { get; } = new();
+    public IEnumerable<ModdableObjectNode> ChildItems => ModdableObjects;
+
     public string FolderPath { get; }
 
-    public CategoryNode(string displayName, string folderPath)
+    public CategoryNode(ICategory category, string folderPath) : base(category.InternalName)
     {
-        DisplayName = displayName;
+        DisplayName = category.DisplayNamePlural;
         FolderPath = folderPath;
     }
 }
 
-public partial class ModdableObjectNode : ObservableObject
+public partial class ModdableObjectNode : BaseNode, IHasChildItems<ModModelNode>
 {
     [ObservableProperty] private IModdableObject _moddableObject;
     public Uri ImagePath { get; } = App.GetService<ImageHandlerService>().PlaceholderImageUri;
-    public ObservableCollection<ModModel> Mods { get; } = new();
+
+    public CategoryNode ParentCategory { get; }
+    public ObservableCollection<ModModelNode> Mods { get; } = new();
+
+    public IEnumerable<ModModelNode> ChildItems => Mods;
 
     public string FolderPath { get; }
 
-    public ModdableObjectNode(IModdableObject moddableObject, string folderPath)
+    public ModdableObjectNode(IModdableObject moddableObject, string folderPath, CategoryNode parentCategory) : base(
+        moddableObject.InternalName)
     {
         FolderPath = folderPath;
+        ParentCategory = parentCategory;
         ModdableObject = moddableObject;
 
         if (moddableObject is IImageSupport { ImageUri: not null } imageSupport)
             ImagePath = imageSupport.ImageUri;
     }
+}
 
-    [RelayCommand]
-    private void GoToCharacter(object? characterObj)
+public partial class ModModelNode : BaseNode
+{
+    public ModModel Mod { get; }
+
+    public ModdableObjectNode ParentModdableObject { get; }
+
+    public ModModelNode(ModModel mod, ModdableObjectNode parentModdableObject) : base(mod.Id.ToString())
     {
-        if (characterObj is not IModdableObject character)
-        {
-            return;
-        }
-
-        App.GetService<INavigationService>().NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
+        Mod = mod;
+        ParentModdableObject = parentModdableObject;
     }
 }
 
+public class ModOverviewPageState : EventArgs
+{
+    public string SearchText { get; set; } = string.Empty;
+    public double ScrollPosition { get; set; }
+    public Dictionary<string, BaseNode> NodesState { get; set; } = new();
+}

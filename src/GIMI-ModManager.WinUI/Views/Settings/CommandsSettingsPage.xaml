@@ -17,18 +17,23 @@
 
         <StackPanel
             MaxWidth="1000"
+            Margin="8,0,8,0"
             HorizontalAlignment="Stretch"
             Spacing="4">
             <TextBlock Style="{StaticResource PageTitleStyle}" Text="Command Settings " />
 
 
-            <controls:SettingsCard Header="Create new command" HeaderIcon="{winUi:FontIcon Glyph=&#xE716;}">
+            <controls:SettingsCard
+                Description="Here you can define custom commands that JASM can run for you. Currently, commands that contain {{TargetPath}} can only be run from the Mods Overview page"
+                Header="Create new command"
+                HeaderIcon="{winUi:FontIcon Glyph=&#xE70F;}">
                 <Button Command="{x:Bind ViewModel.OpenCreateCommandCommand}" Content="Create New Command" />
             </controls:SettingsCard>
 
             <controls:SettingsExpander
+                Description="Here you can view and delete created command definitions"
                 Header="Command Definitions"
-                HeaderIcon="{winUi:FontIcon Glyph=&#xE716;}"
+                HeaderIcon="{winUi:FontIcon Glyph=&#xE74E;}"
                 IsExpanded="True">
                 <controls:SettingsExpander.Items>
                     <Grid>
@@ -72,6 +77,24 @@
                                                 Grid.Column="1"
                                                 Orientation="Horizontal"
                                                 Spacing="8">
+                                                <Button
+                                                    VerticalAlignment="Center"
+                                                    Content="Run"
+                                                    IsEnabled="{x:Bind HasNoTargetPathVariable, Mode=OneWay}">
+                                                    <Button.Flyout>
+                                                        <Flyout>
+                                                            <StackPanel>
+                                                                <TextBlock Text="Are you sure you want to run this command?" />
+                                                                <Button
+                                                                    HorizontalAlignment="Center"
+                                                                    Command="{x:Bind RunCommand}"
+                                                                    CommandParameter="{x:Bind}"
+                                                                    Content="Run"
+                                                                    Style="{ThemeResource AccentButtonStyle}" />
+                                                            </StackPanel>
+                                                        </Flyout>
+                                                    </Button.Flyout>
+                                                </Button>
 
                                                 <Button
                                                     VerticalAlignment="Center"
@@ -95,7 +118,6 @@
                                                         </Flyout>
                                                     </Button.Flyout>
                                                 </Button>
-
                                             </StackPanel>
                                         </Grid>
 
@@ -112,6 +134,14 @@
                                                 <Run Text="Arguments: " />
                                                 <Run Text="{x:Bind Arguments}" />
                                             </TextBlock>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <ItemsRepeater ItemsSource="{x:Bind Attributes}">
+                                                    <ItemsRepeater.Layout>
+                                                        <StackLayout Orientation="Horizontal" />
+                                                    </ItemsRepeater.Layout>
+                                                </ItemsRepeater>
+                                            </StackPanel>
                                         </StackPanel>
 
 
@@ -128,7 +158,8 @@
 
             <controls:SettingsExpander
                 Description="Commands started from JASM for the current running instance"
-                Header="Running Commands"
+                Header="Currently Running Commands"
+                HeaderIcon="{winUi:FontIcon Glyph=&#xE768;}"
                 IsExpanded="True">
 
                 <controls:SettingsExpander.Items>

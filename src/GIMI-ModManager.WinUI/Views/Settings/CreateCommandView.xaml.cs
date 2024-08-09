@@ -111,26 +111,29 @@ public partial class CreateCommandViewModel : ObservableObject
     private string? SetEffectiveWorkingDirectory()
     {
         const string prefix = "Effective working directory: ";
+        var jasmWorkingDirectory = App.ROOT_DIR;
         string? workingDirectory = null;
 
-        if (UseShellExecute)
+        if (!IsValidWorkingDirectory())
         {
-            EffectiveWorkingDirectory = prefix + "Executable location";
+            EffectiveWorkingDirectory = prefix + "Invalid working directory";
+            return null;
         }
-        else if (Directory.Exists(WorkingDirectory))
+
+        if (Directory.Exists(WorkingDirectory))
         {
             workingDirectory = WorkingDirectory;
             EffectiveWorkingDirectory = prefix + workingDirectory;
         }
-        else if (WorkingDirectory == SpecialVariables.TargetPath || Arguments.Contains(SpecialVariables.TargetPath))
+        else if (WorkingDirectory == SpecialVariables.TargetPath)
         {
             workingDirectory = SpecialVariables.TargetPath;
             EffectiveWorkingDirectory = prefix + SpecialVariables.TargetPath;
         }
         else
         {
-            workingDirectory = App.ROOT_DIR;
-            EffectiveWorkingDirectory = prefix + workingDirectory;
+            workingDirectory = null;
+            EffectiveWorkingDirectory = prefix + jasmWorkingDirectory;
         }
 
         return workingDirectory;
@@ -146,9 +149,23 @@ public partial class CreateCommandViewModel : ObservableObject
             (!IsExeFoundInPath() && !File.Exists(Command)))
             return;
 
+        if (!IsValidWorkingDirectory())
+            return;
+
 
         IsValidCommand = true;
-        CommandPreview = (Command + " " + Arguments).Trim();
+        CommandPreview = Command + " " + Arguments;
+    }
+
+    private bool IsValidWorkingDirectory()
+    {
+        if (WorkingDirectory.IsNullOrEmpty())
+            return true;
+
+        if (WorkingDirectory == SpecialVariables.TargetPath)
+            return true;
+
+        return Directory.Exists(WorkingDirectory);
     }
 
 
@@ -161,7 +178,6 @@ public partial class CreateCommandViewModel : ObservableObject
             CanToggleUseShellExecute = false;
             CreateWindow = true;
             CanToggleCreateWindow = false;
-            CanEditWorkingDirectory = false;
         }
         else
         {
@@ -177,12 +193,10 @@ public partial class CreateCommandViewModel : ObservableObject
         {
             CreateWindow = true;
             CanToggleCreateWindow = false;
-            CanEditWorkingDirectory = false;
         }
         else
         {
             CanToggleCreateWindow = true;
-            CanEditWorkingDirectory = true;
         }
     }
 

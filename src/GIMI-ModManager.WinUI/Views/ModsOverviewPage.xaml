@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,6 +14,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <Flyout
             x:Key="CommandMenuFlyout"
@@ -50,6 +53,7 @@
 
                         <DataTemplate x:DataType="viewModels:ModOverviewCommandVM">
                             <Grid
+                                Margin="0,4,0,4"
                                 Padding="4"
                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 ColumnSpacing="4"
@@ -119,8 +123,9 @@
         <DataTemplate x:Key="CategoryTemplate" x:DataType="viewModels:CategoryNode">
             <TreeViewItem
                 ContextFlyout="{StaticResource CommandMenuFlyout}"
-                IsExpanded="False"
-                ItemsSource="{x:Bind ModdableObjects}">
+                IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                ItemsSource="{x:Bind ModdableObjects}"
+                Visibility="{x:Bind IsVisible, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,10,0" />
                     <TextBlock Text="{x:Bind DisplayName}" />
@@ -132,8 +137,9 @@
         <DataTemplate x:Key="CharacterTemplate" x:DataType="viewModels:ModdableObjectNode">
             <TreeViewItem
                 ContextFlyout="{StaticResource CommandMenuFlyout}"
-                IsExpanded="False"
-                ItemsSource="{x:Bind Mods}">
+                IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                ItemsSource="{x:Bind Mods}"
+                Visibility="{x:Bind IsVisible, Mode=OneWay}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -141,19 +147,22 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
-                        <Image Width="32">
-                            <Image.Source>
-                                <BitmapImage DecodePixelWidth="32" UriSource="{x:Bind ImagePath}" />
-                            </Image.Source>
-                        </Image>
+                        <Grid CornerRadius="4">
+                            <Image Width="32">
+                                <Image.Source>
+                                    <BitmapImage DecodePixelWidth="32" UriSource="{x:Bind ImagePath}" />
+                                </Image.Source>
+                            </Image>
+                        </Grid>
+
                         <TextBlock Margin="4,0,4,0" />
-                        <TextBlock Text="{x:Bind ModdableObject.DisplayName}" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Bind ModdableObject.DisplayName}" />
                     </StackPanel>
 
                     <Button
+                        x:Name="GoToCharacterButton"
                         Grid.Column="1"
-                        Command="{Binding Path=GoToCharacterCommand, Mode=OneWay}"
-                        CommandParameter="{x:Bind ModdableObject}"
+                        Click="GoToCharacterButton_OnClick"
                         Content="Go to Character" />
 
                 </Grid>
@@ -161,8 +170,8 @@
             </TreeViewItem>
         </DataTemplate>
 
-        <DataTemplate x:Key="ModTemplate" x:DataType="models:ModModel">
-            <TreeViewItem ContextFlyout="{StaticResource CommandMenuFlyout}">
+        <DataTemplate x:Key="ModTemplate" x:DataType="viewModels:ModModelNode">
+            <TreeViewItem ContextFlyout="{StaticResource CommandMenuFlyout}" Visibility="{x:Bind IsVisible, Mode=OneWay}">
                 <Grid>
 
                     <Grid.ColumnDefinitions>
@@ -171,17 +180,17 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="{x:Bind Name}" />
+                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Mod.Name}" />
 
                     <controls:LinkButton
                         Grid.Column="1"
-                        Link="{x:Bind FolderPath}"
+                        Link="{x:Bind Mod.FolderPath}"
                         ToolTipService.ToolTip="Open skin folder"
-                        Text="{x:Bind FolderName}" />
+                        Text="{x:Bind Mod.FolderName}" />
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <TextBlock Margin="0,0,4,0" Text="Added:" />
-                        <TextBlock Text="{x:Bind DateAdded}" />
+                        <TextBlock Text="{x:Bind Mod.DateAdded}" />
                     </StackPanel>
 
                 </Grid>
@@ -197,24 +206,61 @@
 
     </Page.Resources>
 
-    <Grid>
+    <Grid RowSpacing="8">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
+        <Grid>
 
-            <TextBlock
-                Margin="0,0,0,12"
-                HorizontalAlignment="Center"
-                FontSize="28"
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="Mods Overview" />
-        </StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,12"
+                    FontSize="28"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    TextTrimming="CharacterEllipsis"
+                    Text="Mods Overview" />
+
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Spacing="16"
+                    Visibility="Collapsed">
+                    <Button Command="{x:Bind ViewModel.CloseOpenAllCommand}" Content="Open All" />
+                    <Button
+                        Command="{x:Bind ViewModel.CloseOpenAllCommand}"
+                        CommandParameter="Close"
+                        Content="Close All" />
+                </StackPanel>
+            </StackPanel>
+
+
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="16">
+                <AutoSuggestBox
+                    x:Name="SearchBox"
+                    MinWidth="200"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Press Enter to search..."
+                    QuerySubmitted="SearchBox_OnQuerySubmitted" />
+            </StackPanel>
+
+
+        </Grid>
 
         <TreeView
+            x:Name="OverviewTreeView"
             Grid.Row="1"
             AllowDrop="False"
             CanDrag="False"

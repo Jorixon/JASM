@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using GIMI_ModManager.Core.Helpers;
 using Serilog;
 using static GIMI_ModManager.Core.Services.CommandService.RunningCommandChangedEventArgs;
 
@@ -356,6 +357,22 @@ public sealed class ProcessCommand
 
         _process.Exited += ExitHandler;
 
+
+        var currentWorkingDirectory = Environment.CurrentDirectory;
+
+        if ((Options.UseShellExecute || Options.RunAsAdmin) && !_process.StartInfo.WorkingDirectory.IsNullOrEmpty())
+        {
+            if (Directory.Exists(_process.StartInfo.WorkingDirectory))
+            {
+                Environment.CurrentDirectory = _process.StartInfo.WorkingDirectory;
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    "Working directory does not exist for a command using shell execute");
+            }
+        }
+
         bool result;
         try
         {
@@ -365,6 +382,10 @@ public sealed class ProcessCommand
         {
             _process.Exited -= ExitHandler;
             throw;
+        }
+        finally
+        {
+            Environment.CurrentDirectory = currentWorkingDirectory;
         }
 
         HasBeenStarted = true;
@@ -442,10 +463,10 @@ internal class JsonCommandDefinition
     public required string Command { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public required string? Arguments { get; set; }
+    public string? Arguments { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public required string? WorkingDirectory { get; set; }
+    public string? WorkingDirectory { get; set; }
 
     public required bool UseShellExecute { get; set; }
     public required bool CreateWindow { get; set; }
