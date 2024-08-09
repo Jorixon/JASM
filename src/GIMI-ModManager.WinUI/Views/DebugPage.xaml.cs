@@ -1,6 +1,6 @@
-using GIMI_ModManager.Core.Services.GameBanana;
-using GIMI_ModManager.Core.Services.GameBanana.Models;
-using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.WinUI.Services.AppManagement;
+using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -8,31 +8,73 @@ namespace GIMI_ModManager.WinUI.Views;
 
 public sealed partial class DebugPage : Page
 {
-    private readonly IApiGameBananaClient _apiGameBananaClient = App.GetService<IApiGameBananaClient>();
-    private readonly ModArchiveRepository _modArchiveRepository = App.GetService<ModArchiveRepository>();
-    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
-    private readonly GameBananaCoreService _gameBananaCoreService = App.GetService<GameBananaCoreService>();
+    public CommandService CommandService { get; } = App.GetService<CommandService>();
 
-    public string ModId { get; set; } = "495878";
+    public IWindowManagerService WindowManagerService { get; } = App.GetService<IWindowManagerService>();
 
     public DebugPage()
     {
         InitializeComponent();
-        _ = Task.Run(() => _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder));
     }
+
 
     private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        var cts = new CancellationTokenSource();
+        var execOptions = new CommandExecutionOptions()
+        {
+            UseShellExecute = true,
+            RunAsAdmin = true,
+            Command = "E:\\Genshin Impact\\Genshin Impact game\\GenshinImpact.exe"
+        };
 
-        var modId = new GbModId(ModId);
 
-        var modInfos = await _apiGameBananaClient.GetModFilesInfoAsync(modId, cts.Token);
+        var command = CommandService.CreateCommand(new CommandDefinition()
+        {
+            CommandDisplayName = "test",
+            KillOnMainAppExit = false,
+            ExecutionOptions = execOptions
+        });
 
-        var mod = modInfos!.Files.First();
-        var modFileIdentifier = new GbModFileIdentifier(modId, new GbModFileId(mod.FileId));
+        command.Start();
 
-        var path = await Task.Run(() => _gameBananaCoreService.DownloadModAsync(modFileIdentifier, ct: cts.Token),
-            cts.Token);
+        await command.WaitForExitAsync().ConfigureAwait(false);
+    }
+
+    private async void ButtonBase_OnClickOpenDialog(object sender, RoutedEventArgs e)
+    {
+        var window = App.MainWindow;
+
+        var execOptions = new CommandExecutionOptions()
+        {
+            CreateWindow = true,
+            Command = "python",
+            Arguments = "-u F:\\test.py"
+        };
+
+        var command = CommandService.CreateCommand(new CommandDefinition()
+        {
+            CommandDisplayName = "test",
+            KillOnMainAppExit = true,
+            ExecutionOptions = execOptions
+        });
+
+
+        command.Start();
+        await command.WaitForExitAsync().ConfigureAwait(false);
+
+
+        //var page = new CommandProcessViewer(command);
+
+
+        //WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
+    }
+
+    private void CreateCommand_OnClick(object sender, RoutedEventArgs e)
+    {
+        var window = App.MainWindow;
+
+        var page = new CreateCommandView();
+
+        WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
     }
 }

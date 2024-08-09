@@ -694,6 +694,12 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     }
 
     [RelayCommand]
+    private void GoToModsOverview()
+    {
+        _navigationService.NavigateTo(typeof(ModsOverviewVM).FullName!, ShownCharacter.InternalName);
+    }
+
+    [RelayCommand]
     private void GoToCharacterEditScreen()
     {
         _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, ShownCharacter.InternalName);
