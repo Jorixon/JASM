@@ -65,12 +65,20 @@
 
                                             <StackPanel>
 
-                                                <TextBlock FontSize="16" IsTextSelectionEnabled="True">
+                                                <TextBlock
+                                                    FontSize="16"
+                                                    IsTextSelectionEnabled="True"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTipService.ToolTip="{x:Bind CommandDisplayName}">
                                                     <Run Text="Display Name:" />
                                                     <Run Text="{x:Bind CommandDisplayName}" />
                                                 </TextBlock>
 
-                                                <TextBlock FontSize="10" IsTextSelectionEnabled="True">
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    IsTextSelectionEnabled="True"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTipService.ToolTip="{x:Bind Id}">
                                                     <Run Text="Command Definition Id:" />
                                                     <Run Text="{x:Bind Id}" />
                                                 </TextBlock>
@@ -126,15 +134,24 @@
                                         </Grid>
 
                                         <StackPanel Grid.Row="1" Spacing="8">
-                                            <TextBlock IsTextSelectionEnabled="True">
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind Executable}">
                                                 <Run Text="Executable: " />
                                                 <Run Text="{x:Bind Executable}" />
                                             </TextBlock>
-                                            <TextBlock IsTextSelectionEnabled="True">
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind WorkingDirectory}">
                                                 <Run Text="Working Directory: " />
                                                 <Run Text="{x:Bind WorkingDirectory}" />
                                             </TextBlock>
-                                            <TextBlock IsTextSelectionEnabled="True">
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind Arguments}">
                                                 <Run Text="Arguments: " />
                                                 <Run Text="{x:Bind Arguments}" />
                                             </TextBlock>
@@ -186,17 +203,28 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel>
-                                            <TextBlock FontSize="16" IsTextSelectionEnabled="True">
+                                            <TextBlock
+                                                FontSize="16"
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind CommandDisplayName}">
                                                 <Run Text="Display Name: " />
                                                 <Run Text="{x:Bind CommandDisplayName}" />
                                             </TextBlock>
 
-                                            <TextBlock IsTextSelectionEnabled="True">
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind FullCommand}">
                                                 <Run Text="Full Command: " />
                                                 <Run Text="{x:Bind FullCommand}" />
                                             </TextBlock>
 
-                                            <TextBlock FontSize="10" IsTextSelectionEnabled="True">
+                                            <TextBlock
+                                                FontSize="10"
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind Id}">
                                                 <Run Text="Command Definition Id: " />
                                                 <Run Text="{x:Bind Id}" />
                                             </TextBlock>
