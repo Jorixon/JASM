@@ -51,54 +51,58 @@
 
             <controls1:SwitchPresenter Grid.Row="1" Value="Custom Command">
                 <controls1:Case Value="Custom Command">
-                    <StackPanel Spacing="8">
-                        <controls2:FolderSelector
-                            Title="* Executable"
-                            BrowseCommand="{x:Bind ViewModel.SelectExecutableCommand}"
-                            PlaceHolderText="Must either be in $PATH or be an absolute path to the executable (Required)"
-                            SelectedFolderValue="{x:Bind ViewModel.Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <ScrollViewer>
 
-                        <controls2:FolderSelector
-                            Title="Working Directory"
-                            BrowseCommand="{x:Bind ViewModel.SelectWorkingDirectoryCommand}"
-                            Footer="{x:Bind ViewModel.EffectiveWorkingDirectory, Mode=OneWay}"
-                            IsEnabled="{x:Bind ViewModel.CanEditWorkingDirectory, Mode=OneWay}"
-                            PlaceHolderText="When manually specifying a path, the folder must exist"
-                            SelectedFolderValue="{x:Bind ViewModel.WorkingDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <StackPanel Spacing="8">
+                            <controls2:FolderSelector
+                                Title="* Executable"
+                                BrowseCommand="{x:Bind ViewModel.SelectExecutableCommand}"
+                                PlaceHolderText="Must either be in $PATH or be an absolute path to the executable (Required)"
+                                SelectedFolderValue="{x:Bind ViewModel.Command, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <StackPanel>
-                            <TextBox
-                                Header="Arguments"
-                                PlaceholderText="Arguments that will be passed to the executable"
-                                Text="{x:Bind ViewModel.Arguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock IsTextSelectionEnabled="True" Text="When command is run against a file system object (i.e. a skin/mod folder), {{TargetPath}} will be replaced by the actual path." />
+                            <controls2:FolderSelector
+                                Title="Working Directory"
+                                BrowseCommand="{x:Bind ViewModel.SelectWorkingDirectoryCommand}"
+                                Footer="{x:Bind ViewModel.EffectiveWorkingDirectory, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.CanEditWorkingDirectory, Mode=OneWay}"
+                                PlaceHolderText="When manually specifying a path, the folder must exist"
+                                SelectedFolderValue="{x:Bind ViewModel.WorkingDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <StackPanel>
+                                <TextBox
+                                    Header="Arguments"
+                                    PlaceholderText="Arguments that will be passed to the executable"
+                                    Text="{x:Bind ViewModel.Arguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock IsTextSelectionEnabled="True" Text="When command is run against a file system object (i.e. a skin/mod folder), {{TargetPath}} will be replaced by the actual path." />
+                            </StackPanel>
+
+
+                            <StackPanel>
+                                <CheckBox
+                                    Content="Kill Process on JASM exit"
+                                    IsChecked="{x:Bind ViewModel.KillProcessOnMainAppExit, Mode=TwoWay}"
+                                    ToolTipService.ToolTip="If checked the process will be killed when JASM exits" />
+                                <CheckBox
+                                    Command="{x:Bind ViewModel.ToggleRunAsAdminCommand}"
+                                    Content="Run as Admin"
+                                    IsChecked="{x:Bind ViewModel.RunAsAdmin, Mode=TwoWay}"
+                                    ToolTipService.ToolTip="Run the executable as an Administrator" />
+                                <CheckBox
+                                    Command="{x:Bind ViewModel.ToggleUseShellExecuteCommand}"
+                                    Content="Use Shell Execute"
+                                    IsChecked="{x:Bind ViewModel.UseShellExecute, Mode=TwoWay}"
+                                    IsEnabled="{x:Bind ViewModel.CanToggleUseShellExecute, Mode=OneWay}"
+                                    ToolTipService.ToolTip="Use the Operating System to start the executable" />
+                                <CheckBox
+                                    Content="Create window"
+                                    IsChecked="{x:Bind ViewModel.CreateWindow, Mode=TwoWay}"
+                                    IsEnabled="False"
+                                    ToolTipService.ToolTip="If checked it will be run in an external window" />
+                            </StackPanel>
+
                         </StackPanel>
+                    </ScrollViewer>
 
-
-                        <StackPanel>
-                            <CheckBox
-                                Content="Kill Process on JASM exit"
-                                IsChecked="{x:Bind ViewModel.KillProcessOnMainAppExit, Mode=TwoWay}"
-                                ToolTipService.ToolTip="If checked the process will be killed when JASM exits" />
-                            <CheckBox
-                                Command="{x:Bind ViewModel.ToggleRunAsAdminCommand}"
-                                Content="Run as Admin"
-                                IsChecked="{x:Bind ViewModel.RunAsAdmin, Mode=TwoWay}"
-                                ToolTipService.ToolTip="Run the executable as an Administrator" />
-                            <CheckBox
-                                Command="{x:Bind ViewModel.ToggleUseShellExecuteCommand}"
-                                Content="Use Shell Execute"
-                                IsChecked="{x:Bind ViewModel.UseShellExecute, Mode=TwoWay}"
-                                IsEnabled="{x:Bind ViewModel.CanToggleUseShellExecute, Mode=OneWay}"
-                                ToolTipService.ToolTip="Use the Operating System to start the executable" />
-                            <CheckBox
-                                Content="Create window"
-                                IsChecked="{x:Bind ViewModel.CreateWindow, Mode=TwoWay}"
-                                IsEnabled="False"
-                                ToolTipService.ToolTip="If checked it will be run in an external window" />
-                        </StackPanel>
-
-                    </StackPanel>
                 </controls1:Case>
             </controls1:SwitchPresenter>
 

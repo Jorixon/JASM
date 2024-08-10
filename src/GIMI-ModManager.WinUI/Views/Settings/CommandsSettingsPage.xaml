@@ -36,12 +36,16 @@
                 HeaderIcon="{winUi:FontIcon Glyph=&#xE74E;}"
                 IsExpanded="True">
                 <controls:SettingsExpander.Items>
-                    <Grid>
+                    <controls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
 
-                        <ListView ItemsSource="{x:Bind ViewModel.CommandDefinitions}" SelectionMode="None">
+                        <ListView
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{x:Bind ViewModel.CommandDefinitions}"
+                            SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="settingsViewModels:CommandDefinitionVM">
                                     <Grid
+                                        MinWidth="800"
                                         Margin="0,4,0,4"
                                         Padding="4,4,4,4"
                                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -149,7 +153,7 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                    </Grid>
+                    </controls:SettingsCard>
 
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
@@ -163,12 +167,14 @@
                 IsExpanded="True">
 
                 <controls:SettingsExpander.Items>
-                    <Grid>
+                    <controls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+
 
                         <ListView ItemsSource="{x:Bind ViewModel.RunningCommands}" SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="settingsViewModels:CommandVM">
                                     <Grid
+                                        MinWidth="800"
                                         Margin="0,4,0,4"
                                         Padding="4,4,4,4"
                                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -208,8 +214,8 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
+                    </controls:SettingsCard>
 
-                    </Grid>
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
 
