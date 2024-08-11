@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.14.0](https://github.com/Jorixon/JASM/compare/v2.13.3...v2.14.0) (2024-08-11)
+
+
+### Features
+
+* Create and run custom commands from within JASM ([#222](https://github.com/Jorixon/JASM/issues/222)) ([5ea97ef](https://github.com/Jorixon/JASM/commit/5ea97efcc2b03f86562d1f5349b948c35224150a))
+
+
+### Miscellaneous
+
+* Added missing ZZZ characters ([5ea97ef](https://github.com/Jorixon/JASM/commit/5ea97efcc2b03f86562d1f5349b948c35224150a))
+
 ## [2.13.3](https://github.com/Jorixon/JASM/compare/v2.13.2...v2.13.3) (2024-08-04)
 
 
