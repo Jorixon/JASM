@@ -8,6 +8,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;

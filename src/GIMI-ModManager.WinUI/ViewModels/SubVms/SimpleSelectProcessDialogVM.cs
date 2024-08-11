@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Validators;
