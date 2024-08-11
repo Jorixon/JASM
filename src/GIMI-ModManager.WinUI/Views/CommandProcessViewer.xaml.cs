@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;

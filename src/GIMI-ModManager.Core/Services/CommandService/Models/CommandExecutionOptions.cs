@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
 
-namespace GIMI_ModManager.Core.Services.CommandService;
+namespace GIMI_ModManager.Core.Services.CommandService.Models;
 
 public class CommandExecutionOptions
 {

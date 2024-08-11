@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;

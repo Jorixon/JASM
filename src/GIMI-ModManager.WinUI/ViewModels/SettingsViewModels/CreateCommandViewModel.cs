@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.Views.Settings;

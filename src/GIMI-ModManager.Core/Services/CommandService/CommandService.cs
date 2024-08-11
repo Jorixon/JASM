@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services.CommandService.JsonModels;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using Serilog;
 using static GIMI_ModManager.Core.Services.CommandService.RunningCommandChangedEventArgs;
 
@@ -42,7 +42,7 @@ public sealed class CommandService(ILogger logger)
             try
             {
                 var json = await File.ReadAllTextAsync(_jsonCommandFilePath).ConfigureAwait(false);
-                var jsonCommands = JsonSerializer.Deserialize<CommandRootJson>(json) ?? new CommandRootJson();
+                var jsonCommands = JsonSerializer.Deserialize<JsonCommandRoot>(json) ?? new JsonCommandRoot();
 
                 _commands = jsonCommands.Commands.Select(j => CommandDefinition.FromJson(j)).ToList();
                 if (jsonCommands.StartGameCommand is not null)
@@ -57,7 +57,7 @@ public sealed class CommandService(ILogger logger)
                 _logger.Error(e, "Failed to read command root json. Creating new one");
                 File.Move(_jsonCommandFilePath, _jsonCommandFilePath + ".invalid", overwrite: true);
                 await File.WriteAllTextAsync(_jsonCommandFilePath,
-                        JsonSerializer.Serialize(new CommandRootJson(), _jsonOptions))
+                        JsonSerializer.Serialize(new JsonCommandRoot(), _jsonOptions))
                     .ConfigureAwait(false);
             }
         }
@@ -65,7 +65,7 @@ public sealed class CommandService(ILogger logger)
         {
             _logger.Information("No command root json found, creating new one");
             await File.WriteAllTextAsync(_jsonCommandFilePath,
-                    JsonSerializer.Serialize(new CommandRootJson(), _jsonOptions))
+                    JsonSerializer.Serialize(new JsonCommandRoot(), _jsonOptions))
                 .ConfigureAwait(false);
         }
 
@@ -116,13 +116,13 @@ public sealed class CommandService(ILogger logger)
 
         command.Started += (_, _) =>
         {
-            _runningCommands.TryAdd(commandContext.Id, command);
+            _runningCommands.TryAdd(commandContext.RunId, command);
             RunningCommandsChanged?.Invoke(this,
                 new RunningCommandChangedEventArgs(CommandChangeType.Added, command));
         };
         command.Exited += (_, _) =>
         {
-            var removed = _runningCommands.TryRemove(commandContext.Id, out _);
+            var removed = _runningCommands.TryRemove(commandContext.RunId, out _);
             if (removed)
                 RunningCommandsChanged?.Invoke(this,
                     new RunningCommandChangedEventArgs(CommandChangeType.Removed, command));
@@ -258,43 +258,27 @@ public sealed class CommandService(ILogger logger)
 
     private async Task SaveCommandsAsync()
     {
-        var jsonRoot = new CommandRootJson
+        var jsonRoot = new JsonCommandRoot
         {
             Commands = _commands
                 .Where(c => c is { IsGameStartCommand: false, IsModelImporterCommand: false })
-                .Select(ToJsonCommandDefinition)
+                .Select(c => c.ToJson())
                 .ToArray()
         };
 
         var gameStartCommand = _commands.FirstOrDefault(c => c.IsGameStartCommand);
         if (gameStartCommand is not null)
-            jsonRoot.StartGameCommand = ToJsonCommandDefinition(gameStartCommand);
+            jsonRoot.StartGameCommand = gameStartCommand.ToJson();
 
         var modelImporterCommand = _commands.FirstOrDefault(c => c.IsModelImporterCommand);
         if (modelImporterCommand is not null)
-            jsonRoot.StartGameModelImporter = ToJsonCommandDefinition(modelImporterCommand);
+            jsonRoot.StartGameModelImporter = modelImporterCommand.ToJson();
 
 
         await File.WriteAllTextAsync(_jsonCommandFilePath, JsonSerializer.Serialize(jsonRoot, _jsonOptions))
                 .ConfigureAwait(false);
     }
 
-    private JsonCommandDefinition ToJsonCommandDefinition(CommandDefinition commandDefinition)
-    {
-        return new JsonCommandDefinition
-        {
-            Id = commandDefinition.Id,
-            CreateTime = DateTime.Now,
-            DisplayName = commandDefinition.CommandDisplayName,
-            Command = commandDefinition.ExecutionOptions.Command,
-            Arguments = commandDefinition.ExecutionOptions.Arguments,
-            WorkingDirectory = commandDefinition.ExecutionOptions.WorkingDirectory,
-            UseShellExecute = commandDefinition.ExecutionOptions.UseShellExecute,
-            CreateWindow = commandDefinition.ExecutionOptions.CreateWindow,
-            RunAsAdmin = commandDefinition.ExecutionOptions.RunAsAdmin,
-            KillOnMainAppExit = commandDefinition.KillOnMainAppExit
-        };
-    }
 
     public void Cleanup()
     {
@@ -324,62 +308,6 @@ public class RunningCommandChangedEventArgs(
     }
 }
 
-public class CommandDefinition
-{
-    public Guid Id { get; private set; } = Guid.NewGuid();
-
-    public required string CommandDisplayName { get; init; }
-
-    // If true, the process will be killed when the application closes
-    public required bool KillOnMainAppExit { get; init; }
-    public required CommandExecutionOptions ExecutionOptions { get; init; }
-
-    public bool IsGameStartCommand { get; internal set; }
-
-    public bool IsModelImporterCommand { get; internal set; }
-
-    /// <summary>
-    /// This will return the full command with all variables replaced
-    /// </summary>
-    public (string FullCommand, string? WorkingDirectory) GetFullCommand(
-        SpecialVariablesInput? specialVariablesInput)
-    {
-        var fullCommand = SpecialVariables.ReplaceVariables(
-            ExecutionOptions.Command + " " + ExecutionOptions.Arguments,
-            specialVariablesInput);
-
-        var workingDirectory = SpecialVariables.ReplaceVariables(ExecutionOptions.WorkingDirectory,
-            specialVariablesInput);
-
-        return (fullCommand, workingDirectory);
-    }
-
-    internal void UpdateId(Guid newId) => Id = newId;
-
-
-    internal static CommandDefinition FromJson(JsonCommandDefinition jsonCommandDefinition,
-        bool isGameStartCommand = false, bool isModelImporterCommand = false)
-    {
-        return new CommandDefinition()
-        {
-            Id = jsonCommandDefinition.Id,
-            CommandDisplayName = jsonCommandDefinition.DisplayName,
-            KillOnMainAppExit = jsonCommandDefinition.KillOnMainAppExit,
-            IsGameStartCommand = isGameStartCommand,
-            IsModelImporterCommand = isModelImporterCommand,
-            ExecutionOptions = new CommandExecutionOptions()
-            {
-                Command = jsonCommandDefinition.Command,
-                WorkingDirectory = jsonCommandDefinition.WorkingDirectory,
-                UseShellExecute = jsonCommandDefinition.UseShellExecute,
-                Arguments = jsonCommandDefinition.Arguments,
-                CreateWindow = jsonCommandDefinition.CreateWindow,
-                RunAsAdmin = jsonCommandDefinition.RunAsAdmin
-            }
-        };
-    }
-}
-
 internal class InternalCreateCommandOptions
 {
     public required Guid CommandDefinitionId { get; init; }
@@ -402,179 +330,4 @@ internal class InternalCreateCommandOptions
     public bool KillOnMainAppExit { get; init; }
 
     public required CommandExecutionOptions ExecutionOptions { get; set; }
-}
-
-/// <summary>
-/// This is returned when a command is created, is used to track and interact with the process
-/// </summary>
-public sealed class ProcessCommand
-{
-    private readonly Process _process;
-    private readonly CommandContext _context;
-
-    internal InternalCreateCommandOptions InternalCreateOptions { get; }
-    public CommandExecutionOptions Options => InternalCreateOptions.ExecutionOptions;
-
-    public Guid RunId => _context.Id;
-
-    public Guid CommandDefinitionId => InternalCreateOptions.CommandDefinitionId;
-
-    public string DisplayName => InternalCreateOptions.DisplayName;
-
-    public string FullCommand => _process.StartInfo.FileName + " " + _process.StartInfo.Arguments;
-
-    internal ProcessCommand(Process process, InternalCreateCommandOptions options,
-        CommandContext context)
-    {
-        _process = process;
-        InternalCreateOptions = options;
-        _context = context;
-
-        CanWriteInputReadOutput = InternalCreateOptions.ExecutionOptions.CanRedirectInputOutput();
-    }
-
-    public bool HasBeenStarted { get; private set; }
-    public bool CanWriteInputReadOutput { get; private set; }
-
-    public bool HasExited { get; private set; }
-
-    public bool IsRunning => !HasExited;
-
-    public int ExitCode { get; private set; } = 1337;
-
-    public event EventHandler? Started;
-    public event EventHandler? Exited;
-    public event EventHandler<DataReceivedEventArgs>? OutputDataReceived;
-    public event EventHandler<DataReceivedEventArgs>? ErrorDataReceived;
-
-
-    public bool Start()
-    {
-        if (HasBeenStarted)
-            throw new InvalidOperationException("Cannot start a command that has already been started");
-
-        _process.Exited += ExitHandler;
-
-
-        var currentWorkingDirectory = Environment.CurrentDirectory;
-
-        if ((Options.UseShellExecute || Options.RunAsAdmin) && !_process.StartInfo.WorkingDirectory.IsNullOrEmpty())
-        {
-            if (Directory.Exists(_process.StartInfo.WorkingDirectory))
-            {
-                Environment.CurrentDirectory = _process.StartInfo.WorkingDirectory;
-            }
-            else
-            {
-                throw new InvalidOperationException(
-                    "Working directory does not exist for a command using shell execute");
-            }
-        }
-
-        bool result;
-        try
-        {
-            result = _process.Start();
-        }
-        catch (Exception e)
-        {
-            _process.Exited -= ExitHandler;
-            throw;
-        }
-        finally
-        {
-            Environment.CurrentDirectory = currentWorkingDirectory;
-        }
-
-        HasBeenStarted = true;
-        _context.StartTime = DateTime.Now;
-
-        if (CanWriteInputReadOutput)
-        {
-            _process.OutputDataReceived += (_, args) => OutputDataReceived?.Invoke(this, args);
-            _process.ErrorDataReceived += (_, args) => ErrorDataReceived?.Invoke(this, args);
-
-            _process.BeginOutputReadLine();
-            _process.BeginErrorReadLine();
-        }
-
-        Started?.Invoke(this, EventArgs.Empty);
-
-        _process.Refresh();
-        return result;
-    }
-
-    private void ExitHandler(object? sender, EventArgs args)
-    {
-        HasExited = true;
-        ExitCode = _process.ExitCode;
-        _context.EndTime = DateTime.Now;
-        _process.Dispose();
-        Exited?.Invoke(this, args);
-    }
-
-    public async Task WaitForExitAsync()
-    {
-        if (HasExited)
-            return;
-
-        // TODO: Use task completion source to wait for the process to exit
-        await Task.Run(() => _process.WaitForExit()).ConfigureAwait(false);
-    }
-
-
-    public async Task WriteInputAsync(string? input, bool appendNewLine = true)
-    {
-        if (!CanWriteInputReadOutput)
-            throw new InvalidOperationException("Cannot write input to a process that uses shell execute");
-
-        if (HasExited)
-            throw new InvalidOperationException("Cannot write input to a process that has exited");
-
-        var inputToWrite = input + (appendNewLine ? Environment.NewLine : string.Empty);
-
-        await _process.StandardInput.WriteAsync(inputToWrite).ConfigureAwait(false);
-    }
-
-
-    public async Task<int> KillAsync()
-    {
-        if (HasExited)
-            return ExitCode;
-
-        _process.Kill();
-        await WaitForExitAsync().ConfigureAwait(false);
-        return ExitCode;
-    }
-}
-
-internal class CommandRootJson
-{
-    public JsonCommandDefinition[] Commands { get; set; } = [];
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public JsonCommandDefinition? StartGameCommand { get; set; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public JsonCommandDefinition? StartGameModelImporter { get; set; }
-}
-
-internal class JsonCommandDefinition
-{
-    public required Guid Id { get; set; }
-    public required DateTime CreateTime { get; set; }
-    public required string DisplayName { get; set; }
-    public required string Command { get; set; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? Arguments { get; set; }
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? WorkingDirectory { get; set; }
-
-    public required bool UseShellExecute { get; set; }
-    public required bool CreateWindow { get; set; }
-    public required bool RunAsAdmin { get; set; }
-
-    public required bool KillOnMainAppExit { get; set; }
 }

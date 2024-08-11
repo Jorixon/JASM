@@ -1,8 +1,8 @@
-﻿namespace GIMI_ModManager.Core.Services.CommandService;
+﻿namespace GIMI_ModManager.Core.Services.CommandService.Models;
 
-public class CommandContext
+public sealed class CommandContext
 {
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid RunId { get; } = Guid.NewGuid();
 
     public DateTime CreateTime { get; } = DateTime.Now;
 

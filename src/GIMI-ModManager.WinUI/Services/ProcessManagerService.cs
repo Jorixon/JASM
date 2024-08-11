@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;

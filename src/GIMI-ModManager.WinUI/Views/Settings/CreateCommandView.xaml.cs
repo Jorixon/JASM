@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using Microsoft.UI.Xaml.Controls;
 

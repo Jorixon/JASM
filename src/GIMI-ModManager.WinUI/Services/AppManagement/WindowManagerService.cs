@@ -162,6 +162,8 @@ public class WindowManagerService : IWindowManagerService
 
         _windowDialogOpen.Add(window);
 
+        // Inspired by https://github.com/marticliment/UniGetUI/blob/f32c264600f2f105867b7117c142c493557ba436/src/UniGetUI/Interface/MainView.xaml.cs#L490
+
         var dialog = new ContentDialog
         {
             Content = content,
