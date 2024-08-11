@@ -329,7 +329,7 @@
     "Keys": [
       "miyabi"
     ],
-    "ReleaseDate": "2024-07-4T00:10:00",
+    "ReleaseDate": "2025-07-4T00:10:00",
     "Image": "Miyabi.webp",
     "Rarity": 5,
     "Element": "Ice",
@@ -341,5 +341,76 @@
     "InGameSkins": [],
     "InternalName": "Miyabi",
     "DisplayName": "Miyabi"
+  },
+  {
+    "Keys": [
+      "Jane",
+      "Doe"
+    ],
+    "ReleaseDate": "2024-08-14T00:00:00",
+    "Image": "Jane.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Physical",
+    "Region": [
+      "Unknown"
+    ],
+    "ModFilesName": "Jane",
+    "InGameSkins": [],
+    "InternalName": "Jane",
+    "DisplayName": "Jane"
+  },
+  {
+    "Keys": [
+      "Qingyi"
+    ],
+    "ReleaseDate": "2024-08-14T00:00:00",
+    "Image": "Qingyi.png",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Stun",
+    "Region": [
+      "ResponseTeam"
+    ],
+    "ModFilesName": "Qingyi",
+    "InGameSkins": [],
+    "InternalName": "Qingyi",
+    "DisplayName": "Qingyi"
+  },
+  {
+    "Keys": [
+      "Seth",
+      "Lowell"
+    ],
+    "ReleaseDate": "2024-08-14T00:00:00",
+    "Image": "Seth.png",
+    "Rarity": 4,
+    "Element": "Electric",
+    "Class": "Defense",
+    "Region": [
+      "ResponseTeam"
+    ],
+    "ModFilesName": "Seth",
+    "InGameSkins": [],
+    "InternalName": "Seth",
+    "DisplayName": "Seth"
+  },
+  {
+    "Keys": [
+      "Caesar",
+      "Lowell"
+    ],
+    "ReleaseDate": "2025-08-14T00:00:00",
+    "Image": "Caesar.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Defense",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Caesar",
+    "InGameSkins": [],
+    "InternalName": "Caesar",
+    "DisplayName": "Caesar"
   }
 ]
