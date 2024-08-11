@@ -553,26 +553,26 @@ public sealed class SkinManagerService : ISkinManagerService
         switch (setModStatus)
         {
             case SetModStatus.EnableAllMods:
-            {
-                foreach (var mod in mods)
                 {
-                    var enabledName = mod.Name;
-                    enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
-                    enabledName = enabledName.Replace("DISABLED", "");
-                    if (enabledName != mod.Name)
-                        mod.Rename(enabledName);
+                    foreach (var mod in mods)
+                    {
+                        var enabledName = mod.Name;
+                        enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
+                        enabledName = enabledName.Replace("DISABLED", "");
+                        if (enabledName != mod.Name)
+                            mod.Rename(enabledName);
+                    }
+
+                    break;
                 }
-
-                break;
-            }
             case SetModStatus.DisableAllMods:
-            {
-                foreach (var mod in mods)
-                    if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
-                        mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
+                {
+                    foreach (var mod in mods)
+                        if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
+                            mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
 
-                break;
-            }
+                    break;
+                }
         }
     }
 

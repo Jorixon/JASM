@@ -70,7 +70,8 @@ public partial class CreateCommandViewModel : ObservableObject
 
     [ObservableProperty] private bool _killProcessOnMainAppExit;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CreateCommandCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CreateCommandCommand))]
     private bool _isValidCommand;
 
     [ObservableProperty] private string _commandPreview = string.Empty;

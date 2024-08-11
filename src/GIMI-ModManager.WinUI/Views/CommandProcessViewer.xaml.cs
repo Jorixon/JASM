@@ -54,7 +54,8 @@ public partial class CommandProcessViewerViewModel : ObservableObject
     private ProcessCommand? _command;
     private DispatcherQueue? _dispatcherQueue;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(KillProcessCommand), nameof(WriteInputCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(KillProcessCommand), nameof(WriteInputCommand))]
     private bool _isRunning;
 
     [ObservableProperty] private string _commandDisplayName = string.Empty;

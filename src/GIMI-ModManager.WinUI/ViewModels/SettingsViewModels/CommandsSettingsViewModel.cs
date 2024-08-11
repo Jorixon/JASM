@@ -328,7 +328,8 @@ public partial class CommandDefinitionVM : ObservableObject
     public string Arguments { get; set; }
     public string WorkingDirectory { get; set; }
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanDelete))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanDelete))]
     private bool _isDeleting;
 
     public bool CanDelete => !IsDeleting;
