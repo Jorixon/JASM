@@ -42,9 +42,15 @@ public sealed class CommandService(ILogger logger)
             try
             {
                 var json = await File.ReadAllTextAsync(_jsonCommandFilePath).ConfigureAwait(false);
-                var jsonCommands = JsonSerializer.Deserialize<CommandRootJson>(json)?.Commands ?? [];
+                var jsonCommands = JsonSerializer.Deserialize<CommandRootJson>(json) ?? new CommandRootJson();
 
-                _commands = jsonCommands.Select(CommandDefinition.FromJson).ToList();
+                _commands = jsonCommands.Commands.Select(j => CommandDefinition.FromJson(j)).ToList();
+                if (jsonCommands.StartGameCommand is not null)
+                    _commands.Add(CommandDefinition.FromJson(jsonCommands.StartGameCommand, isGameStartCommand: true));
+
+                if (jsonCommands.StartGameModelImporter is not null)
+                    _commands.Add(CommandDefinition.FromJson(jsonCommands.StartGameModelImporter,
+                        isModelImporterCommand: true));
             }
             catch (Exception e)
             {
@@ -148,6 +154,35 @@ public sealed class CommandService(ILogger logger)
         return SaveCommandsAsync();
     }
 
+    public Task SetSpecialCommands(Guid commandDefinitionId, bool gameStart, bool modelImporterStart)
+    {
+        if (gameStart)
+        {
+            var existingGameStartCommand = _commands.FirstOrDefault(c => c.IsGameStartCommand);
+            if (existingGameStartCommand is not null)
+                existingGameStartCommand.IsGameStartCommand = false;
+
+            var command = _commands.FirstOrDefault(c => c.Id == commandDefinitionId);
+            if (command is null)
+                throw new InvalidOperationException("Command does not exist");
+            command.IsGameStartCommand = true;
+        }
+
+        if (modelImporterStart)
+        {
+            var existingModelImporterCommand = _commands.FirstOrDefault(c => c.IsModelImporterCommand);
+            if (existingModelImporterCommand is not null)
+                existingModelImporterCommand.IsModelImporterCommand = false;
+
+            var command = _commands.FirstOrDefault(c => c.Id == commandDefinitionId);
+            if (command is null)
+                throw new InvalidOperationException("Command does not exist");
+            command.IsModelImporterCommand = true;
+        }
+
+        return SaveCommandsAsync();
+    }
+
 
     public Task DeleteCommandDefinitionAsync(Guid commandId)
     {
@@ -161,9 +196,46 @@ public sealed class CommandService(ILogger logger)
         return SaveCommandsAsync();
     }
 
-    public Task<bool> UpdateCommandDefinitionAsync()
+    public async Task<CommandDefinition> UpdateCommandDefinitionAsync(Guid existingCommandId,
+        CommandDefinition newCommandDefinition)
     {
-        throw new NotImplementedException();
+        var existingCommand = _commands.FirstOrDefault(c => c.Id == existingCommandId);
+
+        if (existingCommand is null)
+            throw new InvalidOperationException("Command does not exist");
+
+        newCommandDefinition.ExecutionOptions.IsReadOnly = true;
+        newCommandDefinition.UpdateId(newCommandDefinition.Id);
+
+        newCommandDefinition.IsGameStartCommand = existingCommand.IsGameStartCommand;
+        newCommandDefinition.IsModelImporterCommand = existingCommand.IsModelImporterCommand;
+
+        _commands.Remove(existingCommand);
+        _commands.Add(newCommandDefinition);
+
+        try
+        {
+            await SaveCommandsAsync().ConfigureAwait(false);
+            return newCommandDefinition;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to update command, reverting...");
+            _commands.Remove(newCommandDefinition);
+            _commands.Add(existingCommand);
+        }
+
+        try
+        {
+            await SaveCommandsAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to revert command update");
+            throw;
+        }
+
+        throw new InvalidOperationException("Failed to update command ");
     }
 
     public Task<IReadOnlyList<CommandDefinition>> GetCommandDefinitionsAsync(
@@ -188,23 +260,40 @@ public sealed class CommandService(ILogger logger)
     {
         var jsonRoot = new CommandRootJson
         {
-            Commands = _commands.Select(c => new JsonCommandDefinition
-            {
-                Id = c.Id,
-                CreateTime = DateTime.Now,
-                DisplayName = c.CommandDisplayName,
-                Command = c.ExecutionOptions.Command,
-                Arguments = c.ExecutionOptions.Arguments,
-                WorkingDirectory = c.ExecutionOptions.WorkingDirectory,
-                UseShellExecute = c.ExecutionOptions.UseShellExecute,
-                CreateWindow = c.ExecutionOptions.CreateWindow,
-                RunAsAdmin = c.ExecutionOptions.RunAsAdmin,
-                KillOnMainAppExit = c.KillOnMainAppExit
-            }).ToArray()
+            Commands = _commands
+                .Where(c => c is { IsGameStartCommand: false, IsModelImporterCommand: false })
+                .Select(ToJsonCommandDefinition)
+                .ToArray()
         };
 
+        var gameStartCommand = _commands.FirstOrDefault(c => c.IsGameStartCommand);
+        if (gameStartCommand is not null)
+            jsonRoot.StartGameCommand = ToJsonCommandDefinition(gameStartCommand);
+
+        var modelImporterCommand = _commands.FirstOrDefault(c => c.IsModelImporterCommand);
+        if (modelImporterCommand is not null)
+            jsonRoot.StartGameModelImporter = ToJsonCommandDefinition(modelImporterCommand);
+
+
         await File.WriteAllTextAsync(_jsonCommandFilePath, JsonSerializer.Serialize(jsonRoot, _jsonOptions))
-            .ConfigureAwait(false);
+                .ConfigureAwait(false);
+    }
+
+    private JsonCommandDefinition ToJsonCommandDefinition(CommandDefinition commandDefinition)
+    {
+        return new JsonCommandDefinition
+        {
+            Id = commandDefinition.Id,
+            CreateTime = DateTime.Now,
+            DisplayName = commandDefinition.CommandDisplayName,
+            Command = commandDefinition.ExecutionOptions.Command,
+            Arguments = commandDefinition.ExecutionOptions.Arguments,
+            WorkingDirectory = commandDefinition.ExecutionOptions.WorkingDirectory,
+            UseShellExecute = commandDefinition.ExecutionOptions.UseShellExecute,
+            CreateWindow = commandDefinition.ExecutionOptions.CreateWindow,
+            RunAsAdmin = commandDefinition.ExecutionOptions.RunAsAdmin,
+            KillOnMainAppExit = commandDefinition.KillOnMainAppExit
+        };
     }
 
     public void Cleanup()
@@ -237,13 +326,17 @@ public class RunningCommandChangedEventArgs(
 
 public class CommandDefinition
 {
-    public Guid Id { get; private init; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.NewGuid();
 
     public required string CommandDisplayName { get; init; }
 
     // If true, the process will be killed when the application closes
     public required bool KillOnMainAppExit { get; init; }
     public required CommandExecutionOptions ExecutionOptions { get; init; }
+
+    public bool IsGameStartCommand { get; internal set; }
+
+    public bool IsModelImporterCommand { get; internal set; }
 
     /// <summary>
     /// This will return the full command with all variables replaced
@@ -261,14 +354,19 @@ public class CommandDefinition
         return (fullCommand, workingDirectory);
     }
 
+    internal void UpdateId(Guid newId) => Id = newId;
 
-    internal static CommandDefinition FromJson(JsonCommandDefinition jsonCommandDefinition)
+
+    internal static CommandDefinition FromJson(JsonCommandDefinition jsonCommandDefinition,
+        bool isGameStartCommand = false, bool isModelImporterCommand = false)
     {
         return new CommandDefinition()
         {
             Id = jsonCommandDefinition.Id,
             CommandDisplayName = jsonCommandDefinition.DisplayName,
             KillOnMainAppExit = jsonCommandDefinition.KillOnMainAppExit,
+            IsGameStartCommand = isGameStartCommand,
+            IsModelImporterCommand = isModelImporterCommand,
             ExecutionOptions = new CommandExecutionOptions()
             {
                 Command = jsonCommandDefinition.Command,
@@ -453,6 +551,12 @@ public sealed class ProcessCommand
 internal class CommandRootJson
 {
     public JsonCommandDefinition[] Commands { get; set; } = [];
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public JsonCommandDefinition? StartGameCommand { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public JsonCommandDefinition? StartGameModelImporter { get; set; }
 }
 
 internal class JsonCommandDefinition

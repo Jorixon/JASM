@@ -1,4 +1,5 @@
-﻿using Windows.Win32;
+﻿using System.ComponentModel;
+using Windows.Win32;
 using Windows.Win32.Foundation;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.CommandService;
@@ -122,11 +123,12 @@ public class CommandHandlerService(CommandService commandService, ILogger logger
         catch (Exception e)
         {
 #if DEBUG
-            throw;
+            if (e is not Win32Exception)
+                throw;
 #endif
 
             _logger.Error(e, "An error occured when starting command");
-            return Result<ProcessCommand>.Error(new SimpleNotification("An error occured when starting command",
+            return Result<ProcessCommand>.Error(e, new SimpleNotification("An error occured when starting command",
                 e.Message, null));
         }
     }
@@ -197,5 +199,12 @@ public class CommandHandlerService(CommandService commandService, ILogger logger
 
             return result;
         }
+    }
+
+    public async Task<IEnumerable<ProcessCommand>> GetRunningCommandAsync(Guid commandDefinitionId)
+    {
+        return (await _commandService.GetRunningCommandsAsync().ConfigureAwait(false))
+            .Where(x => x.CommandDefinitionId == commandDefinitionId)
+            .ToArray();
     }
 }

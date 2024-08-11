@@ -30,6 +30,7 @@ using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
+using CreateCommandViewModel = GIMI_ModManager.WinUI.ViewModels.SettingsViewModels.CreateCommandViewModel;
 using GameBananaService = GIMI_ModManager.WinUI.Services.ModHandling.GameBananaService;
 using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 

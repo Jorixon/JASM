@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentValidation;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Storage.Pickers;
 
 namespace GIMI_ModManager.WinUI.ViewModels.SubVms;
 
@@ -90,6 +90,17 @@ public partial class PathPicker : ObservableRecipient
 
         var folder = await folderPicker.PickSingleFolderAsync();
         Path = folder?.Path;
+    }
+
+    public async Task BrowseFilePathAsync(WindowEx window, string extensionFilter = "*")
+    {
+        var filePicker = new FileOpenPicker();
+        filePicker.FileTypeFilter.Add(extensionFilter);
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+        WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
+
+        var file = await filePicker.PickSingleFileAsync();
+        Path = file?.Path;
     }
 }
 

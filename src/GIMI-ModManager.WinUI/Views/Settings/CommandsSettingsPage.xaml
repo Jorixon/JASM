@@ -110,8 +110,9 @@
 
                                                 <Button
                                                     VerticalAlignment="Center"
-                                                    Content="Edit"
-                                                    IsEnabled="False" />
+                                                    Command="{x:Bind EditCommand}"
+                                                    CommandParameter="{x:Bind}"
+                                                    Content="Edit" />
 
                                                 <Button
                                                     VerticalAlignment="Center"

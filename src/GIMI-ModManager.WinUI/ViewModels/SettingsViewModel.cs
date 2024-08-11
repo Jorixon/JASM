@@ -801,6 +801,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         PersistWindowSize = windowSettings.PersistWindowSize;
         PersistWindowPosition = windowSettings.PersistWindowPosition;
+        await GenshinProcessManager.TryInitialize();
+        await ThreeDMigtoProcessManager.TryInitialize();
     }
 
     [ObservableProperty] private string _maxCacheSizeString = string.Empty;

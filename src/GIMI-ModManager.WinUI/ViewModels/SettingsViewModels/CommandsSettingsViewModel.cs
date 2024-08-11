@@ -110,6 +110,36 @@ public sealed partial class CommandsSettingsViewModel(
         _notificationManager.ShowNotification("Process killed successfully", string.Empty, TimeSpan.FromSeconds(2));
     }
 
+    private bool CanEditCommand(CommandDefinitionVM? commandVM)
+    {
+        return commandVM is { IsDeleting: false, HasTargetPathVariable: false } &&
+               RunningCommands.ToArray().All(r => r.Id != commandVM.Id);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanEditCommand))]
+    private async Task EditAsync(CommandDefinitionVM? commandDefinition)
+    {
+        if (commandDefinition is null)
+            return;
+
+        var window = App.MainWindow;
+
+        var existingCommand = await _commandService.GetCommandDefinitionAsync(commandDefinition.Id);
+
+        if (existingCommand is null)
+        {
+            _notificationManager.ShowNotification("Failed to get command", "Command not found",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        var options = CreateCommandOptions.EditCommand(existingCommand);
+        var page = new CreateCommandView(options: options);
+
+        await _windowManagerService.ShowFullScreenDialogAsync(page, window.Content.XamlRoot, window);
+        await RefreshCommandDefinitionsAsync().ConfigureAwait(false);
+    }
+
     [RelayCommand]
     private async Task DeleteCommandAsync(CommandDefinitionVM? commandDefinition)
     {
@@ -177,7 +207,8 @@ public sealed partial class CommandsSettingsViewModel(
             var commandDefinitionVM = new CommandDefinitionVM(commandDefinition)
             {
                 DeleteCommand = DeleteCommandCommand,
-                RunCommand = RunCommand
+                RunCommand = RunCommand,
+                EditCommand = EditCommand
             };
             CommandDefinitions.Add(commandDefinitionVM);
         }
@@ -228,6 +259,7 @@ public sealed partial class CommandsSettingsViewModel(
         }
 
         RunCommand.NotifyCanExecuteChanged();
+        EditCommand.NotifyCanExecuteChanged();
     }
 }
 
@@ -310,4 +342,7 @@ public partial class CommandDefinitionVM : ObservableObject
 
 
     public required IAsyncRelayCommand RunCommand { get; init; }
+
+
+    public required IAsyncRelayCommand EditCommand { get; init; }
 }
