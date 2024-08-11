@@ -549,7 +549,11 @@
 		<Content Remove="Assets\Games\ZZZ\characters.json" />
 		<Content Remove="Assets\Games\ZZZ\elements.json" />
 		<Content Remove="Assets\Games\ZZZ\game.json" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Caesar.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Character_Others.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Jane.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Qingyi.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Seth.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\ZZZ\npcs.json" />
@@ -600,6 +604,7 @@
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
+		<None Remove="Views\CommandProcessViewer.xaml" />
 		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
 		<None Remove="Views\Controls\DataTemplates.xaml" />
@@ -618,6 +623,8 @@
 		<None Remove="Views\NotificationsPage.xaml" />
 		<None Remove="Views\PresetDetailsPage.xaml" />
 		<None Remove="Views\PresetPage.xaml" />
+		<None Remove="Views\Settings\CommandsSettingsPage.xaml" />
+		<None Remove="Views\Settings\CreateCommandView.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -626,6 +633,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.240109" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Layout" Version="7.1.2" />
@@ -1129,10 +1138,19 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\Settings\CreateCommandView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\Controls\DataTemplates.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Views\CommandProcessViewer.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\CharacterGalleryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Settings\CommandsSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\ModSelector.xaml">

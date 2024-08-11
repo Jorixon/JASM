@@ -13,8 +13,12 @@
     mc:Ignorable="d">
 
 
+
+
+
     <StackPanel>
-        <TextBox Text="{x:Bind ModId, Mode=TwoWay}" />
-        <Button Click="ButtonBase_OnClick">Run</Button>
+        <Button Click="ButtonBase_OnClick" Content="Run Command" />
+        <Button Click="ButtonBase_OnClickOpenDialog" Content="OpenDialog" />
+        <Button Click="CreateCommand_OnClick" Content="Create Command" />
     </StackPanel>
 </Page>

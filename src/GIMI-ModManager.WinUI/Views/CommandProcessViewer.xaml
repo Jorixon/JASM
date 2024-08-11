@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GIMI_ModManager.WinUI.Views.CommandProcessViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        RowSpacing="16">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}">
+                <Run Text="Running: " />
+                <Run Text="{x:Bind ViewModel.CommandDisplayName, Mode=OneWay}" />
+            </TextBlock>
+
+            <CheckBox
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Content="Auto scroll"
+                IsChecked="{x:Bind ViewModel.IsAutoScroll, Mode=TwoWay}" />
+
+        </Grid>
+
+
+
+        <ScrollViewer
+            x:Name="OutputScrollViewer"
+            Grid.Row="1"
+            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+            VerticalScrollBarVisibility="Visible"
+            VerticalScrollMode="Enabled">
+            <TextBlock x:Name="OutputTextBlock" IsTextSelectionEnabled="True" />
+
+        </ScrollViewer>
+        <ProgressBar
+            Grid.Row="1"
+            Margin="0,5,0,0"
+            VerticalAlignment="Bottom"
+            IsIndeterminate="{x:Bind ViewModel.IsRunning, Mode=OneWay}" />
+
+
+        <Grid Grid.Row="2">
+            <StackPanel Spacing="8">
+                <TextBox
+                    x:Name="InputTextBox"
+                    AcceptsReturn="False"
+                    Header="Write to Process, press enter to send"
+                    IsEnabled="{x:Bind ViewModel.IsRunning, Mode=OneWay}"
+                    KeyDown="InputTextBox_OnKeyDown"
+                    Text="{x:Bind ViewModel.InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button
+                    HorizontalAlignment="Right"
+                    Command="{x:Bind ViewModel.KillProcessCommand}"
+                    Content="Kill process" />
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

@@ -51,6 +51,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public OverviewDockPanelVM DockPanelVM { get; }
 
+    public SimpleSelectProcessDialogVM SimpleSelectProcessDialogVM { get; } = new();
+
 
     private IReadOnlyList<IModdableObject> _characters = new List<IModdableObject>();
 
@@ -762,46 +764,16 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _localSettingsService.SaveSettingAsync(CharacterOverviewSettings.GetKey(_category), settings);
 
 
-    private async Task InternalStartAsync(IProcessManager processManager)
-    {
-        _logger.Debug("Starting {ProcessName}", processManager.ProcessName);
-        processManager.CheckStatus();
-
-        if (processManager.ProcessStatus == ProcessStatus.NotInitialized)
-        {
-            string? processPath = null;
-            try
-            {
-                processPath = await processManager.PickProcessPathAsync(App.MainWindow);
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e, "Error picking process path");
-                NotificationManager.ShowNotification($"Error picking process path, ErrorCode: {e.HResult}", e.Message,
-                    TimeSpan.FromSeconds(10));
-            }
-
-            if (processPath is null) return;
-            await processManager.SetPath(Path.GetFileName(processPath), processPath);
-        }
-
-        if (processManager.ProcessStatus == ProcessStatus.NotRunning)
-        {
-            processManager.StartProcess();
-            if (processManager.ErrorMessage is not null)
-                NotificationManager.ShowNotification($"Failed to start {processManager.ProcessName}",
-                    processManager.ErrorMessage,
-                    TimeSpan.FromSeconds(5));
-        }
-    }
+    [RelayCommand]
+    private async Task Start3DmigotoAsync() =>
+        await SimpleSelectProcessDialogVM.InternalStart(ThreeDMigtoProcessManager,
+            SimpleSelectProcessDialogVM.StartType.ModelImporter);
 
 
     [RelayCommand]
-    private async Task Start3DmigotoAsync() => await InternalStartAsync(ThreeDMigtoProcessManager);
-
-
-    [RelayCommand]
-    private async Task StartGenshinAsync() => await InternalStartAsync(GenshinProcessManager);
+    private async Task StartGenshinAsync() =>
+        await SimpleSelectProcessDialogVM.InternalStart(GenshinProcessManager,
+            SimpleSelectProcessDialogVM.StartType.Game);
 
     private bool CanRefreshModsInGame()
     {

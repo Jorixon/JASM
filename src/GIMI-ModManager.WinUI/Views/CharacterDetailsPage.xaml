@@ -87,8 +87,8 @@
                                 PlaceholderText="Character Name"
                                 QuerySubmitted="MoveModSearch_OnQuerySubmitted"
                                 SuggestionChosen="MoveModSearch_OnSuggestionChosen"
-                                Text="{x:Bind ViewModel.MoveModsFlyoutVM.SearchText, Mode=TwoWay}"
-                                TextChanged="MoveModSearch_OnTextChanged">
+                                TextChanged="MoveModSearch_OnTextChanged"
+                                Text="{x:Bind ViewModel.MoveModsFlyoutVM.SearchText, Mode=TwoWay}">
                                 <AutoSuggestBox.ItemTemplate>
                                     <DataTemplate x:DataType="interfaces:IModdableObject">
                                         <TextBlock Text="{x:Bind DisplayName}" />
@@ -184,7 +184,7 @@
                     <Grid>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
@@ -197,12 +197,27 @@
                         </Button>
 
 
-                        <Button
+                        <StackPanel
                             Grid.Column="1"
                             HorizontalAlignment="Right"
-                            Command="{x:Bind ViewModel.GoToCharacterEditScreenCommand}">
-                            <FontIcon Glyph="&#xE70F;" />
-                        </Button>
+                            Orientation="Horizontal"
+                            Spacing="20">
+                            <Button
+                                HorizontalAlignment="Center"
+                                Command="{x:Bind ViewModel.GoToModsOverviewCommand}"
+                                ToolTipService.ToolTip="Go to character in Mods Overview">
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA37;" />
+                            </Button>
+
+
+                            <Button
+                                HorizontalAlignment="Right"
+                                Command="{x:Bind ViewModel.GoToCharacterEditScreenCommand}"
+                                ToolTipService.ToolTip="Edit Character">
+                                <FontIcon Glyph="&#xE70F;" />
+                            </Button>
+                        </StackPanel>
+
                     </Grid>
 
                     <Grid
@@ -234,8 +249,8 @@
                         IsTextSelectionEnabled="True"
                         RelativePanel.AlignLeftWithPanel="True"
                         RelativePanel.Below="itemHero"
-                        Text="{x:Bind ViewModel.ShownCharacter.DisplayName}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        Text="{x:Bind ViewModel.ShownCharacter.DisplayName}" />
                     <!--  Style="{ThemeResource TitleTextBlockStyle}"  -->
 
 
@@ -264,8 +279,8 @@
                             HorizontalAlignment="Center"
                             FontFamily="{StaticResource GenshinFont}"
                             IsTextSelectionEnabled="True"
-                            Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay}"
-                            TextWrapping="WrapWholeWords" />
+                            TextWrapping="WrapWholeWords"
+                            Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay}" />
                         <Button
                             Margin="0,16,0,0"
                             HorizontalAlignment="Center"
@@ -311,13 +326,13 @@
                                 <MenuBarItem.Items>
                                     <MenuFlyoutItem
                                         Command="{x:Bind ViewModel.AddModFolderCommand}"
-                                        Text="Add Mod..."
-                                        ToolTipService.ToolTip="Add a mod folder" />
+                                        ToolTipService.ToolTip="Add a mod folder"
+                                        Text="Add Mod..." />
 
                                     <MenuFlyoutItem
                                         Command="{x:Bind ViewModel.AddModArchiveCommand}"
-                                        Text="Add Archive..."
-                                        ToolTipService.ToolTip="Add a mod inside a compressed archive">
+                                        ToolTipService.ToolTip="Add a mod inside a compressed archive"
+                                        Text="Add Archive...">
                                         <MenuFlyoutItem.KeyboardAccelerators>
                                             <KeyboardAccelerator Key="O" Modifiers="Control" />
                                         </MenuFlyoutItem.KeyboardAccelerators>
@@ -588,9 +603,9 @@
                                     HorizontalAlignment="Stretch"
                                     IsEditMode="{x:Bind ViewModel.ModPaneVM.IsEditingModName, Mode=OneWay}"
                                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=TwoWay}"
                                     TextAlignment="Center"
-                                    ToolTipService.ToolTip="Change mod display name" />
+                                    ToolTipService.ToolTip="Change mod display name"
+                                    Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.Name, Mode=TwoWay}" />
 
                                 <SplitButton
                                     Grid.Column="1"
@@ -601,13 +616,13 @@
                                         <MenuFlyout Placement="Bottom">
                                             <MenuFlyoutItem
                                                 Command="{x:Bind ViewModel.ModPaneVM.SetModIniFileCommand}"
-                                                Text="Set mod .ini file"
-                                                ToolTipService.ToolTip="Set the mod .ini file to be read by JASM" />
+                                                ToolTipService.ToolTip="Set the mod .ini file to be read by JASM"
+                                                Text="Set mod .ini file" />
                                             <MenuFlyoutItem
                                                 Command="{x:Bind ViewModel.ModPaneVM.ClearSetModIniFileCommand}"
                                                 Icon="Clear"
-                                                Text="Ignore .ini file for this mod"
-                                                ToolTipService.ToolTip="JASM will not look for merged.ini/Script.ini file and ignore keyswaps for this mod" />
+                                                ToolTipService.ToolTip="JASM will not look for merged.ini/Script.ini file and ignore keyswaps for this mod"
+                                                Text="Ignore .ini file for this mod" />
                                         </MenuFlyout>
                                     </SplitButton.Flyout>
 
@@ -637,7 +652,7 @@
 
 
                             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                <TextBlock Text="Latest Version:" Visibility="Collapsed" />
+                                <TextBlock Visibility="Collapsed" Text="Latest Version:" />
                                 <TextBlock Text="{x:Bind ViewModel.ModPaneVM.SelectedModModel.ModUrl}" />
 
                             </StackPanel>
@@ -691,8 +706,8 @@
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Top"
-                                            Text="Key swap management is disabled for this mod"
-                                            TextWrapping="WrapWholeWords" />
+                                            TextWrapping="WrapWholeWords"
+                                            Text="Key swap management is disabled for this mod" />
 
                                     </controls:Case>
                                 </controls:SwitchPresenter>

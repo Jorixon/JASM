@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -46,6 +47,23 @@ public sealed partial class FolderSelector : UserControl
 
     #endregion
 
+    #region Footer
+
+    private static readonly DependencyProperty FooterProperty = DependencyProperty.Register(
+        nameof(Footer), typeof(string), typeof(FolderSelector), new PropertyMetadata(default(string)));
+
+    public string Footer
+    {
+        get { return (string)GetValue(FooterProperty); }
+        set
+        {
+            FooterWrapper.Visibility = value.IsNullOrEmpty() ? Visibility.Collapsed : Visibility.Visible;
+            SetValue(FooterProperty, value);
+        }
+    }
+
+    #endregion
+
     #region SelectedFolderValue
 
     public static readonly DependencyProperty SelectedFolderValueProperty = DependencyProperty.Register(
@@ -69,6 +87,19 @@ public sealed partial class FolderSelector : UserControl
     {
         get => (IAsyncRelayCommand)GetValue(BrowseCommandProperty);
         set => SetValue(BrowseCommandProperty, value);
+    }
+
+    #endregion
+
+    #region PlaceHolderText
+
+    private static readonly DependencyProperty PlaceHolderTextProperty = DependencyProperty.Register(
+        nameof(PlaceHolderText), typeof(string), typeof(FolderSelector), new PropertyMetadata(default(string)));
+
+    public string PlaceHolderText
+    {
+        get { return (string)GetValue(PlaceHolderTextProperty); }
+        set { SetValue(PlaceHolderTextProperty, value); }
     }
 
     #endregion

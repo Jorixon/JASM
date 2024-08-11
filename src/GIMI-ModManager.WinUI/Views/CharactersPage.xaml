@@ -6,7 +6,7 @@
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:charactersViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharactersViewModels"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
@@ -19,6 +19,8 @@
         <xaml:BoolToVisibleConverter x:Name="BoolToVisibleConverter" />
         <xaml:BoolInverterConverter x:Name="BoolInverterConverter" />
         <xaml:AttentionTypeToSymbolConverter x:Name="AttentionTypeToSymbolConverter" />
+
+
     </Page.Resources>
     <Grid Margin="0,-24,0,0" Background="Transparent">
         <Grid.Resources>
@@ -57,6 +59,49 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <ContentDialog
+            x:Name="SelectProcessDialog"
+            Title="Select Process Path"
+            DefaultButton="Primary"
+            IsPrimaryButtonEnabled="{x:Bind ViewModel.SimpleSelectProcessDialogVM.PathPicker.IsValid, Mode=OneWay}"
+            PrimaryButtonText="Save"
+            SecondaryButtonText="Cancel">
+            <Grid MinWidth="500" MinHeight="200">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel>
+
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        IsTextSelectionEnabled="True"
+                        TextWrapping="WrapWholeWords"
+                        Text="Select the path to the process you want to start. Once saved this will be started when pressing the start button. This can be reset on the settings page." />
+
+                    <controls1:FolderSelector
+                        Title=""
+                        BrowseCommand="{x:Bind ViewModel.SimpleSelectProcessDialogVM.BrowseSimpleCommand}"
+                        PlaceHolderText="{x:Bind ViewModel.SimpleSelectProcessDialogVM.PlaceHolderText, Mode=OneWay}"
+                        SelectedFolderValue="{x:Bind ViewModel.SimpleSelectProcessDialogVM.PathPicker.Path, Mode=TwoWay}"
+                        ValidationErrorText="{x:Bind ViewModel.SimpleSelectProcessDialogVM.PathPicker.ValidationMessages, Mode=OneWay}" />
+                </StackPanel>
+
+
+
+
+                <Button
+                    Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    Command="{x:Bind ViewModel.SimpleSelectProcessDialogVM.ShowAdvancedDialogCommand}"
+                    Content="Create Advanced Command" />
+
+
+            </Grid>
+        </ContentDialog>
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -98,8 +143,8 @@
                 <TextBlock
                     Margin="0,0,8,0"
                     VerticalAlignment="Center"
-                    Text="Sort by:"
-                    TextWrapping="WrapWholeWords" />
+                    TextWrapping="WrapWholeWords"
+                    Text="Sort by:" />
 
                 <ComboBox
                     x:Name="SortingComboBox"
@@ -130,11 +175,11 @@
                     Content="Start 3Dmigoto">
                     <ToolTipService.ToolTip>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                            <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind ViewModel.ThreeDMigtoProcessManager.ProcessPath, Mode=OneWay}" />
                         </StackPanel>
                     </ToolTipService.ToolTip>
                 </Button>
-                <Button Command="{x:Bind ViewModel.StartGenshinCommand}">
+                <Button Command="{x:Bind ViewModel.StartGenshinCommand}" CommandParameter="{x:Bind SelectProcessDialog}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="0,0,4,0" Text="{x:Bind ViewModel.ShortGameName}" />
                         <Grid
@@ -151,7 +196,7 @@
                     </StackPanel>
                     <ToolTipService.ToolTip>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+                            <TextBlock TextWrapping="WrapWholeWords" Text="{x:Bind ViewModel.GenshinProcessManager.ProcessPath, Mode=OneWay}" />
                         </StackPanel>
                     </ToolTipService.ToolTip>
                 </Button>
@@ -255,8 +300,8 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Drop Here to Auto Detect Mod..."
-                    TextWrapping="NoWrap" />
+                    TextWrapping="NoWrap"
+                    Text="Drop Here to Auto Detect Mod..." />
 
             </Grid>
 
@@ -390,8 +435,8 @@
                                 Margin="0,0,-16,0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Text="{x:Bind ModCount, Mode=OneWay}"
-                                Visibility="{x:Bind HasMods, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                                Visibility="{x:Bind HasMods, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}"
+                                Text="{x:Bind ModCount, Mode=OneWay}" />
 
                             <TextBlock
                                 Grid.Row="1"
@@ -400,8 +445,8 @@
                                 VerticalAlignment="Bottom"
                                 FontFamily="{StaticResource GenshinFont}"
                                 FontSize="14"
-                                Text="{x:Bind Character.DisplayName}"
-                                TextWrapping="WrapWholeWords" />
+                                TextWrapping="WrapWholeWords"
+                                Text="{x:Bind Character.DisplayName}" />
                         </Grid>
                     </Grid>
                 </DataTemplate>

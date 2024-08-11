@@ -5,6 +5,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
@@ -32,6 +33,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     private readonly UserPreferencesService _userPreferencesService;
     private readonly SelectedGameService _selectedGameService;
     private readonly ModArchiveRepository _modArchiveRepository;
+    private readonly CommandService _commandService;
 
 
     public PathPicker PathToGIMIFolderPicker { get; }
@@ -59,7 +61,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
     public StartupViewModel(INavigationService navigationService, ILocalSettingsService localSettingsService,
         IWindowManagerService windowManagerService, ISkinManagerService skinManagerService,
         SelectedGameService selectedGameService, IGameService gameService, ModPresetService modPresetService,
-        UserPreferencesService userPreferencesService, ModArchiveRepository modArchiveRepository)
+        UserPreferencesService userPreferencesService, ModArchiveRepository modArchiveRepository,
+        CommandService commandService)
     {
         _navigationService = navigationService;
         _localSettingsService = localSettingsService;
@@ -70,6 +73,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _modPresetService = modPresetService;
         _userPreferencesService = userPreferencesService;
         _modArchiveRepository = modArchiveRepository;
+        _commandService = commandService;
 
         PathToGIMIFolderPicker = new PathPicker([]);
 
@@ -117,7 +121,8 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
             _userPreferencesService.InitializeAsync(),
             _modPresetService.InitializeAsync(_localSettingsService.ApplicationDataFolder),
             _modArchiveRepository.InitializeAsync(_localSettingsService.ApplicationDataFolder,
-                o => o.MaxDirectorySizeGb = modArchiveSettings.MaxLocalArchiveCacheSizeGb)
+                o => o.MaxDirectorySizeGb = modArchiveSettings.MaxLocalArchiveCacheSizeGb),
+            _commandService.InitializeAsync(_localSettingsService.ApplicationDataFolder)
         };
 
         await Task.WhenAll(tasks);
