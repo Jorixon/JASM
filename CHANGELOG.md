@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.2](https://github.com/Jorixon/JASM/compare/v2.14.1...v2.14.2) (2024-08-20)
+
+
+### Miscellaneous
+
+* Revert package update in Elevator, might help with AV incorrect detection ([#239](https://github.com/Jorixon/JASM/issues/239)) ([22378a6](https://github.com/Jorixon/JASM/commit/22378a63299e53582c40f346fba1d6b792982513))
+
 ## [2.14.1](https://github.com/Jorixon/JASM/compare/v2.14.0...v2.14.1) (2024-08-20)
 
 
