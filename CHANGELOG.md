@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.1](https://github.com/Jorixon/JASM/compare/v2.14.0...v2.14.1) (2024-08-20)
+
+
+### Miscellaneous
+
+* **ZZZ:** Added Burnice ([#235](https://github.com/Jorixon/JASM/issues/235)) Thanks @Pyrageis ([42e42e0](https://github.com/Jorixon/JASM/commit/42e42e0aac4e0fd57bc56ceffe67ef47fdb9693d))
+
 ## [2.14.0](https://github.com/Jorixon/JASM/compare/v2.13.3...v2.14.0) (2024-08-11)
 
 
