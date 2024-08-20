@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>JASM - Just Another Skin Manager</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>JASM - Just Another Skin Manager</value>
+  </data>
+  <data name="Startup1.Text" xml:space="preserve">
+    <value>Como parte de la configuración inicial, necesitarás seleccionar una carpeta de Model-Importer (3dmigoto) y su carpeta de Mods conectada. La carpeta de 3dmigoto contiene 3DMigoto Loader.exe/3DMigotoLoader.exe y una carpeta de Mods. Si aún no has configurado el model importer, por favor hazlo ahora, ve el enlace abajo. Encuentro la mayoría de los mods en Gamebanana, pero Nexusmods también tiene algunos.</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Startup2.Text" xml:space="preserve">
+    <value>Una vez que se guarden los ajustes, la aplicación creará una carpeta para cada personaje dentro de la carpeta 'Mods'. Las carpetas de mods fuera de estas carpetas de personajes serán ignoradas. Esta aplicación habilita y deshabilita mods prefijando las carpetas de mods con 'DISABLED_'. JASM también soporta la exportación de Mods gestionados por ella si deseas usarlos con otras aplicaciones.</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Startup3.Text" xml:space="preserve">
+    <value>Siempre es una buena idea hacer una copia de seguridad de tus archivos/mods antes de usar aplicaciones que interactúan con tus archivos</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="ShellMenuItem_Views_Main.Text" xml:space="preserve">
+    <value>Principal</value>
+  </data>
+  <data name="Main_Title.Text" xml:space="preserve">
+    <value>Principal</value>
+    <comment>Título de la página para MainPage</comment>
+  </data>
+  <data name="ShellMenuItem_Views_Startup.Text" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="Startup_Title.Text" xml:space="preserve">
+    <value>Primera vez configuración</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>Personalización</value>
+  </data>
+  <data name="Settings_Theme.Text" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>Oscuro</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>Predeterminado</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>El objetivo de JASM es facilitar la organización de una gran cantidad de mods de skin</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>Declaración de Privacidad</value>
+  </data>
+  <data name="SettingsPage_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+    <value>https://YourPrivacyUrlGoesHere/</value>
+  </data>
+  <data name="ShellMenuBarSettingsButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>Configuración</value>
+    <comment>Título de la página para SettingsPage</comment>
+  </data>
+  <data name="Startup/Tooltip1.Text" xml:space="preserve">
+    <value>Habilitar esta opción hará que la aplicación ordene los mods existentes en carpetas asignadas a sus respectivos personajes. Cualquier mod que no se pueda emparejar razonablemente será colocado en una carpeta 'Otros'.</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Startup/Tooltip2.Text" xml:space="preserve">
+    <value>Una carpeta de mod que contiene nombres de múltiples personajes puede ser movida incorrectamente al directorio de un personaje. Esto asume una estructura plana de mod, donde las carpetas de skins se almacenan sueltas en la carpeta de mods. Si tienes una estructura de carpetas personalizada, hay una alta probabilidad de que JASM identifique incorrectamente tus skins. Esto también es el caso si tienes carpetas anidadas con skins dentro de ellas.</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Startup/Tooltip3.Text" xml:space="preserve">
+    <value>Esto se puede activar más tarde en la página de configuración.</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>Acerca de esta aplicación</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ComboBox_Header.Text" xml:space="preserve">
+    <value>Seleccionar idioma de visualización:</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ExportDialog.Text" xml:space="preserve">
+    <value>Esto exportará todos los mods que JASM está gestionando a una carpeta de exportación de tu elección. Los mods serán copiados a la carpeta de exportación y no serán eliminados de la carpeta original.</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ExportDialogButtons.CloseButtonText" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ExportDialogButtons.PrimaryButtonText" xml:space="preserve">
+    <value>Exportar</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ExportDialog_ChangeStatus.Text" xml:space="preserve">
+    <value>Cambiar estado de los mods exportados</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ExportDialog_KeepStructure.Text" xml:space="preserve">
+    <value>Mantener la estructura de carpetas de CharacterName/Mods en la carpeta de exportación</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_ExportDialog_RemoveJasm.Text" xml:space="preserve">
+    <value>Eliminar archivos de configuración de JASM de los mods exportados</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_Export_Button.Text" xml:space="preserve">
+    <value>Exportar Mods</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_Export_Title.Text" xml:space="preserve">
+    <value>Exportar/Hacer copia de seguridad de Mods</value>
+    <comment>[No se usa más]</comment>
+  </data>
+  <data name="Settings_Language.Text" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Settings_Language_TexBlock.Text" xml:space="preserve">
+    <value>Las opciones de idioma son actualmente limitadas. Es un trabajo en progreso.</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Resumen</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>En ejecución</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Detenido</value>
+  </data>
+  <data name="Waiting" xml:space="preserve">
+    <value>Esperando</value>
+  </data>
+</root>
