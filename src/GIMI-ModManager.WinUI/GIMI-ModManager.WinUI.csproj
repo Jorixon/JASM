@@ -549,12 +549,7 @@
 		<Content Remove="Assets\Games\ZZZ\characters.json" />
 		<Content Remove="Assets\Games\ZZZ\elements.json" />
 		<Content Remove="Assets\Games\ZZZ\game.json" />
-		<Content Remove="Assets\Games\ZZZ\Images\Characters\Caesar.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Character_Others.png" />
-		<Content Remove="Assets\Games\ZZZ\Images\Characters\Jane.png" />
-		<Content Remove="Assets\Games\ZZZ\Images\Characters\Qingyi.png" />
-		<Content Remove="Assets\Games\ZZZ\Images\Characters\Seth.png" />
-		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\ZZZ\npcs.json" />
 		<Content Remove="Assets\Games\ZZZ\objects.json" />
@@ -567,9 +562,12 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Belle.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ben.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Billy.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Burnice.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Caesar.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Corin.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ellen.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Grace.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Jane.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Koleda.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lucy.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lycaon.webp" />
@@ -577,7 +575,10 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nekomata.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nicole.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Piper.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Qingyi.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Rina.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Seth.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soukaku.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Wise.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\ZhuYuan.webp" />
@@ -586,7 +587,7 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Fire.svg" />
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ice.svg" />
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Physical.svg" />
-		<Content Remove="Assets\Games\ZZZ\Images\Star_Game.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 

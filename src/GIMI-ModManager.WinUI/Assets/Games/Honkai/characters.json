@@ -1,6 +1,5 @@
 [
   {
-    "Id": 0,
     "Keys": [
       "trailblazer"
     ],
@@ -18,7 +17,6 @@
     "DisplayName": "Trailblazer"
   },
   {
-    "Id": 1,
     "Keys": [
       "arlan"
     ],
@@ -36,7 +34,6 @@
     "DisplayName": "Arlan"
   },
   {
-    "Id": 2,
     "Keys": [
       "asta"
     ],
@@ -54,7 +51,6 @@
     "DisplayName": "Asta"
   },
   {
-    "Id": 3,
     "Keys": [
       "bailu"
     ],
@@ -72,7 +68,6 @@
     "DisplayName": "Bailu"
   },
   {
-    "Id": 4,
     "Keys": [
       "blade"
     ],
@@ -90,7 +85,6 @@
     "DisplayName": "Blade"
   },
   {
-    "Id": 5,
     "Keys": [
       "bronya"
     ],
@@ -108,7 +102,6 @@
     "DisplayName": "Bronya"
   },
   {
-    "Id": 6,
     "Keys": [
       "clara"
     ],
@@ -126,7 +119,6 @@
     "DisplayName": "Clara"
   },
   {
-    "Id": 7,
     "Keys": [
       "danheng"
     ],
@@ -144,7 +136,6 @@
     "DisplayName": "Dan Heng"
   },
   {
-    "Id": 8,
     "Keys": [
       "danheng-IL"
     ],
@@ -162,7 +153,6 @@
     "DisplayName": "Dan Heng - IL"
   },
   {
-    "Id": 9,
     "Keys": [
       "fu xuan"
     ],
@@ -180,7 +170,6 @@
     "DisplayName": "Fu Xuan"
   },
   {
-    "Id": 10,
     "Keys": [
       "gepard"
     ],
@@ -198,7 +187,6 @@
     "DisplayName": "Gepard"
   },
   {
-    "Id": 11,
     "Keys": [
       "guinaifen"
     ],
@@ -216,7 +204,6 @@
     "DisplayName": "Guinaifen"
   },
   {
-    "Id": 12,
     "Keys": [
       "herta"
     ],
@@ -234,7 +221,6 @@
     "DisplayName": "Herta"
   },
   {
-    "Id": 13,
     "Keys": [
       "himeko"
     ],
@@ -252,7 +238,6 @@
     "DisplayName": "Himeko"
   },
   {
-    "Id": 14,
     "Keys": [
       "hook"
     ],
@@ -270,7 +255,6 @@
     "DisplayName": "Hook"
   },
   {
-    "Id": 15,
     "Keys": [
       "jingyuan"
     ],
@@ -288,7 +272,6 @@
     "DisplayName": "Jing Yuan"
   },
   {
-    "Id": 16,
     "Keys": [
       "jingliu"
     ],
@@ -306,7 +289,6 @@
     "DisplayName": "Jingliu"
   },
   {
-    "Id": 17,
     "Keys": [
       "kafka"
     ],
@@ -324,7 +306,6 @@
     "DisplayName": "Kafka"
   },
   {
-    "Id": 18,
     "Keys": [
       "luka"
     ],
@@ -342,7 +323,6 @@
     "DisplayName": "Luka"
   },
   {
-    "Id": 19,
     "Keys": [
       "luocha"
     ],
@@ -360,7 +340,6 @@
     "DisplayName": "Luocha"
   },
   {
-    "Id": 20,
     "Keys": [
       "lynx"
     ],
@@ -378,7 +357,6 @@
     "DisplayName": "Lynx"
   },
   {
-    "Id": 21,
     "Keys": [
       "march7"
     ],
@@ -403,7 +381,6 @@
     "DisplayName": "March 7th"
   },
   {
-    "Id": 22,
     "Keys": [
       "natasha"
     ],
@@ -421,7 +398,6 @@
     "DisplayName": "Natasha"
   },
   {
-    "Id": 23,
     "Keys": [
       "pela"
     ],
@@ -439,7 +415,6 @@
     "DisplayName": "Pela"
   },
   {
-    "Id": 24,
     "Keys": [
       "qingque"
     ],
@@ -457,7 +432,6 @@
     "DisplayName": "Qingque"
   },
   {
-    "Id": 25,
     "Keys": [
       "sampo"
     ],
@@ -475,7 +449,6 @@
     "DisplayName": "Sampo"
   },
   {
-    "Id": 25,
     "Keys": [
       "seele"
     ],
@@ -493,7 +466,6 @@
     "DisplayName": "Seele"
   },
   {
-    "Id": 26,
     "Keys": [
       "serval"
     ],
@@ -511,7 +483,6 @@
     "DisplayName": "Serval"
   },
   {
-    "Id": 27,
     "Keys": [
       "silverwolf"
     ],
@@ -529,7 +500,6 @@
     "DisplayName": "Silver Wolf"
   },
   {
-    "Id": 28,
     "Keys": [
       "sushang"
     ],
@@ -547,7 +517,6 @@
     "DisplayName": "Sushang"
   },
   {
-    "Id": 29,
     "Keys": [
       "tingyun"
     ],
@@ -565,7 +534,6 @@
     "DisplayName": "Tingyun"
   },
   {
-    "Id": 30,
     "Keys": [
       "topaz"
     ],
@@ -583,7 +551,6 @@
     "DisplayName": "Topaz and Numby"
   },
   {
-    "Id": 31,
     "Keys": [
       "welt"
     ],
@@ -601,7 +568,6 @@
     "DisplayName": "Welt"
   },
   {
-    "Id": 32,
     "Keys": [
       "yanqing"
     ],
@@ -619,7 +585,6 @@
     "DisplayName": "Yanqing"
   },
   {
-    "Id": 33,
     "Keys": [
       "yukong"
     ],
@@ -637,7 +602,6 @@
     "DisplayName": "Yukong"
   },
   {
-    "Id": 34,
     "Keys": [
       "argenti"
     ],
@@ -655,7 +619,6 @@
     "DisplayName": "Argenti"
   },
   {
-    "Id": 35,
     "Keys": [
       "drratio"
     ],
@@ -673,7 +636,6 @@
     "DisplayName": "Dr. Ratio"
   },
   {
-    "Id": 36,
     "Keys": [
       "hanya"
     ],
@@ -691,7 +653,6 @@
     "DisplayName": "Hanya"
   },
   {
-    "Id": 37,
     "Keys": [
       "huohuo"
     ],
@@ -709,7 +670,6 @@
     "DisplayName": "Huohuo"
   },
   {
-    "Id": 38,
     "Keys": [
       "ruanmei"
     ],
@@ -727,7 +687,6 @@
     "DisplayName": "Ruan Mei"
   },
   {
-    "Id": 39,
     "Keys": [
       "xueyi"
     ],
@@ -745,7 +704,6 @@
     "DisplayName": "Xueyi"
   },
   {
-    "Id": 40,
     "Keys": [
       "blackswan"
     ],
@@ -763,7 +721,6 @@
     "DisplayName": "Black Swan"
   },
   {
-    "Id": 41,
     "Keys": [
       "sparkle"
     ],
@@ -781,7 +738,6 @@
     "DisplayName": "Sparkle"
   },
   {
-    "Id": 42,
     "Keys": [
       "misha"
     ],
@@ -799,7 +755,6 @@
     "DisplayName": "Misha"
   },
   {
-    "Id": 43,
     "Keys": [
       "acheron"
     ],
@@ -817,7 +772,6 @@
     "DisplayName": "Acheron"
   },
   {
-    "Id": 44,
     "Keys": [
       "aventurine"
     ],
@@ -835,7 +789,6 @@
     "DisplayName": "Aventurine"
   },
   {
-    "Id": 45,
     "Keys": [
       "gallagher"
     ],
@@ -853,7 +806,6 @@
     "DisplayName": "Gallagher"
   },
   {
-    "Id": 46,
     "Keys": [
       "robin"
     ],
@@ -871,7 +823,6 @@
     "DisplayName": "Robin"
   },
   {
-    "Id": 47,
     "Keys": [
       "boothill"
     ],
@@ -889,7 +840,6 @@
     "DisplayName": "Boothill"
   },
   {
-    "Id": 48,
     "Keys": [
       "firefly"
     ],
@@ -907,7 +857,6 @@
     "DisplayName": "Firefly"
   },
   {
-    "Id": 49,
     "Keys": [
       "jade"
     ],
@@ -925,7 +874,6 @@
     "DisplayName": "Jade"
   },
   {
-    "Id": 50,
     "Keys": [
       "yunli"
     ],
@@ -943,7 +891,6 @@
     "DisplayName": "Yunli"
   },
   {
-    "Id": 51,
     "Keys": [
       "jiaoqiu"
     ],
@@ -961,7 +908,6 @@
     "DisplayName": "Jiaoqiu"
   },
   {
-    "Id": 52,
     "Keys": [
       "feixiao"
     ],
@@ -979,7 +925,6 @@
     "DisplayName": "Feixiao"
   },
   {
-    "Id": 53,
     "Keys": [
       "Lingsha"
     ],
@@ -997,7 +942,6 @@
     "DisplayName": "Lingsha"
   },
   {
-    "Id": 54,
     "Keys": [
       "Moze"
     ],

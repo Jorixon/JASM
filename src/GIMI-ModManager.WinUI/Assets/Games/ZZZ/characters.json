@@ -1,7 +1,7 @@
 [
   {
     "Keys": [
-      "belle"
+      "Belle"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Belle.webp",
@@ -11,14 +11,14 @@
     "Region": [
       "Phaethon"
     ],
-    "ModFilesName": "belle",
+    "ModFilesName": "Belle",
     "InGameSkins": [],
     "InternalName": "Belle",
     "DisplayName": "Belle"
   },
   {
     "Keys": [
-      "wise"
+      "Wise"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Wise.webp",
@@ -28,15 +28,15 @@
     "Region": [
       "Phaethon"
     ],
-    "ModFilesName": "wise",
+    "ModFilesName": "Wise",
     "InGameSkins": [],
     "InternalName": "Wise",
     "DisplayName": "Wise"
   },
   {
     "Keys": [
-      "alexandrina",
-      "rina"
+      "Alexandrina",
+      "Rina"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Rina.webp",
@@ -53,7 +53,7 @@
   },
   {
     "Keys": [
-      "ellen"
+      "Ellen"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Ellen.webp",
@@ -63,14 +63,14 @@
     "Region": [
       "Victoria"
     ],
-    "ModFilesName": "ellen",
+    "ModFilesName": "Ellen",
     "InGameSkins": [],
     "InternalName": "Ellen",
     "DisplayName": "Ellen"
   },
   {
     "Keys": [
-      "grace"
+      "Grace"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Grace.webp",
@@ -80,14 +80,14 @@
     "Region": [
       "Belobog"
     ],
-    "ModFilesName": "grace",
+    "ModFilesName": "Grace",
     "InGameSkins": [],
     "InternalName": "Grace",
     "DisplayName": "Grace"
   },
   {
     "Keys": [
-      "koleda"
+      "Koleda"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Koleda.webp",
@@ -97,15 +97,15 @@
     "Region": [
       "Belobog"
     ],
-    "ModFilesName": "koleda",
+    "ModFilesName": "Koleda",
     "InGameSkins": [],
     "InternalName": "Koleda",
     "DisplayName": "Koleda"
   },
   {
     "Keys": [
-      "nekomiya",
-      "nekomata"
+      "Nekomiya",
+      "Nekomata"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Nekomata.webp",
@@ -115,7 +115,7 @@
     "Region": [
       "CHares"
     ],
-    "ModFilesName": "nekomata",
+    "ModFilesName": "Nekomata",
     "InGameSkins": [],
     "InternalName": "Nekomata",
     "DisplayName": "Nekomata"
@@ -125,21 +125,21 @@
       "soldier11"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
-    "Image": "Soldier11.png",
+    "Image": "Soldier11.webp",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Attack",
     "Region": [
       "OBOL"
     ],
-    "ModFilesName": "soldier 11",
+    "ModFilesName": "Soldier 11",
     "InGameSkins": [],
     "InternalName": "Soldier11",
     "DisplayName": "Soldier 11"
   },
   {
     "Keys": [
-      "lycaon"
+      "Lycaon"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Lycaon.webp",
@@ -149,14 +149,14 @@
     "Region": [
       "Victoria"
     ],
-    "ModFilesName": "lycaon",
+    "ModFilesName": "Lycaon",
     "InGameSkins": [],
     "InternalName": "Lycaon",
     "DisplayName": "Lycaon"
   },
   {
     "Keys": [
-      "zhuyuan"
+      "ZhuYuan"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "ZhuYuan.webp",
@@ -166,14 +166,14 @@
     "Region": [
       "ResponseTeam"
     ],
-    "ModFilesName": "zhu yuan",
+    "ModFilesName": "Zhu Yuan",
     "InGameSkins": [],
     "InternalName": "ZhuYuan",
     "DisplayName": "Zhu Yuan"
   },
   {
     "Keys": [
-      "anby"
+      "Anby"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Anby.webp",
@@ -183,14 +183,14 @@
     "Region": [
       "CHares"
     ],
-    "ModFilesName": "anby",
+    "ModFilesName": "Anby",
     "InGameSkins": [],
     "InternalName": "Anby",
     "DisplayName": "Anby"
   },
   {
     "Keys": [
-      "anton"
+      "Anton"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Anton.webp",
@@ -200,14 +200,14 @@
     "Region": [
       "Belobog"
     ],
-    "ModFilesName": "anton",
+    "ModFilesName": "Anton",
     "InGameSkins": [],
     "InternalName": "Anton",
     "DisplayName": "Anton"
   },
   {
     "Keys": [
-      "ben"
+      "Ben"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Ben.webp",
@@ -217,14 +217,14 @@
     "Region": [
       "Belobog"
     ],
-    "ModFilesName": "ben",
+    "ModFilesName": "Ben",
     "InGameSkins": [],
     "InternalName": "Ben",
     "DisplayName": "Ben"
   },
   {
     "Keys": [
-      "billy"
+      "Billy"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Billy.webp",
@@ -234,14 +234,14 @@
     "Region": [
       "CHares"
     ],
-    "ModFilesName": "billy",
+    "ModFilesName": "Billy",
     "InGameSkins": [],
     "InternalName": "Billy",
     "DisplayName": "Billy"
   },
   {
     "Keys": [
-      "corin"
+      "Corin"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Corin.webp",
@@ -251,15 +251,15 @@
     "Region": [
       "Victoria"
     ],
-    "ModFilesName": "corin",
+    "ModFilesName": "Corin",
     "InGameSkins": [],
     "InternalName": "Corin",
     "DisplayName": "Corin"
   },
   {
     "Keys": [
-      "luciana",
-      "lucy"
+      "Luciana",
+      "Lucy"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Lucy.webp",
@@ -269,14 +269,14 @@
     "Region": [
       "Calydon"
     ],
-    "ModFilesName": "lucy",
+    "ModFilesName": "Lucy",
     "InGameSkins": [],
     "InternalName": "Lucy",
     "DisplayName": "Lucy"
   },
   {
     "Keys": [
-      "nicole"
+      "Nicole"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Nicole.webp",
@@ -286,14 +286,14 @@
     "Region": [
       "CHares"
     ],
-    "ModFilesName": "nicole",
+    "ModFilesName": "Nicole",
     "InGameSkins": [],
     "InternalName": "Nicole",
     "DisplayName": "Nicole"
   },
   {
     "Keys": [
-      "piper"
+      "Piper"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Piper.webp",
@@ -303,14 +303,14 @@
     "Region": [
       "Calydon"
     ],
-    "ModFilesName": "piper",
+    "ModFilesName": "Piper",
     "InGameSkins": [],
     "InternalName": "Piper",
     "DisplayName": "Piper"
   },
   {
     "Keys": [
-      "soukaku"
+      "Soukaku"
     ],
     "ReleaseDate": "2024-07-4T00:10:00",
     "Image": "Soukaku.webp",
@@ -320,14 +320,14 @@
     "Region": [
       "Section6"
     ],
-    "ModFilesName": "soukaku",
+    "ModFilesName": "Soukaku",
     "InGameSkins": [],
     "InternalName": "Soukaku",
     "DisplayName": "Soukaku"
   },
   {
     "Keys": [
-      "miyabi"
+      "Miyabi"
     ],
     "ReleaseDate": "2025-07-4T00:10:00",
     "Image": "Miyabi.webp",
@@ -337,7 +337,7 @@
     "Region": [
       "Section6"
     ],
-    "ModFilesName": "miyabi",
+    "ModFilesName": "Miyabi",
     "InGameSkins": [],
     "InternalName": "Miyabi",
     "DisplayName": "Miyabi"
@@ -348,12 +348,12 @@
       "Doe"
     ],
     "ReleaseDate": "2024-08-14T00:00:00",
-    "Image": "Jane.png",
+    "Image": "Jane.webp",
     "Rarity": 5,
-    "Element": "Ice",
-    "Class": "Physical",
+    "Element": "Physical",
+    "Class": "Anomoly",
     "Region": [
-      "Unknown"
+      "ResponseTeam"
     ],
     "ModFilesName": "Jane",
     "InGameSkins": [],
@@ -365,7 +365,7 @@
       "Qingyi"
     ],
     "ReleaseDate": "2024-08-14T00:00:00",
-    "Image": "Qingyi.png",
+    "Image": "Qingyi.webp",
     "Rarity": 5,
     "Element": "Electric",
     "Class": "Stun",
@@ -383,7 +383,7 @@
       "Lowell"
     ],
     "ReleaseDate": "2024-08-14T00:00:00",
-    "Image": "Seth.png",
+    "Image": "Seth.webp",
     "Rarity": 4,
     "Element": "Electric",
     "Class": "Defense",
@@ -398,11 +398,11 @@
   {
     "Keys": [
       "Caesar",
-      "Lowell"
+      "King"
     ],
-    "ReleaseDate": "2025-08-14T00:00:00",
-    "Image": "Caesar.png",
-    "Rarity": 4,
+    "ReleaseDate": "2025-11-28T00:00:00",
+    "Image": "Caesar.webp",
+    "Rarity": 5,
     "Element": "Physical",
     "Class": "Defense",
     "Region": [
@@ -412,5 +412,23 @@
     "InGameSkins": [],
     "InternalName": "Caesar",
     "DisplayName": "Caesar"
+  },
+  {
+    "Keys": [
+      "Burnice",
+      "White"
+    ],
+    "ReleaseDate": "2025-11-28T00:00:00",
+    "Image": "Burnice.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Anomoly",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Burnice",
+    "InGameSkins": [],
+    "InternalName": "Burnice",
+    "DisplayName": "Burnice"
   }
 ]
