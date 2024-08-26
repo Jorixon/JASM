@@ -95,4 +95,6 @@ I believe this is due to some oddity with WinAppSdk not installing correctly. I 
 
 Another potential fix if JASM used to work, is to delete the JASM user settings folder. This will wipe your settings i.e. presets, folder paths etc. However, your mods will be untouched as well as the mod settings like custom display name and images. JASM settings are stored here: `%localappdata%\JASM` / `C:\Users\<username>\AppData\Local\JASM`. You can start by deleting each game settings folder to see if it helps, alternativly just delete the entire folder. Presets are stored inside the preset folder. Might be a good idea make a backup first.
 
+### Elevator download link
 
+As the Elevator  gets flagged as malware you'll need to download it manually from the [Releases Page](https://github.com/Jorixon/JASM/releases/tag/v2.14.3)
