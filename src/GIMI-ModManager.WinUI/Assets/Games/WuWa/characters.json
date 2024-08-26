@@ -321,5 +321,39 @@
     "InGameSkins": [],
     "InternalName": "Jinhsi",
     "DisplayName": "Jinhsi"
+  },
+  {
+    "Keys": [
+      "Zhezhi"
+    ],
+    "ReleaseDate": "2025-08-15T00:00:00",
+    "Image": "Zhezhi.png",
+    "Rarity": 5,
+    "Element": "Glacio",
+    "Class": "Rectifier",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Zhezhi",
+    "InGameSkins": [],
+    "InternalName": "Zhezhi",
+    "DisplayName": "Zhezhi"
+  },
+  {
+    "Keys": [
+      "Xiangliyao"
+    ],
+    "ReleaseDate": "2025-08-15T00:00:00",
+    "Image": "Xiangliyao.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Gauntlet",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Xiangliyao",
+    "InGameSkins": [],
+    "InternalName": "Xiangliyao",
+    "DisplayName": "Xiangliyao"
   }
 ]
