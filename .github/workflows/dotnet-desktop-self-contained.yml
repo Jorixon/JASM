@@ -33,7 +33,7 @@ jobs:
       run: dotnet test ${{ github.workspace }}\src
 
     - name: Build, publish and zip the app
-      run: python ${{ github.workspace }}\Build\Release.py SelfContained
+      run: python ${{ github.workspace }}\Build\Release.py SelfContained ExcludeElevator
       shell: cmd
 
     # Upload the app
