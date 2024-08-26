@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.14.3](https://github.com/Jorixon/JASM/compare/v2.14.2...v2.14.3) (2024-08-26)
+
+
+### Miscellaneous
+
+* Exclude Elevator.exe from default release build ([#245](https://github.com/Jorixon/JASM/issues/245)) ([d699f7a](https://github.com/Jorixon/JASM/commit/d699f7a23ea5d7af3646cad99e1bca30c1f6fadd))
+* **WuWu:** Added Zhezhi and Xiangliyao ([#244](https://github.com/Jorixon/JASM/issues/244)) Thanks @Moonholder ([6fb1f42](https://github.com/Jorixon/JASM/commit/6fb1f428b51844db8fc04b0f43f6dab1654de3da))
+
 ## [2.14.2](https://github.com/Jorixon/JASM/compare/v2.14.1...v2.14.2) (2024-08-20)
 
 
