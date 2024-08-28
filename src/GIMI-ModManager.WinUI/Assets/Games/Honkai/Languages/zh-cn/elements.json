@@ -1,0 +1,42 @@
+[
+	{
+		"InternalName": "Adaptive",
+		"DisplayName": "自适应",
+		"Image": "Adaptive.svg"
+	},
+	{
+		"InternalName": "Imaginary",
+		"DisplayName": "虚数",
+		"Image": "Imaginary.webp"
+	},
+	{
+		"InternalName": "Quantum",
+		"DisplayName": "量子",
+		"Image": "Quantum.webp"
+	},
+	{
+		"InternalName": "Wind",
+		"DisplayName": "风",
+		"Image": "Wind.webp"
+	},
+	{
+		"InternalName": "Lightning",
+		"DisplayName": "雷",
+		"Image": "Lightning.webp"
+	},
+	{
+		"InternalName": "Ice",
+		"DisplayName": "冰",
+		"Image": "Ice.webp"
+	},
+	{
+		"InternalName": "Fire",
+		"DisplayName": "火",
+		"Image": "Fire.webp"
+	},
+	{
+		"InternalName": "Physical",
+		"DisplayName": "物理",
+		"Image": "Physical.webp"
+	}
+]

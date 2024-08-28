@@ -1,0 +1,367 @@
+[
+  {
+    "InternalName": "Others",
+    "DisplayName": "其他角色"
+  },
+  {
+    "InternalName": "Weapons",
+    "DisplayName": "武器"
+  },
+  {
+    "Keys": [
+      "rover"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "rover.png",
+    "Rarity": 5,
+    "Element": "Adaptive",
+    "Class": "Sword",
+    "Region": [
+      "Outlander"
+    ],
+    "ModFilesName": "rover",
+    "InGameSkins": [],
+    "InternalName": "Rover",
+    "DisplayName": "漂泊者"
+  },
+  {
+    "Keys": [
+      "Jianxin"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "jianxin.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Gauntlet",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Jianxin",
+    "InGameSkins": [],
+    "InternalName": "Jianxin",
+    "DisplayName": "鉴心"
+  },
+  {
+    "Keys": [
+      "jiyan"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "jiyan.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Broadblade",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Jiyan",
+    "InGameSkins": [],
+    "InternalName": "Jiyan",
+    "DisplayName": "忌炎"
+  },
+  {
+    "Keys": [
+      "lingyang"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "lingyang.png",
+    "Rarity": 5,
+    "Element": "Glacio",
+    "Class": "Gauntlet",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Lingyang",
+    "InGameSkins": [],
+    "InternalName": "Lingyang",
+    "DisplayName": "凌阳"
+  },
+  {
+    "Keys": [
+      "baizhi"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "baizhi.png",
+    "Rarity": 4,
+    "Element": "Glacio",
+    "Class": "Rectifier",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Baizhi",
+    "InGameSkins": [],
+    "InternalName": "Baizhi",
+    "DisplayName": "白芷"
+  },
+  {
+    "Keys": [
+      "chixia"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "chixia.png",
+    "Rarity": 4,
+    "Element": "Fusion",
+    "Class": "Pistols",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Chixia",
+    "InGameSkins": [],
+    "InternalName": "Chixia",
+    "DisplayName": "炽霞"
+  },
+  {
+    "Keys": [
+      "danjin"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "danjin.png",
+    "Rarity": 4,
+    "Element": "Havoc",
+    "Class": "Sword",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Danjin",
+    "InGameSkins": [],
+    "InternalName": "Danjin",
+    "DisplayName": "丹瑾"
+  },
+  {
+    "Keys": [
+      "sanhua"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "sanhua.png",
+    "Rarity": 4,
+    "Element": "Glacio",
+    "Class": "Sword",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Sanhua",
+    "InGameSkins": [],
+    "InternalName": "Sanhua",
+    "DisplayName": "散华"
+  },
+  {
+    "Keys": [
+      "taoqi"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "taoqi.png",
+    "Rarity": 4,
+    "Element": "Havoc",
+    "Class": "Broadblade",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Taoqi",
+    "InGameSkins": [],
+    "InternalName": "Taoqi",
+    "DisplayName": "桃祈"
+  },
+  {
+    "Keys": [
+      "yangyang"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "yangyang.png",
+    "Rarity": 4,
+    "Element": "Aero",
+    "Class": "Sword",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Yangyang",
+    "InGameSkins": [],
+    "InternalName": "Yangyang",
+    "DisplayName": "秧秧"
+  },
+  {
+    "Keys": [
+      "yuanwu"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "yuanwu.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Gauntlet",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Yuanwu",
+    "InGameSkins": [],
+    "InternalName": "Yuanwu",
+    "DisplayName": "渊武"
+  },
+  {
+    "Keys": [
+      "calcharo"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "calcharo.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Broadblade",
+    "Region": [
+      "Newfed"
+    ],
+    "ModFilesName": "Calcharo",
+    "InGameSkins": [],
+    "InternalName": "Calcharo",
+    "DisplayName": "卡卡罗"
+  },
+  {
+    "Keys": [
+      "encore"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "encore.png",
+    "Rarity": 5,
+    "Element": "Fusion",
+    "Class": "Rectifier",
+    "Region": [
+      "Bshores"
+    ],
+    "ModFilesName": "Encore",
+    "InGameSkins": [],
+    "InternalName": "Encore",
+    "DisplayName": "安可"
+  },
+  {
+    "Keys": [
+      "verina"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "verina.png",
+    "Rarity": 5,
+    "Element": "Spectro",
+    "Class": "Rectifier",
+    "Region": [
+      "Newfed"
+    ],
+    "ModFilesName": "Verina",
+    "InGameSkins": [],
+    "InternalName": "Verina",
+    "DisplayName": "维里奈"
+  },
+  {
+    "Keys": [
+      "aalto"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "aalto.png",
+    "Rarity": 4,
+    "Element": "Aero",
+    "Class": "Pistols",
+    "Region": [
+      "Bshores"
+    ],
+    "ModFilesName": "Aalto",
+    "InGameSkins": [],
+    "InternalName": "Aalto",
+    "DisplayName": "秋水"
+  },
+  {
+    "Keys": [
+      "mortefi"
+    ],
+    "ReleaseDate": "2024-05-23T00:00:00",
+    "Image": "mortefi.png",
+    "Rarity": 4,
+    "Element": "Fusion",
+    "Class": "Pistols",
+    "Region": [
+      "Newfed"
+    ],
+    "ModFilesName": "Mortefi",
+    "InGameSkins": [],
+    "InternalName": "Mortefi",
+    "DisplayName": "莫特斐"
+  },
+  {
+    "Keys": [
+      "yinlin"
+    ],
+    "ReleaseDate": "2024-06-6T00:00:00",
+    "Image": "yinlin.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Rectifier",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Yinlin",
+    "InGameSkins": [],
+    "InternalName": "Yinlin",
+    "DisplayName": "吟霖"
+  },
+  {
+    "Keys": [
+      "Changli"
+    ],
+    "ReleaseDate": "2025-06-6T00:00:00",
+    "Image": "Changli.png",
+    "Rarity": 5,
+    "Element": "Fusion",
+    "Class": "Sword",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Changli",
+    "InGameSkins": [],
+    "InternalName": "Changli",
+    "DisplayName": "长离"
+  },
+  {
+    "Keys": [
+      "Jinhsi"
+    ],
+    "ReleaseDate": "2025-06-6T00:00:00",
+    "Image": "Jinhsi.png",
+    "Rarity": 5,
+    "Element": "Spectro",
+    "Class": "Broadblade",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Jinhsi",
+    "InGameSkins": [],
+    "InternalName": "Jinhsi",
+    "DisplayName": "今汐"
+  },
+  {
+    "Keys": [
+      "Zhezhi"
+    ],
+    "ReleaseDate": "2025-08-15T00:00:00",
+    "Image": "Zhezhi.png",
+    "Rarity": 5,
+    "Element": "Glacio",
+    "Class": "Rectifier",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Zhezhi",
+    "InGameSkins": [],
+    "InternalName": "Zhezhi",
+    "DisplayName": "折枝"
+  },
+  {
+    "Keys": [
+      "Xiangliyao"
+    ],
+    "ReleaseDate": "2025-08-15T00:00:00",
+    "Image": "Xiangliyao.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Gauntlet",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Xiangliyao",
+    "InGameSkins": [],
+    "InternalName": "Xiangliyao",
+    "DisplayName": "相里要"
+  }
+]

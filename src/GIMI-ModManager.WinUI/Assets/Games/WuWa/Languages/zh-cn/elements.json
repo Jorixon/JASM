@@ -1,0 +1,32 @@
+[
+	{
+		"InternalName": "Fusion",
+		"DisplayName": "热熔",
+		"Image": "Fusion.svg"
+	},
+	{
+		"InternalName": "Glacio",
+		"DisplayName": "冷凝",
+		"Image": "Glacio.svg"
+	},
+	{
+		"InternalName": "Aero",
+		"DisplayName": "气动",
+		"Image": "Aero.svg"
+	},
+	{
+		"InternalName": "Electro",
+		"DisplayName": "导电",
+		"Image": "Electro.svg"
+	},
+	{
+		"InternalName": "Spectro",
+		"DisplayName": "衍射",
+		"Image": "Spectro.svg"
+	},
+	{
+		"InternalName": "Havoc",
+		"DisplayName": "湮灭",
+		"Image": "Havoc.svg"
+	}
+]

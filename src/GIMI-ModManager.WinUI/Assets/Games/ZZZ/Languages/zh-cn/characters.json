@@ -1,0 +1,442 @@
+[
+  {
+    "InternalName": "Others",
+    "DisplayName": "其他角色"
+  },
+  {
+    "InternalName": "Weapons",
+    "DisplayName": "音擎"
+  },
+  {
+    "Keys": [
+      "Belle"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Belle.webp",
+    "Rarity": 0,
+    "Element": "None",
+    "Class": "None",
+    "Region": [
+      "Phaethon"
+    ],
+    "ModFilesName": "Belle",
+    "InGameSkins": [],
+    "InternalName": "Belle",
+    "DisplayName": "铃"
+  },
+  {
+    "Keys": [
+      "Wise"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Wise.webp",
+    "Rarity": 0,
+    "Element": "None",
+    "Class": "None",
+    "Region": [
+      "Phaethon"
+    ],
+    "ModFilesName": "Wise",
+    "InGameSkins": [],
+    "InternalName": "Wise",
+    "DisplayName": "哲"
+  },
+  {
+    "Keys": [
+      "Alexandrina",
+      "Rina"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Rina.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Support",
+    "Region": [
+      "Victoria"
+    ],
+    "ModFilesName": "Rina",
+    "InGameSkins": [],
+    "InternalName": "Rina",
+    "DisplayName": "丽娜"
+  },
+  {
+    "Keys": [
+      "Ellen"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Ellen.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Attack",
+    "Region": [
+      "Victoria"
+    ],
+    "ModFilesName": "Ellen",
+    "InGameSkins": [],
+    "InternalName": "Ellen",
+    "DisplayName": "艾莲"
+  },
+  {
+    "Keys": [
+      "Grace"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Grace.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Anomoly",
+    "Region": [
+      "Belobog"
+    ],
+    "ModFilesName": "Grace",
+    "InGameSkins": [],
+    "InternalName": "Grace",
+    "DisplayName": "格莉丝"
+  },
+  {
+    "Keys": [
+      "Koleda"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Koleda.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Stun",
+    "Region": [
+      "Belobog"
+    ],
+    "ModFilesName": "Koleda",
+    "InGameSkins": [],
+    "InternalName": "Koleda",
+    "DisplayName": "珂蕾妲"
+  },
+  {
+    "Keys": [
+      "Nekomiya",
+      "Nekomata"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Nekomata.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Attack",
+    "Region": [
+      "CHares"
+    ],
+    "ModFilesName": "Nekomata",
+    "InGameSkins": [],
+    "InternalName": "Nekomata",
+    "DisplayName": "猫又"
+  },
+  {
+    "Keys": [
+      "soldier11"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Soldier11.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Attack",
+    "Region": [
+      "OBOL"
+    ],
+    "ModFilesName": "Soldier 11",
+    "InGameSkins": [],
+    "InternalName": "Soldier11",
+    "DisplayName": "11号"
+  },
+  {
+    "Keys": [
+      "Lycaon"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Lycaon.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Stun",
+    "Region": [
+      "Victoria"
+    ],
+    "ModFilesName": "Lycaon",
+    "InGameSkins": [],
+    "InternalName": "Lycaon",
+    "DisplayName": "莱卡恩"
+  },
+  {
+    "Keys": [
+      "ZhuYuan"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "ZhuYuan.webp",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Attack",
+    "Region": [
+      "ResponseTeam"
+    ],
+    "ModFilesName": "Zhu Yuan",
+    "InGameSkins": [],
+    "InternalName": "ZhuYuan",
+    "DisplayName": "朱鸢"
+  },
+  {
+    "Keys": [
+      "Anby"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Anby.webp",
+    "Rarity": 4,
+    "Element": "Electric",
+    "Class": "Support",
+    "Region": [
+      "CHares"
+    ],
+    "ModFilesName": "Anby",
+    "InGameSkins": [],
+    "InternalName": "Anby",
+    "DisplayName": "安比"
+  },
+  {
+    "Keys": [
+      "Anton"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Anton.webp",
+    "Rarity": 4,
+    "Element": "Electric",
+    "Class": "Attack",
+    "Region": [
+      "Belobog"
+    ],
+    "ModFilesName": "Anton",
+    "InGameSkins": [],
+    "InternalName": "Anton",
+    "DisplayName": "安东"
+  },
+  {
+    "Keys": [
+      "Ben"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Ben.webp",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Defense",
+    "Region": [
+      "Belobog"
+    ],
+    "ModFilesName": "Ben",
+    "InGameSkins": [],
+    "InternalName": "Ben",
+    "DisplayName": "本"
+  },
+  {
+    "Keys": [
+      "Billy"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Billy.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Attack",
+    "Region": [
+      "CHares"
+    ],
+    "ModFilesName": "Billy",
+    "InGameSkins": [],
+    "InternalName": "Billy",
+    "DisplayName": "比利"
+  },
+  {
+    "Keys": [
+      "Corin"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Corin.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Attack",
+    "Region": [
+      "Victoria"
+    ],
+    "ModFilesName": "Corin",
+    "InGameSkins": [],
+    "InternalName": "Corin",
+    "DisplayName": "可琳"
+  },
+  {
+    "Keys": [
+      "Luciana",
+      "Lucy"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Lucy.webp",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Support",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Lucy",
+    "InGameSkins": [],
+    "InternalName": "Lucy",
+    "DisplayName": "露西"
+  },
+  {
+    "Keys": [
+      "Nicole"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Nicole.webp",
+    "Rarity": 4,
+    "Element": "Ether",
+    "Class": "Support",
+    "Region": [
+      "CHares"
+    ],
+    "ModFilesName": "Nicole",
+    "InGameSkins": [],
+    "InternalName": "Nicole",
+    "DisplayName": "妮可"
+  },
+  {
+    "Keys": [
+      "Piper"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Piper.webp",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Anomoly",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Piper",
+    "InGameSkins": [],
+    "InternalName": "Piper",
+    "DisplayName": "派派·韦尔"
+  },
+  {
+    "Keys": [
+      "Soukaku"
+    ],
+    "ReleaseDate": "2024-07-4T00:10:00",
+    "Image": "Soukaku.webp",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Support",
+    "Region": [
+      "Section6"
+    ],
+    "ModFilesName": "Soukaku",
+    "InGameSkins": [],
+    "InternalName": "Soukaku",
+    "DisplayName": "苍角"
+  },
+  {
+    "Keys": [
+      "Miyabi"
+    ],
+    "ReleaseDate": "2025-07-4T00:10:00",
+    "Image": "Miyabi.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Attack",
+    "Region": [
+      "Section6"
+    ],
+    "ModFilesName": "Miyabi",
+    "InGameSkins": [],
+    "InternalName": "Miyabi",
+    "DisplayName": "雅"
+  },
+  {
+    "Keys": [
+      "Jane",
+      "Doe"
+    ],
+    "ReleaseDate": "2024-08-14T00:00:00",
+    "Image": "Jane.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Anomoly",
+    "Region": [
+      "ResponseTeam"
+    ],
+    "ModFilesName": "Jane",
+    "InGameSkins": [],
+    "InternalName": "Jane",
+    "DisplayName": "简"
+  },
+  {
+    "Keys": [
+      "Qingyi"
+    ],
+    "ReleaseDate": "2024-08-14T00:00:00",
+    "Image": "Qingyi.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Stun",
+    "Region": [
+      "ResponseTeam"
+    ],
+    "ModFilesName": "Qingyi",
+    "InGameSkins": [],
+    "InternalName": "Qingyi",
+    "DisplayName": "青衣"
+  },
+  {
+    "Keys": [
+      "Seth",
+      "Lowell"
+    ],
+    "ReleaseDate": "2024-08-14T00:00:00",
+    "Image": "Seth.webp",
+    "Rarity": 4,
+    "Element": "Electric",
+    "Class": "Defense",
+    "Region": [
+      "ResponseTeam"
+    ],
+    "ModFilesName": "Seth",
+    "InGameSkins": [],
+    "InternalName": "Seth",
+    "DisplayName": "赛斯"
+  },
+  {
+    "Keys": [
+      "Caesar",
+      "King"
+    ],
+    "ReleaseDate": "2025-11-28T00:00:00",
+    "Image": "Caesar.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Defense",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Caesar",
+    "InGameSkins": [],
+    "InternalName": "Caesar",
+    "DisplayName": "凯撒"
+  },
+  {
+    "Keys": [
+      "Burnice",
+      "White"
+    ],
+    "ReleaseDate": "2025-11-28T00:00:00",
+    "Image": "Burnice.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Anomoly",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Burnice",
+    "InGameSkins": [],
+    "InternalName": "Burnice",
+    "DisplayName": "柏妮思"
+  }
+]
