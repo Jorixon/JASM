@@ -1,119 +1,101 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using Windows.Storage.Pickers;
+using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GIMI_ModManager.Core.GamesService;
-using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.Core.Services.CommandService;
+using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Models.Options;
-using GIMI_ModManager.WinUI.Services.AppManagement;
-using Microsoft.UI.Xaml;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.Services;
 
+// This is an old class that was its own thing at some point. Now that CommandService is a thing, this class is just a wrapper for CommandService
 public abstract partial class BaseProcessManager<TProcessOptions> : ObservableObject, IProcessManager
     where TProcessOptions : ProcessOptionsBase, new()
 {
-    private protected readonly ILogger _logger;
-    private protected readonly ILocalSettingsService _localSettingsService;
-    private readonly SelectedGameService _selectedGameService;
+    private readonly CommandService _commandService;
+    private readonly CommandHandlerService _commandHandler;
+    private readonly NotificationManager _notificationManager;
+    private CommandDefinition? _commandDefinition;
+    private ProcessCommand? _process;
 
-    private Process? _process;
-    private protected string _prcoessPath = null!;
-    private protected string _workingDirectory = string.Empty;
 
-    private protected bool runAsAdmin;
+    private readonly ILogger _logger;
+
 
     public string ProcessName { get; protected set; } = string.Empty;
 
-    public string ProcessPath
-    {
-        get => _prcoessPath;
-        private protected set
-        {
-            if (value == _prcoessPath) return;
-            _prcoessPath = value;
-            OnPropertyChanged();
-        }
-    }
+    [ObservableProperty] private string? _processPath;
 
-
-    [ObservableProperty] private string? _errorMessage = null;
 
     [ObservableProperty] private ProcessStatus _processStatus = ProcessStatus.NotInitialized;
 
+    public bool IsGameProcessManager => GetType() == typeof(GenshinProcessManager);
 
-    protected BaseProcessManager(ILogger logger, ILocalSettingsService localSettingsService,
-        SelectedGameService selectedGameService)
+    protected BaseProcessManager(ILogger logger)
     {
         _logger = logger;
-        _localSettingsService = localSettingsService;
-        _selectedGameService = selectedGameService;
+        _commandService = App.GetService<CommandService>();
+        _commandHandler = App.GetService<CommandHandlerService>();
+        _notificationManager = App.GetService<NotificationManager>();
     }
 
-    // Runs on JASM startup
+
+    [MemberNotNullWhen(true, nameof(_commandDefinition), nameof(ProcessPath))]
     public async Task<bool> TryInitialize()
     {
-        var processOptions = await ReadProcessOptions();
-
-        if (processOptions.GetType() == typeof(GenshinProcessOptions) ||
-            await _selectedGameService.GetSelectedGameAsync() == SupportedGames.Honkai.ToString())
+        if (GetType() == typeof(GenshinProcessManager))
         {
-            runAsAdmin = true;
+            _commandDefinition =
+                (await _commandService.GetCommandDefinitionsAsync()).FirstOrDefault(c => c.IsGameStartCommand);
+        }
+        else if (GetType() == typeof(ThreeDMigtoProcessManager))
+        {
+            _commandDefinition =
+                (await _commandService.GetCommandDefinitionsAsync()).FirstOrDefault(c => c.IsModelImporterCommand);
+        }
+        else
+        {
+            throw new InvalidOperationException("Unknown process manager type");
         }
 
-        if (!File.Exists(processOptions.ProcessPath)) return false;
+        if (_commandDefinition is null)
+        {
+            ProcessStatus = ProcessStatus.NotInitialized;
 
-        ProcessPath = processOptions.ProcessPath;
-        ProcessName = Path.GetFileNameWithoutExtension(ProcessPath);
-        ProcessStatus = ProcessStatus.NotRunning;
+            if (_process is not null)
+                Debugger.Break();
+
+            _process = null;
+            return false;
+        }
+
+        ProcessPath = _commandDefinition.ExecutionOptions.Command;
+        ProcessName = _commandDefinition.CommandDisplayName;
+        await CheckStatus();
         return true;
     }
 
     public async Task ResetProcessOptions()
     {
-        await _SetStartupPath(null!, null!, null);
+        if (ProcessStatus == ProcessStatus.NotInitialized || _commandDefinition is null) return;
+
+        await _commandService.DeleteCommandDefinitionAsync(_commandDefinition.Id);
         ProcessStatus = ProcessStatus.NotInitialized;
-        _logger.Information($"Reset {typeof(TProcessOptions).Name} path settings");
+        _commandDefinition = null;
     }
 
 
-    // Runs when the start process is clicked and options are not set
-    public async Task SetPath(string processName, string path, string? workingDirectory = null)
+    public async Task StartProcess()
     {
-        await _SetStartupPath(processName, path, workingDirectory);
-        ProcessStatus = ProcessStatus.NotRunning;
-        _logger.Information($"Saved {typeof(TProcessOptions).Name} path to settings");
-    }
-
-    private async Task _SetStartupPath(string processName, string path, string? workingDirectory = null)
-    {
-        ProcessName = processName;
-        ProcessPath = path;
-        _workingDirectory = workingDirectory ?? Path.GetDirectoryName(path) ?? "";
-
-        var processOptions = await ReadProcessOptions();
-
-        processOptions.ProcessPath = path;
-        processOptions.WorkingDirectory = _workingDirectory;
-
-        await _localSettingsService.SaveSettingAsync(processOptions.Key, processOptions);
-    }
-
-    private async Task<TProcessOptions> ReadProcessOptions()
-    {
-        var processOptions = new TProcessOptions();
-        processOptions = await _localSettingsService.ReadSettingAsync<TProcessOptions>(processOptions.Key) ??
-                         new TProcessOptions();
-        return processOptions;
-    }
-
-    public void StartProcess()
-    {
-        if (_process is { HasExited: false })
-        {
-            _logger.Information($"{ProcessName} is already running");
+        if (!await TryInitialize())
             return;
+
+        if (ProcessStatus == ProcessStatus.Running && _process is not null)
+        {
+            _process.Exited -= OnProcessOnExited;
+            _process = null;
         }
 
         if (ProcessStatus == ProcessStatus.NotInitialized)
@@ -122,117 +104,100 @@ public abstract partial class BaseProcessManager<TProcessOptions> : ObservableOb
             return;
         }
 
-        try
+
+        var result = await _commandHandler.RunCommandAsync(_commandDefinition.Id, null);
+
+        if (!result.IsSuccess)
         {
-            _process = Process.Start(new ProcessStartInfo(ProcessPath)
+            if (result.Exception is Win32Exception e)
             {
-                WorkingDirectory = _workingDirectory == string.Empty
-                    ? Path.GetDirectoryName(ProcessPath) ?? ""
-                    : _workingDirectory,
-                Arguments = runAsAdmin ? "runas" : "",
-                UseShellExecute = runAsAdmin
-            });
-        }
-        catch (Win32Exception e)
-        {
-            if (e.NativeErrorCode == 1223)
-            {
-                _logger.Error(e,
-                    $"Failed to start {ProcessName}, this can happen due to the user cancelling the UAC (admin) prompt");
-                ErrorMessage =
-                    $"Failed to start {ProcessName}, this can happen due to the user cancelling the UAC (admin) prompt";
-            }
-            else if (e.NativeErrorCode == 740)
-            {
-                _logger.Error(e,
-                    $"Failed to start {ProcessName}, this can happen if the exe has the 'Run as administrator' option enabled");
-                ErrorMessage =
-                    $"Failed to start {ProcessName}, this can happen if the exe has the 'Run as administrator' option enabled in the exe properties";
-            }
-            else
-            {
-                _logger.Error(e, $"Failed to start {ProcessName}");
-                ErrorMessage = $"Failed to start {ProcessName} due to an unknown error, see logs for details";
+                var message = $"Failed to start {ProcessName}";
+
+                if (e.NativeErrorCode == 1223)
+                {
+                    message =
+                        $"Failed to start {ProcessName}, this can happen due to the user cancelling the UAC (admin) prompt";
+                }
+                else if (e.NativeErrorCode == 740)
+                {
+                    message =
+                        $"Failed to start {ProcessName}, this can happen if the exe has the 'Run as administrator' option enabled in the exe properties";
+                }
+
+                _notificationManager.ShowNotification("Could not start process", message, null);
+                return;
             }
 
 
-            ErrorMessage ??= $"Failed to start {ProcessName}";
-            return;
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, $"Failed to start {ProcessName}");
-            ErrorMessage = $"Failed to start {ProcessName} due to an unknown error, see logs for details";
-            return;
-        }
+            if (result.HasNotification)
+            {
+                _notificationManager.ShowNotification(result.Notification);
+                return;
+            }
 
-        if (_process == null || _process.HasExited)
-        {
-            ProcessStatus = ProcessStatus.NotInitialized;
-            ErrorMessage = $"Failed to start {ProcessName}";
-            _logger.Error($"Failed to start {ProcessName}");
+            _notificationManager.ShowNotification("Could not start process", "An unknown error occurred", null);
             return;
         }
 
-        ErrorMessage = null;
-        ProcessStatus = ProcessStatus.Running;
+        var process = result.Value;
 
-        _process.Exited += (sender, args) =>
+        if (process.HasExited)
         {
             ProcessStatus = ProcessStatus.NotRunning;
-            _logger.Information("{ProcessName} exited with exit code: {ExitCode}", ProcessName, _process.ExitCode);
-        };
+            return;
+        }
+
+
+        process.Exited += OnProcessOnExited;
+
+        _process = process;
     }
 
 
-    public void CheckStatus()
+    private void OnProcessOnExited(object? sender, EventArgs args)
     {
-        if (ProcessStatus == ProcessStatus.NotInitialized) return;
-        ProcessStatus = _process is { HasExited: false } ? ProcessStatus.Running : ProcessStatus.NotRunning;
+        ProcessStatus = ProcessStatus.NotRunning;
+        _logger.Debug("{ProcessName} exited with exit code: {ExitCode}", ProcessName,
+            _process?.ExitCode ?? 13337);
+        _process = null;
     }
 
-    public void StopProcess()
+    public async Task CheckStatus()
+    {
+        if (_commandDefinition is null)
+        {
+            ProcessStatus = ProcessStatus.NotInitialized;
+            return;
+        }
+
+        if (_process is { HasExited: false })
+        {
+            ProcessStatus = ProcessStatus.Running;
+            return;
+        }
+
+        var runningCommand = await _commandHandler.GetRunningCommandAsync(_commandDefinition.Id);
+        ProcessStatus = runningCommand.Any() ? ProcessStatus.Running : ProcessStatus.NotRunning;
+    }
+
+    public async Task StopProcess()
     {
         if (_process is { HasExited: false })
         {
             _logger.Information($"Killing {ProcessName}");
-            _process.Kill();
+            await _process.KillAsync().ConfigureAwait(false);
             _logger.Debug($"{ProcessName} killed");
         }
     }
 
-    /// <summary>
-    /// Set path with SetPath()
-    /// </summary>
-    /// <param name="windowHandle"></param>
-    /// <returns></returns>
-    public async Task<string?> PickProcessPathAsync(Window windowHandle)
+    public async Task SetCommandAsync(CommandDefinition commandDefinition)
     {
-        var exeFilePicker = new FileOpenPicker();
-        exeFilePicker.FileTypeFilter.Add(".exe");
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(windowHandle);
-        WinRT.Interop.InitializeWithWindow.Initialize(exeFilePicker, hwnd);
-        var chosenExePath = await exeFilePicker.PickSingleFileAsync();
-
-        if (chosenExePath is null)
-        {
-            _logger.Information("User cancelled 3Dmigoto exe selection");
-            return null;
-        }
-
-        if (chosenExePath.FileType != ".exe")
-        {
-            _logger.Warning("User selected a file that is not an exe");
-            return null;
-        }
-
-        if (!File.Exists(chosenExePath.Path))
-        {
-            _logger.Warning("User selected a file that does not exist");
-            return null;
-        }
-
-        return chosenExePath.Path;
+        await ResetProcessOptions();
+        await _commandService.SaveCommandDefinitionAsync(commandDefinition);
+        await _commandService.SetSpecialCommands(commandDefinition.Id,
+            gameStart: GetType() == typeof(GenshinProcessManager),
+            modelImporterStart: GetType() == typeof(ThreeDMigtoProcessManager));
+        await TryInitialize();
     }
 }
 
@@ -256,36 +221,29 @@ public enum ProcessStatus
 
 public class GenshinProcessManager : BaseProcessManager<GenshinProcessOptions>
 {
-    public GenshinProcessManager(ILogger logger, ILocalSettingsService localSettingsService,
-        SelectedGameService selectedGameService) : base(
-        logger.ForContext<GenshinProcessManager>(),
-        localSettingsService, selectedGameService)
+    public GenshinProcessManager(ILogger logger) : base(logger.ForContext<GenshinProcessManager>())
     {
     }
 }
 
 public class ThreeDMigtoProcessManager : BaseProcessManager<MigotoProcessOptions>
 {
-    public ThreeDMigtoProcessManager(ILogger logger, ILocalSettingsService localSettingsService,
-        SelectedGameService selectedGameService) : base(
-        logger.ForContext<ThreeDMigtoProcessManager>(),
-        localSettingsService, selectedGameService)
+    public ThreeDMigtoProcessManager(ILogger logger) : base(
+        logger.ForContext<ThreeDMigtoProcessManager>())
     {
     }
 }
 
 public interface IProcessManager
 {
+    public bool IsGameProcessManager { get; }
     public string ProcessName { get; }
     public string ProcessPath { get; }
-    public string? ErrorMessage { get; }
     public ProcessStatus ProcessStatus { get; }
 
     public Task<bool> TryInitialize();
     public Task ResetProcessOptions();
-    public Task SetPath(string processName, string path, string? workingDirectory = null);
-    public void StartProcess();
-    public void CheckStatus();
-    public void StopProcess();
-    public Task<string?> PickProcessPathAsync(Window windowHandle);
+    public Task StartProcess();
+    public Task CheckStatus();
+    public Task SetCommandAsync(CommandDefinition commandDefinition);
 }

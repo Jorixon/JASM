@@ -28,6 +28,7 @@ using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;
@@ -46,6 +47,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly SelectedGameService _selectedGameService;
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
     private readonly LifeCycleService _lifeCycleService;
+    private readonly INavigationService _navigationService;
 
 
     private readonly NotificationManager _notificationManager;
@@ -118,7 +120,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
         SelectedGameService selectedGameService, ModUpdateAvailableChecker modUpdateAvailableChecker,
-        LifeCycleService lifeCycleService)
+        LifeCycleService lifeCycleService, INavigationService navigationService)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -134,6 +136,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _selectedGameService = selectedGameService;
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
         _lifeCycleService = lifeCycleService;
+        _navigationService = navigationService;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -433,7 +436,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                    "Enabling and disabling mods will also automatically refresh active mods in Genshin " +
                    "The Elevator process should automatically close when this program is closed.\n\n" +
                    "After pressing Start, a User Account Control (UAC) prompt will appear to confirm the elevation.\n\n" +
-                   "(This requires that Genshin and that 3Dmigoto is running, when pressing F10",
+                   "(This requires that Genshin and that 3Dmigoto is running, when pressing F10\n\n" +
+                   "Check the FAQ on the JASM github to download it separately as it gets flagged as malware.",
             Margin = new Thickness(0, 0, 0, 12),
             IsTextSelectionEnabled = true
         };
@@ -748,6 +752,14 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
+    private Task NavigateToCommandsSettings()
+    {
+        _navigationService.NavigateTo(typeof(CommandsSettingsViewModel).FullName!,
+            transitionInfo: new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     private async Task ToggleModUpdateChecker()
     {
         var modUpdateCheckerSettings =
@@ -790,6 +802,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         PersistWindowSize = windowSettings.PersistWindowSize;
         PersistWindowPosition = windowSettings.PersistWindowPosition;
+        await GenshinProcessManager.TryInitialize();
+        await ThreeDMigtoProcessManager.TryInitialize();
     }
 
     [ObservableProperty] private string _maxCacheSizeString = string.Empty;

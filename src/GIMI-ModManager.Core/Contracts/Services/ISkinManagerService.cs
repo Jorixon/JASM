@@ -1,5 +1,6 @@
 ﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities;
+using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Services;
@@ -16,6 +17,7 @@ public interface ISkinManagerService : IDisposable
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     bool IsInitialized { get; }
     public Task ScanForModsAsync();
+    public DirectoryInfo GetCategoryFolderPath(ICategory category);
     public ICharacterModList GetCharacterModList(string internalName);
     public ICharacterModList GetCharacterModList(IModdableObject character);
     public ICharacterModList? GetCharacterModListOrDefault(string internalName);

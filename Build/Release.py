@@ -19,6 +19,7 @@ RELEASE_DIR = "output"
 JASM_RELEASE_DIR = "output\\JASM"
 
 SelfContained =  sys.argv[1] == "SelfContained" if len(sys.argv) > 1  else False
+ExcludeElevator = "ExcludeElevator" in sys.argv
 
 def checkSuccessfulExitCode(exitCode: int) -> None:
 	if exitCode != 0:
@@ -42,12 +43,16 @@ if versionNumber is None or len(versionNumber) == 0:
 	exit(1)
 versionNumber = versionNumber[0]
 
-print("Building Elevator...")
-elevatorPublishCommand = "dotnet publish " + ELEVATOR_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release"
-print(elevatorPublishCommand)
-checkSuccessfulExitCode(os.system(elevatorPublishCommand))
-print()
-print("Finished building Elevator")
+if (ExcludeElevator == False):
+	print("Building Elevator...")
+	elevatorPublishCommand = "dotnet publish " + ELEVATOR_CSPROJ + " /p:PublishProfile=FolderProfile.pubxml -c Release"
+	print(elevatorPublishCommand)
+	checkSuccessfulExitCode(os.system(elevatorPublishCommand))
+	print()
+	print("Finished building Elevator")
+else:
+	print("Skipping Elevator")
+	print()
 
 
 if (SelfContained == False):
@@ -72,11 +77,11 @@ print("Finished building JASM")
 os.makedirs(RELEASE_DIR, exist_ok=True)
 os.makedirs(JASM_RELEASE_DIR, exist_ok=True)
 
-
-print("Copying Elevator to JASM...")
-checkSuccessfulExitCode(os.system("copy " + ELEVATOR_OUTPUT_FILE + " " + JASM_RELEASE_DIR))
-print()
-print("Finished copying Elevator to release directory")
+if (ExcludeElevator == False):
+	print("Copying Elevator to JASM...")
+	checkSuccessfulExitCode(os.system("copy " + ELEVATOR_OUTPUT_FILE + " " + JASM_RELEASE_DIR))
+	print()
+	print("Finished copying Elevator to release directory")
 
 print("Copying JASM to output...")
 shutil.copytree(JASM_OUTPUT, JASM_RELEASE_DIR, dirs_exist_ok=True)

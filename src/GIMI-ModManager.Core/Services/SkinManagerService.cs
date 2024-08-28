@@ -651,9 +651,14 @@ public sealed class SkinManagerService : ISkinManagerService
 
         foreach (var category in categories)
         {
-            var categoryFolder = new DirectoryInfo(Path.Combine(_activeModsFolder.FullName, category.InternalName));
+            var categoryFolder = GetCategoryFolderPath(category);
             categoryFolder.Create();
         }
+    }
+
+    public DirectoryInfo GetCategoryFolderPath(ICategory category)
+    {
+        return new DirectoryInfo(Path.Combine(_activeModsFolder.FullName, category.InternalName));
     }
 
 

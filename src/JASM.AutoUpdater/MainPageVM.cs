@@ -333,6 +333,8 @@ public partial class MainPageVM : ObservableRecipient
 
         Log("Deleting old files...", $"Path: {_installedJasmFolder.FullName}");
 
+        string[] doNotDeleteFiles = ["Elevator.exe", "JASM - Just Another Skin Manager.exe.WebView2", "logs"];
+
         foreach (var fileSystemInfo in _installedJasmFolder.EnumerateFileSystemInfos())
         {
             if (fileSystemInfo.Name.StartsWith(autoUpdaterFolder.Name,
@@ -341,15 +343,10 @@ public partial class MainPageVM : ObservableRecipient
                 continue;
             }
 
-            if (fileSystemInfo.Name.Equals("JASM - Just Another Skin Manager.exe.WebView2",
-                    StringComparison.OrdinalIgnoreCase))
+            if (doNotDeleteFiles.Any(fileEntry => fileSystemInfo.Name.Equals(fileEntry,
+                    StringComparison.CurrentCultureIgnoreCase)))
             {
-                continue;
-            }
-
-            if (fileSystemInfo.Name.Equals("logs",
-                    StringComparison.OrdinalIgnoreCase))
-            {
+                Serilog.Log.Logger.Information("Not deleting file: {FileName}", fileSystemInfo.Name);
                 continue;
             }
 

@@ -1,5 +1,39 @@
 # Changelog
 
+## [2.14.3](https://github.com/Jorixon/JASM/compare/v2.14.2...v2.14.3) (2024-08-26)
+
+
+### Miscellaneous
+
+* Exclude Elevator.exe from default release build ([#245](https://github.com/Jorixon/JASM/issues/245)) ([d699f7a](https://github.com/Jorixon/JASM/commit/d699f7a23ea5d7af3646cad99e1bca30c1f6fadd))
+* **WuWu:** Added Zhezhi and Xiangliyao ([#244](https://github.com/Jorixon/JASM/issues/244)) Thanks @Moonholder ([6fb1f42](https://github.com/Jorixon/JASM/commit/6fb1f428b51844db8fc04b0f43f6dab1654de3da))
+
+## [2.14.2](https://github.com/Jorixon/JASM/compare/v2.14.1...v2.14.2) (2024-08-20)
+
+
+### Miscellaneous
+
+* Revert package update in Elevator, might help with AV incorrect detection ([#239](https://github.com/Jorixon/JASM/issues/239)) ([22378a6](https://github.com/Jorixon/JASM/commit/22378a63299e53582c40f346fba1d6b792982513))
+
+## [2.14.1](https://github.com/Jorixon/JASM/compare/v2.14.0...v2.14.1) (2024-08-20)
+
+
+### Miscellaneous
+
+* **ZZZ:** Added Burnice ([#235](https://github.com/Jorixon/JASM/issues/235)) Thanks @Pyrageis ([42e42e0](https://github.com/Jorixon/JASM/commit/42e42e0aac4e0fd57bc56ceffe67ef47fdb9693d))
+
+## [2.14.0](https://github.com/Jorixon/JASM/compare/v2.13.3...v2.14.0) (2024-08-11)
+
+
+### Features
+
+* Create and run custom commands from within JASM ([#222](https://github.com/Jorixon/JASM/issues/222)) ([5ea97ef](https://github.com/Jorixon/JASM/commit/5ea97efcc2b03f86562d1f5349b948c35224150a))
+
+
+### Miscellaneous
+
+* Added missing ZZZ characters ([5ea97ef](https://github.com/Jorixon/JASM/commit/5ea97efcc2b03f86562d1f5349b948c35224150a))
+
 ## [2.13.3](https://github.com/Jorixon/JASM/compare/v2.13.2...v2.13.3) (2024-08-04)
 
 

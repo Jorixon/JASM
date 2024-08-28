@@ -16,7 +16,7 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<BaseOutputPath></BaseOutputPath>
 		<!-- x-release-please-start-version -->
-		<VersionPrefix>2.13.3</VersionPrefix>
+		<VersionPrefix>2.14.3</VersionPrefix>
 		<!-- x-release-please-end -->
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
@@ -537,9 +537,11 @@
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Sanhua.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Taoqi.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Verina.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Xiangliyao.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Yangyang.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Yinlin.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Yuanwu.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Zhezhi.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\WuWa\npcs.json" />
 		<Content Remove="Assets\Games\WuWa\objects.json" />
@@ -550,7 +552,6 @@
 		<Content Remove="Assets\Games\ZZZ\elements.json" />
 		<Content Remove="Assets\Games\ZZZ\game.json" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Character_Others.png" />
-		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.png" />
 		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
 		<Content Remove="Assets\Games\ZZZ\npcs.json" />
 		<Content Remove="Assets\Games\ZZZ\objects.json" />
@@ -563,9 +564,12 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Belle.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ben.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Billy.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Burnice.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Caesar.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Corin.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Ellen.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Grace.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Jane.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Koleda.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lucy.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Lycaon.webp" />
@@ -573,7 +577,10 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nekomata.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Nicole.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Piper.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Qingyi.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Rina.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Seth.webp" />
+		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soldier11.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Soukaku.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\Wise.webp" />
 		<Content Remove="Assets\Games\ZZZ\Images\Characters\ZhuYuan.webp" />
@@ -582,7 +589,7 @@
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Fire.svg" />
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Ice.svg" />
 		<Content Remove="Assets\Games\ZZZ\Images\Elements\Physical.svg" />
-		<Content Remove="Assets\Games\ZZZ\Images\Star_Game.png" />
+		<Content Remove="Assets\Games\ZZZ\Images\Start_Game.png" />
 
 		<Content Remove="Assets\ModPanePlaceholder.webp" />
 
@@ -600,6 +607,7 @@
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
+		<None Remove="Views\CommandProcessViewer.xaml" />
 		<None Remove="Views\Controls\BoolBorder.xaml" />
 		<None Remove="Views\Controls\CustomImage.xaml" />
 		<None Remove="Views\Controls\DataTemplates.xaml" />
@@ -618,6 +626,8 @@
 		<None Remove="Views\NotificationsPage.xaml" />
 		<None Remove="Views\PresetDetailsPage.xaml" />
 		<None Remove="Views\PresetPage.xaml" />
+		<None Remove="Views\Settings\CommandsSettingsPage.xaml" />
+		<None Remove="Views\Settings\CreateCommandView.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -626,6 +636,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.240109" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Layout" Version="7.1.2" />
@@ -1129,10 +1141,19 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\Settings\CreateCommandView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\Controls\DataTemplates.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Views\CommandProcessViewer.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\CharacterGalleryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Settings\CommandsSettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\ModSelector.xaml">

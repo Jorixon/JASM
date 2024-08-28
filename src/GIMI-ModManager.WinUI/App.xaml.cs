@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Activation;
@@ -15,8 +16,10 @@ using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
+using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.Views;
 using GIMI_ModManager.WinUI.Views.CharacterManager;
+using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -27,6 +30,7 @@ using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
+using CreateCommandViewModel = GIMI_ModManager.WinUI.ViewModels.SettingsViewModels.CreateCommandViewModel;
 using GameBananaService = GIMI_ModManager.WinUI.Services.ModHandling.GameBananaService;
 using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
 
@@ -143,6 +147,8 @@ public partial class App : Application
                 services.AddSingleton<ArchiveService>();
                 services.AddSingleton<ModArchiveRepository>();
                 services.AddSingleton<GameBananaCoreService>();
+                services.AddSingleton<CommandService>();
+                services.AddSingleton<CommandHandlerService>();
 
                 services.AddSingleton<GameBananaService>();
 
@@ -230,8 +236,14 @@ public partial class App : Application
                 services.AddTransient<PresetDetailsPage>();
                 services.AddTransient<ModSelectorViewModel>();
                 services.AddTransient<ModSelector>();
+                services.AddTransient<CommandsSettingsViewModel>();
+                services.AddTransient<CommandsSettingsPage>();
                 services.AddTransient<CharacterGalleryPage>();
                 services.AddTransient<CharacterGalleryViewModel>();
+                services.AddTransient<CommandProcessViewer>();
+                services.AddTransient<CommandProcessViewerViewModel>();
+                services.AddTransient<CreateCommandView>();
+                services.AddTransient<CreateCommandViewModel>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

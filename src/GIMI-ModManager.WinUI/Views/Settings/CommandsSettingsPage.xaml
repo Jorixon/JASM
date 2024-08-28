@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.Settings.CommandsSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.Settings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settingsViewModels="using:GIMI_ModManager.WinUI.ViewModels.SettingsViewModels"
+    xmlns:winUi="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d">
+
+
+
+    <ScrollViewer Width="1000">
+
+        <StackPanel
+            MaxWidth="1000"
+            Margin="8,0,8,0"
+            HorizontalAlignment="Stretch"
+            Spacing="4">
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Command Settings " />
+
+
+            <controls:SettingsCard
+                Description="Here you can define custom commands that JASM can run for you. Currently, commands that contain {{TargetPath}} can only be run from the Mods Overview page"
+                Header="Create new command"
+                HeaderIcon="{winUi:FontIcon Glyph=&#xE70F;}">
+                <Button Command="{x:Bind ViewModel.OpenCreateCommandCommand}" Content="Create New Command" />
+            </controls:SettingsCard>
+
+            <controls:SettingsExpander
+                Description="Here you can view and delete created command definitions"
+                Header="Command Definitions"
+                HeaderIcon="{winUi:FontIcon Glyph=&#xE74E;}"
+                IsExpanded="True">
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+
+                        <ListView
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{x:Bind ViewModel.CommandDefinitions}"
+                            SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="settingsViewModels:CommandDefinitionVM">
+                                    <Grid
+                                        MinWidth="800"
+                                        Margin="0,4,0,4"
+                                        Padding="4,4,4,4"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="4"
+                                        RowSpacing="4">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel>
+
+                                                <TextBlock
+                                                    FontSize="16"
+                                                    IsTextSelectionEnabled="True"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTipService.ToolTip="{x:Bind CommandDisplayName}">
+                                                    <Run Text="Display Name:" />
+                                                    <Run Text="{x:Bind CommandDisplayName}" />
+                                                </TextBlock>
+
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    IsTextSelectionEnabled="True"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTipService.ToolTip="{x:Bind Id}">
+                                                    <Run Text="Command Definition Id:" />
+                                                    <Run Text="{x:Bind Id}" />
+                                                </TextBlock>
+                                            </StackPanel>
+
+
+                                            <StackPanel
+                                                Grid.Column="1"
+                                                Orientation="Horizontal"
+                                                Spacing="8">
+                                                <Button
+                                                    VerticalAlignment="Center"
+                                                    Content="Run"
+                                                    IsEnabled="{x:Bind HasNoTargetPathVariable, Mode=OneWay}">
+                                                    <Button.Flyout>
+                                                        <Flyout>
+                                                            <StackPanel>
+                                                                <TextBlock Text="Are you sure you want to run this command?" />
+                                                                <Button
+                                                                    HorizontalAlignment="Center"
+                                                                    Command="{x:Bind RunCommand}"
+                                                                    CommandParameter="{x:Bind}"
+                                                                    Content="Run"
+                                                                    Style="{ThemeResource AccentButtonStyle}" />
+                                                            </StackPanel>
+                                                        </Flyout>
+                                                    </Button.Flyout>
+                                                </Button>
+
+                                                <Button
+                                                    VerticalAlignment="Center"
+                                                    Command="{x:Bind EditCommand}"
+                                                    CommandParameter="{x:Bind}"
+                                                    Content="Edit" />
+
+                                                <Button
+                                                    VerticalAlignment="Center"
+                                                    Content="Delete"
+                                                    IsEnabled="{x:Bind CanDelete, Mode=OneWay}">
+                                                    <Button.Flyout>
+                                                        <Flyout x:Name="DeleteFlyout">
+                                                            <StackPanel>
+                                                                <TextBlock Text="Are you sure you want to delete this command?" />
+                                                                <Button
+                                                                    HorizontalAlignment="Center"
+                                                                    Command="{x:Bind DeleteCommand}"
+                                                                    CommandParameter="{x:Bind}"
+                                                                    Content="Delete" />
+                                                            </StackPanel>
+                                                        </Flyout>
+                                                    </Button.Flyout>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Grid.Row="1" Spacing="8">
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind Executable}">
+                                                <Run Text="Executable: " />
+                                                <Run Text="{x:Bind Executable}" />
+                                            </TextBlock>
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind WorkingDirectory}">
+                                                <Run Text="Working Directory: " />
+                                                <Run Text="{x:Bind WorkingDirectory}" />
+                                            </TextBlock>
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind Arguments}">
+                                                <Run Text="Arguments: " />
+                                                <Run Text="{x:Bind Arguments}" />
+                                            </TextBlock>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <ItemsRepeater ItemsSource="{x:Bind Attributes}">
+                                                    <ItemsRepeater.Layout>
+                                                        <StackLayout Orientation="Horizontal" />
+                                                    </ItemsRepeater.Layout>
+                                                </ItemsRepeater>
+                                            </StackPanel>
+                                        </StackPanel>
+
+
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </controls:SettingsCard>
+
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+
+
+
+            <controls:SettingsExpander
+                Description="Commands started from JASM for the current running instance"
+                Header="Currently Running Commands"
+                HeaderIcon="{winUi:FontIcon Glyph=&#xE768;}"
+                IsExpanded="True">
+
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
+
+
+                        <ListView ItemsSource="{x:Bind ViewModel.RunningCommands}" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="settingsViewModels:CommandVM">
+                                    <Grid
+                                        MinWidth="800"
+                                        Margin="0,4,0,4"
+                                        Padding="4,4,4,4"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+                                            <TextBlock
+                                                FontSize="16"
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind CommandDisplayName}">
+                                                <Run Text="Display Name: " />
+                                                <Run Text="{x:Bind CommandDisplayName}" />
+                                            </TextBlock>
+
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind FullCommand}">
+                                                <Run Text="Full Command: " />
+                                                <Run Text="{x:Bind FullCommand}" />
+                                            </TextBlock>
+
+                                            <TextBlock
+                                                FontSize="10"
+                                                IsTextSelectionEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind Id}">
+                                                <Run Text="Command Definition Id: " />
+                                                <Run Text="{x:Bind Id}" />
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <Button
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Command="{x:Bind KillCommand}"
+                                            CommandParameter="{x:Bind}"
+                                            Content="Kill" />
+
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </controls:SettingsCard>
+
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+
+
+
+        </StackPanel>
+    </ScrollViewer>
+
+</Page>
