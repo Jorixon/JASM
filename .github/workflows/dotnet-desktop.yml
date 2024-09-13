@@ -41,7 +41,7 @@ jobs:
       run: dotnet test ${{ github.workspace }}\src
 
     - name: Build, publish and zip the app
-      run: python ${{ github.workspace }}\Build\Release.py
+      run: python ${{ github.workspace }}\Build\Release.py ExcludeElevator
       shell: cmd
 
     # Upload the app

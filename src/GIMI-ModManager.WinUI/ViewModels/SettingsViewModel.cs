@@ -436,7 +436,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                    "Enabling and disabling mods will also automatically refresh active mods in Genshin " +
                    "The Elevator process should automatically close when this program is closed.\n\n" +
                    "After pressing Start, a User Account Control (UAC) prompt will appear to confirm the elevation.\n\n" +
-                   "(This requires that Genshin and that 3Dmigoto is running, when pressing F10",
+                   "(This requires that Genshin and that 3Dmigoto is running, when pressing F10\n\n" +
+                   "Check the FAQ on the JASM github to download it separately as it gets flagged as malware.",
             Margin = new Thickness(0, 0, 0, 12),
             IsTextSelectionEnabled = true
         };
