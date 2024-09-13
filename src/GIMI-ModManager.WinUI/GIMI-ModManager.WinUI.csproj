@@ -68,12 +68,14 @@
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KaeyaSailwind_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KeqingOpulent_Thumb.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KiraraPhantom_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KleeBlossoming_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_KleeBlossoming_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_LisaSobriquet_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_MonaCN_Thumb.webp" />
+		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_NilouBreeze_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.png" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_NingguangOrchid_Thumb.webp" />
 		<Content Remove="Assets\Games\Genshin\Images\AltCharacterSkins\Character_Skin_RosariaCN_Thumb.png" />
