@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="3dmigotoFolderSelector.Title" xml:space="preserve">
+    <value>Carpeta 3dMigoto</value>
+  </data>
+  <data name="ChangeLanguageDialogText" xml:space="preserve">
+    <value>Cambiar el idioma requiere reiniciar la aplicación.
+Esto es necesario para configurar correctamente la aplicación para el idioma seleccionado.
+¿Quieres cambiar el idioma?</value>
+  </data>
+  <data name="ElevatorSectionHeader.Text" xml:space="preserve">
+    <value>Proceso de Sincronización</value>
+  </data>
+  <data name="ElevatorStatusTitle.Text" xml:space="preserve">
+    <value>Estado de la sincronización</value>
+  </data>
+  <data name="FolderSectionHeader.Text" xml:space="preserve">
+    <value>Carpetas</value>
+  </data>
+  <data name="GameSelectorComboBox.Header" xml:space="preserve">
+    <value>Seleccionar juego:</value>
+  </data>
+  <data name="GameSelectorSectionHeader.Text" xml:space="preserve">
+    <value>Juego</value>
+  </data>
+  <data name="GameSelectorTitle.Text" xml:space="preserve">
+    <value>JASM soporta completamente Genshin Impact y Honkai Star Rail.
+JASM soporta parcialmente WUWA y ZZZ</value>
+  </data>
+  <data name="LanguageSelectionSectionHeader.Text" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LanguageSelectorComboBox.Header" xml:space="preserve">
+    <value>Seleccionar idioma de visualización:</value>
+  </data>
+  <data name="LanguageSelectorTitle.Text" xml:space="preserve">
+    <value>Las opciones de idioma actualmente son limitadas. El trabajo está en progreso.</value>
+  </data>
+  <data name="ModsFolderSelector.Title" xml:space="preserve">
+    <value>Carpeta de mods</value>
+  </data>
+  <data name="ModUpdateCheckerCheckBox.Content" xml:space="preserve">
+    <value>Verificación automática de mods</value>
+  </data>
+  <data name="ModUpdateCheckerDescription.Text" xml:space="preserve">
+    <value>Mod Update Checker verifica la disponibilidad de actualizaciones de mods al inicio y periódicamente en segundo plano.
+Al activarse, verifica cada 30 minutos, pero solo los mods que no se han verificado en al menos 15 minutos.
+La verificación manual de actualizaciones siempre consulta directamente a GameBanana.</value>
+  </data>
+  <data name="ModUpdateCheckerNextText.Text" xml:space="preserve">
+    <value>Próxima verificación en:</value>
+  </data>
+  <data name="ModUpdateCheckerSectionHeader.Text" xml:space="preserve">
+    <value>Verificación de actualizaciones de mods</value>
+  </data>
+  <data name="StartElevatorButton.Content" xml:space="preserve">
+    <value>Iniciar Proceso de Sincronización</value>
+  </data>
+  <data name="StartElevatorDialogDontShowContent" xml:space="preserve">
+    <value>No mostrar esto nuevamente</value>
+  </data>
+  <data name="StartElevatorDialogText" xml:space="preserve">
+    <value>Presiona el botón de Inicio para comenzar el proceso de sincronización. La sincronización es un proceso administrativo que se utiliza para comunicarse con 3DMigoto y el juego.
+
+Mientras la sincronización está activa, puedes presionar F10 en la aplicación para actualizar los mods activos en el juego.
+
+Habilitar y deshabilitar mods también actualizará automáticamente el funcionamiento de 3DMigoto en el juego. El proceso de sincronización debe finalizar automáticamente después de cerrar el programa.
+
+Después de presionar el botón de Inicio, aparecerá una solicitud de Control de Cuentas de Usuario (UAC) para permisos de administrador.
+
+(Para esto es necesario que el juego y 3Dmigoto estén ejecutándose, al presionar F10)</value>
+  </data>
+  <data name="StartElevatorDialogTitle" xml:space="preserve">
+    <value>¿Iniciar sincronización?</value>
+  </data>
+</root>

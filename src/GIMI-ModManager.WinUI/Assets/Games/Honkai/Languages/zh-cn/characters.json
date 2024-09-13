@@ -1,0 +1,969 @@
+[
+  {
+    "InternalName": "Others",
+    "DisplayName": "其他角色"
+  },
+  {
+    "InternalName": "Weapons",
+    "DisplayName": "光锥"
+  },
+  {
+    "Keys": [
+      "trailblazer"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "trailblazer.gif",
+    "Rarity": 5,
+    "Element": "Adaptive",
+    "Class": "Adaptive",
+    "Region": [
+      "Astral Express"
+    ],
+    "ModFilesName": "trailblazer",
+    "InGameSkins": [],
+    "InternalName": "Trailblazer",
+    "DisplayName": "开拓者"
+  },
+  {
+    "Keys": [
+      "arlan"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "arlan.png",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Destruction",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "Arlan",
+    "InGameSkins": [],
+    "InternalName": "Arlan",
+    "DisplayName": "阿兰"
+  },
+  {
+    "Keys": [
+      "asta"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "asta.png",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Harmony",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "Asta",
+    "InGameSkins": [],
+    "InternalName": "Asta",
+    "DisplayName": "艾丝妲"
+  },
+  {
+    "Keys": [
+      "bailu"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "bailu.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Bailu",
+    "InGameSkins": [],
+    "InternalName": "Bailu",
+    "DisplayName": "白露"
+  },
+  {
+    "Keys": [
+      "blade"
+    ],
+    "ReleaseDate": "2023-07-19T00:00:00",
+    "Image": "blade.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Blade",
+    "InGameSkins": [],
+    "InternalName": "Blade",
+    "DisplayName": "刃"
+  },
+  {
+    "Keys": [
+      "bronya"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "bronya.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Harmony",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Bronya",
+    "InGameSkins": [],
+    "InternalName": "Bronya",
+    "DisplayName": "布洛妮娅"
+  },
+  {
+    "Keys": [
+      "clara"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "clara.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Destruction",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Clara",
+    "InGameSkins": [],
+    "InternalName": "Clara",
+    "DisplayName": "克拉拉"
+  },
+  {
+    "Keys": [
+      "danheng"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "danheng.png",
+    "Rarity": 4,
+    "Element": "Wind",
+    "Class": "Hunt",
+    "Region": [
+      "Astral Express"
+    ],
+    "ModFilesName": "Dan Heng",
+    "InGameSkins": [],
+    "InternalName": "Dan Heng",
+    "DisplayName": "丹恒"
+  },
+  {
+    "Keys": [
+      "danheng-IL"
+    ],
+    "ReleaseDate": "2023-08-30T00:00:00",
+    "Image": "DHIL.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Dan Heng IL",
+    "InGameSkins": [],
+    "InternalName": "Dan Heng IL",
+    "DisplayName": "丹恒•饮月"
+  },
+  {
+    "Keys": [
+      "fu xuan"
+    ],
+    "ReleaseDate": "2023-09-20T00:00:00",
+    "Image": "fuxuan.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Preservation",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "FuXuan",
+    "InGameSkins": [],
+    "InternalName": "FuXuan",
+    "DisplayName": "符玄"
+  },
+  {
+    "Keys": [
+      "gepard"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "gepard.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Preservation",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Gepard",
+    "InGameSkins": [],
+    "InternalName": "Gepard",
+    "DisplayName": "杰帕德"
+  },
+  {
+    "Keys": [
+      "guinaifen"
+    ],
+    "ReleaseDate": "2023-10-27T00:00:00",
+    "Image": "guinaifen.png",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Guinaifen",
+    "InGameSkins": [],
+    "InternalName": "Guinaifen",
+    "DisplayName": "桂乃芬"
+  },
+  {
+    "Keys": [
+      "herta"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "herta.png",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Erudition",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "Herta",
+    "InGameSkins": [],
+    "InternalName": "Herta",
+    "DisplayName": "黑塔"
+  },
+  {
+    "Keys": [
+      "himeko"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "himeko.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Erudition",
+    "Region": [
+      "Astral Express"
+    ],
+    "ModFilesName": "Himeko",
+    "InGameSkins": [],
+    "InternalName": "Himeko",
+    "DisplayName": "姬子"
+  },
+  {
+    "Keys": [
+      "hook"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "hook.png",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Destruction",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Hook",
+    "InGameSkins": [],
+    "InternalName": "Hook",
+    "DisplayName": "虎克"
+  },
+  {
+    "Keys": [
+      "jingyuan"
+    ],
+    "ReleaseDate": "2023-05-17T00:00:00",
+    "Image": "jingyuan.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "JingYuan",
+    "InGameSkins": [],
+    "InternalName": "JingYuan",
+    "DisplayName": "景元"
+  },
+  {
+    "Keys": [
+      "jingliu"
+    ],
+    "ReleaseDate": "2023-10-11T00:00:00",
+    "Image": "jingliu.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Jingliu",
+    "InGameSkins": [],
+    "InternalName": "Jingliu",
+    "DisplayName": "镜流"
+  },
+  {
+    "Keys": [
+      "kafka"
+    ],
+    "ReleaseDate": "2023-08-09T00:00:00",
+    "Image": "kafka.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Nihility",
+    "Region": [
+      "Pteruges-V"
+    ],
+    "ModFilesName": "Kafka",
+    "InGameSkins": [],
+    "InternalName": "Kafka",
+    "DisplayName": "卡芙卡"
+  },
+  {
+    "Keys": [
+      "luka"
+    ],
+    "ReleaseDate": "2023-08-09T00:00:00",
+    "Image": "luka.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Nihility",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Luka",
+    "InGameSkins": [],
+    "InternalName": "Luka",
+    "DisplayName": "卢卡"
+  },
+  {
+    "Keys": [
+      "luocha"
+    ],
+    "ReleaseDate": "2023-06-28T00:00:00",
+    "Image": "luocha.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Luocha",
+    "InGameSkins": [],
+    "InternalName": "Luocha",
+    "DisplayName": "罗刹"
+  },
+  {
+    "Keys": [
+      "lynx"
+    ],
+    "ReleaseDate": "2023-09-20T00:00:00",
+    "Image": "lynx.png",
+    "Rarity": 4,
+    "Element": "Quantum",
+    "Class": "Abundance",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Lynx",
+    "InGameSkins": [],
+    "InternalName": "Lynx",
+    "DisplayName": "玲可"
+  },
+  {
+    "Keys": [
+      "march7"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "march7.png",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Preservation",
+    "Region": [
+      "Astral Express"
+    ],
+    "ModFilesName": "March7",
+    "InGameSkins": [
+      {
+        "ModFilesName": "March7thHunt",
+        "Image": "Character_Skin_March7Hunt_Thumb.png",
+        "InternalName": "March7Hunt",
+        "DisplayName": "三月七•巡猎"
+      }
+    ],
+    "InternalName": "March7",
+    "DisplayName": "三月七"
+  },
+  {
+    "Keys": [
+      "natasha"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "natasha.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Abundance",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Natasha",
+    "InGameSkins": [],
+    "InternalName": "Natasha",
+    "DisplayName": "娜塔莎"
+  },
+  {
+    "Keys": [
+      "pela"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "pela.png",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Nihility",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Pela",
+    "InGameSkins": [],
+    "InternalName": "Pela",
+    "DisplayName": "佩拉"
+  },
+  {
+    "Keys": [
+      "qingque"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "qingque.png",
+    "Rarity": 4,
+    "Element": "Quantum",
+    "Class": "Erudition",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Qingque",
+    "InGameSkins": [],
+    "InternalName": "Qingque",
+    "DisplayName": "青雀"
+  },
+  {
+    "Keys": [
+      "sampo"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "sampo.png",
+    "Rarity": 4,
+    "Element": "Wind",
+    "Class": "Nihility",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Sampo",
+    "InGameSkins": [],
+    "InternalName": "Sampo",
+    "DisplayName": "桑博"
+  },
+  {
+    "Keys": [
+      "seele"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "seele.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Hunt",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Seele",
+    "InGameSkins": [],
+    "InternalName": "Seele",
+    "DisplayName": "希儿"
+  },
+  {
+    "Keys": [
+      "serval"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "serval.png",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Erudition",
+    "Region": [
+      "Jarilo VI"
+    ],
+    "ModFilesName": "Serval",
+    "InGameSkins": [],
+    "InternalName": "Serval",
+    "DisplayName": "希露瓦"
+  },
+  {
+    "Keys": [
+      "silverwolf"
+    ],
+    "ReleaseDate": "2023-06-07T00:00:00",
+    "Image": "silverwolf.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Nihility",
+    "Region": [
+      "Punklorde"
+    ],
+    "ModFilesName": "SilverWolf",
+    "InGameSkins": [],
+    "InternalName": "SilverWolf",
+    "DisplayName": "银狼"
+  },
+  {
+    "Keys": [
+      "sushang"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "sushang.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Sushang",
+    "InGameSkins": [],
+    "InternalName": "Sushang",
+    "DisplayName": "素裳"
+  },
+  {
+    "Keys": [
+      "tingyun"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "tingyun.png",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Tingyun",
+    "InGameSkins": [],
+    "InternalName": "Tingyun",
+    "DisplayName": "停云"
+  },
+  {
+    "Keys": [
+      "topaz"
+    ],
+    "ReleaseDate": "2023-10-27T00:00:00",
+    "Image": "topaz.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Hunt",
+    "Region": [
+      "IPC"
+    ],
+    "ModFilesName": "Topaz",
+    "InGameSkins": [],
+    "InternalName": "Topaz",
+    "DisplayName": "托帕&账账"
+  },
+  {
+    "Keys": [
+      "welt"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "welt.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Nihility",
+    "Region": [
+      "Astral Express"
+    ],
+    "ModFilesName": "Welt",
+    "InGameSkins": [],
+    "InternalName": "Welt",
+    "DisplayName": "瓦尔特"
+  },
+  {
+    "Keys": [
+      "yanqing"
+    ],
+    "ReleaseDate": "2023-04-26T00:00:00",
+    "Image": "yanqing.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Yanqing",
+    "InGameSkins": [],
+    "InternalName": "Yanqing",
+    "DisplayName": "彦卿"
+  },
+  {
+    "Keys": [
+      "yukong"
+    ],
+    "ReleaseDate": "2023-06-28T00:00:00",
+    "Image": "yukong.png",
+    "Rarity": 4,
+    "Element": "Imaginary",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Yukong",
+    "InGameSkins": [],
+    "InternalName": "Yukong",
+    "DisplayName": "驭空"
+  },
+  {
+    "Keys": [
+      "argenti"
+    ],
+    "ReleaseDate": "2023-12-06T00:00:00",
+    "Image": "argenti.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Erudition",
+    "Region": [
+      "Cosmic"
+    ],
+    "ModFilesName": "Argenti",
+    "InGameSkins": [],
+    "InternalName": "Argenti",
+    "DisplayName": "银枝"
+  },
+  {
+    "Keys": [
+      "drratio"
+    ],
+    "ReleaseDate": "2024-01-17T00:00:00",
+    "Image": "drratio.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Hunt",
+    "Region": [
+      "Cosmic"
+    ],
+    "ModFilesName": "DrRatio",
+    "InGameSkins": [],
+    "InternalName": "DrRatio",
+    "DisplayName": "真理医生"
+  },
+  {
+    "Keys": [
+      "hanya"
+    ],
+    "ReleaseDate": "2023-12-06T00:00:00",
+    "Image": "hanya.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Harmony",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Hanya",
+    "InGameSkins": [],
+    "InternalName": "Hanya",
+    "DisplayName": "寒鸦"
+  },
+  {
+    "Keys": [
+      "huohuo"
+    ],
+    "ReleaseDate": "2023-12-06T00:00:00",
+    "Image": "huohuo.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Huohuo",
+    "InGameSkins": [],
+    "InternalName": "Huohuo",
+    "DisplayName": "藿藿"
+  },
+  {
+    "Keys": [
+      "ruanmei"
+    ],
+    "ReleaseDate": "2023-12-27T00:00:00",
+    "Image": "ruanmei.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Harmony",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "RuanMei",
+    "InGameSkins": [],
+    "InternalName": "RuanMei",
+    "DisplayName": "阮•梅"
+  },
+  {
+    "Keys": [
+      "xueyi"
+    ],
+    "ReleaseDate": "2023-12-27T00:00:00",
+    "Image": "xueyi.png",
+    "Rarity": 4,
+    "Element": "Quantum",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Luofu"
+    ],
+    "ModFilesName": "Xueyi",
+    "InGameSkins": [],
+    "InternalName": "Xueyi",
+    "DisplayName": "雪衣"
+  },
+  {
+    "Keys": [
+      "blackswan"
+    ],
+    "ReleaseDate": "2024-02-06T00:00:00",
+    "Image": "blackswan.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Nihility",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "BlackSwan",
+    "InGameSkins": [],
+    "InternalName": "BlackSwan",
+    "DisplayName": "黑天鹅"
+  },
+  {
+    "Keys": [
+      "sparkle"
+    ],
+    "ReleaseDate": "2024-02-29T00:00:00",
+    "Image": "sparkle.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Harmony",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Sparkle",
+    "InGameSkins": [],
+    "InternalName": "Sparkle",
+    "DisplayName": "花火"
+  },
+  {
+    "Keys": [
+      "misha"
+    ],
+    "ReleaseDate": "2024-02-29T00:00:00",
+    "Image": "misha.png",
+    "Rarity": 4,
+    "Element": "Ice",
+    "Class": "Destruction",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Misha",
+    "InGameSkins": [],
+    "InternalName": "Misha",
+    "DisplayName": "米沙"
+  },
+  {
+    "Keys": [
+      "acheron"
+    ],
+    "ReleaseDate": "2024-03-27T00:00:00",
+    "Image": "acheron.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Nihility",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Acheron",
+    "InGameSkins": [],
+    "InternalName": "Acheron",
+    "DisplayName": "黄泉"
+  },
+  {
+    "Keys": [
+      "aventurine"
+    ],
+    "ReleaseDate": "2024-03-27T00:00:00",
+    "Image": "aventurine.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Preservation",
+    "Region": [
+      "IPC"
+    ],
+    "ModFilesName": "Aventurine",
+    "InGameSkins": [],
+    "InternalName": "Aventurine",
+    "DisplayName": "砂金"
+  },
+  {
+    "Keys": [
+      "gallagher"
+    ],
+    "ReleaseDate": "2024-03-27T00:00:00",
+    "Image": "gallagher.png",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Abundance",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Gallagher",
+    "InGameSkins": [],
+    "InternalName": "Gallagher",
+    "DisplayName": "加拉赫"
+  },
+  {
+    "Keys": [
+      "robin"
+    ],
+    "ReleaseDate": "2024-05-07T00:00:00",
+    "Image": "robin.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Harmony",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Robin",
+    "InGameSkins": [],
+    "InternalName": "Robin",
+    "DisplayName": "知更鸟"
+  },
+  {
+    "Keys": [
+      "boothill"
+    ],
+    "ReleaseDate": "2024-05-07T00:00:00",
+    "Image": "boothill.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Hunt",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Boothill",
+    "InGameSkins": [],
+    "InternalName": "Boothill",
+    "DisplayName": "波提欧"
+  },
+  {
+    "Keys": [
+      "firefly"
+    ],
+    "ReleaseDate": "2024-06-18T00:00:00",
+    "Image": "firefly.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Destruction",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Firefly",
+    "InGameSkins": [],
+    "InternalName": "Firefly",
+    "DisplayName": "流萤"
+  },
+  {
+    "Keys": [
+      "jade"
+    ],
+    "ReleaseDate": "2024-06-18T00:00:00",
+    "Image": "jade.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Erudition",
+    "Region": [
+      "IPC"
+    ],
+    "ModFilesName": "Jade",
+    "InGameSkins": [],
+    "InternalName": "Jade",
+    "DisplayName": "翡翠"
+  },
+  {
+    "Keys": [
+      "yunli"
+    ],
+    "ReleaseDate": "2024-07-31T00:00:00",
+    "Image": "yunli.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Destruction",
+    "Region": [
+      "The Xianzhou Zhuming"
+    ],
+    "ModFilesName": "Yunli",
+    "InGameSkins": [],
+    "InternalName": "Yunli",
+    "DisplayName": "云璃"
+  },
+  {
+    "Keys": [
+      "jiaoqiu"
+    ],
+    "ReleaseDate": "2024-08-21T00:00:00",
+    "Image": "jiaoqiu.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Jiaoqiu",
+    "InGameSkins": [],
+    "InternalName": "Jiaoqiu",
+    "DisplayName": "椒丘"
+  },
+  {
+    "Keys": [
+      "feixiao"
+    ],
+    "ReleaseDate": "2024-09-10T00:00:00",
+    "Image": "feixiao.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Feixiao",
+    "InGameSkins": [],
+    "InternalName": "Feixiao",
+    "DisplayName": "飞霄"
+  },
+  {
+    "Keys": [
+      "Lingsha"
+    ],
+    "ReleaseDate": "2024-10-01T00:00:00",
+    "Image": "lingsha.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Abundance",
+    "Region": [
+      "The Xianzhou Luofo"
+    ],
+    "ModFilesName": "Lingsha",
+    "InGameSkins": [],
+    "InternalName": "Lingsha",
+    "DisplayName": "灵砂"
+  },
+  {
+    "Keys": [
+      "Moze"
+    ],
+    "ReleaseDate": "",
+    "Image": "moze.png",
+    "Rarity": 4,
+    "Element": "Lightning",
+    "Class": "Hunt",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Moze",
+    "InGameSkins": [],
+    "InternalName": "Moze",
+    "DisplayName": "貊泽"
+  }
+]
