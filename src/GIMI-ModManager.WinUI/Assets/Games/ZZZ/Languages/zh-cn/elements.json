@@ -1,0 +1,27 @@
+[
+	{
+		"InternalName": "Fire",
+		"DisplayName": "火",
+		"Image": "Fire.svg"
+	},
+	{
+		"InternalName": "Electric",
+		"DisplayName": "电",
+		"Image": "Electric.svg"
+	},
+	{
+		"InternalName": "Ice",
+		"DisplayName": "冰",
+		"Image": "Ice.svg"
+	},
+	{
+		"InternalName": "Physical",
+		"DisplayName": "物理",
+		"Image": "Physical.svg"
+	},
+	{
+		"InternalName": "Ether",
+		"DisplayName": "以太",
+		"Image": "Ether.svg"
+	}
+]

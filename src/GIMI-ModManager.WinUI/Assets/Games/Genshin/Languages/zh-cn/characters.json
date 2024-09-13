@@ -1,7 +1,7 @@
 [
   {
     "InternalName": "Others",
-    "DisplayName": "其他"
+    "DisplayName": "其他角色"
   },
   {
     "InternalName": "Weapons",
@@ -454,5 +454,73 @@
   {
     "InternalName": "Sethos",
     "DisplayName": "赛索斯"
+  },
+  {
+    "Keys": [
+      "Emilie"
+    ],
+    "ReleaseDate": "2024-08-06T00:00:00",
+    "Image": "Character_Emilie_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Polearm",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Emilie",
+    "InGameSkins": [],
+    "InternalName": "Emilie",
+    "DisplayName": "艾梅莉埃"
+  },
+  {
+    "Keys": [
+      "Mualani"
+    ],
+    "ReleaseDate": "2024-08-28T00:00:00",
+    "Image": "Character_Mualani_Thumb.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Mualani",
+    "InGameSkins": [],
+    "InternalName": "Mualani",
+    "DisplayName": "玛拉妮"
+  },
+  {
+    "Keys": [
+      "Kinich"
+    ],
+    "ReleaseDate": "2024-09-18T00:00:00",
+    "Image": "Character_Kinich_Thumb.png",
+    "Rarity": 5,
+    "Element": "Dendro",
+    "Class": "Claymore",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Kinich",
+    "InGameSkins": [],
+    "InternalName": "Kinich",
+    "DisplayName": "基尼奇"
+  },
+  {
+    "Keys": [
+      "Kachina"
+    ],
+    "ReleaseDate": "2024-08-06T00:00:00",
+    "Image": "Character_Kachina_Thumb.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Polearm",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Kachina",
+    "InGameSkins": [],
+    "InternalName": "Kachina",
+    "DisplayName": "卡齐娜"
   }
 ]

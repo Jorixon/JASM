@@ -1,0 +1,11 @@
+{
+  "GameName": "Wuthering Waves",
+  "GameShortName": "WuWa",
+  "RarityName": "Rarity",
+  "GameIcon": "Start_Game.png",
+  "GameBananaUrl": "https://gamebanana.com/games/20357",
+  "GameModelImporterUrl": "https://gamebanana.com/tools/17252",
+  "GameModelImporterName": "Wuthering Waves Model Importer",
+  "GameModelImporterShortName": "WWMI",
+  "GameModelImporterExeName": ["WWMI Loader.exe"]
+}
