@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.15.0](https://github.com/Jorixon/JASM/compare/v2.14.3...v2.15.0) (2024-09-13)
+
+
+### Features
+
+* **Genshin:** Added Nilou skin and Kirara skin ([c17fe45](https://github.com/Jorixon/JASM/commit/c17fe45574d27044d9a21dbb4ee862b2c51bce4c))
+* Save space in CharacterDetailsPage by making the first and second columns use less space ([#251](https://github.com/Jorixon/JASM/issues/251)) ([2204c06](https://github.com/Jorixon/JASM/commit/2204c06ab5f10915571bbfe6861f2084688d1cb5))
+* Updated Simplified Chinese Translation ([#247](https://github.com/Jorixon/JASM/issues/247)) ([6c2aa4c](https://github.com/Jorixon/JASM/commit/6c2aa4cf3316c624c7fc1008bf7a8d871ab84d25))
+* **ZZZ:** Added partial Spanish (Argentina) translation ([#238](https://github.com/Jorixon/JASM/issues/238)) ([b48ccf3](https://github.com/Jorixon/JASM/commit/b48ccf312a6e10c8e46e5d700a9dcf247054c118))
+
+
+### Miscellaneous
+
+* Updated application packages ([#254](https://github.com/Jorixon/JASM/issues/254)) ([c17fe45](https://github.com/Jorixon/JASM/commit/c17fe45574d27044d9a21dbb4ee862b2c51bce4c))
+* Updated WinAppSDK to 1.6 ([c17fe45](https://github.com/Jorixon/JASM/commit/c17fe45574d27044d9a21dbb4ee862b2c51bce4c))
+
 ## [2.14.3](https://github.com/Jorixon/JASM/compare/v2.14.2...v2.14.3) (2024-08-26)
 
 
