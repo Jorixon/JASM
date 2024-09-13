@@ -68,7 +68,7 @@ public class CharactersJsonTests : IDisposable
                 $"Duplicate subskin name: {characterSkins.First().InternalName} in characters: {string.Join(", ", characterSkins.Select(skin => skin.Character.InternalName))}");
         }
 
-        Assert.Empty(subSkins.GroupBy(subSkin => subSkin.InternalName.Id).Where(g => g.Count() > 1));
+        Assert.DoesNotContain(subSkins.GroupBy(subSkin => subSkin.InternalName.Id), g => g.Count() > 1);
     }
 
     public void Dispose()

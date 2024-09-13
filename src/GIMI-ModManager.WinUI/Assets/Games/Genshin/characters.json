@@ -649,7 +649,14 @@
       "Inazuma"
     ],
     "ModFilesName": "Kirara",
-    "InGameSkins": [],
+    "InGameSkins": [
+		{
+			"ModFilesName": "KiraraPhantom",
+			"Image": "Character_Skin_KiraraPhantom_Thumb.webp",
+			"InternalName": "Kirara Phantom in Boots",
+			"DisplayName": "Phantom in Boots"
+		  }
+	],
     "InternalName": "Kirara",
     "DisplayName": "Kirara"
   },
@@ -894,7 +901,14 @@
       "Sumeru"
     ],
     "ModFilesName": "Nilou",
-    "InGameSkins": [],
+    "InGameSkins": [
+		{
+			"ModFilesName": "NilouBreeze",
+			"Image": "Character_Skin_NilouBreeze_Thumb.webp",
+			"InternalName": "Nilou Breeze of Sabaa",
+			"DisplayName": "Breeze of Sabaa"
+		  }
+	],
     "InternalName": "Nilou",
     "DisplayName": "Nilou"
   },
