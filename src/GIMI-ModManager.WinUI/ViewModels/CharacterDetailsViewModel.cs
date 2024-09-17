@@ -71,6 +71,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
 
     [ObservableProperty] private bool _isICharacter = false;
 
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsFullPagerLoaderHidden))]
+    private bool _isFullPageLoaderVisible = true;
+
+    public bool IsFullPagerLoaderHidden => !IsFullPageLoaderVisible;
+
 
     public CharacterDetailsViewModel(IGameService gameService, ILogger logger,
         INavigationService navigationService, ISkinManagerService skinManagerService,
