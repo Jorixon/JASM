@@ -8,7 +8,8 @@ namespace GIMI_ModManager.WinUI.Services;
 public class LocalSettingsService : ILocalSettingsService
 {
     private const string _defaultApplicationDataFolder = "ApplicationData";
-    private const string _defaultLocalSettingsFile = "LocalSettings.json";
+    private const string _defaultLocalSettingsFileName = "LocalSettings.json";
+    private const string _defaultAppScopedSettingsFileName = "LocalAppSettings.json";
     private const string _jasm = "JASM";
 
     private readonly IFileService _fileService;
@@ -17,15 +18,18 @@ public class LocalSettingsService : ILocalSettingsService
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
     private string _applicationDataFolder;
-    private readonly string _localsettingsFile;
+    private readonly string _localSettingsFile;
+    private readonly string _appScopedSettingsFile = _defaultAppScopedSettingsFileName;
 
     private IDictionary<string, object> _settings;
 
     private bool _isInitialized;
 
-    public string SettingsLocation => Path.Combine(_applicationDataFolder, _localsettingsFile);
+    public string GameScopedSettingsLocation => Path.Combine(_applicationDataFolder, _localSettingsFile);
+    public string AppScopedSettingsLocation => Path.Combine(_localApplicationData, _jasm, _appScopedSettingsFile);
 
     public string ApplicationDataFolder => _applicationDataFolder;
+
 
     public LocalSettingsService(IFileService fileService)
     {
@@ -36,7 +40,13 @@ public class LocalSettingsService : ILocalSettingsService
 #else
         _applicationDataFolder = Path.Combine(_localApplicationData, _jasm, _defaultApplicationDataFolder);
 #endif
-        _localsettingsFile = _defaultLocalSettingsFile;
+
+#if DEBUG
+        _appScopedSettingsFile = Path.GetFileNameWithoutExtension(_appScopedSettingsFile) + "_Debug" +
+                                 Path.GetExtension(_appScopedSettingsFile);
+#endif
+
+        _localSettingsFile = _defaultLocalSettingsFileName;
 
         _settings = new Dictionary<string, object>();
     }
@@ -46,9 +56,26 @@ public class LocalSettingsService : ILocalSettingsService
         if (!_isInitialized)
         {
             _settings = await Task.Run(() =>
-                            _fileService.Read<Dictionary<string, object>>(_applicationDataFolder,
-                                _localsettingsFile)) ??
-                        new Dictionary<string, object>();
+            {
+                if (!File.Exists(GameScopedSettingsLocation))
+                    File.Create(GameScopedSettingsLocation).Dispose();
+
+                if (!File.Exists(AppScopedSettingsLocation))
+                    File.Create(AppScopedSettingsLocation).Dispose();
+
+                var appScopedSettings =
+                    _fileService.Read<Dictionary<string, object>>(_localApplicationData, _appScopedSettingsFile);
+
+                var gameScopedSettings =
+                    _fileService.Read<Dictionary<string, object>>(_applicationDataFolder, _localSettingsFile);
+
+                foreach (var (key, _) in appScopedSettings)
+                {
+                    gameScopedSettings.Remove(key);
+                }
+
+                return gameScopedSettings.Concat(appScopedSettings).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            });
 
             _isInitialized = true;
         }
@@ -68,7 +95,7 @@ public class LocalSettingsService : ILocalSettingsService
         _settings = new Dictionary<string, object>();
     }
 
-    public async Task<T?> ReadSettingAsync<T>(string key)
+    public async Task<T?> ReadSettingAsync<T>(string key, SettingScope settingScope = SettingScope.Game)
     {
         await InitializeAsync();
 
@@ -78,22 +105,24 @@ public class LocalSettingsService : ILocalSettingsService
         return default;
     }
 
-    public async Task<T> ReadOrCreateSettingAsync<T>(string key) where T : new()
+    public async Task<T> ReadOrCreateSettingAsync<T>(string key, SettingScope settingScope = SettingScope.Game)
+        where T : new()
     {
         var setting = await ReadSettingAsync<T>(key);
         return setting ?? new T();
     }
 
-    public async Task SaveSettingAsync<T>(string key, T value) where T : notnull
+    public async Task SaveSettingAsync<T>(string key, T value, SettingScope settingScope = SettingScope.Game)
+        where T : notnull
     {
         await InitializeAsync();
 
         _settings[key] = await Json.StringifyAsync(value);
 
-        await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
+        await Task.Run(() => _fileService.Save(_applicationDataFolder, _localSettingsFile, _settings));
     }
 
-    public T? ReadSetting<T>(string key)
+    public T? ReadSetting<T>(string key, SettingScope settingScope = SettingScope.Game)
     {
         if (_settings != null && _settings.TryGetValue(key, out var obj))
             return JsonConvert.DeserializeObject<T>((string)obj);

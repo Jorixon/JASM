@@ -113,7 +113,7 @@ public class SelectedGameService
             throw new ArgumentException("Invalid game name.");
 
         string? oldGame = null;
-        if (!_localSettingsService.SettingsLocation.Equals(GetGameSpecificSettingsFolderName(game),
+        if (!_localSettingsService.GameScopedSettingsLocation.Equals(GetGameSpecificSettingsFolderName(game),
                 StringComparison.OrdinalIgnoreCase))
         {
             oldGame = game;
