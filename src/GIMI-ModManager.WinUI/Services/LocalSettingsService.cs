@@ -1,8 +1,6 @@
-﻿using Windows.Storage;
-using GIMI_ModManager.Core.Contracts.Services;
+﻿using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Helpers;
 using Newtonsoft.Json;
 
 namespace GIMI_ModManager.WinUI.Services;
@@ -25,10 +23,7 @@ public class LocalSettingsService : ILocalSettingsService
 
     private bool _isInitialized;
 
-    public string SettingsLocation =>
-        RuntimeHelper.IsMSIX
-            ? "Stored in ApplicationData"
-            : Path.Combine(_applicationDataFolder, _localsettingsFile);
+    public string SettingsLocation => Path.Combine(_applicationDataFolder, _localsettingsFile);
 
     public string ApplicationDataFolder => _applicationDataFolder;
 
@@ -75,18 +70,10 @@ public class LocalSettingsService : ILocalSettingsService
 
     public async Task<T?> ReadSettingAsync<T>(string key)
     {
-        if (RuntimeHelper.IsMSIX)
-        {
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-                return await Json.ToObjectAsync<T>((string)obj).ConfigureAwait(false);
-        }
-        else
-        {
-            await InitializeAsync();
+        await InitializeAsync();
 
-            if (_settings != null && _settings.TryGetValue(key, out var obj))
-                return await Json.ToObjectAsync<T>((string)obj).ConfigureAwait(false);
-        }
+        if (_settings != null && _settings.TryGetValue(key, out var obj))
+            return await Json.ToObjectAsync<T>((string)obj).ConfigureAwait(false);
 
         return default;
     }
@@ -99,33 +86,31 @@ public class LocalSettingsService : ILocalSettingsService
 
     public async Task SaveSettingAsync<T>(string key, T value) where T : notnull
     {
-        if (RuntimeHelper.IsMSIX)
-        {
-            ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value);
-        }
-        else
-        {
-            await InitializeAsync();
+        await InitializeAsync();
 
-            _settings[key] = await Json.StringifyAsync(value);
+        _settings[key] = await Json.StringifyAsync(value);
 
-            await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
-        }
+        await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
     }
 
     public T? ReadSetting<T>(string key)
     {
-        if (RuntimeHelper.IsMSIX)
-        {
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-                return JsonConvert.DeserializeObject<T>((string)obj);
-        }
-        else
-        {
-            if (_settings != null && _settings.TryGetValue(key, out var obj))
-                return JsonConvert.DeserializeObject<T>((string)obj);
-        }
+        if (_settings != null && _settings.TryGetValue(key, out var obj))
+            return JsonConvert.DeserializeObject<T>((string)obj);
 
         return default;
     }
+}
+
+public enum SettingScope
+{
+    /// <summary>
+    /// For settings that are for the entire application.
+    /// </summary>
+    App,
+
+    /// <summary>
+    /// Settings that are specific to the game.
+    /// </summary>
+    Game
 }

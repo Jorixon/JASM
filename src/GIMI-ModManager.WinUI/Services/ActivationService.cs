@@ -8,7 +8,6 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
-using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services.AppManagement;
@@ -46,8 +45,6 @@ public class ActivationService : IActivationService
     private readonly ModNotificationManager _modNotificationManager;
     private readonly LifeCycleService _lifeCycleService;
     private UIElement? _shell = null;
-
-    private readonly bool IsMsix = RuntimeHelper.IsMSIX;
 
 
     public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler,

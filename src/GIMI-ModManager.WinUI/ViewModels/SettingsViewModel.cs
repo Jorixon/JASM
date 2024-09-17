@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
-using Windows.ApplicationModel;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -274,19 +273,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private static string GetVersionDescription()
     {
-        Version version;
-
-        if (RuntimeHelper.IsMSIX)
-        {
-            var packageVersion = Package.Current.Id.Version;
-
-            version = new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build,
-                packageVersion.Revision);
-        }
-        else
-        {
-            version = Assembly.GetExecutingAssembly().GetName().Version!;
-        }
+        var version = Assembly.GetExecutingAssembly().GetName().Version!;
 
         return
             $"{"AppDisplayName".GetLocalized()} - {VersionFormatter(version)}";
@@ -406,13 +393,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private async Task RestartAppAsync(int delay = 2)
     {
         _navigationViewService.IsEnabled = false;
-
-        if (RuntimeHelper.IsMSIX)
-        {
-            _logger.Information("Restarting in MSIX mode not supported. Shutting down...");
-            Application.Current.Exit();
-            return;
-        }
 
         await Task.Delay(TimeSpan.FromSeconds(delay));
 
