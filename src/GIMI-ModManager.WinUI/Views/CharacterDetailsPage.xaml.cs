@@ -26,6 +26,8 @@ public sealed partial class CharacterDetailsPage : Page
 {
     public CharacterDetailsViewModel ViewModel { get; }
 
+    public Visibility PageLoader = Visibility.Visible;
+
     private readonly MenuFlyout _modListContextMenuFlyout = new();
 
     private static (string, ModListVM.SortMethod)? _currentSortMethod;
@@ -61,7 +63,7 @@ public sealed partial class CharacterDetailsPage : Page
             }
             finally
             {
-                ViewModel.IsFullPageLoaderVisible = false;
+                PageLoader = Visibility.Collapsed;
             }
 
             if (_currentSortMethod is null) return;
@@ -125,7 +127,6 @@ public sealed partial class CharacterDetailsPage : Page
     {
         if (ViewModel.ModListVM.BackendMods.Any())
         {
-            ViewModel.IsFullPageLoaderVisible = true;
             var stackPanel = MainContentArea.FindName("NoModsStackPanel") as StackPanel;
             if (stackPanel != null) stackPanel.Visibility = Visibility.Collapsed;
 
@@ -137,7 +138,6 @@ public sealed partial class CharacterDetailsPage : Page
         }
         else if (MainContentArea.FindName("NoModsStackPanel") is null)
         {
-            ViewModel.IsFullPageLoaderVisible = false;
             ModListGrid.Visibility = Visibility.Collapsed;
             ModDetailsPane.Visibility = Visibility.Collapsed;
             ModPaneSplitter.Visibility = Visibility.Collapsed;
@@ -205,10 +205,6 @@ public sealed partial class CharacterDetailsPage : Page
             dottedLineBox.Child = dropText;
 
             MainContentArea.Children.Add(stackPanel);
-        }
-        else
-        {
-            ViewModel.IsFullPageLoaderVisible = false;
         }
     }
 
