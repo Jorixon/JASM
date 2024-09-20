@@ -687,7 +687,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             return;
         }
 
-
+        var presetsUpdated = new List<ModPreset>();
         foreach (var modPreset in presets)
         {
             try
@@ -701,6 +701,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                     : null;
 
                 await _modPresetService.ReplaceModEntryAsync(modPreset.Name, newMod.Id, oldMod.Id, modPreferences);
+                presetsUpdated.Add(modPreset);
             }
             catch (Exception e)
             {
@@ -717,6 +718,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             .Where(preset => preset.Mods.Any(mod => mod.ModId == oldMod.Id))
             .ToArray();
 
+        // Mod is not in any presets
+        if (readOnlyPresetsWithMod.Length == 0 && presetsUpdated.Count == 0)
+            return;
+
         var readOnlyPresetsMessage = readOnlyPresetsWithMod.Length == 0
             ? ""
             : "The following presets were not updated due to being read-only: " +
@@ -724,12 +729,17 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
         TimeSpan? notificationDuration = readOnlyPresetsMessage.Any() ? null : TimeSpan.FromSeconds(6);
 
+        var presetsUpdatedMessage = presetsUpdated.Count == 0
+            ? ""
+            : "The mod was updated in the following presets: " +
+              string.Join(", ", presets.Select(p => p.Name)) + "\n" +
+              readOnlyPresetsMessage;
+
         var notification = new SimpleNotification(
-            title: "Mod was updated for presets",
-            message: "The mod was updated in the following presets: " +
-                     string.Join(", ", presets.Select(p => p.Name)) + "\n" +
-                     readOnlyPresetsMessage,
+            title: presetsUpdated.Count == 0 ? "Mod was not updated for any presets" : "Mod was updated for presets",
+            message: presetsUpdatedMessage,
             notificationDuration);
+
         _notificationManager.ShowNotification(notification);
     }
 
