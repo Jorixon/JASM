@@ -34,8 +34,8 @@
             <TextBlock
                 Grid.Column="0"
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind ViewModel.GetPageTitle, Mode=OneWay}"
-                TextWrapping="NoWrap" />
+                TextWrapping="NoWrap"
+                Text="{x:Bind ViewModel.GetPageTitle, Mode=OneWay}" />
 
             <ProgressRing
                 Grid.Column="1"
@@ -80,7 +80,7 @@
             animations:ItemsReorderAnimation.Duration="00:00:00.4460000"
             DesiredWidth="400"
             FlowDirection="LeftToRight"
-            ItemHeight="220"
+            ItemHeight="250"
             ItemsSource="{x:Bind ViewModel.ModEntries}"
             SelectionMode="None">
 
@@ -151,8 +151,8 @@
                                         <MenuFlyoutItem
                                             Command="{x:Bind ReplaceMissingModCommand}"
                                             CommandParameter="{Binding Mode=OneWay}"
-                                            Text="Find Replacement Mod"
-                                            Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            Visibility="{x:Bind IsMissing, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Text="Find Replacement Mod">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE8DA;" />
                                             </MenuFlyoutItem.Icon>
@@ -160,9 +160,9 @@
                                         <MenuFlyoutItem
                                             Command="{x:Bind ReadAndSavePreferencesCommand}"
                                             CommandParameter="{Binding Mode=OneWay}"
-                                            Text="Read and Save Preferences"
                                             ToolTipService.ToolTip="Read current 3Dmigoto user ini for his mod and save preference for this preset"
-                                            Visibility="{x:Bind IsNotMissing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            Visibility="{x:Bind IsNotMissing, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Text="Read and Save Preferences">
                                             <MenuFlyoutItem.Icon>
                                                 <FontIcon Glyph="&#xE74E;" />
                                             </MenuFlyoutItem.Icon>
@@ -206,14 +206,14 @@
                                 <TextBlock
                                     FontSize="16"
                                     IsTextSelectionEnabled="True"
-                                    Text="{x:Bind Name}"
-                                    TextWrapping="WrapWholeWords" />
+                                    TextWrapping="WrapWholeWords"
+                                    Text="{x:Bind Name}" />
 
                                 <controls1:LinkButton
                                     HorizontalAlignment="Center"
                                     Link="{x:Bind SourceUrl}"
-                                    Text="{x:Bind ModUrlName}"
-                                    Visibility="{x:Bind HasSourceUrl, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    Visibility="{x:Bind HasSourceUrl, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Text="{x:Bind ModUrlName}" />
 
                                 <StackPanel>
                                     <TextBlock HorizontalAlignment="Center" Text="Added To Preset At:" />
@@ -236,9 +236,9 @@
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         IsTextSelectionEnabled="True"
-                                        Text="{x:Bind FullPath}"
                                         TextWrapping="Wrap"
-                                        ToolTipService.ToolTip="{x:Bind FullPath}" />
+                                        ToolTipService.ToolTip="{x:Bind FullPath}"
+                                        Text="{x:Bind FullPath}" />
                                 </StackPanel>
                             </StackPanel>
 
