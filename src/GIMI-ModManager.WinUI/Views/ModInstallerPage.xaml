@@ -301,8 +301,8 @@
 
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedImageIcon}" />
-                        <TextBlock Margin="4,0" Text="PreviewImage:" />
-                        <TextBlock Text="Auto" />
+                        <TextBlock Margin="4,0" Text="Preview Image Source:" />
+                        <TextBlock Text="{x:Bind ViewModel.ImageSource, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel
                         Margin="0,0,0,8"

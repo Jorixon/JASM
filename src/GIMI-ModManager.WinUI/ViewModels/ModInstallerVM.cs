@@ -120,6 +120,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private FileSystemItem? _lastSelectedImageFile;
 
+    [ObservableProperty] private string _imageSource = "Auto";
+
     public ModInstallerVM(ILogger logger, ImageHandlerService imageHandlerService,
         NotificationManager notificationManager, IWindowManagerService windowManagerService,
         ModNotificationManager modNotificationManager, ILocalSettingsService localSettingsService,
@@ -161,7 +163,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         EnableThisMod = !_characterModList.Character.IsMultiMod && installerSettings.EnableModOnInstall;
         AlwaysOnTop = installerSettings.ModInstallerWindowOnTop;
 
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             var modDir = _modInstallation.AutoSetModRootFolder();
             if (modDir is not null)
@@ -188,6 +190,44 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             }
 
 
+            if (_installOptions?.ExistingModIdToUpdate is not null &&
+                _skinManagerService.GetModById(_installOptions.ExistingModIdToUpdate.Value) is { } oldModToUpdate)
+            {
+                var oldModSettings = await oldModToUpdate.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
+
+                if (oldModSettings is not null)
+                {
+                    var oldImage = oldModSettings.ImagePath;
+                    StorageFile? imageFile;
+                    try
+                    {
+                        imageFile = await _imageHandlerService.CopyImageToTmpFolder(oldImage).ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Failed to copy image from old mod");
+                        imageFile = null;
+                    }
+
+                    dispatcherQueue.TryEnqueue(() =>
+                    {
+                        if (imageFile is not null)
+                        {
+                            ClearModPreviewImage();
+                            ModPreviewImagePath = new Uri(imageFile.Path);
+                            ImageSource = "Image from existing Mod";
+                        }
+
+                        CustomName = oldModSettings.CustomName ?? string.Empty;
+                        Author = oldModSettings.Author ?? string.Empty;
+                        Description = oldModSettings.Description ?? string.Empty;
+                        ModUrl = oldModSettings.ModUrl?.ToString() ?? string.Empty;
+                    });
+                    return;
+                }
+            }
+
+
             var autoFoundImages = SkinModHelpers.DetectModPreviewImages(_modInstallation.ModFolder.FullName);
 
             if (autoFoundImages.Any())
@@ -197,6 +237,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                     var fileSystemItem = RootFolder.FirstOrDefault()
                         ?.GetByPath(autoFoundImages.FirstOrDefault()?.LocalPath ?? "");
                     SetModPreviewImage(fileSystemItem);
+                    ImageSource = "Local image found in new Mod";
                 });
 
             if (options?.ModUrl is not null)
@@ -208,7 +249,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     {
         if (e.PropertyName == nameof(ModUrl))
         {
-            if (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty())
+            if (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty() && ModPreviewImagePath != _placeholderImageUri)
                 return;
             await GetModInfo(ModUrl);
         }
@@ -405,6 +446,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         }
 
         LastSelectedImageFile = fileSystemItem;
+        ImageSource = "Local image selected from new Mod";
     }
 
     [RelayCommand]
@@ -416,6 +458,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             LastSelectedImageFile.RightIcon = null;
             LastSelectedImageFile = null;
         }
+
+        ImageSource = "Manual";
     }
 
     private bool _canCopyImage()
@@ -456,6 +500,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         try
         {
             imageUri = await Task.Run(() => _imageHandlerService.GetImageFromClipboardAsync());
+            ImageSource = "Manual";
         }
         catch (Exception e)
         {
@@ -486,6 +531,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
 
         ModPreviewImagePath = new Uri(imageUri.Path);
+        ImageSource = "Manual";
         if (LastSelectedImageFile is not null)
         {
             LastSelectedImageFile.RightIcon = null;
@@ -803,7 +849,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                         var newImage = await Task.Run(() => _imageHandlerService.DownloadImageAsync(newImageUrl, ct),
                             ct);
                         ModPreviewImagePath = new Uri(newImage.Path);
-
+                        ImageSource = "GB Mod Thumbnail";
                         if (LastSelectedImageFile is not null)
                         {
                             LastSelectedImageFile.RightIcon = null;
