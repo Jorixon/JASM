@@ -65,7 +65,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private string _modCharacterName = string.Empty;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ReRetrieveModInfoCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ReRetrieveModInfoCommand))]
     private bool _isRetrievingModInfo;
 
     [ObservableProperty] private FileSystemItem? _lastSelectedShaderFixesFolder;
@@ -85,7 +86,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [ObservableProperty] private Uri _modPreviewImagePath = App.GetService<ImageHandlerService>().PlaceholderImageUri;
     [ObservableProperty] private string _customName = string.Empty;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ReRetrieveModInfoCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ReRetrieveModInfoCommand))]
     private string _modUrl = string.Empty;
 
     [ObservableProperty] private string _author = string.Empty;
