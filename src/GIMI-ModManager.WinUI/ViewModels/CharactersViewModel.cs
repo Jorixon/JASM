@@ -78,6 +78,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private string _categoryPageTitle = string.Empty;
     [ObservableProperty] private string _modToggleText = string.Empty;
+    [ObservableProperty] private string _modNotificationsToggleText = string.Empty;
     [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
     [ObservableProperty]
@@ -314,6 +315,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         CategoryPageTitle =
             $"{category.DisplayName} {_localizer.GetLocalizedStringOrDefault("Overview", useUidAsDefaultValue: true)}";
         ModToggleText = $"Show only {category.DisplayNamePlural} with Mods";
+        ModNotificationsToggleText = $"Show only {category.DisplayNamePlural} with Mod Notifications";
         SearchBoxPlaceHolder = $"Search {category.DisplayNamePlural}...";
 
 
@@ -457,14 +459,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         // Character Ids where more than 1 skin is enabled
         await RefreshMultipleModsWarningAsync();
 
-
-        if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
-        {
-            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
-                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
-        }
-
-
         // ShowOnlyModsCharacters
         var settings =
             await _localSettingsService
@@ -474,6 +468,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             ShowOnlyCharactersWithMods = true;
             _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
                 _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+        }
+
+        if (settings.ShowOnlyModsWithNotifications)
+        {
+            ShowOnlyModsWithNotifications = true;
+            _filters[FilterType.HasModNotifications] =
+                new GridFilter(characterGridItemModel => characterGridItemModel.Notification);
         }
 
         SortByDescending = settings.SortByDescending;
@@ -672,6 +673,42 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var settings = await ReadCharacterSettings();
 
         settings.ShowOnlyCharactersWithMods = ShowOnlyCharactersWithMods;
+
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
+    [ObservableProperty] private bool _showOnlyModsWithNotifications;
+
+    [RelayCommand]
+    private async Task ShowOnlyCharactersWithModNotificationsAsync()
+    {
+        if (ShowOnlyModsWithNotifications)
+        {
+            ShowOnlyModsWithNotifications = false;
+
+            _filters.Remove(FilterType.HasModNotifications);
+
+            ResetContent();
+            var settingss = await ReadCharacterSettings();
+
+
+            settingss.ShowOnlyModsWithNotifications = ShowOnlyModsWithNotifications;
+
+            await SaveCharacterSettings(settingss);
+
+            return;
+        }
+
+        _filters[FilterType.HasModNotifications] = new GridFilter(characterGridItem =>
+            characterGridItem.Notification);
+
+        ShowOnlyModsWithNotifications = true;
+
+        ResetContent();
+
+        var settings = await ReadCharacterSettings();
+
+        settings.ShowOnlyModsWithNotifications = ShowOnlyModsWithNotifications;
 
         await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
@@ -962,7 +999,8 @@ public enum FilterType
 {
     Element,
     Search,
-    HasMods
+    HasMods,
+    HasModNotifications
 }
 
 public sealed class SortingMethod
