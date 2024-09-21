@@ -16,7 +16,7 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<BaseOutputPath></BaseOutputPath>
 		<!-- x-release-please-start-version -->
-		<VersionPrefix>2.15.0</VersionPrefix>
+		<VersionPrefix>2.16.0</VersionPrefix>
 		<!-- x-release-please-end -->
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
@@ -622,6 +622,7 @@
 		<None Remove="Views\DebugPage.xaml" />
 		<None Remove="Views\EasterEggPage.xaml" />
 		<None Remove="Views\ErrorWindow.xaml" />
+		<None Remove="Views\GbModPageWindow.xaml" />
 		<None Remove="Views\ModInstallerPage.xaml" />
 		<None Remove="Views\ModSelector.xaml" />
 		<None Remove="Views\ModsOverviewPage.xaml" />
@@ -702,6 +703,12 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\BoolBorder.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\GbModPageWindow.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\GbModPageWindow.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\ModUpdateAvailableWindow.xaml">

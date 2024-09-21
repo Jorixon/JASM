@@ -3,21 +3,21 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
-using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
-using GIMI_ModManager.WinUI.ViewModels.ModPageViewModels;
 using Microsoft.UI.Dispatching;
 using Serilog;
 
-namespace GIMI_ModManager.WinUI.ViewModels;
+namespace GIMI_ModManager.WinUI.ViewModels.ModPageViewModels;
 
-public partial class ModUpdateVM : ObservableRecipient
+public partial class ModPageVM : ObservableRecipient
 {
     private readonly GameBananaCoreService _gameBananaCoreService = App.GetService<GameBananaCoreService>();
     private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
@@ -27,11 +27,11 @@ public partial class ModUpdateVM : ObservableRecipient
     private readonly ArchiveService _archiveService = App.GetService<ArchiveService>();
 
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly Guid _notificationId;
     private ICharacterModList _characterModList = null!;
+    private readonly IModdableObject _moddableObject;
     private readonly WindowEx _window;
-    private ModNotification? _notification;
     private List<ModFileInfo> _modFiles = new();
+    private GbModId _gbModId = null!;
     private readonly CancellationToken _ct;
 
     private ModPageInfo? _modPageInfo;
@@ -42,15 +42,13 @@ public partial class ModUpdateVM : ObservableRecipient
 
     [ObservableProperty] private Uri _modPage = new("https://gamebanana.com/");
 
-    [ObservableProperty] private Uri? _modPath = null;
-
-    [ObservableProperty] private DateTime _lastUpdateCheck = DateTime.Now;
+    [ObservableProperty] private Uri? _characterModListPath = null;
 
     [ObservableProperty] private bool _isOpenDownloadButtonEnabled = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    [NotifyCanExecuteChangedFor(nameof(IgnoreAndCloseCommand), nameof(StartDownloadCommand),
+    [NotifyCanExecuteChangedFor(nameof(CloseCommand), nameof(StartDownloadCommand),
         nameof(StartInstallCommand))]
     private bool _isWindowBusy = false;
 
@@ -60,11 +58,13 @@ public partial class ModUpdateVM : ObservableRecipient
     public readonly ObservableCollection<ModFileInfoVm> ModFileInfos = new();
     private readonly ILogger _logger = App.GetService<ILogger>().ForContext<ModUpdateVM>();
 
-    public ModUpdateVM(Guid notificationId, WindowEx window, CancellationToken ctsToken)
+    public ModPageVM(Uri modPage, IModdableObject moddableObject, WindowEx window, CancellationToken ctsToken)
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _notificationId = notificationId;
+        _moddableObject = moddableObject;
+        ModPage = modPage;
         _window = window;
+        _window.Title = "Download Mod files";
         _ct = ctsToken;
         Initialize();
     }
@@ -86,44 +86,23 @@ public partial class ModUpdateVM : ObservableRecipient
     private async Task InternalInitialize()
     {
         IsWindowBusy = true;
-        _notification =
-            await _modNotificationManager.GetNotificationById(_notificationId);
 
-        if (_notification?.ModsRetrievedResult is null)
-        {
-            await LogErrorAndClose(new InvalidOperationException("Failed to get mod page info, mod info is missing"));
-            return;
-        }
+        if (GameBananaUrlHelper.TryGetModIdFromUrl(ModPage, out var modId))
+            _gbModId = modId;
+        else
+            await LogErrorAndClose(new InvalidGameBananaUrlException($"Invalid GameBanana url: {ModPage}"));
 
-        var characterSkinEntry = _skinManagerService.GetModEntryById(_notification.ModId);
 
-        if (characterSkinEntry is null)
-        {
-            await LogErrorAndClose(new InvalidOperationException($"Mod with id {_notification.ModId} not found"));
-            return;
-        }
-
-        _characterModList = characterSkinEntry.ModList;
-        var mod = characterSkinEntry.Mod;
-
-        var modSettings = mod.Settings.GetSettingsLegacy().TryPickT0(out var settings, out _) ? settings : null;
-
-        if (modSettings is null)
-        {
-            await LogErrorAndClose(new ModSettingsNotFoundException($"Mod settings not found for mod {mod.FullPath}"));
-            return;
-        }
+        _characterModList = _skinManagerService.GetCharacterModList(_moddableObject);
 
         if (!await _gameBananaCoreService.HealthCheckAsync(_ct))
         {
             await LogErrorAndClose(
-                new InvalidOperationException("Failed to get mod page info, GameBanana Api is not available"),
-                removeNotification: false);
+                new InvalidOperationException("Failed to get mod page info, GameBanana Api is not available"));
             return;
         }
 
-        _modPageInfo =
-            await _gameBananaCoreService.GetModProfileAsync(new GbModId(_notification.ModsRetrievedResult.ModId), _ct);
+        _modPageInfo = await _gameBananaCoreService.GetModProfileAsync(_gbModId, _ct);
 
         if (_modPageInfo is null)
         {
@@ -131,13 +110,8 @@ public partial class ModUpdateVM : ObservableRecipient
             return;
         }
 
-        ModName = modSettings.CustomName ?? mod.Name;
-        if (_modPageInfo.ModPageUrl is not null)
-            ModPage = _modPageInfo.ModPageUrl;
-
-        ModPath = new Uri(mod.FullPath);
-        LastUpdateCheck = _notification.ModsRetrievedResult.LastCheck;
-
+        _window.Title = $"Downloads for: {_modPageInfo.ModName}";
+        CharacterModListPath = new Uri(_characterModList.AbsModsFolderPath);
 
         _modFiles = _modPageInfo.Files.ToList();
 
@@ -145,7 +119,6 @@ public partial class ModUpdateVM : ObservableRecipient
         {
             var vm = new ModFileInfoVm(modFile, StartDownloadCommand, StartInstallCommand)
             {
-                IsNew = modFile.DateAdded > LastUpdateCheck,
                 IsBusy = true
             };
             ModFileInfos.Add(vm);
@@ -155,7 +128,7 @@ public partial class ModUpdateVM : ObservableRecipient
         IsWindowBusy = false;
     }
 
-    private async Task LogErrorAndClose(Exception e, bool removeNotification = true)
+    private Task LogErrorAndClose(Exception e)
     {
         _logger.Error(e, "Failed to get mod update info");
         App.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -164,30 +137,14 @@ public partial class ModUpdateVM : ObservableRecipient
                 e.Message, TimeSpan.FromSeconds(10));
         });
         _window.Close();
-
-        if (!removeNotification)
-            return;
-
-        var notification = await _modNotificationManager.GetNotificationById(_notificationId);
-        if (notification is null)
-        {
-            return;
-        }
-
-        await _modNotificationManager.RemoveModNotificationAsync(notification.Id);
+        return Task.CompletedTask;
     }
 
     [RelayCommand(CanExecute = nameof(IsNotBusy))]
-    private async Task IgnoreAndCloseAsync()
+    private Task CloseAsync()
     {
-        var notification = await _modNotificationManager.GetNotificationById(_notificationId);
-        if (notification is null)
-        {
-            return;
-        }
-
-        await _modNotificationManager.RemoveModNotificationAsync(notification.Id);
         _window.Close();
+        return Task.CompletedTask;
     }
 
 
@@ -319,7 +276,6 @@ public partial class ModUpdateVM : ObservableRecipient
                     setup: options =>
                     {
                         options.ModUrl = modUrl;
-                        options.ExistingModIdToUpdate = _notification?.ModId;
                     }).ConfigureAwait(false);
 
                 return await task.WaitForCloseAsync(_ct).ConfigureAwait(false);

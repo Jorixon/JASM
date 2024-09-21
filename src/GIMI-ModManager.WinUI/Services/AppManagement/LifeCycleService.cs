@@ -123,26 +123,44 @@ public class LifeCycleService(
 
     public Task<nint?> CheckIfAlreadyRunningAsync()
     {
-        var currentProcess = Process.GetCurrentProcess();
-        var processes = Process.GetProcessesByName(currentProcess.ProcessName);
+        var otherProcess = GetOtherInstanceProcess();
 
-        if (processes.Length <= 1) return Task.FromResult<IntPtr?>(null);
+        return otherProcess == null
+            ? Task.FromResult<IntPtr?>(null)
+            : Task.FromResult<IntPtr?>(otherProcess.MainWindowHandle);
+    }
 
-        var currentProcessId = currentProcess.Id;
-        var currentProcessName = currentProcess.ProcessName;
-
-        foreach (var process in processes)
+    public Process? GetOtherInstanceProcess()
+    {
+        try
         {
-            if (process.Id == currentProcessId) continue;
+            var currentProcess = Process.GetCurrentProcess();
+            var processes = Process.GetProcessesByName(currentProcess.ProcessName);
 
-            var processName = process.ProcessName;
+            if (processes.Length <= 1) return null;
+
+            var currentProcessId = currentProcess.Id;
+            var currentProcessName = currentProcess.ProcessName;
+
+            foreach (var process in processes)
+            {
+                if (process.Id == currentProcessId) continue;
+
+                var processName = process.ProcessName;
 
 
-            if (currentProcessName!.Equals(processName, StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult<IntPtr?>(process.MainWindowHandle);
+                if (currentProcessName!.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                    return process;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error checking for other instances of the app");
+            return null;
         }
 
-        return Task.FromResult<IntPtr?>(null);
+
+        return null;
     }
 
     public async Task StartShutdownAsync(bool shutdown = true)

@@ -9,10 +9,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
+using GIMI_ModManager.Core.Services.ModPresetService;
+using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models.Settings;
@@ -35,13 +38,17 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     private readonly ModNotificationManager _modNotificationManager;
     private readonly IWindowManagerService _windowManagerService;
     private readonly ILocalSettingsService _localSettingsService;
+    private readonly ISkinManagerService _skinManagerService;
     private readonly GameBananaService _gameBananaService;
     private readonly CharacterSkinService _characterSkinService;
     private readonly ModSettingsService _modSettingsService;
     private readonly Uri _placeholderImageUri;
+    private readonly ModPresetService _modPresetService;
+
     private ICharacterModList _characterModList = null!;
     private ICharacterSkin? _inGameSkin = null;
     private DispatcherQueue? _dispatcherQueue;
+    private InstallOptions? _installOptions;
 
 
     private IAsyncRelayCommand? _addModDialogCommand;
@@ -99,6 +106,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [ObservableProperty] private bool _enableThisMod;
     [ObservableProperty] private bool _alwaysOnTop;
 
+    [ObservableProperty] private bool _replaceModToUpdateInPreset;
+    [ObservableProperty] private bool _replaceDuplicateModInPreset;
+
+    public bool IsUpdatingMod => _installOptions?.ExistingModIdToUpdate is not null;
+    private ISkinMod? _existingModToUpdate;
+
     public readonly string RootFolderIcon = "\uF89A";
     public readonly string ShaderFixesFolderIcon = "\uE710";
     public readonly string SelectedImageIcon = "\uE8B9";
@@ -108,11 +121,13 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
     [ObservableProperty] private FileSystemItem? _lastSelectedImageFile;
 
+    [ObservableProperty] private string _imageSource = "Auto";
+
     public ModInstallerVM(ILogger logger, ImageHandlerService imageHandlerService,
         NotificationManager notificationManager, IWindowManagerService windowManagerService,
         ModNotificationManager modNotificationManager, ILocalSettingsService localSettingsService,
         CharacterSkinService characterSkinService, ModSettingsService modSettingsService,
-        GameBananaService gameBananaService)
+        GameBananaService gameBananaService, ModPresetService modPresetService, ISkinManagerService skinManagerService)
     {
         _logger = logger;
         _imageHandlerService = imageHandlerService;
@@ -124,6 +139,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _characterSkinService = characterSkinService;
         _modSettingsService = modSettingsService;
         _gameBananaService = gameBananaService;
+        _modPresetService = modPresetService;
+        _skinManagerService = skinManagerService;
         PropertyChanged += OnPropertyChanged;
     }
 
@@ -134,6 +151,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         ModCharacterName = characterModList.Character.DisplayName;
         _modInstallation = ModInstallation.Start(modToInstall, _characterModList);
         _dispatcherQueue = dispatcherQueue;
+        _installOptions = options;
+        OnPropertyChanged(nameof(IsUpdatingMod));
 
         RootFolder.Clear();
         RootFolder.Add(new RootFolder(modToInstall));
@@ -145,8 +164,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         EnableThisMod = !_characterModList.Character.IsMultiMod && installerSettings.EnableModOnInstall;
         AlwaysOnTop = installerSettings.ModInstallerWindowOnTop;
 
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
+            _existingModToUpdate = _installOptions?.ExistingModIdToUpdate is not null
+                ? _skinManagerService.GetModById(_installOptions.ExistingModIdToUpdate.Value)
+                : null;
+
             var modDir = _modInstallation.AutoSetModRootFolder();
             if (modDir is not null)
             {
@@ -172,6 +195,44 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             }
 
 
+            if (_installOptions?.ExistingModIdToUpdate is not null &&
+                _skinManagerService.GetModById(_installOptions.ExistingModIdToUpdate.Value) is { } oldModToUpdate)
+            {
+                var oldModSettings = await oldModToUpdate.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
+
+                if (oldModSettings is not null)
+                {
+                    var oldImage = oldModSettings.ImagePath;
+                    StorageFile? imageFile;
+                    try
+                    {
+                        imageFile = await _imageHandlerService.CopyImageToTmpFolder(oldImage).ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Failed to copy image from old mod");
+                        imageFile = null;
+                    }
+
+                    dispatcherQueue.TryEnqueue(() =>
+                    {
+                        if (imageFile is not null)
+                        {
+                            ClearModPreviewImage();
+                            ModPreviewImagePath = new Uri(imageFile.Path);
+                            ImageSource = "Image from existing Mod";
+                        }
+
+                        CustomName = oldModSettings.CustomName ?? string.Empty;
+                        Author = oldModSettings.Author ?? string.Empty;
+                        Description = oldModSettings.Description ?? string.Empty;
+                        ModUrl = oldModSettings.ModUrl?.ToString() ?? string.Empty;
+                    });
+                    return;
+                }
+            }
+
+
             var autoFoundImages = SkinModHelpers.DetectModPreviewImages(_modInstallation.ModFolder.FullName);
 
             if (autoFoundImages.Any())
@@ -181,6 +242,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                     var fileSystemItem = RootFolder.FirstOrDefault()
                         ?.GetByPath(autoFoundImages.FirstOrDefault()?.LocalPath ?? "");
                     SetModPreviewImage(fileSystemItem);
+                    ImageSource = "Local image found in new Mod";
                 });
 
             if (options?.ModUrl is not null)
@@ -192,7 +254,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     {
         if (e.PropertyName == nameof(ModUrl))
         {
-            if (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty())
+            if (!CustomName.IsNullOrEmpty() && !Author.IsNullOrEmpty() && ModPreviewImagePath != _placeholderImageUri)
                 return;
             await GetModInfo(ModUrl);
         }
@@ -389,6 +451,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         }
 
         LastSelectedImageFile = fileSystemItem;
+        ImageSource = "Local image selected from new Mod";
     }
 
     [RelayCommand]
@@ -400,6 +463,8 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             LastSelectedImageFile.RightIcon = null;
             LastSelectedImageFile = null;
         }
+
+        ImageSource = "Manual";
     }
 
     private bool _canCopyImage()
@@ -440,6 +505,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         try
         {
             imageUri = await Task.Run(() => _imageHandlerService.GetImageFromClipboardAsync());
+            ImageSource = "Manual";
         }
         catch (Exception e)
         {
@@ -470,6 +536,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
 
         ModPreviewImagePath = new Uri(imageUri.Path);
+        ImageSource = "Manual";
         if (LastSelectedImageFile is not null)
         {
             LastSelectedImageFile.RightIcon = null;
@@ -518,6 +585,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         try
         {
             var skinMod = await Task.Run(() => _modInstallation.AddModAsync(GetModOptions()));
+
+            await Task.Run(() => HandleModPresetsAsync(skinMod));
+
             SuccessfulInstall(skinMod);
         }
         catch (Exception e)
@@ -541,8 +611,11 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
         try
         {
-            var skinMod = await Task.Run(() => _modInstallation.AddAndReplaceAsync(_duplicateMod, GetModOptions()));
+            var modOptions = GetModOptions(ModFolderName);
+            var skinMod = await Task.Run(() => _modInstallation.AddAndReplaceAsync(_duplicateMod, modOptions));
             SuccessfulInstall(skinMod);
+
+            await Task.Run(() => HandleModPresetsAsync(skinMod));
         }
         catch (Exception e)
         {
@@ -553,6 +626,126 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             Finally();
         }
+    }
+
+    private async Task HandleModPresetsAsync(ISkinMod newMod)
+    {
+        if (ReplaceDuplicateModInPreset && ReplaceModToUpdateInPreset)
+            return;
+
+        if (!ReplaceDuplicateModInPreset && !ReplaceModToUpdateInPreset)
+            return;
+
+        ISkinMod? oldMod = null;
+
+        if (ReplaceDuplicateModInPreset)
+        {
+            oldMod = _duplicateMod;
+        }
+        else if (ReplaceModToUpdateInPreset && _installOptions?.ExistingModIdToUpdate != null && _existingModToUpdate?.Id == _installOptions.ExistingModIdToUpdate.Value)
+        {
+            oldMod = _existingModToUpdate;
+        }
+
+        try
+        {
+            if (oldMod is not null)
+                await ReplaceModInPresetAsync(newMod, oldMod).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "An uncaught exception occurred while updating mod entries in presets");
+            return;
+        }
+    }
+
+    private async Task ReplaceModInPresetAsync(ISkinMod newMod, ISkinMod oldMod)
+    {
+        // oldMod may have been deleted by now
+        // new and old mod may also have been renamed
+
+        var readOnlyPresets = new List<ModPreset>();
+
+        ModPreset[] presets;
+        try
+        {
+            presets = _modPresetService.GetPresets()
+                .Where(p => p.Mods.Any(m => m.ModId == oldMod.Id))
+                .Where(p =>
+                {
+                    var isReadOnly = p.IsReadOnly;
+
+                    if (isReadOnly)
+                        readOnlyPresets.Add(p);
+
+                    return !isReadOnly;
+                }).ToArray();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to get presets");
+
+            _notificationManager.ShowNotification(
+                "Failed to get presets, could not automatically update mod entries in presets", e.Message,
+                TimeSpan.FromSeconds(5));
+
+            return;
+        }
+
+        var presetsUpdated = new List<ModPreset>();
+        foreach (var modPreset in presets)
+        {
+            try
+            {
+                var oldModEntry = modPreset.Mods.FirstOrDefault(m => m.ModId == oldMod.Id);
+                if (oldModEntry is null)
+                    continue;
+
+                var modPreferences = oldMod.Settings.TryGetSettings(out var cachedModSettings)
+                    ? cachedModSettings.Preferences
+                    : null;
+
+                await _modPresetService.ReplaceModEntryAsync(modPreset.Name, newMod.Id, oldMod.Id, modPreferences);
+                presetsUpdated.Add(modPreset);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to update preset {presetName}", modPreset.Name);
+
+                _notificationManager.ShowNotification(
+                    $"Failed to update preset {modPreset.Name}, could not automatically update mod entries in preset. Please check your presets manually",
+                    e.Message, TimeSpan.FromSeconds(5));
+                return;
+            }
+        }
+
+        var readOnlyPresetsWithMod = readOnlyPresets
+            .Where(preset => preset.Mods.Any(mod => mod.ModId == oldMod.Id))
+            .ToArray();
+
+        // Mod is not in any presets
+        if (readOnlyPresetsWithMod.Length == 0 && presetsUpdated.Count == 0)
+            return;
+
+        var readOnlyPresetsMessage = readOnlyPresetsWithMod.Length == 0
+            ? ""
+            : "The following presets were not updated due to being read-only: " +
+              string.Join(", ", readOnlyPresets.Select(p => p.Name));
+
+        TimeSpan? notificationDuration = readOnlyPresetsMessage.Any() ? null : TimeSpan.FromSeconds(6);
+
+        var presetsUpdatedMessage = presetsUpdated.Count == 0
+            ? ""
+            : "The mod was updated in the following presets: " +
+              string.Join(", ", presets.Select(p => p.Name)) + "\n" +
+              readOnlyPresetsMessage;
+
+        var notification = new SimpleNotification(
+            title: presetsUpdated.Count == 0 ? "Mod was not updated for any presets" : "Mod was updated for presets",
+            message: presetsUpdatedMessage,
+            notificationDuration);
+
+        _notificationManager.ShowNotification(notification);
     }
 
     [MemberNotNullWhen(true, nameof(_modInstallation), nameof(_duplicateMod))]
@@ -595,9 +788,12 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
             return;
         try
         {
-            var skinMod = await Task.Run(() => _modInstallation.RenameAndAddAsync(GetModOptions(ModFolderName),
+            var modOptions = GetModOptions(ModFolderName);
+            var skinMod = await Task.Run(() => _modInstallation.RenameAndAddAsync(modOptions,
                 _duplicateMod, DuplicateModFolderName, DuplicateModCustomName));
             SuccessfulInstall(skinMod);
+
+            await Task.Run(() => HandleModPresetsAsync(skinMod));
         }
         catch (Exception e)
         {
@@ -668,7 +864,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
                         var newImage = await Task.Run(() => _imageHandlerService.DownloadImageAsync(newImageUrl, ct),
                             ct);
                         ModPreviewImagePath = new Uri(newImage.Path);
-
+                        ImageSource = "GB Mod Thumbnail";
                         if (LastSelectedImageFile is not null)
                         {
                             LastSelectedImageFile.RightIcon = null;
@@ -834,6 +1030,20 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         _logger.Debug("Disabled {disabledMods} and enabled {enabledMod}, also set skin override for mod to {SkinName}",
             string.Join(',', disabledMods.Select(mod => mod.Name)),
             installedMod.Name, _inGameSkin.InternalName.Id);
+    }
+
+    [RelayCommand]
+    private void ToggleReplaceDuplicateModInPreset()
+    {
+        ReplaceDuplicateModInPreset = !ReplaceDuplicateModInPreset;
+        ReplaceModToUpdateInPreset = false;
+    }
+
+    [RelayCommand]
+    private void ToggleReplaceModToUpdateInPreset()
+    {
+        ReplaceModToUpdateInPreset = !ReplaceModToUpdateInPreset;
+        ReplaceDuplicateModInPreset = false;
     }
 
 

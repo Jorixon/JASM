@@ -6,6 +6,7 @@ using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using Serilog;
 using static GIMI_ModManager.WinUI.Services.ModHandling.ModDragAndDropService.DragAndDropFinishedArgs;
+using GIMI_ModManager.WinUI.Views;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
 
@@ -195,6 +196,27 @@ public class ModDragAndDropService
         }
     }
 
+
+    public async Task AddModFromUrlAsync(ICharacterModList modList, Uri uri)
+    {
+        var windowKey = $"ModPage_{modList.Character.InternalName}";
+        if (_windowManagerService.GetWindow(windowKey) is { } window)
+        {
+            PInvoke.PlaySound("SystemAsterisk", null,
+                SND_FLAGS.SND_ASYNC | SND_FLAGS.SND_ALIAS | SND_FLAGS.SND_NODEFAULT);
+
+            App.MainWindow.DispatcherQueue.TryEnqueue(() => window.Activate());
+            return;
+        }
+
+
+        var modWindow = new GbModPageWindow(uri, modList.Character);
+        _windowManagerService.CreateWindow(modWindow, identifier: windowKey);
+        await Task.Delay(100);
+        modWindow.BringToFront();
+
+        DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(new List<ExtractPaths>()));
+    }
 
     public class DragAndDropFinishedArgs : EventArgs
     {

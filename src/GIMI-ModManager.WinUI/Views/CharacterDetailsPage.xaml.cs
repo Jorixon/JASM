@@ -26,7 +26,11 @@ public sealed partial class CharacterDetailsPage : Page
 {
     public CharacterDetailsViewModel ViewModel { get; }
 
+    public Visibility PageLoader = Visibility.Visible;
+
     private readonly MenuFlyout _modListContextMenuFlyout = new();
+
+    private static (string, ModListVM.SortMethod)? _currentSortMethod;
 
     public CharacterDetailsPage()
     {
@@ -44,16 +48,34 @@ public sealed partial class CharacterDetailsPage : Page
 
         ModListGrid.Loaded += async (_, __) =>
         {
-            SyncGridSelection(ViewModel.ModListVM.SelectedMods, new List<ModModel>());
-
-            ViewModel.ModListVM.SelectedMods.CollectionChanged += (_, args) =>
+            try
             {
-                SyncGridSelection(args.NewItems?.OfType<ModModel>() ?? new List<ModModel>(),
-                    args.OldItems?.OfType<ModModel>() ?? new List<ModModel>());
-            };
+                SyncGridSelection(ViewModel.ModListVM.SelectedMods, new List<ModModel>());
 
-            await Task.Delay(100);
-            ModListGrid.Focus(FocusState.Programmatic);
+                ViewModel.ModListVM.SelectedMods.CollectionChanged += (_, args) =>
+                {
+                    SyncGridSelection(args.NewItems?.OfType<ModModel>() ?? new List<ModModel>(),
+                        args.OldItems?.OfType<ModModel>() ?? new List<ModModel>());
+                };
+
+                await Task.Delay(100);
+                ModListGrid.Focus(FocusState.Programmatic);
+            }
+            finally
+            {
+                PageLoader = Visibility.Collapsed;
+            }
+
+            if (_currentSortMethod is null) return;
+            var sortedColumn =
+                ModListGrid.Columns.FirstOrDefault(x => x.Tag.ToString() == _currentSortMethod.Value.Item1);
+            if (sortedColumn is null) return;
+
+            sortedColumn.SortDirection = _currentSortMethod.Value.Item2.IsDescending
+                ? DataGridSortDirection.Descending
+                : DataGridSortDirection.Ascending;
+
+            ModListGrid_OnSorting(this, new DataGridColumnEventArgs(sortedColumn));
         };
 
 
@@ -217,6 +239,8 @@ public sealed partial class CharacterDetailsPage : Page
                 e.Column.SortDirection = DataGridSortDirection.Descending;
                 ViewModel.SortMethod = new ModListVM.SortMethod("Name", true);
             }
+
+            PersistSortInMemory("Name");
         }
 
         if (e.Column.Tag.ToString() == "Folder Name")
@@ -248,6 +272,8 @@ public sealed partial class CharacterDetailsPage : Page
                 e.Column.SortDirection = DataGridSortDirection.Descending;
                 ViewModel.SortMethod = new ModListVM.SortMethod("FolderName", true);
             }
+
+            PersistSortInMemory("Folder Name");
         }
 
 
@@ -272,6 +298,8 @@ public sealed partial class CharacterDetailsPage : Page
                 ViewModel.SortMethod = new ModListVM.SortMethod("IsEnabled", false);
                 ViewModel.ModListVM.ResetContent(ViewModel.SortMethod);
             }
+
+            PersistSortInMemory("IsEnabled");
         }
 
         if (e.Column.Tag.ToString() == "Author Name")
@@ -302,6 +330,8 @@ public sealed partial class CharacterDetailsPage : Page
                 e.Column.SortDirection = DataGridSortDirection.Descending;
                 ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.Author), false);
             }
+
+            PersistSortInMemory("Author Name");
         }
 
 
@@ -331,6 +361,8 @@ public sealed partial class CharacterDetailsPage : Page
                 e.Column.SortDirection = DataGridSortDirection.Descending;
                 ViewModel.SortMethod = new ModListVM.SortMethod(nameof(ModModel.DateAdded), false);
             }
+
+            PersistSortInMemory("Date Added");
         }
 
 
@@ -338,6 +370,12 @@ public sealed partial class CharacterDetailsPage : Page
         foreach (var dgColumn in ModListGrid.Columns)
             if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
                 dgColumn.SortDirection = null;
+
+        void PersistSortInMemory(string tag)
+        {
+            if (ViewModel.SortMethod is not null)
+                _currentSortMethod = new ValueTuple<string, ModListVM.SortMethod>(tag, ViewModel.SortMethod);
+        }
     }
 
     private void ModListArea_OnDragOver(object sender, DragEventArgs e)

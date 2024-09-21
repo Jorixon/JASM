@@ -25,7 +25,8 @@
             VerticalAlignment="Center"
             Click="ButtonBase_OnClick"
             ContextFlyout="{StaticResource Flyout}"
-            NavigateUri="{x:Bind Link, Mode=OneWay}">
+            NavigateUri="{x:Bind Link, Mode=OneWay}"
+            ToolTipService.ToolTip="{x:Bind Link, Mode=OneWay}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock
                     Margin="0,0,8,0"

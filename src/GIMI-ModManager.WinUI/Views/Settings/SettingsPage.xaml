@@ -357,6 +357,16 @@
                         </StackPanel>
                     </StackPanel>
 
+
+                    <TextBlock IsTextSelectionEnabled="True">
+                        <Run Text="Current Size of Mod Cache for" />
+                        <Run Text="{x:Bind ViewModel.SelectedGame, Mode=OneWay}" />
+                        <Run Text=":" />
+                        <Run Text="{x:Bind ViewModel.ModCacheSizeGB, Mode=OneWay}" />
+                        <Run Text="GB" />
+
+                    </TextBlock>
+
                 </StackPanel>
 
                 <TextBlock
@@ -420,7 +430,11 @@
                             Margin="8,0"
                             VerticalAlignment="Center"
                             Text="{x:Bind ViewModel.LatestVersion, Mode=OneWay}" />
+
+                        <controls:LinkButton Link="https://github.com/Jorixon/JASM/releases/latest" Text="See what's new in the latest release" />
+
                     </StackPanel>
+
 
                     <StackPanel Margin="0,16,0,16" Orientation="Horizontal">
                         <Button

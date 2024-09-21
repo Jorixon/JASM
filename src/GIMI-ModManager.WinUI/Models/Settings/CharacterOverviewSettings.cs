@@ -10,4 +10,5 @@ public class CharacterOverviewSettings
     public bool ShowOnlyCharactersWithMods { get; set; } = false;
     public bool SortByDescending { get; set; } = false;
     public string? SortingMethod { get; set; }
+    public bool ShowOnlyModsWithNotifications { get; set; }
 }

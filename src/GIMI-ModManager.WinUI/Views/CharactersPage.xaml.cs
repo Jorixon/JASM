@@ -1,4 +1,5 @@
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using CommunityToolkit.WinUI;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
@@ -92,8 +93,27 @@ public sealed partial class CharactersPage : Page
 
     private async void CharacterThumbnail_OnDrop(object sender, DragEventArgs e)
     {
+
         if (((Grid)sender).DataContext is CharacterGridItemModel characterGridItem)
-            await ViewModel.ModDroppedOnCharacterAsync(characterGridItem, await e.DataView.GetStorageItemsAsync());
+        {
+            var urlFormats = new[] { "Text", "UniformResourceLocatorW", "UniformResourceLocator" };
+            if (urlFormats.All(format => e.DataView.Contains(format)))
+            {
+                try
+                {
+                    var uri = await e.DataView.GetWebLinkAsync();
+                    await ViewModel.ModUrlDroppedOnCharacterAsync(characterGridItem, uri);
+
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            else
+                await ViewModel.ModDroppedOnCharacterAsync(characterGridItem, await e.DataView.GetStorageItemsAsync());
+
+        }
 
         var gridItem = ((Grid)sender);
         SetGridDropHereVisibility(gridItem, Visibility.Collapsed);

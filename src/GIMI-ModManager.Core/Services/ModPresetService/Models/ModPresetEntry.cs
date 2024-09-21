@@ -24,7 +24,7 @@ public class ModPresetEntry
     public string Name => ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(new DirectoryInfo(FullPath).Name);
 
 
-    public IReadOnlyDictionary<string, string>? Preferences { get; init; }
+    public IReadOnlyDictionary<string, string>? Preferences { get; private set; }
 
     public DateTime? AddedAt { get; internal set; }
 
@@ -58,6 +58,11 @@ public class ModPresetEntry
             SourceUrl = settings.ModUrl,
             AddedAt = DateTime.Now
         };
+    }
+
+    internal void UpdatePreferences(IEnumerable<KeyValuePair<string, string>>? preferences)
+    {
+        Preferences = preferences?.ToDictionary();
     }
 
     internal static ModPresetEntry FromJson(JsonModPresetEntry json)

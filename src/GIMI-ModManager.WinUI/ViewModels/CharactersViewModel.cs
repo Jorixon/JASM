@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
@@ -78,6 +79,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private string _categoryPageTitle = string.Empty;
     [ObservableProperty] private string _modToggleText = string.Empty;
+    [ObservableProperty] private string _modNotificationsToggleText = string.Empty;
     [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
     [ObservableProperty]
@@ -314,6 +316,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         CategoryPageTitle =
             $"{category.DisplayName} {_localizer.GetLocalizedStringOrDefault("Overview", useUidAsDefaultValue: true)}";
         ModToggleText = $"Show only {category.DisplayNamePlural} with Mods";
+        ModNotificationsToggleText = $"Show only {category.DisplayNamePlural} with Mod Notifications";
         SearchBoxPlaceHolder = $"Search {category.DisplayNamePlural}...";
 
 
@@ -457,14 +460,6 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         // Character Ids where more than 1 skin is enabled
         await RefreshMultipleModsWarningAsync();
 
-
-        if (pinnedCharactersOptions.ShowOnlyCharactersWithMods)
-        {
-            _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
-                _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
-        }
-
-
         // ShowOnlyModsCharacters
         var settings =
             await _localSettingsService
@@ -474,6 +469,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             ShowOnlyCharactersWithMods = true;
             _filters[FilterType.HasMods] = new GridFilter(characterGridItem =>
                 _skinManagerService.GetCharacterModList(characterGridItem.Character).Mods.Any());
+        }
+
+        if (settings.ShowOnlyModsWithNotifications)
+        {
+            ShowOnlyModsWithNotifications = true;
+            _filters[FilterType.HasModNotifications] =
+                new GridFilter(characterGridItemModel => characterGridItemModel.Notification);
         }
 
         SortByDescending = settings.SortByDescending;
@@ -676,6 +678,42 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
 
+    [ObservableProperty] private bool _showOnlyModsWithNotifications;
+
+    [RelayCommand]
+    private async Task ShowOnlyCharactersWithModNotificationsAsync()
+    {
+        if (ShowOnlyModsWithNotifications)
+        {
+            ShowOnlyModsWithNotifications = false;
+
+            _filters.Remove(FilterType.HasModNotifications);
+
+            ResetContent();
+            var settingss = await ReadCharacterSettings();
+
+
+            settingss.ShowOnlyModsWithNotifications = ShowOnlyModsWithNotifications;
+
+            await SaveCharacterSettings(settingss);
+
+            return;
+        }
+
+        _filters[FilterType.HasModNotifications] = new GridFilter(characterGridItem =>
+            characterGridItem.Notification);
+
+        ShowOnlyModsWithNotifications = true;
+
+        ResetContent();
+
+        var settings = await ReadCharacterSettings();
+
+        settings.ShowOnlyModsWithNotifications = ShowOnlyModsWithNotifications;
+
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
 
     [ObservableProperty] private string _pinText = DefaultPinText;
 
@@ -824,6 +862,44 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         }
     }
 
+    public async Task ModUrlDroppedOnCharacterAsync(CharacterGridItemModel characterGridItemModel, Uri uri)
+    {
+        if (IsAddingMod)
+        {
+            _logger.Warning("Already adding mod");
+            return;
+        }
+
+        var modList = _skinManagerService.CharacterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(characterGridItemModel.Character));
+        if (modList is null)
+        {
+            _logger.Warning("No mod list found for character {Character}",
+                characterGridItemModel.Character.InternalName);
+            return;
+        }
+
+        if (!GameBananaUrlHelper.TryGetModIdFromUrl(uri, out _))
+        {
+            NotificationManager.ShowNotification("Invalid GameBanana mod page link", "", null);
+            return;
+        }
+
+        try
+        {
+            IsAddingMod = true;
+            await _modDragAndDropService.AddModFromUrlAsync(modList, uri);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error opening mod page window");
+            NotificationManager.ShowNotification("Error opening mod page window", e.Message, TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            IsAddingMod = false;
+        }
+    }
+
 
     private CharacterGridItemModel? FindCharacterByInternalName(string internalName)
     {
@@ -962,7 +1038,8 @@ public enum FilterType
 {
     Element,
     Search,
-    HasMods
+    HasMods,
+    HasModNotifications
 }
 
 public sealed class SortingMethod

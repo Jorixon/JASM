@@ -12,6 +12,7 @@ using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
@@ -47,6 +48,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
     private readonly LifeCycleService _lifeCycleService;
     private readonly INavigationService _navigationService;
+    private readonly ModArchiveRepository _modArchiveRepository;
 
 
     private readonly NotificationManager _notificationManager;
@@ -111,6 +113,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     private ModManagerOptions? _modManagerOptions = null!;
 
+    [ObservableProperty] private string _modCacheSizeGB = string.Empty;
+
     public SettingsViewModel(
         IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService,
         ElevatorService elevatorService, ILogger logger, NotificationManager notificationManager,
@@ -119,7 +123,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         GenshinProcessManager genshinProcessManager, ThreeDMigtoProcessManager threeDMigtoProcessManager,
         IGameService gameService, AutoUpdaterService autoUpdaterService, ILanguageLocalizer localizer,
         SelectedGameService selectedGameService, ModUpdateAvailableChecker modUpdateAvailableChecker,
-        LifeCycleService lifeCycleService, INavigationService navigationService)
+        LifeCycleService lifeCycleService, INavigationService navigationService,
+        ModArchiveRepository modArchiveRepository)
     {
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
@@ -136,6 +141,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         _modUpdateAvailableChecker = modUpdateAvailableChecker;
         _lifeCycleService = lifeCycleService;
         _navigationService = navigationService;
+        _modArchiveRepository = modArchiveRepository;
         GenshinProcessManager = genshinProcessManager;
         ThreeDMigtoProcessManager = threeDMigtoProcessManager;
         _logger = logger.ForContext<SettingsViewModel>();
@@ -784,6 +790,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         PersistWindowPosition = windowSettings.PersistWindowPosition;
         await GenshinProcessManager.TryInitialize();
         await ThreeDMigtoProcessManager.TryInitialize();
+        ModCacheSizeGB = _modArchiveRepository.GetTotalCacheSizeInGB().ToString("F");
     }
 
     [ObservableProperty] private string _maxCacheSizeString = string.Empty;
