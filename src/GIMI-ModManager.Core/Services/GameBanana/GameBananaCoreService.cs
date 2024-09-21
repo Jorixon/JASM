@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.GameBanana.ApiModels;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ public sealed class GameBananaCoreService(
     private readonly ModArchiveRepository _modArchiveRepository = modArchiveRepository;
 
     private readonly ApiGameBananaCache _cache = new(cacheDuration: TimeSpan.FromMinutes(10));
+    private readonly ConcurrentDictionary<Uri, DownloadHandle> _downloadHandles = new();
 
 
     private IApiGameBananaClient CreateApiGameBananaClient() =>
@@ -125,8 +127,10 @@ public sealed class GameBananaCoreService(
         public required bool Exists { get; init; }
     }
 
+    private readonly AsyncLock _downloadLock = new();
+
     /// <summary>
-    /// Downloads a mod from GameBanana. Uses caching to reduce the number of API calls and checks archive cache before downloading.
+    /// Downloads a mod from GameBanana. Uses caching to reduce the number of API calls and checks archive cache before downloading. Also checks for duplicate downloads.
     /// </summary>
     /// <param name="modFileIdentifier"></param>
     /// <param name="progress">An IProgress that can be used to monitor progress. Goes from 0 to 100</param>
@@ -172,14 +176,51 @@ public sealed class GameBananaCoreService(
             // Mod archive already exists locally
             return modArchiveHandle.FullName;
 
+        var downloadUri = Uri.TryCreate(modFileInfo.DownloadUrl, UriKind.Absolute, out var parsedDownloadUrl)
+            ? parsedDownloadUrl
+            : null;
+        Task<ModArchiveHandle> downloadTask;
 
-        modArchiveHandle = await _modArchiveRepository.CreateAndTrackModArchiveAsync(
-            async (fileStream) =>
+        // Prevent duplicate downloads from the same url
+        using (var _ = await _downloadLock.LockAsync(cancellationToken: ct).ConfigureAwait(false))
+        {
+            if (downloadUri is not null && _downloadHandles.TryGetValue(downloadUri, out var downloadHandle))
             {
-                await apiGameBananaClient.DownloadModAsync(modFileIdentifier.ModFileId, fileStream, progress, ct)
-                    .ConfigureAwait(false);
-                return modFileInfo.FileName;
-            }, modFileIdentifier, cancellationToken: ct).ConfigureAwait(false);
+                modArchiveHandle = await downloadHandle.DownloadTask.ConfigureAwait(false);
+                return modArchiveHandle.FullName;
+            }
+
+            downloadTask = _modArchiveRepository.CreateAndTrackModArchiveAsync(
+                async (fileStream) =>
+                {
+                    await apiGameBananaClient.DownloadModAsync(modFileIdentifier.ModFileId, fileStream, progress, ct)
+                        .ConfigureAwait(false);
+                    return modFileInfo.FileName;
+                }, modFileIdentifier, cancellationToken: ct);
+
+            if (downloadUri is not null)
+            {
+                var handle = new DownloadHandle()
+                {
+                    DownloadUri = downloadUri,
+                    DownloadTask = downloadTask
+                };
+
+                _downloadHandles.AddOrUpdate(downloadUri, handle, (_, _) => handle);
+            }
+        }
+
+        try
+        {
+            modArchiveHandle = await downloadTask.ConfigureAwait(false);
+        }
+        finally
+        {
+            if (downloadUri is not null)
+                // In case the task was cancelled or faulted
+                _downloadHandles.TryRemove(downloadUri, out _);
+        }
+
 
         return modArchiveHandle.FullName;
     }
@@ -206,4 +247,10 @@ public sealed class GameBananaCoreService(
         _cache.Set(modId, modFilesInfo);
         return modFilesInfo;
     }
+}
+
+public sealed class DownloadHandle()
+{
+    public required Uri DownloadUri { get; init; }
+    public required Task<ModArchiveHandle> DownloadTask { get; init; }
 }
