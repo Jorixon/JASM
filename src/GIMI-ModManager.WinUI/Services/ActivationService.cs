@@ -6,6 +6,7 @@ using Windows.Win32.UI.WindowsAndMessaging;
 using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Activation;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
@@ -48,6 +49,7 @@ public class ActivationService : IActivationService
     private UIElement? _shell = null;
 
     private readonly bool IsMsix = RuntimeHelper.IsMSIX;
+    private readonly string[] _args = Environment.GetCommandLineArgs().Skip(1).ToArray();
 
 
     public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
@@ -91,6 +93,9 @@ public class ActivationService : IActivationService
 #elif RELEASE
         _logger.Information("JASM starting up in RELEASE mode...");
 #endif
+
+        await HandleLaunchArgsAsync();
+
         // Check if there is another instance of JASM running
         await CheckIfAlreadyRunningAsync();
 
@@ -122,19 +127,12 @@ public class ActivationService : IActivationService
 
     private async Task CheckIfAlreadyRunningAsync()
     {
-        nint? processHandle;
-        try
-        {
-            processHandle = await _lifeCycleService.CheckIfAlreadyRunningAsync();
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Could not determine if JASM is already running. Assuming not");
-            return;
-        }
+        var isJasmRunningHWND = await IsJasmRunning();
 
-        if (processHandle == null) return;
-        var hWnd = new HWND(processHandle.Value);
+        if (!isJasmRunningHWND.HasValue) return;
+
+        var hWnd = isJasmRunningHWND.Value;
+
         _logger.Information("JASM is already running, exiting...");
         try
         {
@@ -151,6 +149,25 @@ public class ActivationService : IActivationService
 
         Application.Current.Exit();
         await Task.Delay(-1);
+    }
+
+
+    private async Task<HWND?> IsJasmRunning()
+    {
+        nint? processHandle;
+        try
+        {
+            processHandle = await _lifeCycleService.CheckIfAlreadyRunningAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Could not determine if JASM is already running. Assuming not");
+            return null;
+        }
+
+        if (processHandle == null) return null;
+
+        return new HWND(processHandle.Value);
     }
 
     private async Task HandleActivationAsync(object activationArgs)
@@ -268,6 +285,110 @@ public class ActivationService : IActivationService
     // Declared here for now, might move to a different class later.
     private const string IgnoreAdminWarningKey = "IgnoreAdminPrivelegesWarning";
 
+    private async Task HandleLaunchArgsAsync()
+    {
+        if (_args.Length == 0)
+            return;
+
+        var supportedGames = Enum.GetNames<SupportedGames>().Select(v => v.ToLower()).ToArray();
+
+        if (_args.Any(arg => arg.Contains("help", StringComparison.OrdinalIgnoreCase)) &&
+            // WinUI doesnt seem to launch like a regular console app.
+            // This kinda works, but it's not perfect.
+            // Overriding the main entry point didn't seem to work either.
+            PInvoke.AttachConsole(unchecked((uint)-1)))
+        {
+            // TODO: Use CommandLineParser or something similar.
+            Console.WriteLine("JASM Command line arguments:");
+
+            Console.WriteLine(
+                $"      --game <game> - Launch JASM with the specified game selected. Supported games: {string.Join('|', supportedGames)}");
+
+            Console.WriteLine(
+                "           --switch - If used with --game, will switch to the selected game if JASM is already running. This is done by exiting the already running instance.");
+
+            Application.Current.Exit();
+            await Task.Delay(-1);
+        }
+
+
+        await _selectedGameService.InitializeAsync().ConfigureAwait(false);
+        var notSelectedGames = await _selectedGameService.GetNotSelectedGameAsync().ConfigureAwait(false);
+
+        var launchGameArgIndex =
+            Array.FindIndex(_args, arg => arg.Equals("--game", StringComparison.OrdinalIgnoreCase));
+        if (launchGameArgIndex == -1)
+            return;
+
+        var launchGameArgValue = _args.ElementAtOrDefault(launchGameArgIndex + 1);
+        if (launchGameArgValue.IsNullOrEmpty())
+        {
+            _logger.Warning("No game specified for arg: --game <{ValidGames}>",
+                string.Join('|', Enum.GetNames<SupportedGames>().Select(v => v.ToLower())));
+            return;
+        }
+
+        var selectedGame = Enum.TryParse<SupportedGames>(launchGameArgValue, true, out var game)
+            ? game
+            : SupportedGames.Genshin;
+
+        if (!notSelectedGames.Contains(selectedGame))
+            return;
+
+        var otherProcess = _lifeCycleService.GetOtherInstanceProcess();
+
+        if (otherProcess is not null)
+        {
+            if (!_args.Contains("--switch"))
+            {
+                // If the other instance is running, and the switch flag is not present, return.
+                // Will be handled by the OtherInstance check later.
+                return;
+            }
+
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                _logger.Information("Closing running instance of JASM to switch to {SelectedGame}", selectedGame);
+                otherProcess.CloseMainWindow();
+                await otherProcess.WaitForExitAsync(cts.Token).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to close running instance of JASM");
+                return;
+            }
+
+            try
+            {
+                await _selectedGameService.SaveSelectedGameAsync(selectedGame.ToString()).ConfigureAwait(false);
+                await _selectedGameService.InitializeAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                // If this errors then I don't know what to do.
+                _logger.Error(e, "Failed to save selected game");
+            }
+
+            return;
+        }
+
+        try
+        {
+            await _selectedGameService.SaveSelectedGameAsync(selectedGame.ToString()).ConfigureAwait(false);
+            await _selectedGameService.InitializeAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            // If this errors then I don't know what to do.
+            _logger.Error(e, "Failed to save selected game");
+            return;
+        }
+
+
+        _logger.Information("Game selected via launch args: {SelectedGame}", selectedGame);
+    }
 
     private void ShowStartupPopups()
     {
