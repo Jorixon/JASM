@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <winUiEx:WindowEx
-    x:Class="GIMI_ModManager.WinUI.Views.ModUpdateAvailableWindow"
+    x:Class="GIMI_ModManager.WinUI.Views.GbModPageWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
@@ -9,10 +9,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modPageViewModels="using:GIMI_ModManager.WinUI.ViewModels.ModPageViewModels"
     xmlns:services="using:GIMI_ModManager.Core.Services"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.ViewModels"
     xmlns:winUiEx="using:WinUIEx"
-    xmlns:modPageViewModels="using:GIMI_ModManager.WinUI.ViewModels.ModPageViewModels"
     x:Name="RootWindow"
     mc:Ignorable="d">
 
@@ -44,12 +44,12 @@
                         Margin="10"
                         FontSize="20"
                         FontWeight="Bold"
-                        Text="New Downloadable Files Found" />
+                        Text="Download Mods from GameBanana" />
 
                     <controls:LinkButton
-                        Link="{x:Bind ViewModel.ModPath, Mode=OneWay}"
-                        Text="{x:Bind ViewModel.ModPath.LocalPath, Mode=OneWay, FallbackValue=ModPath}"
-                        ToolTipService.ToolTip="Open Mod folder..." />
+                        Link="{x:Bind ViewModel.CharacterModListPath, Mode=OneWay}"
+                        ToolTipService.ToolTip="Open Mod folder..."
+                        Text="{x:Bind ViewModel.CharacterModListPath.LocalPath, Mode=OneWay, FallbackValue=ModPath}" />
                 </StackPanel>
 
                 <controls1:SwitchPresenter Grid.Row="1" Value="{x:Bind ViewModel.Initializing, Mode=OneWay}">
@@ -100,8 +100,8 @@
                                                         Margin="8,0"
                                                         VerticalAlignment="Bottom"
                                                         IsTextSelectionEnabled="True"
-                                                        Text="{x:Bind AgeFormated}"
-                                                        ToolTipService.ToolTip="{x:Bind DateAddedTooltipFormat}" />
+                                                        ToolTipService.ToolTip="{x:Bind DateAddedTooltipFormat}"
+                                                        Text="{x:Bind AgeFormated}" />
                                                 </StackPanel>
 
 
@@ -111,13 +111,6 @@
                                                     Grid.Column="0"
                                                     IsTextSelectionEnabled="True"
                                                     Text="{x:Bind Description}" />
-
-                                                <TextBlock
-                                                    Grid.Row="0"
-                                                    Grid.Column="1"
-                                                    HorizontalAlignment="Right"
-                                                    Text="New since last check"
-                                                    Visibility="{Binding Path=IsNew, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                                                 <StackPanel Grid.Row="1" Grid.Column="1">
                                                     <Grid>
@@ -152,9 +145,6 @@
                                                             IsIndeterminate="{x:Bind IsBusy, Mode=OneWay}"
                                                             Visibility="{Binding Path=IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                                     </Grid>
-
-
-
                                                 </StackPanel>
                                             </Grid>
                                         </controls:BoolBorder>
@@ -178,21 +168,10 @@
                         Width="200"
                         Height="50"
                         HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.IgnoreAndCloseCommand}"
-                        Content="Ignore and Close"
+                        Command="{x:Bind ViewModel.CloseCommand}"
+                        Content="Close"
                         IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
-                        ToolTipService.ToolTip="Removes the notification and closes this window" />
-
-                    <StackPanel
-                        Grid.Column="1"
-                        Padding="4"
-                        HorizontalAlignment="Right"
-                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                        CornerRadius="4">
-                        <TextBlock Text="Last Check:" />
-                        <TextBlock Text="{x:Bind ViewModel.LastUpdateCheck, Mode=OneWay}" />
-                    </StackPanel>
-
+                        ToolTipService.ToolTip="Close window" />
                 </Grid>
 
             </Grid>
@@ -216,8 +195,8 @@
                         <controls:LinkButton
                             VerticalAlignment="Center"
                             Link="{x:Bind ViewModel.ModPage, Mode=OneWay}"
-                            Text="{x:Bind ViewModel.ModPage, Mode=OneWay}"
-                            ToolTipService.ToolTip="Open in default browser..." />
+                            ToolTipService.ToolTip="Open in default browser..."
+                            Text="{x:Bind ViewModel.ModPage, Mode=OneWay}" />
                     </StackPanel>
                     <Button
                         Grid.Column="1"

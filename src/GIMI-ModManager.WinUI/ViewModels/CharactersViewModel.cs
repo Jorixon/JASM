@@ -10,6 +10,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
+using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
@@ -854,6 +855,44 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         {
             _logger.Error(e, "Error adding mod");
             NotificationManager.ShowNotification("Error adding mod", e.Message, TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            IsAddingMod = false;
+        }
+    }
+
+    public async Task ModUrlDroppedOnCharacterAsync(CharacterGridItemModel characterGridItemModel, Uri uri)
+    {
+        if (IsAddingMod)
+        {
+            _logger.Warning("Already adding mod");
+            return;
+        }
+
+        var modList = _skinManagerService.CharacterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(characterGridItemModel.Character));
+        if (modList is null)
+        {
+            _logger.Warning("No mod list found for character {Character}",
+                characterGridItemModel.Character.InternalName);
+            return;
+        }
+
+        if (!GameBananaUrlHelper.TryGetModIdFromUrl(uri, out _))
+        {
+            NotificationManager.ShowNotification("Invalid GameBanana mod page link", "", null);
+            return;
+        }
+
+        try
+        {
+            IsAddingMod = true;
+            await _modDragAndDropService.AddModFromUrlAsync(modList, uri);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error opening mod page window");
+            NotificationManager.ShowNotification("Error opening mod page window", e.Message, TimeSpan.FromSeconds(10));
         }
         finally
         {
