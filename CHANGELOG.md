@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.16.0](https://github.com/Jorixon/JASM/compare/v2.15.0...v2.16.0) (2024-09-21)
+
+
+### Features
+
+* Allow for automatically replacing an existing mod in a preset with a new mod when installing new mods ([#258](https://github.com/Jorixon/JASM/issues/258)) ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+* For the CharacterDetailsPage grid ordering is persisted in memory ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+* Now possible to filter to only characters where there is a mod notification i.e. Mod update / new mod added. New filter dropdown added to the left of the Element icons. ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+* Now possible to start JASM and switch to specific game trough command line args. See FAQ for example ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+
+
+### Miscellaneous
+
+* Added link to Github releases on the settings page when a new update is available ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+* Current size of the local mod cache is now shown on the settings page ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+* When updating a mod, the existing JASM_ModConfig will take precedence over settings taken from GameBanana ([65b580b](https://github.com/Jorixon/JASM/commit/65b580b73534914ebf448fdbd38f3f2af0852677))
+
 ## [2.15.0](https://github.com/Jorixon/JASM/compare/v2.14.3...v2.15.0) (2024-09-13)
 
 
