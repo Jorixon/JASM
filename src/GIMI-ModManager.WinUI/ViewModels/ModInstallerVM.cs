@@ -110,6 +110,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
     [ObservableProperty] private bool _replaceDuplicateModInPreset;
 
     public bool IsUpdatingMod => _installOptions?.ExistingModIdToUpdate is not null;
+    private ISkinMod? _existingModToUpdate;
 
     public readonly string RootFolderIcon = "\uF89A";
     public readonly string ShaderFixesFolderIcon = "\uE710";
@@ -165,6 +166,10 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
         await Task.Run(async () =>
         {
+            _existingModToUpdate = _installOptions?.ExistingModIdToUpdate is not null
+                ? _skinManagerService.GetModById(_installOptions.ExistingModIdToUpdate.Value)
+                : null;
+
             var modDir = _modInstallation.AutoSetModRootFolder();
             if (modDir is not null)
             {
@@ -637,9 +642,9 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         {
             oldMod = _duplicateMod;
         }
-        else if (ReplaceModToUpdateInPreset && _installOptions?.ExistingModIdToUpdate != null)
+        else if (ReplaceModToUpdateInPreset && _installOptions?.ExistingModIdToUpdate != null && _existingModToUpdate?.Id == _installOptions.ExistingModIdToUpdate.Value)
         {
-            oldMod = _skinManagerService.GetModById(_installOptions.ExistingModIdToUpdate.Value);
+            oldMod = _existingModToUpdate;
         }
 
         try
