@@ -36,6 +36,16 @@ internal sealed class ApiGameBananaCache
         return null;
     }
 
+    public T[] GetAll<T>() where T : class
+    {
+        ClearExpiredEntries();
+
+        return _cache
+            .Where(x => x.Key.StartsWith($"{typeof(T).Name}_"))
+            .Select(x => (T)x.Value.Value)
+            .ToArray();
+    }
+
 
     public void Set<T>(string key, T value, TimeSpan? cacheDuration = null) where T : class
     {

@@ -205,4 +205,23 @@ public class ImageHandlerService
 
         return tmpImage;
     }
+
+    public async Task<StorageFile?> CopyImageToTmpFolder(Uri? uri)
+    {
+        if (uri is null)
+            return null;
+
+        if (uri.Scheme == Uri.UriSchemeHttps && uri.IsAbsoluteUri)
+        {
+            return await DownloadImageAsync(uri).ConfigureAwait(false);
+        }
+
+        if (uri.Scheme == Uri.UriSchemeFile)
+        {
+            var file = await StorageFile.GetFileFromPathAsync(uri.LocalPath);
+            return await CopyImageToTmpFolder(file).ConfigureAwait(false);
+        }
+
+        return null;
+    }
 }

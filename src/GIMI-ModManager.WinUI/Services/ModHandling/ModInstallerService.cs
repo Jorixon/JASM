@@ -80,6 +80,7 @@ public class ModInstallerService(
 public class InstallOptions
 {
     public Uri? ModUrl { get; set; }
+    public Guid? ExistingModIdToUpdate { get; set; }
 }
 
 public sealed class InstallMonitor : IDisposable

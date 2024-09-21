@@ -32,8 +32,8 @@
             <MenuFlyoutItem
                 Command="{x:Bind ViewModel.SetShaderFixesFolderCommand}"
                 CommandParameter="{Binding}"
-                Text="Set ShaderFixes Folder"
-                Visibility="Collapsed" />
+                Visibility="Collapsed"
+                Text="Set ShaderFixes Folder" />
         </MenuFlyout>
 
         <DataTemplate x:Key="RootFolderTemplate" x:DataType="viewModels:RootFolder">
@@ -149,11 +149,21 @@
 
                     </Grid>
 
-                    <CheckBox
-                        Grid.Row="2"
-                        Margin="4"
-                        Content="Overwrite existing mod"
-                        IsChecked="{x:Bind ViewModel.OverwriteExistingMod, Mode=TwoWay}" />
+                    <StackPanel Grid.Row="2">
+                        <CheckBox
+                            Margin="4"
+                            Content="Overwrite existing mod"
+                            IsChecked="{x:Bind ViewModel.OverwriteExistingMod, Mode=TwoWay}" />
+
+                        <CheckBox
+                            Margin="4"
+                            Command="{x:Bind ViewModel.ToggleReplaceDuplicateModInPresetCommand}"
+                            IsChecked="{x:Bind ViewModel.ReplaceDuplicateModInPreset, Mode=OneWay}"
+                            ToolTipService.ToolTip="The duplicate mod will be replaced in presets by the newly installed mod. This is mutually exclusive with the 'replace old mod in presets' checkbox.">
+                            <TextBlock TextWrapping="WrapWholeWords" Text="Replace duplicate mod in presets with new mod" />
+                        </CheckBox>
+                    </StackPanel>
+
                 </Grid>
 
             </ContentDialog.Content>
@@ -291,8 +301,8 @@
 
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Margin="4,0" Glyph="{x:Bind ViewModel.SelectedImageIcon}" />
-                        <TextBlock Margin="4,0" Text="PreviewImage:" />
-                        <TextBlock Text="Auto" />
+                        <TextBlock Margin="4,0" Text="Preview Image Source:" />
+                        <TextBlock Text="{x:Bind ViewModel.ImageSource, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel
                         Margin="0,0,0,8"
@@ -310,20 +320,20 @@
                     <TextBlock
                         Padding="8"
                         HorizontalAlignment="Left"
-                        Text="Here you can select the root of the mod folder."
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        Text="Here you can select the root of the mod folder." />
 
                     <TextBlock
                         Padding="8"
                         HorizontalAlignment="Left"
-                        Text="This is usually the folder that contains the 'merged.ini/Script.ini' or '.JASM_ModConfig.json'.&#x0a;JASM will automatically detect the mod folder and the merged.ini file. If you want to manually select the mod folder, you can do so by right clicking the folder in the overview above. "
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        Text="This is usually the folder that contains the 'merged.ini/Script.ini' or '.JASM_ModConfig.json'.&#x0a;JASM will automatically detect the mod folder and the merged.ini file. If you want to manually select the mod folder, you can do so by right clicking the folder in the overview above. " />
 
                     <TextBlock
                         Padding="8"
                         HorizontalAlignment="Left"
-                        Text="You can also manually select image file for the mod preview image. It's usually fine to just press 'Add Mod'"
-                        TextWrapping="WrapWholeWords" />
+                        TextWrapping="WrapWholeWords"
+                        Text="You can also manually select image file for the mod preview image. It's usually fine to just press 'Add Mod'" />
 
 
 
@@ -369,18 +379,28 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
                     <CheckBox
-                        Margin="8,0"
+                        Margin="4,0"
                         Command="{x:Bind ViewModel.EnableOnlyToggleCommand}"
                         Content="Enable this mod and disable others?"
                         IsChecked="{x:Bind ViewModel.EnableThisMod, Mode=OneWay}"
                         ToolTipService.ToolTip="This will enable this mod and disable all other mods. If a character then it will only disable for that characters skin" />
 
-                    <Button
+
+                    <CheckBox
                         Grid.Column="1"
-                        Margin="8,0"
+                        Command="{x:Bind ViewModel.ToggleReplaceModToUpdateInPresetCommand}"
+                        Content="Replace mod to update with new mod in presets"
+                        IsChecked="{x:Bind ViewModel.ReplaceModToUpdateInPreset, Mode=OneWay}"
+                        ToolTipService.ToolTip="This will replace the old mod with an update with this new installed mod for all presets. This checkbox is separate from the checkbox for when a duplicate mod is detected"
+                        Visibility="{x:Bind ViewModel.IsUpdatingMod, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                    <Button
+                        Grid.Column="2"
+                        Margin="4,0"
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.AddModCommand}"
                         Content="Add Mod">

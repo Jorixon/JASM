@@ -180,6 +180,41 @@ public sealed class ModPresetService(
         return updatedModEntry;
     }
 
+    public async Task<ModPresetEntry> ReplaceModEntryAsync(string presetName, Guid newModId, Guid oldModId,
+        IEnumerable<KeyValuePair<string, string>>? oldModPreferences = null)
+    {
+        using var _ = await LockAsync().ConfigureAwait(false);
+
+        if (oldModId == newModId)
+            throw new InvalidOperationException("Old mod Id and new mod Id are the same");
+
+        var preset = GetFirstModPreset(presetName);
+        AssertIsEditable(preset.Name);
+
+        var oldModEntry = preset.Mods.FirstOrDefault(m => m.ModId == oldModId)
+                          ?? throw new InvalidOperationException("Mod to update in preset not found");
+
+        var newMod = _skinManagerService.GetModById(newModId) ??
+                     throw new InvalidOperationException("New mod to replace in preset not found");
+
+        var newModSettings = await newMod.Settings.TryReadSettingsAsync(useCache: false).ConfigureAwait(false) ??
+                             throw new ModSettingsNotFoundException(
+                                 $"Could not read mod settings for {newMod.FullPath}");
+
+        var updatedModEntry = ModPresetEntry.FromSkinMod(newMod, newModSettings);
+
+
+        updatedModEntry.AddedAt = DateTime.Now;
+        if (oldModPreferences is not null)
+            updatedModEntry.UpdatePreferences(oldModPreferences);
+
+        preset.RemoveMods([oldModEntry]);
+        preset.AddMods([updatedModEntry]);
+
+        await WritePresetsAsync().ConfigureAwait(false);
+        return updatedModEntry;
+    }
+
     public async Task ToggleReadOnlyAsync(string presetName)
     {
         using var _ = await LockAsync().ConfigureAwait(false);

@@ -57,7 +57,7 @@ public class ModNotificationManager(
         if (modNotificationRoot is null)
         {
             logger.Warning("Mod notifications file is in an invalid format. Creating a new one");
-            _modNotificationsFile.Delete();
+            _modNotificationsFile.CopyTo(_modNotificationsFile.FullName + ".invalid", true);
             modNotificationRoot = new ModNotificationsRoot("1.0");
             var fileStream = _modNotificationsFile.Create();
             await JsonSerializer.SerializeAsync(fileStream, modNotificationRoot, _jsonSerializerOptions)

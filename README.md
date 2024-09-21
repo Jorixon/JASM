@@ -1,4 +1,4 @@
-﻿# JASM - Just Another Skin Manager
+# JASM - Just Another Skin Manager
 
 JASM is a skin manager for a certain game. Made using WinUI 3 with WinAppSDK. 
 I made this for fun, for myself and to learn WinUI, but it kinda took off over time.
@@ -94,6 +94,27 @@ The code has progressively gotten more spaghettified over time ;_;
 I believe this is due to some oddity with WinAppSdk not installing correctly. I do not know what causes this. A temporary (permanent?) solution is to use the self contained version of JASM that does not require WinAppSdk or .NET. See the releases page [SelfContainted_JASM_vx.x.x.7z](https://github.com/Jorixon/JASM/releases). Ref [#72](https://github.com/Jorixon/JASM/issues/72) and [#171](https://github.com/Jorixon/JASM/issues/171)
 
 Another potential fix if JASM used to work, is to delete the JASM user settings folder. This will wipe your settings i.e. presets, folder paths etc. However, your mods will be untouched as well as the mod settings like custom display name and images. JASM settings are stored here: `%localappdata%\JASM` / `C:\Users\<username>\AppData\Local\JASM`. You can start by deleting each game settings folder to see if it helps, alternativly just delete the entire folder. Presets are stored inside the preset folder. Might be a good idea make a backup first.
+
+
+### Command line support
+
+JASM has basic command line support. As of now the only supported functionality is to start directly into a selected game. If you would like to see more command line options, feel free to open an issue with your suggested use case.
+
+See --help for more information.
+
+Powershell:
+```powershell
+.\'JASM - Just Another Skin Manager.exe' --help
+# Example: Close the current instance if it is running and start JASM with the selected game
+.\'JASM - Just Another Skin Manager.exe' --switch --game genshin
+```
+
+### Memory usage is high
+
+For each page navigated a lot of memory is allocated and not released. This causes the app to quickly use more than 1GB of memory by quickly navigating between pages. This isn't a quick fix. I suggest restarting the app if you notice it getting slow.
+
+From my research WinUI seems to maybe have a memory leak when navigating pages. I am not sure if this is the case or if I am doing something wrong. Most of the memory is unmanaged memory which means a memory profiler won't help much. 
+
 
 ### Elevator download link
 
