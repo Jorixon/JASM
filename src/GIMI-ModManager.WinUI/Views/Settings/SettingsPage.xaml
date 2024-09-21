@@ -357,6 +357,16 @@
                         </StackPanel>
                     </StackPanel>
 
+
+                    <TextBlock IsTextSelectionEnabled="True">
+                        <Run Text="Current Size of Mod Cache for" />
+                        <Run Text="{x:Bind ViewModel.SelectedGame, Mode=OneWay}" />
+                        <Run Text=":" />
+                        <Run Text="{x:Bind ViewModel.ModCacheSizeGB, Mode=OneWay}" />
+                        <Run Text="GB" />
+
+                    </TextBlock>
+
                 </StackPanel>
 
                 <TextBlock

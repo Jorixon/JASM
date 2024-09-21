@@ -226,11 +226,12 @@ public sealed class ModArchiveRepository
         return archiveFile;
     }
 
+    public double GetTotalCacheSizeInGB() => _modArchives.Sum(x => x.Value.SizeInGb);
 
     private void RemoveUntilUnderMaxSize()
     {
         // Remove archives until the directory is under the max size
-        var currentSize = _modArchives.Sum(x => x.Value.SizeInGb);
+        var currentSize = GetTotalCacheSizeInGB();
 
         if (currentSize > _maxDirectorySizeGb)
         {
