@@ -139,7 +139,7 @@ public enum SettingScope
     App,
 
     /// <summary>
-    /// Settings that are specific to the game.
+    /// Settings that are specific to the game profile.
     /// </summary>
     Game
 }

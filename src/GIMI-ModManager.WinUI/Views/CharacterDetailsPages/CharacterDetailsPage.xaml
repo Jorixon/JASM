@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GIMI_ModManager.WinUI.Views.CharacterDetailsPages.CharacterDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:characterDetailsPages="using:GIMI_ModManager.WinUI.Views.CharacterDetailsPages"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interfaces="using:GIMI_ModManager.Core.GamesService.Interfaces"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:GIMI_ModManager.WinUI.Models"
+    xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
+    xmlns:viewModels="using:GIMI_ModManager.WinUI.Models.ViewModels"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
+    x:Name="CharacterDetailsRoot"
+    mc:Ignorable="d">
+
+    <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}">
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="10*" />
+            </Grid.ColumnDefinitions>
+
+            <characterDetailsPages:CharacterCard x:Name="CharacterCard" />
+
+
+            <Grid x:Name="PageInitLoader" Grid.Column="1">
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="Visible">
+                    <ProgressRing />
+                    <TextBlock Text="Loading Mods..." />
+                </StackPanel>
+            </Grid>
+
+            <Grid
+                x:Name="RightWorkingArea"
+                Grid.Column="1"
+                Margin="4,0,4,0"
+                Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="ToolBarArea" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <MenuBar>
+                            <MenuBarItem Title="Mods">
+                                <MenuBarItem.Items>
+                                    <MenuFlyoutItem ToolTipService.ToolTip="Add a mod folder" Text="Add Mod..." />
+
+                                    <MenuFlyoutItem ToolTipService.ToolTip="Add a mod inside a compressed archive" Text="Add Archive...">
+                                        <MenuFlyoutItem.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                        </MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
+
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem Text="Refresh Mods">
+                                        <MenuFlyoutItem.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="F5" />
+                                        </MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
+                                </MenuBarItem.Items>
+                            </MenuBarItem>
+
+                            <MenuBarItem Title="Folders">
+                                <MenuFlyoutItem Text="Open Character's Mod folder..." />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Open 3Dmigoto Root folder..." />
+                            </MenuBarItem>
+                        </MenuBar>
+
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="16">
+
+                        <InfoBar
+                            Height="50"
+                            VerticalAlignment="Center"
+                            IsClosable="False"
+                            Visibility="Visible" />
+
+                        <ToggleSwitch
+                            x:Name="ViewToggleSwitch"
+                            IsOn="False"
+                            OffContent="Detailed View"
+                            OnContent="Gallery View" />
+                        <!--  Toggled="ViewToggleSwitch_OnToggled"  -->
+
+                        <Grid MinWidth="32">
+                            <ProgressRing />
+                        </Grid>
+
+                    </StackPanel>
+
+                </Grid>
+                <Grid
+                    x:Name="MainContentArea"
+                    Grid.Row="1"
+                    AllowDrop="False"
+                    Background="Transparent">
+                    <!--
+                        DragOver="ModListArea_OnDragOver"
+                        Drop="ModListArea_OnDrop"
+                    -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid
+                            x:Name="ModListArea"
+                            AllowDrop="True"
+                            Background="Transparent"
+                            CornerRadius="10">
+                            <!--
+                                DragOver="ModListArea_OnDragOver"
+                                Drop="ModListArea_OnDrop"
+                            -->
+                            <characterDetailsPages:ModGrid x:Name="ModGrid" />
+
+                        </Grid>
+
+                        <characterDetailsPages:ModPane x:Name="ModPane" Grid.Column="1" />
+
+                        <controls:GridSplitter
+                            x:Name="ModPaneSplitter"
+                            Grid.Column="1"
+                            Width="8"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            ResizeBehavior="BasedOnAlignment"
+                            ResizeDirection="Auto">
+                            <controls:GridSplitter.RenderTransform>
+                                <TranslateTransform X="-10" />
+                            </controls:GridSplitter.RenderTransform>
+                        </controls:GridSplitter>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+
+        </Grid>
+    </Grid>
+</Page>

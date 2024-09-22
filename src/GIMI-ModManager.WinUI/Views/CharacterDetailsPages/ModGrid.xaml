@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GIMI_ModManager.WinUI.Views.CharacterDetailsPages.ModGrid"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.CharacterDetailsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:GIMI_ModManager.WinUI.Models"
+    xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
+    xmlns:subViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels"
+    IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <controls:DataGrid
+            x:Name="ModListGrid"
+            AllowDrop="False"
+            AutoGenerateColumns="False"
+            CanUserReorderColumns="False"
+            CanUserResizeColumns="True"
+            FrozenColumnCount="3"
+            GridLinesVisibility="All"
+            ItemsSource="{x:Bind ViewModel.GridMods, Mode=OneWay}"
+            SelectionChanged="ModListGrid_OnSelectionChanged"
+            SelectionMode="Extended">
+            <!--
+                Sorting="ModListGrid_OnSorting"
+                KeyDown="ModListGrid_OnKeyDown"
+                CellEditEnded="ModListGrid_OnCellEditEnded"
+                ContextFlyout="{Binding ElementName=ModRowFlyout}"
+            -->
+
+
+            <controls:DataGrid.Columns>
+                <controls:DataGridTemplateColumn
+                    Width="SizeToHeader"
+                    CanUserResize="False"
+                    CanUserSort="True"
+                    Header="Enabled"
+                    Tag="IsEnabled">
+
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="subViewModels:ModRowVM">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <CheckBox
+                                    Width="Auto"
+                                    MinWidth="0"
+                                    IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
+                                    IsTabStop="False" />
+                            </Grid>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+
+                <controls:DataGridTemplateColumn
+                    Width="SizeToCells"
+                    MinWidth="0"
+                    CanUserSort="False"
+                    Header=""
+                    IsReadOnly="True"
+                    Tag="NotificationColumn">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="subViewModels:ModRowVM">
+
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <ItemsRepeater>
+                                    <!--  ItemsSource="{x:Bind ModNotifications, Mode=OneWay}"  -->
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="notifications:ModNotification">
+                                            <Grid Margin="4,0" VerticalAlignment="Center">
+                                                <Button
+                                                    Margin="0"
+                                                    Padding="0"
+                                                    BorderThickness="0"
+                                                    CornerRadius="0"
+                                                    DataContext="{x:Bind}">
+                                                    <!--
+                                                        Click="ButtonBase_OnClick"
+                                                        PointerEntered="NotificationButton_OnPointerEntered"
+                                                        PointerExited="NotificationButton_OnPointerExited"
+                                                    -->
+                                                    <Button.Content>
+                                                        <FontIcon
+                                                            VerticalAlignment="Bottom"
+                                                            Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                                            Glyph="{x:Bind AttentionType, Converter={StaticResource AttentionTypeToSymbolConverter}}" />
+                                                    </Button.Content>
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </StackPanel>
+
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+                <controls:DataGridTemplateColumn
+                    Width="SizeToCells"
+                    CanUserSort="True"
+                    Header="Mod Name"
+                    IsReadOnly="True"
+                    Tag="Name">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="subViewModels:ModRowVM">
+                            <Grid Margin="8,0">
+                                <TextBlock
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind DisplayName, Mode=OneWay}" />
+                            </Grid>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTextColumn
+                    Width="SizeToCells"
+                    Binding="{Binding FolderName, Mode=OneWay}"
+                    CanUserSort="True"
+                    Header="Mod Folder Name"
+                    IsReadOnly="True"
+                    Tag="Folder Name" />
+
+                <controls:DataGridTextColumn
+                    Width="SizeToCells"
+                    Binding="{Binding Author, Mode=OneWay}"
+                    CanUserSort="True"
+                    Header="Author"
+                    IsReadOnly="True"
+                    Tag="Author Name" />
+
+                <controls:DataGridTemplateColumn
+                    Width="SizeToCells"
+                    CanUserSort="True"
+                    Header="Date Added"
+                    IsReadOnly="True"
+                    Tag="Date Added">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="subViewModels:ModRowVM">
+                            <Grid
+                                Margin="8,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <TextBlock
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    Text="DateAdded" />
+                            </Grid>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+            </controls:DataGrid.Columns>
+
+        </controls:DataGrid>
+    </Grid>
+</UserControl>

@@ -15,6 +15,7 @@ using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.Views;
@@ -30,6 +31,7 @@ using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
+using CharacterDetailsPage = GIMI_ModManager.WinUI.Views.CharacterDetailsPage;
 using CreateCommandViewModel = GIMI_ModManager.WinUI.ViewModels.SettingsViewModels.CreateCommandViewModel;
 using GameBananaService = GIMI_ModManager.WinUI.Services.ModHandling.GameBananaService;
 using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
@@ -244,6 +246,9 @@ public partial class App : Application
                 services.AddTransient<CommandProcessViewerViewModel>();
                 services.AddTransient<CreateCommandView>();
                 services.AddTransient<CreateCommandViewModel>();
+                services.AddTransient<ViewModels.CharacterDetailsViewModels.CharacterDetailsViewModel>();
+                services.AddTransient<ModPaneVM>();
+                services.AddTransient<ModGridVM>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

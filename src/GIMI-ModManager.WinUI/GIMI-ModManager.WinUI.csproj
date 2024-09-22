@@ -606,6 +606,10 @@
 		<None Remove="Assets\Games\Honkai\Images\Start_Game.png" />
 		<None Remove="Styles\FontTypes.xaml" />
 		<None Remove="Views\CharacterDetailsPage.xaml" />
+		<None Remove="Views\CharacterDetailsPages\CharacterCard.xaml" />
+		<None Remove="Views\CharacterDetailsPages\CharacterDetailsPage.xaml" />
+		<None Remove="Views\CharacterDetailsPages\ModGrid.xaml" />
+		<None Remove="Views\CharacterDetailsPages\ModPane.xaml" />
 		<None Remove="Views\CharacterGalleryPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
@@ -693,6 +697,9 @@
 		<None Update="Assets\Games\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<Page Update="Views\CharacterDetailsPage\CharacterDetailsPage.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
 		<Page Update="Views\ModInstallerPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
@@ -1151,6 +1158,15 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\CharacterDetailsPages\CharacterCard.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\CharacterDetailsPages\ModGrid.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\CharacterDetailsPages\ModPane.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\Settings\CreateCommandView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

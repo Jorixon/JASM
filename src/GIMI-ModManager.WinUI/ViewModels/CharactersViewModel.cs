@@ -639,7 +639,11 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             return;
         }
 
-        _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
+        if (DebugViewModel.UseNewModel)
+            _navigationService.NavigateTo(typeof(CharacterDetailsViewModels.CharacterDetailsViewModel).FullName!,
+                characterModel);
+        else
+            _navigationService.NavigateTo(typeof(CharacterDetailsViewModel).FullName!, characterModel);
     }
 
     [ObservableProperty] private bool _showOnlyCharactersWithMods = false;
