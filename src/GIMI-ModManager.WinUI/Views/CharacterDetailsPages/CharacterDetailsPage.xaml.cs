@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.Contracts.Services;
+using GIMI_ModManager.WinUI.Helpers.Xaml;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -20,21 +22,29 @@ public sealed partial class CharacterDetailsPage : Page
         ModPane.ViewModel = ViewModel.ModPaneVM;
         ModGrid.ViewModel = ViewModel.ModGridVM;
 
+        ViewModel.OnModObjectLoaded += OnModObjectLoaded;
         ViewModel.OnModsLoaded += OnModsLoaded;
+        ViewModel.OnInitializingFinished += OnInitializingFinished;
     }
+
+    private void OnModObjectLoaded(object? sender, EventArgs e)
+    {
+        ViewModel.GridLoadedAwaiter = () => ModGrid.DataGrid.AwaitItemsSourceLoaded(ViewModel.CancellationToken);
+    }
+
 
     private void OnModsLoaded(object? sender, EventArgs e)
     {
         ViewModel.OnModsLoaded -= OnModsLoaded;
-        // Hide Page Init loader
         PageInitLoader.Visibility = Visibility.Collapsed;
         RightWorkingArea.Visibility = Visibility.Visible;
 
-
-        if (ModGrid.ViewModel.ModdableObjectHasAnyMods)
-            return;
-
+        if (ModGrid.ViewModel.ModdableObjectHasAnyMods) return;
         ShowNoModsElement();
+    }
+
+    private void OnInitializingFinished(object? sender, EventArgs e)
+    {
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -159,5 +169,11 @@ public sealed partial class CharacterDetailsPage : Page
         MainContentArea.Children.Add(stackPanel);
 
         return stackPanel;
+    }
+
+
+    private void KeyboardAccelerator_OnInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        SearchModsTextBox.Focus(FocusState.Keyboard);
     }
 }

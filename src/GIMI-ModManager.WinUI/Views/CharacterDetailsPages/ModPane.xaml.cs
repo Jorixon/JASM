@@ -21,6 +21,15 @@ public sealed partial class ModPane : UserControl
     public ModPaneVM ViewModel
     {
         get { return (ModPaneVM)GetValue(ViewModelProperty); }
-        set { SetValue(ViewModelProperty, value); }
+        set
+        {
+            SetValue(ViewModelProperty, value);
+            OnViewModelSetHandler(ViewModel);
+        }
+    }
+
+
+    private void OnViewModelSetHandler(ModPaneVM viewModel)
+    {
     }
 }

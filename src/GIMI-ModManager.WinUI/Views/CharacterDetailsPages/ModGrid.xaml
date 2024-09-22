@@ -14,12 +14,51 @@
     mc:Ignorable="d">
 
     <Grid>
+
+        <Grid.Resources>
+            <Flyout
+                x:Name="ModRowFlyout"
+                Placement="RightEdgeAlignedBottom"
+                ShouldConstrainToRootBounds="False">
+
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE74D;" />
+                        <FontIcon Grid.Column="1" Glyph="&#xE74D;" />
+                    </Grid>
+
+                    <StackPanel Grid.Row="1">
+                        <Button>Move Mod...</Button>
+                        <Button>Mod Details...</Button>
+                        <Button>Presets...</Button>
+                        <Button>Commands...</Button>
+                    </StackPanel>
+
+                </Grid>
+
+
+
+
+            </Flyout>
+        </Grid.Resources>
+
         <controls:DataGrid
             x:Name="ModListGrid"
             AllowDrop="False"
             AutoGenerateColumns="False"
-            CanUserReorderColumns="False"
+            CanUserReorderColumns="True"
             CanUserResizeColumns="True"
+            ContextFlyout="{Binding ElementName=ModRowFlyout, Mode=OneTime}"
             FrozenColumnCount="3"
             GridLinesVisibility="All"
             ItemsSource="{x:Bind ViewModel.GridMods, Mode=OneWay}"
@@ -29,7 +68,6 @@
                 Sorting="ModListGrid_OnSorting"
                 KeyDown="ModListGrid_OnKeyDown"
                 CellEditEnded="ModListGrid_OnCellEditEnded"
-                ContextFlyout="{Binding ElementName=ModRowFlyout}"
             -->
 
 
@@ -155,6 +193,14 @@
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
+
+                <controls:DataGridTextColumn
+                    Width="SizeToCells"
+                    Binding="{Binding InPresets, Mode=OneWay}"
+                    CanUserSort="True"
+                    Header="Presets"
+                    IsReadOnly="True"
+                    Tag="InPresets" />
             </controls:DataGrid.Columns>
 
         </controls:DataGrid>

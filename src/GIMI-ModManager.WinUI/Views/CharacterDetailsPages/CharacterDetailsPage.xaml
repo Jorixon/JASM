@@ -98,6 +98,24 @@
                             IsClosable="False"
                             Visibility="Visible" />
 
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBox
+                                x:Name="SearchModsTextBox"
+                                MinWidth="200"
+                                MaxWidth="500"
+                                PlaceholderText="Search Mods...">
+
+                                <TextBox.KeyboardAccelerators>
+                                    <KeyboardAccelerator
+                                        Key="F"
+                                        Invoked="KeyboardAccelerator_OnInvoked"
+                                        Modifiers="Control" />
+                                </TextBox.KeyboardAccelerators>
+
+                            </TextBox>
+                        </StackPanel>
+
+
                         <ToggleSwitch
                             x:Name="ViewToggleSwitch"
                             IsOn="False"

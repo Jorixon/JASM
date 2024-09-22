@@ -6,18 +6,24 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 
-public partial class ModGridVM(ISkinManagerService skinManagerService, CharacterSkinService characterSkinService, NotificationManager notificationService)
+public partial class ModGridVM(
+    ISkinManagerService skinManagerService,
+    CharacterSkinService characterSkinService,
+    NotificationManager notificationService,
+    ModPresetService presetService)
     : ObservableRecipient, IRecipient<ModChangedMessage>
 {
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
     private readonly CharacterSkinService _characterSkinService = characterSkinService;
     private readonly NotificationManager _notificationService = notificationService;
+    private readonly ModPresetService _presetService = presetService;
 
     private CancellationToken _navigationCt = default;
     private ICharacterModList _characterModList = null!;
@@ -29,11 +35,12 @@ public partial class ModGridVM(ISkinManagerService skinManagerService, Character
 
     public bool IsNotBusy => !IsBusy;
 
-    private List<CharacterSkinEntry> _modBackend = new();
+    private List<CharacterSkinEntry> _modsBackend = new();
+    public IReadOnlyList<CharacterSkinEntry> ModsBackend => _modsBackend.AsReadOnly();
     public ObservableCollection<ModRowVM> GridMods = new();
     public ObservableCollection<ModRowVM> SelectedMods = new();
 
-    public bool ModdableObjectHasAnyMods => _modBackend.Count != 0;
+    public bool ModdableObjectHasAnyMods => _modsBackend.Count != 0;
 
     public async Task InitializeAsync(ModDetailsPageContext context, CancellationToken navigationCt = default)
     {
@@ -59,21 +66,30 @@ public partial class ModGridVM(ISkinManagerService skinManagerService, Character
 
             if (_context.IsCharacter && _context.Skins.Count > 1)
             {
-                _modBackend = await _characterSkinService
+                _modsBackend = await _characterSkinService
                     .GetCharacterSkinEntriesForSkinAsync(_context.SelectedSkin, useSettingsCache: true,
                         cancellationToken: _navigationCt)
                     .ToListAsync().ConfigureAwait(false);
             }
             else
             {
-                _modBackend = _characterModList.Mods.ToList();
+                _modsBackend = _characterModList.Mods.ToList();
             }
 
+            var modToPresetMapping = await _presetService
+                .FindPresetsForModsAsync(_modsBackend.Select(m => m.Id))
+                .ConfigureAwait(false);
 
-            foreach (var x in _modBackend)
+            foreach (var x in _modsBackend)
             {
                 _navigationCt.ThrowIfCancellationRequested();
-                var modVm = await CreateModRowVM(x, _navigationCt).ConfigureAwait(false);
+
+                IEnumerable<string> presetNames = [];
+
+                if (modToPresetMapping.TryGetValue(x.Id, out var modPresets))
+                    presetNames = modPresets.Select(m => m.Name);
+
+                var modVm = await CreateModRowVM(x, presetNames, _navigationCt).ConfigureAwait(false);
                 modRows.Add(modVm);
             }
 
@@ -96,12 +112,13 @@ public partial class ModGridVM(ISkinManagerService skinManagerService, Character
         GridMods.AddRange(modRows);
     }
 
-    private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry,
+    private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry, IEnumerable<string> presetNames,
         CancellationToken cancellationToken = default)
     {
         var skinModSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true, cancellationToken)
             .ConfigureAwait(false);
-        return new ModRowVM(characterSkinEntry, skinModSettings);
+
+        return new ModRowVM(characterSkinEntry, skinModSettings, presetNames);
     }
 
     public void Receive(ModChangedMessage message)
@@ -109,6 +126,20 @@ public partial class ModGridVM(ISkinManagerService skinManagerService, Character
         // TODO: IMplement
     }
 
+    public void SetSelectedMod(Guid modId, bool ignoreFilters = false)
+    {
+        if (ignoreFilters)
+            throw new NotImplementedException();
+
+        var mod = GridMods.FirstOrDefault(x => x.Id == modId);
+        if (mod is null)
+            return;
+
+        var index = GridMods.IndexOf(mod);
+        SelectModEvent?.Invoke(this, new SelectModRowEventArgs(index));
+    }
+
+    // Only to be used by code behind
     public void SelectionChanged_EventHandler(ICollection<ModRowVM> selectedMods, ICollection<ModRowVM> removedMods)
     {
         var anyChanges = false;
@@ -120,6 +151,7 @@ public partial class ModGridVM(ISkinManagerService skinManagerService, Character
                 if (!SelectedMods.Contains(mod))
                 {
                     SelectedMods.Add(mod);
+                    anyChanges = true;
                 }
             }
         }
@@ -129,27 +161,53 @@ public partial class ModGridVM(ISkinManagerService skinManagerService, Character
             foreach (var mod in removedMods)
             {
                 if (SelectedMods.Contains(mod))
+                {
                     SelectedMods.Remove(mod);
+                    anyChanges = true;
+                }
             }
         }
 
-        //SelectedModsCount = SelectedMods.Count;
-        //OnModsSelected?.Invoke(this, new ModSelectedEventArgs(SelectedMods));
+        if (anyChanges)
+            OnModsSelected?.Invoke(this, new ModRowSelectedEventArgs(SelectedMods));
+    }
+
+    // Used by parent view model
+    public event EventHandler<ModRowSelectedEventArgs>? OnModsSelected;
+
+    // Set single selected from code
+    public event EventHandler<SelectModRowEventArgs>? SelectModEvent;
+
+    public class ModRowSelectedEventArgs(IEnumerable<ModRowVM> mods) : EventArgs
+    {
+        public ICollection<ModRowVM> Mods { get; } = mods.ToArray();
+    }
+
+    public class SelectModRowEventArgs(int index) : EventArgs
+    {
+        public int Index { get; } = index;
     }
 }
 
 public partial class ModRowVM : ObservableObject
 {
+    public Guid Id { get; init; }
     [ObservableProperty] private bool _isSelected;
     public bool IsEnabled { get; init; }
     public string DisplayName { get; init; }
 
     public string FolderName { get; init; }
 
-    public ModRowVM(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings)
+    public string Author => "Author";
+
+    public string InPresets { get; }
+
+    public ModRowVM(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings, IEnumerable<string> presetNames)
     {
+        Id = characterSkinEntry.Mod.Id;
         IsEnabled = characterSkinEntry.IsEnabled;
         DisplayName = modSettings?.CustomName ?? characterSkinEntry.Mod.GetDisplayName();
         FolderName = characterSkinEntry.Mod.Name;
+        InPresets = string.Join('|', presetNames);
     }
 }

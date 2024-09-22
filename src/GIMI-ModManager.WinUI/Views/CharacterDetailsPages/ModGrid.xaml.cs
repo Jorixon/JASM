@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,9 +10,13 @@ namespace GIMI_ModManager.WinUI.Views.CharacterDetailsPages;
 
 public sealed partial class ModGrid : UserControl
 {
+    public DataGrid DataGrid;
+
     public ModGrid()
     {
         InitializeComponent();
+        Unloaded += OnUnloaded;
+        DataGrid = ModListGrid;
     }
 
 
@@ -21,10 +26,40 @@ public sealed partial class ModGrid : UserControl
     public ModGridVM ViewModel
     {
         get { return (ModGridVM)GetValue(ViewModelProperty); }
-        set { SetValue(ViewModelProperty, value); }
+        set
+        {
+            SetValue(ViewModelProperty, value);
+            OnViewModelSetHandler(ViewModel);
+        }
     }
 
     private void ModListGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        ViewModel.SelectionChanged_EventHandler(
+            e.AddedItems.OfType<ModRowVM>().ToArray(),
+            e.RemovedItems.OfType<ModRowVM>().ToArray());
+    }
+
+
+    private void OnViewModelSetHandler(ModGridVM viewModel)
+    {
+        viewModel.SelectModEvent += ViewModelOnSelectModEvent;
+    }
+
+    private void ViewModelOnSelectModEvent(object? sender, ModGridVM.SelectModRowEventArgs e)
+    {
+        DataGrid.SelectedIndex = e.Index;
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            ViewModel.SelectModEvent -= ViewModelOnSelectModEvent;
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
     }
 }

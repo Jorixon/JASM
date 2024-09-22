@@ -8,6 +8,7 @@ using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
+using Microsoft.UI.Dispatching;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 
@@ -17,10 +18,12 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private readonly IGameService _gameService = App.GetService<IGameService>();
     private readonly NotificationManager _notificationService = App.GetService<NotificationManager>();
 
-    private readonly CancellationTokenSource _navigationCancellationTokenSource = new();
-    private CancellationToken _cancellationToken;
+    public Func<Task>? GridLoadedAwaiter { get; set; }
 
-    private bool IsReturning => _cancellationToken.IsCancellationRequested || _isErrorNavigateBack;
+    private readonly CancellationTokenSource _navigationCancellationTokenSource = new();
+    public CancellationToken CancellationToken;
+
+    private bool IsReturning => CancellationToken.IsCancellationRequested || _isErrorNavigateBack;
     private bool _isErrorNavigateBack;
     [ObservableProperty] private bool _isNavigationFinished;
 
@@ -49,15 +52,16 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private async Task InitAsync(object parameter)
     {
-        _cancellationToken = _navigationCancellationTokenSource.Token;
+        CancellationToken = _navigationCancellationTokenSource.Token;
         if (IsReturning)
             return;
         OnInitializingStarted?.Invoke(this, EventArgs.Empty);
 
         // Init character card
         InitCharacterCard(parameter);
+
         // Refresh UI
-        await Task.Delay(100, _cancellationToken);
+        await Task.Delay(100, CancellationToken);
         if (IsReturning)
             return;
 
@@ -68,13 +72,29 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             return;
 
         // Init Mod Pane
-        // ...
+        await InitModPaneAsync();
         if (IsReturning)
             return;
+
+        await SetInitialSelectedModAsync();
 
         // Finished initializing
         IsNavigationFinished = true;
         OnInitializingFinished?.Invoke(this, EventArgs.Empty);
+    }
+
+    private async Task SetInitialSelectedModAsync()
+    {
+        if (GridLoadedAwaiter is not null)
+            await GridLoadedAwaiter();
+        GridLoadedAwaiter = null;
+
+        var modToSelect = ModGridVM.GridMods.FirstOrDefault(m => m.IsEnabled) ?? ModGridVM.GridMods.FirstOrDefault();
+
+        if (modToSelect is null)
+            return;
+
+        ModGridVM.SetSelectedMod(modToSelect.Id);
     }
 
 
@@ -107,13 +127,34 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private async Task InitModGridAsync()
     {
-        await ModGridVM.InitializeAsync(new ModDetailsPageContext(ShownModObject, SelectedSkin), _cancellationToken);
+        await ModGridVM.InitializeAsync(new ModDetailsPageContext(ShownModObject, SelectedSkin), CancellationToken);
+        ModGridVM.OnModsSelected += OnModsSelected;
         if (IsReturning)
             return;
 
 
         ModGridVM.IsBusy = false;
         OnModsLoaded?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnModsSelected(object? sender, ModGridVM.ModRowSelectedEventArgs args)
+    {
+        var selectedMod = args.Mods.FirstOrDefault();
+
+        ModPaneVM.QueueLoadMod(selectedMod?.Id);
+
+        if (selectedMod is null)
+            return;
+
+        // TODO: Handle notification
+    }
+
+    private async Task InitModPaneAsync()
+    {
+        // Init Mod Pane
+        await ModPaneVM.OnNavigatedToAsync(DispatcherQueue.GetForCurrentThread(), CancellationToken);
+        if (IsReturning)
+            return;
     }
 
     public void OnNavigatedFrom()
