@@ -152,14 +152,14 @@
                                 <TextBlock
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    Text="{x:Bind DisplayName, Mode=OneWay}" />
+                                    Text="{x:Bind DisplayName, Mode=OneTime}" />
                             </Grid>
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
-                    Binding="{Binding FolderName, Mode=OneWay}"
+                    Binding="{Binding FolderName, Mode=OneTime}"
                     CanUserSort="True"
                     Header="Mod Folder Name"
                     IsReadOnly="True"
@@ -167,7 +167,7 @@
 
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
-                    Binding="{Binding Author, Mode=OneWay}"
+                    Binding="{Binding Author, Mode=OneTime}"
                     CanUserSort="True"
                     Header="Author"
                     IsReadOnly="True"
@@ -176,19 +176,19 @@
                 <controls:DataGridTemplateColumn
                     Width="SizeToCells"
                     CanUserSort="True"
-                    Header="Date Added"
+                    Header="Added"
                     IsReadOnly="True"
                     Tag="Date Added">
                     <controls:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="subViewModels:ModRowVM">
                             <Grid
                                 Margin="8,0"
-                                HorizontalAlignment="Center"
+                                HorizontalAlignment="Left"
                                 VerticalAlignment="Center">
                                 <TextBlock
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    Text="DateAdded" />
+                                    Text="{Binding DateAddedFormated, Mode=OneTime}" />
                             </Grid>
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -196,7 +196,7 @@
 
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
-                    Binding="{Binding InPresets, Mode=OneWay}"
+                    Binding="{Binding InPresets, Mode=OneTime}"
                     CanUserSort="True"
                     Header="Presets"
                     IsReadOnly="True"

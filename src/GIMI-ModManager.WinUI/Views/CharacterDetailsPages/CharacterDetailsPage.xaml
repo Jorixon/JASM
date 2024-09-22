@@ -77,9 +77,20 @@
                             </MenuBarItem>
 
                             <MenuBarItem Title="Folders">
-                                <MenuFlyoutItem Text="Open Character's Mod folder..." />
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGIMIRootFolderCommand}" Text="Open 3Dmigoto Root folder..." />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="Open 3Dmigoto Root folder..." />
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenCharacterFolderCommand}" Text="Open Character's Mod folder..." />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem
+                                    Command="{x:Bind ViewModel.OpenModFolderCommand}"
+                                    IsEnabled="{x:Bind ViewModel.ModGridVM.IsSingleModSelected, Mode=OneWay}"
+                                    Text="Open Selected Mod folder..." />
+                            </MenuBarItem>
+
+                            <MenuBarItem Title="View">
+                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time." Text="Single Select" />
+                                <ToggleMenuFlyoutItem Text="Compact Mode" />
+                                <ToggleMenuFlyoutItem Text="Hide 'Disabled_' From Folder Names" />
                             </MenuBarItem>
                         </MenuBar>
 
@@ -103,7 +114,9 @@
                                 x:Name="SearchModsTextBox"
                                 MinWidth="200"
                                 MaxWidth="500"
-                                PlaceholderText="Search Mods...">
+                                PlaceholderText="Search Mods..."
+                                TextChanged="SearchModsTextBox_OnTextChanged"
+                                Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                                 <TextBox.KeyboardAccelerators>
                                     <KeyboardAccelerator

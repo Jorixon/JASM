@@ -44,7 +44,6 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
     private async Task ModLoaderLoopAsync()
     {
         // Runs on the UI thread
-
         await foreach (var loadModMessage in _channel.Reader.ReadAllAsync().WithCancellation(_cancellationToken))
         {
             using var _ = await LockAsync().ConfigureAwait(false);
@@ -53,10 +52,9 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
                 if (loadModMessage.ModId is null)
                 {
                     await UnloadModAsync();
-                    return;
+                    continue;
                 }
 
-                // Load mod
                 await LoadModAsync(loadModMessage.ModId.Value);
             }
             catch (TaskCanceledException)
@@ -88,6 +86,7 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
     private Task UnloadModAsync()
     {
         // Unload mod
+        ShownModImageUri = ImageHandlerService.StaticPlaceholderImageUri;
         return Task.CompletedTask;
     }
 

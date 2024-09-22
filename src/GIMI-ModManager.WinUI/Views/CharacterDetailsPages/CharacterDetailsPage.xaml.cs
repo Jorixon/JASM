@@ -176,4 +176,9 @@ public sealed partial class CharacterDetailsPage : Page
     {
         SearchModsTextBox.Focus(FocusState.Keyboard);
     }
+
+    private void SearchModsTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        ViewModel.SearchMods(SearchModsTextBox.Text);
+    }
 }

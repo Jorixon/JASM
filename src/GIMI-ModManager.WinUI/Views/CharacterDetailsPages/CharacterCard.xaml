@@ -92,6 +92,18 @@
             </StackPanel>
 
             <StackPanel
+                Margin="0,8"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,4,0"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource BodyTextStyle}"
+                    Text="Mod Folder Size:" />
+                <TextBlock Style="{ThemeResource BodyTextStyle}" Text="0 GB" />
+            </StackPanel>
+
+            <StackPanel
                 x:Name="SelectSkinBox"
                 Padding="8"
                 Background="{ThemeResource ControlFillColorDefaultBrush}"

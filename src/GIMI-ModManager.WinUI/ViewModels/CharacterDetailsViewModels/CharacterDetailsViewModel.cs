@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GIMI_ModManager.Core.Contracts.Entities;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
@@ -9,6 +11,7 @@ using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using Microsoft.UI.Dispatching;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 
@@ -16,7 +19,10 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 {
     private readonly INavigationService _navigationService = App.GetService<INavigationService>();
     private readonly IGameService _gameService = App.GetService<IGameService>();
+    private readonly ILogger _logger = App.GetService<ILogger>().ForContext<CharacterDetailsViewModel>();
+    private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
     private readonly NotificationManager _notificationService = App.GetService<NotificationManager>();
+    private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
 
     public Func<Task>? GridLoadedAwaiter { get; set; }
 
@@ -25,6 +31,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private bool IsReturning => CancellationToken.IsCancellationRequested || _isErrorNavigateBack;
     private bool _isErrorNavigateBack;
+    private ICharacterModList _modList = null!;
     [ObservableProperty] private bool _isNavigationFinished;
 
 
@@ -76,19 +83,19 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         if (IsReturning)
             return;
 
-        await SetInitialSelectedModAsync();
+        if (GridLoadedAwaiter is not null)
+            await GridLoadedAwaiter();
+        GridLoadedAwaiter = null;
+
+        AutoSelectFirstMod();
 
         // Finished initializing
         IsNavigationFinished = true;
         OnInitializingFinished?.Invoke(this, EventArgs.Empty);
     }
 
-    private async Task SetInitialSelectedModAsync()
+    private void AutoSelectFirstMod()
     {
-        if (GridLoadedAwaiter is not null)
-            await GridLoadedAwaiter();
-        GridLoadedAwaiter = null;
-
         var modToSelect = ModGridVM.GridMods.FirstOrDefault(m => m.IsEnabled) ?? ModGridVM.GridMods.FirstOrDefault();
 
         if (modToSelect is null)
@@ -121,6 +128,15 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             ShownModImageUri = SelectedSkin.ImageUri ?? ImageHandlerService.StaticPlaceholderImageUri;
         }
 
+        var modList = _skinManagerService.GetCharacterModListOrDefault(moddableObject.InternalName);
+
+        if (modList is null)
+        {
+            ErrorNavigateBack();
+            return;
+        }
+
+        _modList = modList;
         IsModObjectLoaded = true;
         OnModObjectLoaded?.Invoke(this, EventArgs.Empty);
     }
@@ -141,7 +157,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     {
         var selectedMod = args.Mods.FirstOrDefault();
 
-        ModPaneVM.QueueLoadMod(selectedMod?.Id);
+        var queued = ModPaneVM.QueueLoadMod(selectedMod?.Id);
 
         if (selectedMod is null)
             return;
