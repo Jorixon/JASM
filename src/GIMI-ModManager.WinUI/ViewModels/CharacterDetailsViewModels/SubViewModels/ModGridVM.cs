@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -25,10 +26,11 @@ public partial class ModGridVM(
     private readonly ModPresetService _presetService = presetService;
 
     private CancellationToken _navigationCt = default;
-    private ICharacterModList _characterModList = null!;
+    private ICharacterModList _modList = null!;
     private ModDetailsPageContext _context = null!;
 
-    private ModGridSortingMethod _currentSortingMethod = new(ModRowSorters.IsEnabledSorters);
+    public bool IsDescending { get; private set; } = true;
+    public ModGridSortingMethod CurrentSortingMethod { get; private set; } = new(ModRowSorter.IsEnabledSorter);
 
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))]
@@ -50,7 +52,7 @@ public partial class ModGridVM(
     {
         _navigationCt = navigationCt;
         _context = context;
-        _characterModList = _skinManagerService.GetCharacterModList(_context.ShownModObject);
+        _modList = _skinManagerService.GetCharacterModList(_context.ShownModObject);
         await ReloadAllModsAsync();
         IsBusy = false;
     }
@@ -77,7 +79,7 @@ public partial class ModGridVM(
             }
             else
             {
-                _modsBackend = _characterModList.Mods.ToList();
+                _modsBackend = _modList.Mods.ToList();
             }
 
             var modToPresetMapping = await _presetService
@@ -110,15 +112,11 @@ public partial class ModGridVM(
                     message,
                     TimeSpan.FromSeconds(10));
             }
-
-            // TODO: TESTING
-            var orderedMods = _currentSortingMethod.Sort(_gridModsBackend, true).ToList();
-            _gridModsBackend.Clear();
-            _gridModsBackend.AddRange(orderedMods);
         }, _navigationCt);
 
 
         GridMods.AddRange(_gridModsBackend);
+        SetModSorting(CurrentSortingMethod.SortingMethodType, IsDescending);
     }
 
     private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry, IEnumerable<string> presetNames,
@@ -127,7 +125,10 @@ public partial class ModGridVM(
         var skinModSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true, cancellationToken)
             .ConfigureAwait(false);
 
-        return new ModRowVM(characterSkinEntry, skinModSettings, presetNames);
+        return new ModRowVM(characterSkinEntry, skinModSettings, presetNames)
+        {
+            ToggleEnabledCommand = new AsyncRelayCommand<ModRowVM>(ToggleModAsync)
+        };
     }
 
     public ModRowVM[] SearchFilterMods(string searchText)
@@ -180,6 +181,38 @@ public partial class ModGridVM(
         SelectModEvent?.Invoke(this, new SelectModRowEventArgs(index));
     }
 
+
+    private async Task ToggleModAsync(ModRowVM? mod)
+    {
+        if (mod is null)
+            return;
+
+        var characterSkinEntry = _modsBackend.FirstOrDefault(x => x.Id == mod.Id);
+        if (characterSkinEntry is null)
+            return;
+
+
+        try
+        {
+            await Task.Run(() =>
+            {
+                if (characterSkinEntry.IsEnabled)
+                    _modList.DisableMod(characterSkinEntry.Id);
+                else
+                    _modList.EnableMod(characterSkinEntry.Id);
+            }, CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            _notificationService.ShowNotification("An error occured toggling mod", e.Message, TimeSpan.FromSeconds(5));
+        }
+
+        mod.IsEnabled = characterSkinEntry.IsEnabled;
+        mod.FolderName = characterSkinEntry.Mod.Name;
+        mod.AbsFolderPath = characterSkinEntry.Mod.FullPath;
+        Messenger.Send(new ModChangedMessage(characterSkinEntry, null));
+    }
+
     public void ClearSelection() => SelectModEvent?.Invoke(this, new SelectModRowEventArgs(-1));
 
 
@@ -226,6 +259,8 @@ public partial class ModGridVM(
     // Set single selected from code
     public event EventHandler<SelectModRowEventArgs>? SelectModEvent;
 
+    public event EventHandler<SortEvent>? SortEvent;
+
     public class ModRowSelectedEventArgs(IEnumerable<ModRowVM> mods) : EventArgs
     {
         public ICollection<ModRowVM> Mods { get; } = mods.ToArray();
@@ -235,47 +270,49 @@ public partial class ModGridVM(
     {
         public int Index { get; } = index;
     }
-}
 
-public sealed class ModGridSortingMethod : SortingMethod<ModRowVM>
-{
-    public ModGridSortingMethod(Sorter<ModRowVM> sortingMethodType, ModRowVM? firstItem = null,
-        ICollection<ModRowVM>? lastItems = null) : base(sortingMethodType, firstItem, lastItems)
+    public void SetModSorting(string sortColumn, bool isDescending, bool isUiTriggered = false)
     {
+        if (sortColumn.IsNullOrEmpty())
+            return;
+
+        var sorter = ModGridSortingMethod.AllSorters.FirstOrDefault(x => x.SortingMethodType == sortColumn);
+
+        if (sorter is null)
+            return;
+
+        CurrentSortingMethod = new ModGridSortingMethod(sorter);
+        IsDescending = isDescending;
+        SortMods();
+
+        if (isUiTriggered == false)
+            SortEvent?.Invoke(this, new SortEvent(sortColumn, isDescending));
+    }
+
+    private void SortMods()
+    {
+        var sortedBackendMods = CurrentSortingMethod.Sort(_gridModsBackend, IsDescending).ToArray();
+        _gridModsBackend.Clear();
+        _gridModsBackend.AddRange(sortedBackendMods);
+
+        var sortedVisibleMods = CurrentSortingMethod.Sort(GridMods, IsDescending).ToArray();
+        for (var newPosition = 0; newPosition < sortedVisibleMods.Length; newPosition++)
+        {
+            var mod = sortedVisibleMods[newPosition];
+            var oldPosition = GridMods.IndexOf(mod);
+
+            if (oldPosition == newPosition)
+                continue;
+
+            GridMods.Move(oldPosition, newPosition);
+        }
     }
 }
 
-public sealed class ModRowSorters : Sorter<ModRowVM>
+public class SortEvent(string sortColumn, bool isDescending) : EventArgs
 {
-    private ModRowSorters(string sortingMethodType, SortFunc firstSortFunc, AdditionalSortFunc? secondSortFunc = null,
-        AdditionalSortFunc? thirdSortFunc = null) : base(sortingMethodType, firstSortFunc, secondSortFunc,
-        thirdSortFunc)
-    {
-    }
-
-    public static readonly string NoneName = "None";
-
-    public static ModRowSorters NoneSorter { get; } = new(NoneName,
-        (mod, isDescending) => mod.OrderBy(x => x.Id)
-    );
-
-
-    public static readonly string IsEnabledName = nameof(ModRowVM.IsEnabled);
-
-    public static ModRowSorters IsEnabledSorters { get; } = new(IsEnabledName,
-        (mod, isDescending) =>
-            isDescending
-                ? mod.OrderByDescending(x => x.IsEnabled).ThenByDescending(x => x.DateAdded)
-                : mod.OrderBy(x => x.IsEnabled).ThenByDescending(x => x.DateAdded)
-    );
-
-
-    public static readonly string DateAddedName = nameof(ModRowVM.DateAdded);
-
-    public static ModRowSorters DatedAddedSorters { get; } = new(DateAddedName,
-        (mod, isDescending) =>
-            isDescending
-                ? mod.OrderByDescending(x => (x.DateAdded))
-                : mod.OrderBy(x => (x.DateAdded)
-                ));
+    public string SortColumn { get; } = sortColumn;
+    public bool IsDescending { get; } = isDescending;
 }
+
+

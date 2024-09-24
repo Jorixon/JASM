@@ -44,6 +44,7 @@ public sealed partial class ModGrid : UserControl
     private void OnViewModelSetHandler(ModGridVM viewModel)
     {
         viewModel.SelectModEvent += ViewModelOnSelectModEvent;
+        viewModel.SortEvent += SetSortUiEventHandler;
     }
 
     private void ViewModelOnSelectModEvent(object? sender, ModGridVM.SelectModRowEventArgs e)
@@ -56,10 +57,46 @@ public sealed partial class ModGrid : UserControl
         try
         {
             ViewModel.SelectModEvent -= ViewModelOnSelectModEvent;
+            ViewModel.SortEvent -= SetSortUiEventHandler;
         }
         catch (Exception)
         {
             // ignored
         }
+    }
+
+    private void SetSortUiEventHandler(object? sender, SortEvent sortEvent)
+    {
+        var column = DataGrid.Columns.FirstOrDefault(c => c.Tag.ToString() == sortEvent.SortColumn);
+        if (column is null)
+        {
+            return;
+        }
+
+        column.SortDirection =
+            sortEvent.IsDescending ? DataGridSortDirection.Descending : DataGridSortDirection.Ascending;
+
+        // Reset other columns
+        // Remove sorting indicators from other columns
+        foreach (var dgColumn in ModListGrid.Columns)
+            if (dgColumn.Tag.ToString() != sortEvent.SortColumn)
+                dgColumn.SortDirection = null;
+    }
+
+    private void OnColumnSort(object? sender, DataGridColumnEventArgs e)
+    {
+        var sortColumn = e.Column.Tag.ToString() ?? "";
+        var isDescending = e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending;
+        e.Column.SortDirection = isDescending ? DataGridSortDirection.Descending : DataGridSortDirection.Ascending;
+
+
+        ViewModel.SetModSorting(sortColumn, isDescending, true);
+
+
+        // Reset other columns
+        // Remove sorting indicators from other columns
+        foreach (var dgColumn in ModListGrid.Columns)
+            if (dgColumn.Tag.ToString() != sortColumn)
+                dgColumn.SortDirection = null;
     }
 }

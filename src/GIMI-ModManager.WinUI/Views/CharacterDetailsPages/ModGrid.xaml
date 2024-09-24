@@ -63,7 +63,8 @@
             GridLinesVisibility="All"
             ItemsSource="{x:Bind ViewModel.GridMods, Mode=OneWay}"
             SelectionChanged="ModListGrid_OnSelectionChanged"
-            SelectionMode="Extended">
+            SelectionMode="Extended"
+            Sorting="OnColumnSort">
             <!--
                 Sorting="ModListGrid_OnSorting"
                 KeyDown="ModListGrid_OnKeyDown"
@@ -85,6 +86,8 @@
                                 <CheckBox
                                     Width="Auto"
                                     MinWidth="0"
+                                    Command="{x:Bind ToggleEnabledCommand}"
+                                    CommandParameter="{x:Bind}"
                                     IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
                                     IsTabStop="False" />
                             </Grid>
@@ -145,7 +148,7 @@
                     CanUserSort="True"
                     Header="Mod Name"
                     IsReadOnly="True"
-                    Tag="Name">
+                    Tag="DisplayName">
                     <controls:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="subViewModels:ModRowVM">
                             <Grid Margin="8,0">
@@ -159,11 +162,11 @@
                 </controls:DataGridTemplateColumn>
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
-                    Binding="{Binding FolderName, Mode=OneTime}"
+                    Binding="{Binding FolderName, Mode=OneWay}"
                     CanUserSort="True"
                     Header="Mod Folder Name"
                     IsReadOnly="True"
-                    Tag="Folder Name" />
+                    Tag="FolderName" />
 
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
@@ -171,14 +174,14 @@
                     CanUserSort="True"
                     Header="Author"
                     IsReadOnly="True"
-                    Tag="Author Name" />
+                    Tag="Author" />
 
                 <controls:DataGridTemplateColumn
                     Width="SizeToCells"
                     CanUserSort="True"
                     Header="Added"
                     IsReadOnly="True"
-                    Tag="Date Added">
+                    Tag="DateAdded">
                     <controls:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="subViewModels:ModRowVM">
                             <Grid
@@ -200,7 +203,7 @@
                     CanUserSort="True"
                     Header="Presets"
                     IsReadOnly="True"
-                    Tag="InPresets" />
+                    Tag="Presets" />
             </controls:DataGrid.Columns>
 
         </controls:DataGrid>

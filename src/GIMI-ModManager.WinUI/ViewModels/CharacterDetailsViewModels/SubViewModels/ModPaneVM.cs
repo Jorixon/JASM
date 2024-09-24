@@ -98,7 +98,6 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
 
     public void Receive(ModChangedMessage message)
     {
-        throw new NotImplementedException();
     }
 
     public Task OnNavigatedToAsync(DispatcherQueue dispatcherQueue, CancellationToken navigationCt)
@@ -106,12 +105,14 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
         _dispatcherQueue = dispatcherQueue;
         _cancellationToken = navigationCt;
         _dispatcherQueue.EnqueueAsync(ModLoaderLoopAsync);
+        Messenger.RegisterAll(this);
         return Task.CompletedTask;
     }
 
     public void OnNavigatedFrom()
     {
         _channel.Writer.TryComplete();
+        Messenger.UnregisterAll(this);
     }
 
     private async Task<IDisposable> LockAsync() =>
