@@ -7,6 +7,7 @@ using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
+using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
@@ -104,6 +105,15 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         ModGridVM.SetSelectedMod(modToSelect.Id);
     }
 
+    private async Task SetSortOrder()
+    {
+        var settings = await ReadSettingsAsync();
+        if (settings.SortByDescending == null || settings.SortingMethod == null)
+            return;
+
+        ModGridVM.SetModSorting(settings.SortingMethod, settings.SortByDescending.Value);
+    }
+
 
     private void InitCharacterCard(object parameter)
     {
@@ -143,6 +153,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private async Task InitModGridAsync()
     {
+        await SetSortOrder();
         await ModGridVM.InitializeAsync(new ModDetailsPageContext(ShownModObject, SelectedSkin), CancellationToken);
         ModGridVM.OnModsSelected += OnModsSelected;
         if (IsReturning)
@@ -175,11 +186,21 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     public void OnNavigatedFrom()
     {
-        ModPaneVM.OnNavigatedFrom();
         _navigationCancellationTokenSource.Cancel();
+        ModGridVM.OnModsSelected -= OnModsSelected;
+        ModPaneVM.OnNavigatedFrom();
+
+
         Task.Run(async () =>
         {
-            await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+            var delay = Task.Delay(TimeSpan.FromSeconds(2), CancellationToken.None);
+
+            var settings = await ReadSettingsAsync().ConfigureAwait(false);
+            settings.SortingMethod = ModGridVM.CurrentSortingMethod.SortingMethodType;
+            settings.SortByDescending = ModGridVM.IsDescendingSort;
+            await SaveSettingsAsync(settings).ConfigureAwait(false);
+            await delay.ConfigureAwait(false);
+
             try
             {
                 _navigationCancellationTokenSource?.Dispose();
@@ -188,7 +209,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             {
                 // ignored
             }
-        });
+        }, CancellationToken.None);
     }
 
 
@@ -228,6 +249,14 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             });
         });
     }
+
+
+    private Task<CharacterDetailsSettings> ReadSettingsAsync() =>
+        _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(CharacterDetailsSettings.Key,
+            SettingScope.App);
+
+    private Task SaveSettingsAsync(CharacterDetailsSettings settings) =>
+        _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings, SettingScope.App);
 
     private void NotifyCommandsChanged()
     {

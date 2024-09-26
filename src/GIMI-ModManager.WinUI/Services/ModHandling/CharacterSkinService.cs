@@ -33,8 +33,7 @@ public class CharacterSkinService
     {
         foreach (var mod in mods)
         {
-            if (cancellationToken.IsCancellationRequested)
-                yield break;
+            cancellationToken.ThrowIfCancellationRequested();
 
             var modSettings = await mod.Settings.TryReadSettingsAsync(useCache: useSettingsCache, cancellationToken: cancellationToken);
 
@@ -69,7 +68,9 @@ public class CharacterSkinService
             ICharacterSkin? detectedSkin;
             try
             {
-                detectedSkin = _modCrawlerService.GetFirstSubSkinRecursive(mod.FullPath, skin.Character.InternalName);
+                detectedSkin =
+                    _modCrawlerService.GetFirstSubSkinRecursive(mod.FullPath, skin.Character.InternalName,
+                        cancellationToken);
             }
             catch (OperationCanceledException)
             {

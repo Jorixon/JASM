@@ -27,6 +27,7 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
     public bool IsNotReadOnly => !IsReadOnly;
 
     [ObservableProperty] private Uri _shownModImageUri = ImageHandlerService.StaticPlaceholderImageUri;
+    private Guid? _loadedModId;
 
 
     public bool QueueLoadMod(Guid? modId) => _channel.Writer.TryWrite(new LoadModMessage { ModId = modId });
@@ -62,7 +63,6 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
             }
             catch (Exception e)
             {
-                // Log error
                 _notificationService.ShowNotification("Error loading mod", e.Message, null);
             }
         }
@@ -70,6 +70,9 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
 
     private async Task LoadModAsync(Guid modId)
     {
+        if (modId == _loadedModId)
+            return;
+
         var mod = _skinManagerService.GetModById(modId);
         if (mod == null)
             return;
@@ -80,12 +83,14 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
         if (modSettings is null)
             return;
 
+        _loadedModId = modId;
         ShownModImageUri = modSettings.ImagePath ?? ImageHandlerService.StaticPlaceholderImageUri;
     }
 
     private Task UnloadModAsync()
     {
         // Unload mod
+        _loadedModId = null;
         ShownModImageUri = ImageHandlerService.StaticPlaceholderImageUri;
         return Task.CompletedTask;
     }
@@ -113,6 +118,36 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
     {
         _channel.Writer.TryComplete();
         Messenger.UnregisterAll(this);
+    }
+
+    private async Task CommandWrapper(Func<Task> command)
+    {
+        try
+        {
+            using var _ = await LockAsync().ConfigureAwait(false);
+            await command().ConfigureAwait(false);
+        }
+        catch (TaskCanceledException)
+        {
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private async Task CommandWrapper(Action command)
+    {
+        try
+        {
+            using var _ = await LockAsync().ConfigureAwait(false);
+            command();
+        }
+        catch (TaskCanceledException)
+        {
+        }
+        catch (OperationCanceledException)
+        {
+        }
     }
 
     private async Task<IDisposable> LockAsync() =>

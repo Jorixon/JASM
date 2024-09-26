@@ -12,24 +12,30 @@ public partial class ModRowVM : ObservableObject
     [ObservableProperty] private bool _isSelected;
 
     [ObservableProperty] private bool _isEnabled;
-    public string DisplayName { get; init; }
 
-    [ObservableProperty] private string _folderName;
+    [ObservableProperty] private string _displayName = string.Empty;
 
-    [ObservableProperty] private string _absFolderPath;
+    [ObservableProperty] private string _folderName = string.Empty;
 
-    public DateTime DateAdded { get; init; }
+    [ObservableProperty] private string _absFolderPath = string.Empty;
 
-    public string DateAddedFormated { get; }
+    [ObservableProperty] private DateTime _dateAdded;
 
-    public string Author { get; }
+    [ObservableProperty] private string _dateAddedFormated = string.Empty;
 
-    public string[] Presets { get; }
-    public string InPresets { get; }
+    [ObservableProperty] private string _author = string.Empty;
+    [ObservableProperty] private string[] _presets = [];
+    [ObservableProperty] private string _inPresets = string.Empty;
 
     public ModRowVM(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings, IEnumerable<string> presetNames)
     {
         Id = characterSkinEntry.Mod.Id;
+        UpdateModel(characterSkinEntry, modSettings, presetNames);
+    }
+
+    public void UpdateModel(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings,
+        IEnumerable<string> presetNames)
+    {
         IsEnabled = characterSkinEntry.IsEnabled;
         DisplayName = modSettings?.CustomName ?? characterSkinEntry.Mod.GetDisplayName();
         FolderName = characterSkinEntry.Mod.Name;
@@ -38,13 +44,13 @@ public partial class ModRowVM : ObservableObject
         DateAddedFormated = DateAdded.ToString("d");
         Author = modSettings?.Author ?? string.Empty;
         Presets = presetNames.ToArray();
-        InPresets = string.Join('|', Presets);
+        InPresets = string.Join(',', Presets);
 
 
         SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:D}";
     }
 
-    public string SearchableText { get; }
+    public string SearchableText { get; private set; } = string.Empty;
 
     public required IAsyncRelayCommand ToggleEnabledCommand { get; init; }
 }

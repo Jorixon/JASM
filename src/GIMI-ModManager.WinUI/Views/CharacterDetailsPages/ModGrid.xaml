@@ -62,6 +62,7 @@
             FrozenColumnCount="3"
             GridLinesVisibility="All"
             ItemsSource="{x:Bind ViewModel.GridMods, Mode=OneWay}"
+            KeyDown="ModListGrid_OnKeyDown"
             SelectionChanged="ModListGrid_OnSelectionChanged"
             SelectionMode="Extended"
             Sorting="OnColumnSort">

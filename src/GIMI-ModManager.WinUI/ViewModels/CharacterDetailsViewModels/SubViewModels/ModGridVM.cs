@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -7,6 +8,7 @@ using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.ModPresetService;
+using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
@@ -29,7 +31,7 @@ public partial class ModGridVM(
     private ICharacterModList _modList = null!;
     private ModDetailsPageContext _context = null!;
 
-    public bool IsDescending { get; private set; } = true;
+    public bool IsDescendingSort { get; private set; } = true;
     public ModGridSortingMethod CurrentSortingMethod { get; private set; } = new(ModRowSorter.IsEnabledSorter);
 
 
@@ -38,11 +40,11 @@ public partial class ModGridVM(
 
     public bool IsNotBusy => !IsBusy;
 
-    private List<CharacterSkinEntry> _modsBackend = new();
-    public IReadOnlyList<CharacterSkinEntry> ModsBackend => _modsBackend.AsReadOnly();
-    private readonly List<ModRowVM> _gridModsBackend = new();
-    public ObservableCollection<ModRowVM> GridMods { get; } = new();
-    public ObservableCollection<ModRowVM> SelectedMods { get; } = new();
+    private List<CharacterSkinEntry> _modsBackend = [];
+    private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
+    private readonly List<ModRowVM> _gridModsBackend = [];
+    public ObservableCollection<ModRowVM> GridMods { get; } = [];
+    public ObservableCollection<ModRowVM> SelectedMods { get; } = [];
 
     public bool IsSingleModSelected => SelectedMods.Count == 1;
 
@@ -82,7 +84,7 @@ public partial class ModGridVM(
                 _modsBackend = _modList.Mods.ToList();
             }
 
-            var modToPresetMapping = await _presetService
+            _modToPresetMapping = await _presetService
                 .FindPresetsForModsAsync(_modsBackend.Select(m => m.Id))
                 .ConfigureAwait(false);
 
@@ -90,12 +92,7 @@ public partial class ModGridVM(
             {
                 _navigationCt.ThrowIfCancellationRequested();
 
-                IEnumerable<string> presetNames = [];
-
-                if (modToPresetMapping.TryGetValue(x.Id, out var modPresets))
-                    presetNames = modPresets.Select(m => m.Name);
-
-                var modVm = await CreateModRowVM(x, presetNames, _navigationCt).ConfigureAwait(false);
+                var modVm = await CreateModRowVM(x, _navigationCt).ConfigureAwait(false);
                 _gridModsBackend.Add(modVm);
             }
 
@@ -116,19 +113,41 @@ public partial class ModGridVM(
 
 
         GridMods.AddRange(_gridModsBackend);
-        SetModSorting(CurrentSortingMethod.SortingMethodType, IsDescending);
+        SetModSorting(CurrentSortingMethod.SortingMethodType, IsDescendingSort);
     }
 
-    private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry, IEnumerable<string> presetNames,
+    private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry,
         CancellationToken cancellationToken = default)
     {
         var skinModSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true, cancellationToken)
             .ConfigureAwait(false);
 
+        var presetNames = _modToPresetMapping.TryGetValue(characterSkinEntry.Id, out var presets)
+            ? presets.Select(p => p.Name)
+            : [];
+
+
         return new ModRowVM(characterSkinEntry, skinModSettings, presetNames)
         {
             ToggleEnabledCommand = new AsyncRelayCommand<ModRowVM>(ToggleModAsync)
         };
+    }
+
+    private async Task UpdateModVm(CharacterSkinEntry characterSkinEntry,
+        CancellationToken cancellationToken = default)
+    {
+        var existingMod = _gridModsBackend.FirstOrDefault(mod => mod.Id == characterSkinEntry.Id);
+        if (existingMod is null)
+            throw new InvalidOperationException("Mod not found in grid mods");
+
+        var skinModSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true, cancellationToken)
+            .ConfigureAwait(false);
+
+        var presetNames = _modToPresetMapping.TryGetValue(characterSkinEntry.Id, out var presets)
+            ? presets.Select(p => p.Name)
+            : [];
+
+        existingMod.UpdateModel(characterSkinEntry, skinModSettings, presetNames);
     }
 
     public ModRowVM[] SearchFilterMods(string searchText)
@@ -191,25 +210,16 @@ public partial class ModGridVM(
         if (characterSkinEntry is null)
             return;
 
-
         try
         {
-            await Task.Run(() =>
-            {
-                if (characterSkinEntry.IsEnabled)
-                    _modList.DisableMod(characterSkinEntry.Id);
-                else
-                    _modList.EnableMod(characterSkinEntry.Id);
-            }, CancellationToken.None);
+            await Task.Run(() => _modList.ToggleMod(characterSkinEntry.Id), CancellationToken.None);
+            await UpdateModVm(characterSkinEntry, CancellationToken.None);
         }
         catch (Exception e)
         {
             _notificationService.ShowNotification("An error occured toggling mod", e.Message, TimeSpan.FromSeconds(5));
         }
 
-        mod.IsEnabled = characterSkinEntry.IsEnabled;
-        mod.FolderName = characterSkinEntry.Mod.Name;
-        mod.AbsFolderPath = characterSkinEntry.Mod.FullPath;
         Messenger.Send(new ModChangedMessage(characterSkinEntry, null));
     }
 
@@ -253,6 +263,31 @@ public partial class ModGridVM(
         }
     }
 
+    // Only to be used by code behind
+    public async Task OnKeyDown_EventHandlerAsync(VirtualKey key)
+    {
+        var selectedMods = SelectedMods.ToArray();
+        if (selectedMods.Length == 0)
+            return;
+
+        if (key == VirtualKey.Delete)
+        {
+            _notificationService.ShowNotification("Not implemented", "", null);
+            return;
+        }
+
+        if (key == VirtualKey.Space)
+        {
+            if (selectedMods.Any(m => !m.ToggleEnabledCommand.CanExecute(null)))
+                return;
+
+            foreach (var mod in selectedMods)
+            {
+                await mod.ToggleEnabledCommand.ExecuteAsync(mod);
+            }
+        }
+    }
+
     // Used by parent view model
     public event EventHandler<ModRowSelectedEventArgs>? OnModsSelected;
 
@@ -282,7 +317,7 @@ public partial class ModGridVM(
             return;
 
         CurrentSortingMethod = new ModGridSortingMethod(sorter);
-        IsDescending = isDescending;
+        IsDescendingSort = isDescending;
         SortMods();
 
         if (isUiTriggered == false)
@@ -291,11 +326,11 @@ public partial class ModGridVM(
 
     private void SortMods()
     {
-        var sortedBackendMods = CurrentSortingMethod.Sort(_gridModsBackend, IsDescending).ToArray();
+        var sortedBackendMods = CurrentSortingMethod.Sort(_gridModsBackend, IsDescendingSort).ToArray();
         _gridModsBackend.Clear();
         _gridModsBackend.AddRange(sortedBackendMods);
 
-        var sortedVisibleMods = CurrentSortingMethod.Sort(GridMods, IsDescending).ToArray();
+        var sortedVisibleMods = CurrentSortingMethod.Sort(GridMods, IsDescendingSort).ToArray();
         for (var newPosition = 0; newPosition < sortedVisibleMods.Length; newPosition++)
         {
             var mod = sortedVisibleMods[newPosition];

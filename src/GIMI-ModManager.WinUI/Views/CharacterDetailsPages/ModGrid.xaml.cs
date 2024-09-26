@@ -2,6 +2,7 @@ using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -98,5 +99,10 @@ public sealed partial class ModGrid : UserControl
         foreach (var dgColumn in ModListGrid.Columns)
             if (dgColumn.Tag.ToString() != sortColumn)
                 dgColumn.SortDirection = null;
+    }
+
+    private async void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        await ViewModel.OnKeyDown_EventHandlerAsync(e.Key).ConfigureAwait(false);
     }
 }
