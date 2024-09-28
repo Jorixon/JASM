@@ -45,7 +45,7 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
     private async Task ModLoaderLoopAsync()
     {
         // Runs on the UI thread
-        await foreach (var loadModMessage in _channel.Reader.ReadAllAsync().WithCancellation(_cancellationToken))
+        await foreach (var loadModMessage in _channel.Reader.ReadAllAsync(_cancellationToken))
         {
             using var _ = await LockAsync().ConfigureAwait(false);
             try

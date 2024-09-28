@@ -9,9 +9,11 @@ using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.Core.Services.ModPresetService.Models;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 
@@ -19,18 +21,22 @@ public partial class ModGridVM(
     ISkinManagerService skinManagerService,
     CharacterSkinService characterSkinService,
     NotificationManager notificationService,
-    ModPresetService presetService)
+    ModPresetService presetService,
+    ILocalSettingsService localSettingsService)
     : ObservableRecipient, IRecipient<ModChangedMessage>
 {
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
     private readonly CharacterSkinService _characterSkinService = characterSkinService;
     private readonly NotificationManager _notificationService = notificationService;
     private readonly ModPresetService _presetService = presetService;
+    private readonly ILocalSettingsService _localSettingsService = localSettingsService;
 
+    private DispatcherQueue _dispatcherQueue = null!;
     private CancellationToken _navigationCt = default;
     private ICharacterModList _modList = null!;
     private ModDetailsPageContext _context = null!;
 
+    public BusySetter BusySetter { get; set; }
     public bool IsDescendingSort { get; private set; } = true;
     public ModGridSortingMethod CurrentSortingMethod { get; private set; } = new(ModRowSorter.IsEnabledSorter);
 
@@ -39,6 +45,9 @@ public partial class ModGridVM(
     private bool _isBusy = true;
 
     public bool IsNotBusy => !IsBusy;
+
+    [ObservableProperty] private SelectionMode _gridSelectionMode = SelectionMode.Extended;
+
 
     private List<CharacterSkinEntry> _modsBackend = [];
     private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
@@ -50,51 +59,37 @@ public partial class ModGridVM(
 
     public bool ModdableObjectHasAnyMods => _modsBackend.Count != 0;
 
+    public int TrackedMods => _modsBackend.Count;
+
     public async Task InitializeAsync(ModDetailsPageContext context, CancellationToken navigationCt = default)
     {
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _navigationCt = navigationCt;
         _context = context;
         _modList = _skinManagerService.GetCharacterModList(_context.ShownModObject);
-        await ReloadAllModsAsync();
+        var settings = await _localSettingsService.ReadCharacterDetailsSettingsAsync();
+        GridSelectionMode = settings.SingleSelect ? SelectionMode.Single : SelectionMode.Extended;
+        await InitModsAsync();
         IsBusy = false;
     }
 
+    public void OnNavigateFrom()
+    {
+    }
 
-    public async Task ReloadAllModsAsync()
+    private async Task InitModsAsync()
     {
         GridMods.Clear();
         _gridModsBackend.Clear();
-        RefreshResult refreshResult = new RefreshResult();
+        SelectedMods.Clear();
 
         await Task.Run(async () =>
         {
-            refreshResult = await _skinManagerService
+            var refreshResult = await _skinManagerService
                 .RefreshModsAsync(_context.ShownModObject.InternalName)
                 .ConfigureAwait(false);
 
-            if (_context.IsCharacter && _context.Skins.Count > 1)
-            {
-                _modsBackend = await _characterSkinService
-                    .GetCharacterSkinEntriesForSkinAsync(_context.SelectedSkin, useSettingsCache: true,
-                        cancellationToken: _navigationCt)
-                    .ToListAsync().ConfigureAwait(false);
-            }
-            else
-            {
-                _modsBackend = _modList.Mods.ToList();
-            }
-
-            _modToPresetMapping = await _presetService
-                .FindPresetsForModsAsync(_modsBackend.Select(m => m.Id))
-                .ConfigureAwait(false);
-
-            foreach (var x in _modsBackend)
-            {
-                _navigationCt.ThrowIfCancellationRequested();
-
-                var modVm = await CreateModRowVM(x, _navigationCt).ConfigureAwait(false);
-                _gridModsBackend.Add(modVm);
-            }
+            await LoadModsAsync().ConfigureAwait(false);
 
             if (refreshResult.ModsDuplicate.Any())
             {
@@ -114,6 +109,68 @@ public partial class ModGridVM(
 
         GridMods.AddRange(_gridModsBackend);
         SetModSorting(CurrentSortingMethod.SortingMethodType, IsDescendingSort);
+    }
+
+    public async Task ReloadAllModsAsync(TimeSpan? minimumWaitTime = null)
+    {
+        using var _ = BusySetter.StartHardBusy();
+        var waitTime = minimumWaitTime is not null ? Task.Delay(minimumWaitTime.Value, _navigationCt) : null;
+
+        Guid? selectedModId = SelectedMods.Count == 1 ? SelectedMods.First().Id : null;
+
+        // For now just reuse the grid init
+        await InitModsAsync();
+
+        // Make it take at least the minimum time to show the user that something is happening
+        if (waitTime is not null)
+            await waitTime;
+
+        if (selectedModId.HasValue && GridMods.Any(m => m.Id == selectedModId))
+        {
+            SetSelectedMod(selectedModId.Value);
+        }
+    }
+
+    public async Task OnChangeSkinAsync(ModDetailsPageContext context)
+    {
+        _context = context;
+        _gridModsBackend.Clear();
+        GridMods.Clear();
+        SelectedMods.Clear();
+
+        await Task.Run(LoadModsAsync, _navigationCt);
+
+        GridMods.AddRange(_gridModsBackend);
+        SetModSorting(CurrentSortingMethod.SortingMethodType, IsDescendingSort);
+    }
+
+    private async Task LoadModsAsync()
+    {
+        if (_context.IsCharacter && _context.Skins.Count > 1)
+        {
+            _modsBackend = await _characterSkinService
+                .GetCharacterSkinEntriesForSkinAsync(_context.SelectedSkin, useSettingsCache: true,
+                    cancellationToken: _navigationCt)
+                .ToListAsync().ConfigureAwait(false);
+        }
+        else
+        {
+            _modsBackend = _modList.Mods.ToList();
+        }
+
+        _modToPresetMapping = await _presetService
+            .FindPresetsForModsAsync(_modsBackend.Select(m => m.Id))
+            .ConfigureAwait(false);
+
+        foreach (var x in _modsBackend)
+        {
+            _navigationCt.ThrowIfCancellationRequested();
+
+            var modVm = await CreateModRowVM(x, _navigationCt).ConfigureAwait(false);
+            _gridModsBackend.Add(modVm);
+        }
+
+        _dispatcherQueue.TryEnqueue(() => OnModsReloaded?.Invoke(this, EventArgs.Empty));
     }
 
     private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry,
@@ -206,6 +263,8 @@ public partial class ModGridVM(
         if (mod is null)
             return;
 
+        using var _ = BusySetter.StartSoftBusy();
+
         var characterSkinEntry = _modsBackend.FirstOrDefault(x => x.Id == mod.Id);
         if (characterSkinEntry is null)
             return;
@@ -278,6 +337,7 @@ public partial class ModGridVM(
 
         if (key == VirtualKey.Space)
         {
+            using var _ = BusySetter.StartSoftBusy();
             if (selectedMods.Any(m => !m.ToggleEnabledCommand.CanExecute(null)))
                 return;
 
@@ -295,6 +355,8 @@ public partial class ModGridVM(
     public event EventHandler<SelectModRowEventArgs>? SelectModEvent;
 
     public event EventHandler<SortEvent>? SortEvent;
+
+    public event EventHandler? OnModsReloaded;
 
     public class ModRowSelectedEventArgs(IEnumerable<ModRowVM> mods) : EventArgs
     {
@@ -349,5 +411,3 @@ public class SortEvent(string sortColumn, bool isDescending) : EventArgs
     public string SortColumn { get; } = sortColumn;
     public bool IsDescending { get; } = isDescending;
 }
-
-

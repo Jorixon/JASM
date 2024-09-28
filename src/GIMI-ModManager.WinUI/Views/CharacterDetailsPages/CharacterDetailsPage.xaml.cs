@@ -5,6 +5,7 @@ using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
@@ -29,7 +30,21 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void OnModObjectLoaded(object? sender, EventArgs e)
     {
+        ViewModel.OnModObjectLoaded -= OnModObjectLoaded;
         ViewModel.GridLoadedAwaiter = () => ModGrid.DataGrid.AwaitItemsSourceLoaded(ViewModel.CancellationToken);
+        var button = CharacterCard.SelectSkinBox;
+
+        if (!ViewModel.IsCharacter || ViewModel.Character.Skins.Count == 0) return;
+
+        var tooltip = ToolTipService.GetToolTip(button);
+        if (tooltip is ToolTip) return;
+        var toolTip = new ToolTip
+        {
+            Content = "This character only has one default in-game skin, so you can't change it.",
+            Placement = PlacementMode.Bottom
+        };
+
+        ToolTipService.SetToolTip(button, toolTip);
     }
 
 
@@ -45,6 +60,7 @@ public sealed partial class CharacterDetailsPage : Page
 
     private void OnInitializingFinished(object? sender, EventArgs e)
     {
+        ViewModel.OnInitializingFinished -= OnInitializingFinished;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

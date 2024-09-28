@@ -56,7 +56,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Orientation="Horizontal">
-                        <MenuBar>
+                        <MenuBar IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}">
                             <MenuBarItem Title="Mods">
                                 <MenuBarItem.Items>
                                     <MenuFlyoutItem ToolTipService.ToolTip="Add a mod folder" Text="Add Mod..." />
@@ -68,7 +68,7 @@
                                     </MenuFlyoutItem>
 
                                     <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem Text="Refresh Mods">
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshAllModsCommand}" Text="Refresh Mods">
                                         <MenuFlyoutItem.KeyboardAccelerators>
                                             <KeyboardAccelerator Key="F5" />
                                         </MenuFlyoutItem.KeyboardAccelerators>
@@ -88,7 +88,11 @@
                             </MenuBarItem>
 
                             <MenuBarItem Title="View">
-                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time." Text="Single Select" />
+                                <ToggleMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.ToggleSingleSelectCommand}"
+                                    IsEnabled="{x:Bind ViewModel.IsSingleSelectEnabled, Mode=OneWay}"
+                                    ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time."
+                                    Text="Single Select" />
                                 <ToggleMenuFlyoutItem Text="Compact Mode" />
                                 <ToggleMenuFlyoutItem Text="Hide 'Disabled_' From Folder Names" />
                             </MenuBarItem>
@@ -114,6 +118,7 @@
                                 x:Name="SearchModsTextBox"
                                 MinWidth="200"
                                 MaxWidth="500"
+                                IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}"
                                 PlaceholderText="Search Mods..."
                                 TextChanged="SearchModsTextBox_OnTextChanged"
                                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -137,7 +142,7 @@
                         <!--  Toggled="ViewToggleSwitch_OnToggled"  -->
 
                         <Grid MinWidth="32">
-                            <ProgressRing />
+                            <ProgressRing IsActive="{x:Bind ViewModel.IsWorking, Mode=OneWay}" />
                         </Grid>
 
                     </StackPanel>
@@ -166,11 +171,14 @@
                                 DragOver="ModListArea_OnDragOver"
                                 Drop="ModListArea_OnDrop"
                             -->
-                            <characterDetailsPages:ModGrid x:Name="ModGrid" />
+                            <characterDetailsPages:ModGrid x:Name="ModGrid" IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}" />
 
                         </Grid>
 
-                        <characterDetailsPages:ModPane x:Name="ModPane" Grid.Column="1" />
+                        <characterDetailsPages:ModPane
+                            x:Name="ModPane"
+                            Grid.Column="1"
+                            IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}" />
 
                         <controls:GridSplitter
                             x:Name="ModPaneSplitter"

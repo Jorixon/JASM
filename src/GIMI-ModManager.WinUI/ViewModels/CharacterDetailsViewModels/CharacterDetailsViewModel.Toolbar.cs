@@ -1,12 +1,17 @@
 ﻿using Windows.Storage;
 using Windows.System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.WinUI.Models.Options;
+using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 
 public partial class CharacterDetailsViewModel
 {
+    [ObservableProperty] private bool _isSingleSelectEnabled;
+
+
     [RelayCommand]
     private async Task OpenGIMIRootFolderAsync()
     {
@@ -60,5 +65,25 @@ public partial class CharacterDetailsViewModel
 
         await Launcher.LaunchFolderAsync(
             await StorageFolder.GetFolderFromPathAsync(directoryToOpen.FullName));
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotHardBusy))]
+    private async Task RefreshAllModsAsync()
+    {
+        await CommandWrapperAsync(true,
+            () => ModGridVM.ReloadAllModsAsync(minimumWaitTime: TimeSpan.FromMilliseconds(300))).ConfigureAwait(false);
+    }
+
+
+    [RelayCommand(CanExecute = nameof(IsNotHardBusy))]
+    private async Task ToggleSingleSelectAsync()
+    {
+        var settings = await ReadSettingsAsync();
+        settings.SingleSelect = !IsSingleSelectEnabled;
+        await SaveSettingsAsync(settings);
+
+        IsSingleSelectEnabled = settings.SingleSelect;
+
+        ModGridVM.GridSelectionMode = IsSingleSelectEnabled ? SelectionMode.Extended : SelectionMode.Single;
     }
 }

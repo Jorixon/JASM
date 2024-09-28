@@ -10,11 +10,13 @@ namespace GIMI_ModManager.WinUI.Views.CharacterDetailsPages;
 public sealed partial class CharacterCard : UserControl
 {
     public Grid ItemHero;
+    public StackPanel SelectSkinBox;
 
     public CharacterCard()
     {
         InitializeComponent();
         ItemHero = itemHero;
+        SelectSkinBox = selectSkinBox;
     }
 
 

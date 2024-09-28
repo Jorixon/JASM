@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -35,6 +37,26 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private ICharacterModList _modList = null!;
     [ObservableProperty] private bool _isNavigationFinished;
 
+    private readonly BusySetter _busySetter;
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    private bool _isSoftBusy; // App is doing something, but the user can still do other things
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking), nameof(CanChangeInGameSkins))]
+    private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
+
+    public bool IsNotSoftBusy => !IsSoftBusy;
+    public bool IsNotHardBusy => !IsHardBusy;
+
+    public bool IsWorking => IsSoftBusy || IsHardBusy;
+
+
+    public CharacterDetailsViewModel()
+    {
+        _busySetter = new BusySetter(this);
+    }
+
 
     public ModGridVM ModGridVM { get; private set; } = App.GetService<ModGridVM>();
     public ModPaneVM ModPaneVM { get; private set; } = App.GetService<ModPaneVM>();
@@ -43,7 +65,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     {
         try
         {
-            await InitAsync(parameter).ConfigureAwait(false);
+            await InitAsync(parameter, _busySetter.StartHardBusy()).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -58,8 +80,12 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         }
     }
 
-    private async Task InitAsync(object parameter)
+    private async Task InitAsync(object parameter, BusySetter.CommandTracker commandTracker)
     {
+#if DEBUG
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+#endif
         CancellationToken = _navigationCancellationTokenSource.Token;
         if (IsReturning)
             return;
@@ -68,16 +94,27 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         // Init character card
         InitCharacterCard(parameter);
 
-        // Refresh UI
+        // Yield to UI, render character card, specifically the image
         await Task.Delay(100, CancellationToken);
         if (IsReturning)
             return;
-
 
         // Load mods
         await InitModGridAsync();
         if (IsReturning)
             return;
+
+        // Yield to UI, render grid
+        await Task.Delay(50, CancellationToken);
+        commandTracker.Finish();
+        if (IsReturning)
+            return;
+
+#if DEBUG
+        stopwatch.Stop();
+        Log.Logger.Information("Grid loading time {ElapsedMilliseconds} ms",
+            stopwatch.ElapsedMilliseconds);
+#endif
 
         // Init Mod Pane
         await InitModPaneAsync();
@@ -115,46 +152,12 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     }
 
 
-    private void InitCharacterCard(object parameter)
-    {
-        var internalName = ParseNavigationArg(parameter);
-
-        var moddableObject = _gameService.GetModdableObjectByIdentifier(internalName);
-
-        if (moddableObject == null)
-        {
-            ErrorNavigateBack();
-            return;
-        }
-
-        ShownModObject = moddableObject;
-        ShownModImageUri = moddableObject.ImageUri ?? ImageHandlerService.StaticPlaceholderImageUri;
-
-
-        if (ShownModObject is ICharacter character)
-        {
-            Character = character;
-            SelectedSkin = character.Skins.First();
-            ShownModImageUri = SelectedSkin.ImageUri ?? ImageHandlerService.StaticPlaceholderImageUri;
-        }
-
-        var modList = _skinManagerService.GetCharacterModListOrDefault(moddableObject.InternalName);
-
-        if (modList is null)
-        {
-            ErrorNavigateBack();
-            return;
-        }
-
-        _modList = modList;
-        IsModObjectLoaded = true;
-        OnModObjectLoaded?.Invoke(this, EventArgs.Empty);
-    }
-
     private async Task InitModGridAsync()
     {
+        ModGridVM.BusySetter = _busySetter;
+        ModGridVM.OnModsReloaded += OnModsReloaded;
         await SetSortOrder();
-        await ModGridVM.InitializeAsync(new ModDetailsPageContext(ShownModObject, SelectedSkin), CancellationToken);
+        await ModGridVM.InitializeAsync(CreateContext(), CancellationToken);
         ModGridVM.OnModsSelected += OnModsSelected;
         if (IsReturning)
             return;
@@ -163,6 +166,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         ModGridVM.IsBusy = false;
         OnModsLoaded?.Invoke(this, EventArgs.Empty);
     }
+
+    private void OnModsReloaded(object? sender, EventArgs e) => UpdateTrackedMods();
 
     private void OnModsSelected(object? sender, ModGridVM.ModRowSelectedEventArgs args)
     {
@@ -188,6 +193,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     {
         _navigationCancellationTokenSource.Cancel();
         ModGridVM.OnModsSelected -= OnModsSelected;
+        ModGridVM.OnNavigateFrom();
         ModPaneVM.OnNavigatedFrom();
 
 
@@ -258,7 +264,99 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private Task SaveSettingsAsync(CharacterDetailsSettings settings) =>
         _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings, SettingScope.App);
 
-    private void NotifyCommandsChanged()
+
+    private async Task CommandWrapperAsync(bool startHardBusy, Func<Task> command)
     {
+        using var _ = startHardBusy ? _busySetter.StartHardBusy() : _busySetter.StartSoftBusy();
+        try
+        {
+            await command();
+        }
+        catch (TaskCanceledException)
+        {
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception e)
+        {
+            _notificationService.ShowNotification("An unknown error occured while executing the command", e.Message,
+                TimeSpan.FromSeconds(5));
+        }
+    }
+}
+
+public partial class BusySetter(CharacterDetailsViewModel viewModel) : ObservableObject
+{
+    private readonly CharacterDetailsViewModel _viewModel = viewModel;
+
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    private bool _isSoftBusy; // App is doing something, but the user can still do other things
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
+    private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
+
+    public bool IsNotSoftBusy => !IsSoftBusy;
+    public bool IsNotHardBusy => !IsHardBusy;
+
+    public bool IsWorking => IsSoftBusy || IsHardBusy;
+
+    public event EventHandler? SoftBusyChanged;
+    public event EventHandler? HardBusyChanged;
+
+
+    private readonly ConcurrentDictionary<Guid, byte> _trackedSoftCommands = [];
+    private readonly ConcurrentDictionary<Guid, byte> _trackedHardCommands = [];
+
+    private void Refresh()
+    {
+        var oldSoftBusy = IsSoftBusy;
+        var oldHardBusy = IsHardBusy;
+
+        IsSoftBusy = !_trackedSoftCommands.IsEmpty;
+        IsHardBusy = !_trackedHardCommands.IsEmpty;
+        _viewModel.IsHardBusy = IsHardBusy;
+        _viewModel.IsSoftBusy = IsSoftBusy;
+
+        if (oldSoftBusy != IsSoftBusy)
+            SoftBusyChanged?.Invoke(this, EventArgs.Empty);
+
+        if (oldHardBusy != IsHardBusy)
+            HardBusyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public CommandTracker StartSoftBusy()
+    {
+        var tracker = new CommandTracker(this, false);
+        _trackedSoftCommands.TryAdd(tracker.CommandId, 0);
+        Refresh();
+        return tracker;
+    }
+
+    public CommandTracker StartHardBusy()
+    {
+        var tracker = new CommandTracker(this, true);
+        _trackedHardCommands.TryAdd(tracker.CommandId, 0);
+        Refresh();
+        return tracker;
+    }
+
+
+    public readonly struct CommandTracker(BusySetter busySetter, bool isHardBusy) : IDisposable
+    {
+        public readonly Guid CommandId = Guid.NewGuid();
+
+        public void Dispose() => Finish();
+
+        public void Finish()
+        {
+            if (isHardBusy)
+                busySetter._trackedHardCommands.TryRemove(CommandId, out _);
+            else
+                busySetter._trackedSoftCommands.TryRemove(CommandId, out _);
+
+            busySetter.Refresh();
+        }
     }
 }

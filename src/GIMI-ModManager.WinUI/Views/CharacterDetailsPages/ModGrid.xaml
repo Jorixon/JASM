@@ -64,7 +64,7 @@
             ItemsSource="{x:Bind ViewModel.GridMods, Mode=OneWay}"
             KeyDown="ModListGrid_OnKeyDown"
             SelectionChanged="ModListGrid_OnSelectionChanged"
-            SelectionMode="Extended"
+            SelectionMode="{x:Bind ViewModel.GridSelectionMode, Mode=OneWay}"
             Sorting="OnColumnSort">
             <!--
                 Sorting="ModListGrid_OnSorting"
