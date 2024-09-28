@@ -2,6 +2,7 @@
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.WinUI.Models.Options;
 using Microsoft.UI.Xaml.Controls;
 
@@ -10,7 +11,16 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 public partial class CharacterDetailsViewModel
 {
     [ObservableProperty] private bool _isSingleSelectEnabled;
+    [ObservableProperty] private bool _isModFolderNameColumnVisible;
 
+
+    private async Task InitToolbarAsync()
+    {
+        var settings = await ReadSettingsAsync();
+        IsSingleSelectEnabled = settings.SingleSelect;
+        ModGridVM.GridSelectionMode = IsSingleSelectEnabled ? DataGridSelectionMode.Single : DataGridSelectionMode.Extended;
+        IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
+    }
 
     [RelayCommand]
     private async Task OpenGIMIRootFolderAsync()
@@ -78,12 +88,33 @@ public partial class CharacterDetailsViewModel
     [RelayCommand(CanExecute = nameof(IsNotHardBusy))]
     private async Task ToggleSingleSelectAsync()
     {
-        var settings = await ReadSettingsAsync();
-        settings.SingleSelect = !IsSingleSelectEnabled;
-        await SaveSettingsAsync(settings);
+        await CommandWrapperAsync(false, async () =>
+        {
+            var settings = await ReadSettingsAsync();
+            settings.SingleSelect = !IsSingleSelectEnabled;
+            await SaveSettingsAsync(settings);
 
-        IsSingleSelectEnabled = settings.SingleSelect;
+            IsSingleSelectEnabled = settings.SingleSelect;
 
-        ModGridVM.GridSelectionMode = IsSingleSelectEnabled ? SelectionMode.Extended : SelectionMode.Single;
+            var firstModSelected = ModGridVM.SelectedMods.FirstOrDefault();
+            ModGridVM.GridSelectionMode = IsSingleSelectEnabled ? DataGridSelectionMode.Single : DataGridSelectionMode.Extended;
+            if (firstModSelected is not null)
+                ModGridVM.SetSelectedMod(firstModSelected.Id);
+        }).ConfigureAwait(false);
+    }
+
+
+    [RelayCommand]
+    private async Task ToggleHideModFolderColumnAsync()
+    {
+        await CommandWrapperAsync(false, async () =>
+        {
+            var settings = await ReadSettingsAsync();
+            settings.ModFolderNameColumnVisible = !IsModFolderNameColumnVisible;
+            await SaveSettingsAsync(settings);
+
+            IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
+            ModGridVM.IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
+        }).ConfigureAwait(false);
     }
 }

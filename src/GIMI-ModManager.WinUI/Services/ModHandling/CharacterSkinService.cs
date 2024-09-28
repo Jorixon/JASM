@@ -27,7 +27,7 @@ public class CharacterSkinService
         _logger = logger.ForContext<CharacterSkinService>();
     }
 
-    public async IAsyncEnumerable<ISkinMod> FilterModsToSkinAsync(ICharacterSkin skin, 
+    public async IAsyncEnumerable<ISkinMod> FilterModsToSkinAsync(ICharacterSkin skin,
         IEnumerable<ISkinMod> mods, bool useSettingsCache = false, bool ignoreUndetectableMods = false,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {

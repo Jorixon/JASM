@@ -90,11 +90,13 @@
                             <MenuBarItem Title="View">
                                 <ToggleMenuFlyoutItem
                                     Command="{x:Bind ViewModel.ToggleSingleSelectCommand}"
-                                    IsEnabled="{x:Bind ViewModel.IsSingleSelectEnabled, Mode=OneWay}"
+                                    IsChecked="{x:Bind ViewModel.IsSingleSelectEnabled, Mode=OneWay}"
                                     ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time."
                                     Text="Single Select" />
-                                <ToggleMenuFlyoutItem Text="Compact Mode" />
-                                <ToggleMenuFlyoutItem Text="Hide 'Disabled_' From Folder Names" />
+                                <ToggleMenuFlyoutItem
+                                    Command="{x:Bind ViewModel.ToggleHideModFolderColumnCommand}"
+                                    IsChecked="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay}"
+                                    Text="Show 'Mod Folder Names' column" />
                             </MenuBarItem>
                         </MenuBar>
 

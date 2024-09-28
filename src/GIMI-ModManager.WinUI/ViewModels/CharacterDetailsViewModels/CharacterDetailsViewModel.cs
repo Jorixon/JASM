@@ -1,11 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
@@ -39,12 +41,26 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private readonly BusySetter _busySetter;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking), nameof(CanChangeInGameSkins))]
+
     private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
+    public bool IsHardBusy
+    {
+        get => _isHardBusy;
+        set
+        {
+            if (value == _isHardBusy) return;
+            _isHardBusy = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsNotHardBusy));
+            OnPropertyChanged(nameof(IsWorking));
+            OnPropertyChanged(nameof(CanChangeInGameSkins));
+            NotifyCommands();
+        }
+    }
 
     public bool IsNotSoftBusy => !IsSoftBusy;
     public bool IsNotHardBusy => !IsHardBusy;
@@ -121,10 +137,14 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         if (IsReturning)
             return;
 
+        await InitToolbarAsync();
+
+        // Wait for the grid to load the datasource
         if (GridLoadedAwaiter is not null)
             await GridLoadedAwaiter();
         GridLoadedAwaiter = null;
 
+        // Now that the grid is loaded, we can select the first mod
         AutoSelectFirstMod();
 
         // Finished initializing
@@ -284,6 +304,28 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
                 TimeSpan.FromSeconds(5));
         }
     }
+
+    private IRelayCommand[]? _viewModelCommands;
+    private void NotifyCommands()
+    {
+
+        if (_viewModelCommands is null)
+        {
+            var commands = new List<IRelayCommand>();
+            foreach (var propertyInfo in GetType()
+                         .GetProperties()
+                         .Where(p=> p.PropertyType.IsAssignableTo(typeof(IRelayCommand))))
+            {
+                var value = propertyInfo.GetValue(this);
+
+                if (value is IRelayCommand relayCommand)
+                    commands.Add(relayCommand);
+            }
+
+            _viewModelCommands = commands.ToArray();
+        }
+        _viewModelCommands.ForEach(c => c.NotifyCanExecuteChanged());
+    }
 }
 
 public partial class BusySetter(CharacterDetailsViewModel viewModel) : ObservableObject
@@ -291,10 +333,12 @@ public partial class BusySetter(CharacterDetailsViewModel viewModel) : Observabl
     private readonly CharacterDetailsViewModel _viewModel = viewModel;
 
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
     private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
 
     public bool IsNotSoftBusy => !IsSoftBusy;

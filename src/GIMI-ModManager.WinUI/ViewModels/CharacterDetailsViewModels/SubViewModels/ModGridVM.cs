@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -46,8 +48,10 @@ public partial class ModGridVM(
 
     public bool IsNotBusy => !IsBusy;
 
-    [ObservableProperty] private SelectionMode _gridSelectionMode = SelectionMode.Extended;
+    [ObservableProperty] private DataGridSelectionMode _gridSelectionMode = DataGridSelectionMode.Extended;
+    private bool SingleSelect => GridSelectionMode == DataGridSelectionMode.Single;
 
+    [ObservableProperty] private bool _isModFolderNameColumnVisible;
 
     private List<CharacterSkinEntry> _modsBackend = [];
     private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
@@ -68,7 +72,8 @@ public partial class ModGridVM(
         _context = context;
         _modList = _skinManagerService.GetCharacterModList(_context.ShownModObject);
         var settings = await _localSettingsService.ReadCharacterDetailsSettingsAsync();
-        GridSelectionMode = settings.SingleSelect ? SelectionMode.Single : SelectionMode.Extended;
+        GridSelectionMode = settings.SingleSelect ? DataGridSelectionMode.Single : DataGridSelectionMode.Extended;
+        IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
         await InitModsAsync();
         IsBusy = false;
     }
@@ -190,15 +195,14 @@ public partial class ModGridVM(
         };
     }
 
-    private async Task UpdateModVm(CharacterSkinEntry characterSkinEntry,
+    private async Task UpdateModVm(CharacterSkinEntry characterSkinEntry, bool useSettingsCache = true,
         CancellationToken cancellationToken = default)
     {
         var existingMod = _gridModsBackend.FirstOrDefault(mod => mod.Id == characterSkinEntry.Id);
         if (existingMod is null)
             throw new InvalidOperationException("Mod not found in grid mods");
 
-        var skinModSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(true, cancellationToken)
-            .ConfigureAwait(false);
+        var skinModSettings = await characterSkinEntry.Mod.Settings.TryReadSettingsAsync(useSettingsCache, cancellationToken);
 
         var presetNames = _modToPresetMapping.TryGetValue(characterSkinEntry.Id, out var presets)
             ? presets.Select(p => p.Name)
@@ -258,28 +262,53 @@ public partial class ModGridVM(
     }
 
 
-    private async Task ToggleModAsync(ModRowVM? mod)
+    private async Task ToggleModAsync(ModRowVM? modVmToToggle)
     {
-        if (mod is null)
+        if (modVmToToggle is null)
             return;
 
         using var _ = BusySetter.StartSoftBusy();
 
-        var characterSkinEntry = _modsBackend.FirstOrDefault(x => x.Id == mod.Id);
-        if (characterSkinEntry is null)
+        var modEntryToToggle = _modsBackend.FirstOrDefault(x => x.Id == modVmToToggle.Id);
+        if (modEntryToToggle is null)
             return;
+
+        var otherMods = SingleSelect ? _modsBackend.Where(mod => modVmToToggle.Id != mod.Id && mod.IsEnabled).ToArray() : [];
 
         try
         {
-            await Task.Run(() => _modList.ToggleMod(characterSkinEntry.Id), CancellationToken.None);
-            await UpdateModVm(characterSkinEntry, CancellationToken.None);
+            await Task.Run(() =>
+            {
+                try
+                {
+                    foreach (var skinEntry in otherMods)
+                    {
+                        if (skinEntry.IsEnabled)
+                            _modList.DisableMod(skinEntry.Id);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _notificationService.ShowNotification("An error occured disabling mod", e.Message, TimeSpan.FromSeconds(5));
+                }
+
+
+                _modList.ToggleMod(modEntryToToggle.Id);
+            }, CancellationToken.None);
+
+
+            await UpdateModVm(modEntryToToggle, false, CancellationToken.None);
+            foreach (var otherModEntry in otherMods)
+            {
+                await UpdateModVm(otherModEntry, false, CancellationToken.None);
+            }
         }
         catch (Exception e)
         {
             _notificationService.ShowNotification("An error occured toggling mod", e.Message, TimeSpan.FromSeconds(5));
         }
 
-        Messenger.Send(new ModChangedMessage(characterSkinEntry, null));
+        Messenger.Send(new ModChangedMessage(modEntryToToggle, null));
     }
 
     public void ClearSelection() => SelectModEvent?.Invoke(this, new SelectModRowEventArgs(-1));
@@ -328,6 +357,12 @@ public partial class ModGridVM(
         var selectedMods = SelectedMods.ToArray();
         if (selectedMods.Length == 0)
             return;
+
+        if (SingleSelect && selectedMods.Length > 1)
+        {
+            selectedMods = selectedMods.Take(1).ToArray();
+            Debugger.Break(); // TODO Handle
+        }
 
         if (key == VirtualKey.Delete)
         {

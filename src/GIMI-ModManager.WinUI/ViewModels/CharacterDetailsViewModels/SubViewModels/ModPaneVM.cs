@@ -21,7 +21,8 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
     private DispatcherQueue _dispatcherQueue = null!;
 
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotReadOnly))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotReadOnly))]
     private bool _isReadOnly = true;
 
     public bool IsNotReadOnly => !IsReadOnly;

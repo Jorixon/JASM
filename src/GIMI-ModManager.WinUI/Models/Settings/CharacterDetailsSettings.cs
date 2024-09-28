@@ -11,4 +11,5 @@ public class CharacterDetailsSettings
     public bool SingleSelect { get; set; }
     public string? SortingMethod { get; set; }
     public bool? SortByDescending { get; set; }
+    public bool ModFolderNameColumnVisible { get; set; }
 }

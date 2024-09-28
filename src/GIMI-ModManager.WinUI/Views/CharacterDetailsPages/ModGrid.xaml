@@ -162,6 +162,7 @@
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
                 <controls:DataGridTextColumn
+                    Visibility="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                     Width="SizeToCells"
                     Binding="{Binding FolderName, Mode=OneWay}"
                     CanUserSort="True"
