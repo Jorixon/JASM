@@ -1,10 +1,11 @@
-﻿using Windows.Storage;
+﻿using System.Collections.ObjectModel;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI.Controls;
 using GIMI_ModManager.WinUI.Models.Options;
-using Microsoft.UI.Xaml.Controls;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 
@@ -12,6 +13,9 @@ public partial class CharacterDetailsViewModel
 {
     [ObservableProperty] private bool _isSingleSelectEnabled;
     [ObservableProperty] private bool _isModFolderNameColumnVisible;
+
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddModArchiveCommand), nameof(AddModFolderCommand))]
+    private bool _isAddingModFolder;
 
 
     private async Task InitToolbarAsync()
@@ -115,6 +119,100 @@ public partial class CharacterDetailsViewModel
 
             IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
             ModGridVM.IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
+        }).ConfigureAwait(false);
+    }
+
+
+    private bool CanAddModFolder() => !IsAddingModFolder && IsNotHardBusy;
+
+    [RelayCommand(CanExecute = nameof(CanAddModFolder))]
+    private async Task AddModFolder()
+    {
+        await CommandWrapperAsync(true, async () =>
+        {
+            var folderPicker = new FolderPicker();
+            folderPicker.FileTypeFilter.Add("*");
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
+
+            var folder = await folderPicker.PickSingleFolderAsync();
+            if (folder is null)
+            {
+                _logger.Debug("User cancelled folder picker.");
+                return;
+            }
+
+            try
+            {
+                IsAddingModFolder = true;
+                var result = await Task.Run(async () =>
+                {
+                    var installMonitor = await _modDragAndDropService.AddStorageItemFoldersAsync(_modList,
+                        new ReadOnlyCollection<IStorageItem>([folder])).ConfigureAwait(false);
+
+                    if (installMonitor is not null)
+                        return await installMonitor.WaitForCloseAsync().ConfigureAwait(false);
+                    return null;
+                }, CancellationToken.None);
+
+
+                if (result?.CloseReason == CloseRequestedArgs.CloseReasons.Success)
+                    await ModGridVM.ReloadAllModsAsync();
+            }
+            finally
+            {
+                IsAddingModFolder = false;
+            }
+        }).ConfigureAwait(false);
+    }
+
+    private bool CanAddModArchive() => !IsAddingModFolder && IsNotHardBusy;
+
+    [RelayCommand(CanExecute = nameof(CanAddModArchive))]
+    private async Task AddModArchiveAsync()
+    {
+        await CommandWrapperAsync(true, async () =>
+        {
+            var filePicker = new FileOpenPicker();
+            filePicker.FileTypeFilter.Add(".zip");
+            filePicker.FileTypeFilter.Add(".rar");
+            filePicker.FileTypeFilter.Add(".7z");
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
+            var file = await filePicker.PickSingleFileAsync();
+            if (file is null)
+            {
+                _logger.Debug("User cancelled file picker.");
+                return;
+            }
+
+            try
+            {
+                IsAddingModFolder = true;
+                var result = await Task.Run(async () =>
+                    {
+                        var installMonitor = await _modDragAndDropService.AddStorageItemFoldersAsync(_modList, [file]).ConfigureAwait(false);
+
+                        if (installMonitor is not null)
+                            return await installMonitor.WaitForCloseAsync().ConfigureAwait(false);
+                        return null;
+                    },
+                    CancellationToken.None);
+
+                if (result?.CloseReason == CloseRequestedArgs.CloseReasons.Success)
+                    await ModGridVM.ReloadAllModsAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error while adding archive.");
+                _notificationService.ShowNotification("Error while adding storage items.",
+                    $"An error occurred while adding the storage items.\n{e.Message}",
+                    TimeSpan.FromSeconds(5));
+            }
+            finally
+            {
+                IsAddingModFolder = false;
+            }
         }).ConfigureAwait(false);
     }
 }

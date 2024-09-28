@@ -1,5 +1,7 @@
 using CommunityToolkit.WinUI.UI.Controls;
+using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -104,5 +106,20 @@ public sealed partial class ModGrid : UserControl
     private async void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
         await ViewModel.OnKeyDown_EventHandlerAsync(e.Key).ConfigureAwait(false);
+    }
+
+    private void NotificationButton_OnPointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        if (button.DataContext is not ModRowVM_ModNotificationVM modNotification) return;
+        if (modNotification.AttentionType != AttentionType.UpdateAvailable) return;
+
+
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Hand);
+    }
+
+    private void NotificationButton_OnPointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
     }
 }

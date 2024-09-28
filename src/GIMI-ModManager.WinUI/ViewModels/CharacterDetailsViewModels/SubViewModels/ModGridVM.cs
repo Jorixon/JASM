@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI.Controls;
+using CommunityToolkitWrapper;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -15,7 +16,7 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
-using Microsoft.UI.Xaml.Controls;
+using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 
@@ -24,7 +25,8 @@ public partial class ModGridVM(
     CharacterSkinService characterSkinService,
     NotificationManager notificationService,
     ModPresetService presetService,
-    ILocalSettingsService localSettingsService)
+    ILocalSettingsService localSettingsService,
+    ModNotificationManager modNotificationManager)
     : ObservableRecipient, IRecipient<ModChangedMessage>
 {
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
@@ -32,12 +34,13 @@ public partial class ModGridVM(
     private readonly NotificationManager _notificationService = notificationService;
     private readonly ModPresetService _presetService = presetService;
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
+    private readonly ModNotificationManager _modNotificationManager = modNotificationManager;
 
     private DispatcherQueue _dispatcherQueue = null!;
     private CancellationToken _navigationCt = default;
     private ICharacterModList _modList = null!;
     private ModDetailsPageContext _context = null!;
-
+    private readonly AsyncLock _modRefreshLock = new();
     public BusySetter BusySetter { get; set; }
     public bool IsDescendingSort { get; private set; } = true;
     public ModGridSortingMethod CurrentSortingMethod { get; private set; } = new(ModRowSorter.IsEnabledSorter);
@@ -52,6 +55,8 @@ public partial class ModGridVM(
     private bool SingleSelect => GridSelectionMode == DataGridSelectionMode.Single;
 
     [ObservableProperty] private bool _isModFolderNameColumnVisible;
+
+    public bool IsInitialized { get; private set; }
 
     private List<CharacterSkinEntry> _modsBackend = [];
     private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
@@ -75,11 +80,14 @@ public partial class ModGridVM(
         GridSelectionMode = settings.SingleSelect ? DataGridSelectionMode.Single : DataGridSelectionMode.Extended;
         IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
         await InitModsAsync();
+        _modList.ModsChanged += ModListOnModsChanged;
         IsBusy = false;
+        IsInitialized = true;
     }
 
     public void OnNavigateFrom()
     {
+        _modList.ModsChanged -= ModListOnModsChanged;
     }
 
     private async Task InitModsAsync()
@@ -118,8 +126,9 @@ public partial class ModGridVM(
 
     public async Task ReloadAllModsAsync(TimeSpan? minimumWaitTime = null)
     {
+        using var __ = await ModRefreshLockAsync();
         using var _ = BusySetter.StartHardBusy();
-        var waitTime = minimumWaitTime is not null ? Task.Delay(minimumWaitTime.Value, _navigationCt) : null;
+        var waitTime = minimumWaitTime is not null ? Task.Delay(minimumWaitTime.Value, _navigationCt) : Task.CompletedTask;
 
         Guid? selectedModId = SelectedMods.Count == 1 ? SelectedMods.First().Id : null;
 
@@ -127,8 +136,7 @@ public partial class ModGridVM(
         await InitModsAsync();
 
         // Make it take at least the minimum time to show the user that something is happening
-        if (waitTime is not null)
-            await waitTime;
+        await waitTime;
 
         if (selectedModId.HasValue && GridMods.Any(m => m.Id == selectedModId))
         {
@@ -138,6 +146,7 @@ public partial class ModGridVM(
 
     public async Task OnChangeSkinAsync(ModDetailsPageContext context)
     {
+        using var __ = await ModRefreshLockAsync();
         _context = context;
         _gridModsBackend.Clear();
         GridMods.Clear();
@@ -188,8 +197,9 @@ public partial class ModGridVM(
             ? presets.Select(p => p.Name)
             : [];
 
+        var modNotifications = await _modNotificationManager.GetNotificationsForModAsync(characterSkinEntry.Id);
 
-        return new ModRowVM(characterSkinEntry, skinModSettings, presetNames)
+        return new ModRowVM(characterSkinEntry, skinModSettings, presetNames, modNotifications)
         {
             ToggleEnabledCommand = new AsyncRelayCommand<ModRowVM>(ToggleModAsync)
         };
@@ -208,7 +218,10 @@ public partial class ModGridVM(
             ? presets.Select(p => p.Name)
             : [];
 
-        existingMod.UpdateModel(characterSkinEntry, skinModSettings, presetNames);
+        var modNotifications = await _modNotificationManager.GetNotificationsForModAsync(characterSkinEntry.Id);
+
+
+        existingMod.UpdateModel(characterSkinEntry, skinModSettings, presetNames, modNotifications);
     }
 
     public ModRowVM[] SearchFilterMods(string searchText)
@@ -245,7 +258,7 @@ public partial class ModGridVM(
 
     public void Receive(ModChangedMessage message)
     {
-        // TODO: IMplement
+        // TODO: Implement
     }
 
     public void SetSelectedMod(Guid modId, bool ignoreFilters = false)
@@ -312,6 +325,20 @@ public partial class ModGridVM(
     }
 
     public void ClearSelection() => SelectModEvent?.Invoke(this, new SelectModRowEventArgs(-1));
+
+    private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
+    {
+        if (!IsInitialized)
+            return;
+
+        _notificationService.ShowNotification(
+            $"Folder Activity Detected in {_context.ShownModObject.DisplayName}'s Mod Folder",
+            "Files/Folders were changed in the characters mod folder and mods have been refreshed.",
+            TimeSpan.FromSeconds(5));
+
+
+        var _ = _dispatcherQueue.EnqueueAsync(() => ReloadAllModsAsync());
+    }
 
 
     // Only to be used by code behind
@@ -439,6 +466,8 @@ public partial class ModGridVM(
             GridMods.Move(oldPosition, newPosition);
         }
     }
+
+    private Task<LockReleaser> ModRefreshLockAsync() => _modRefreshLock.LockAsync(null, _navigationCt);
 }
 
 public class SortEvent(string sortColumn, bool isDescending) : EventArgs

@@ -22,6 +22,7 @@ public sealed partial class CharacterDetailsPage : Page
         CharacterCard.ViewModel = ViewModel;
         ModPane.ViewModel = ViewModel.ModPaneVM;
         ModGrid.ViewModel = ViewModel.ModGridVM;
+        ModGrid.ViewModel.OnModsReloaded += OnModsReloaded;
 
         ViewModel.OnModObjectLoaded += OnModObjectLoaded;
         ViewModel.OnModsLoaded += OnModsLoaded;
@@ -58,6 +59,14 @@ public sealed partial class CharacterDetailsPage : Page
         ShowNoModsElement();
     }
 
+    private void OnModsReloaded(object? sender, EventArgs eventArgs)
+    {
+        if (ViewModel.ModGridVM.ModdableObjectHasAnyMods)
+            HideNoModsElement();
+        else
+            ShowNoModsElement();
+    }
+
     private void OnInitializingFinished(object? sender, EventArgs e)
     {
         ViewModel.OnInitializingFinished -= OnInitializingFinished;
@@ -88,6 +97,7 @@ public sealed partial class CharacterDetailsPage : Page
         ModGrid.Visibility = Visibility.Collapsed;
         ModPane.Visibility = Visibility.Collapsed;
         ModPaneSplitter.Visibility = Visibility.Collapsed;
+        SearchModsTextBox.Visibility = Visibility.Collapsed;
 
         ModListArea.AllowDrop = false;
         MainContentArea.AllowDrop = true;
@@ -103,6 +113,7 @@ public sealed partial class CharacterDetailsPage : Page
         ModGrid.Visibility = Visibility.Visible;
         ModPane.Visibility = Visibility.Visible;
         ModPaneSplitter.Visibility = Visibility.Visible;
+        SearchModsTextBox.Visibility = Visibility.Visible;
 
         ModListArea.AllowDrop = true;
         MainContentArea.AllowDrop = false;

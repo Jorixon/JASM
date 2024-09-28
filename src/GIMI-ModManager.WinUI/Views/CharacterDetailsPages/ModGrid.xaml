@@ -10,9 +10,13 @@
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
     xmlns:subViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <xaml:AttentionTypeToSymbolConverter x:Key="AttentionTypeToSymbolConverter" />
+    </UserControl.Resources>
     <Grid>
 
         <Grid.Resources>
@@ -111,21 +115,20 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
-                                <ItemsRepeater>
-                                    <!--  ItemsSource="{x:Bind ModNotifications, Mode=OneWay}"  -->
+                                <ItemsRepeater ItemsSource="{x:Bind ModNotifications}">
                                     <ItemsRepeater.ItemTemplate>
-                                        <DataTemplate x:DataType="notifications:ModNotification">
+                                        <DataTemplate x:DataType="subViewModels:ModRowVM_ModNotificationVM">
                                             <Grid Margin="4,0" VerticalAlignment="Center">
                                                 <Button
                                                     Margin="0"
                                                     Padding="0"
                                                     BorderThickness="0"
                                                     CornerRadius="0"
-                                                    DataContext="{x:Bind}">
+                                                    DataContext="{x:Bind}"
+                                                    PointerEntered="NotificationButton_OnPointerEntered"
+                                                    PointerExited="NotificationButton_OnPointerExited">
                                                     <!--
                                                         Click="ButtonBase_OnClick"
-                                                        PointerEntered="NotificationButton_OnPointerEntered"
-                                                        PointerExited="NotificationButton_OnPointerExited"
                                                     -->
                                                     <Button.Content>
                                                         <FontIcon
@@ -162,13 +165,13 @@
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
                 <controls:DataGridTextColumn
-                    Visibility="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                     Width="SizeToCells"
                     Binding="{Binding FolderName, Mode=OneWay}"
                     CanUserSort="True"
                     Header="Mod Folder Name"
                     IsReadOnly="True"
-                    Tag="FolderName" />
+                    Tag="FolderName"
+                    Visibility="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                 <controls:DataGridTextColumn
                     Width="SizeToCells"

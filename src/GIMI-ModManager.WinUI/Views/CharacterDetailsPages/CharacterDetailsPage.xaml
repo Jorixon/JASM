@@ -59,9 +59,15 @@
                         <MenuBar IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}">
                             <MenuBarItem Title="Mods">
                                 <MenuBarItem.Items>
-                                    <MenuFlyoutItem ToolTipService.ToolTip="Add a mod folder" Text="Add Mod..." />
+                                    <MenuFlyoutItem
+                                        Command="{x:Bind ViewModel.AddModFolderCommand}"
+                                        ToolTipService.ToolTip="Add a mod folder"
+                                        Text="Add Mod..." />
 
-                                    <MenuFlyoutItem ToolTipService.ToolTip="Add a mod inside a compressed archive" Text="Add Archive...">
+                                    <MenuFlyoutItem
+                                        Command="{x:Bind ViewModel.AddModArchiveCommand}"
+                                        ToolTipService.ToolTip="Add a mod inside a compressed archive"
+                                        Text="Add Archive...">
                                         <MenuFlyoutItem.KeyboardAccelerators>
                                             <KeyboardAccelerator Key="O" Modifiers="Control" />
                                         </MenuFlyoutItem.KeyboardAccelerators>

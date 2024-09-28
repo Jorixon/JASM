@@ -13,6 +13,7 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using Microsoft.UI.Dispatching;
@@ -28,6 +29,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
     private readonly NotificationManager _notificationService = App.GetService<NotificationManager>();
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
+    private readonly ModNotificationManager _modNotificationManager = App.GetService<ModNotificationManager>();
+    private readonly ModDragAndDropService _modDragAndDropService = App.GetService<ModDragAndDropService>();
 
     public Func<Task>? GridLoadedAwaiter { get; set; }
 
@@ -41,12 +44,12 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private readonly BusySetter _busySetter;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
 
     private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
+
     public bool IsHardBusy
     {
         get => _isHardBusy;
@@ -189,14 +192,32 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private void OnModsReloaded(object? sender, EventArgs e) => UpdateTrackedMods();
 
-    private void OnModsSelected(object? sender, ModGridVM.ModRowSelectedEventArgs args)
+    private async void OnModsSelected(object? sender, ModGridVM.ModRowSelectedEventArgs args)
     {
         var selectedMod = args.Mods.FirstOrDefault();
 
-        var queued = ModPaneVM.QueueLoadMod(selectedMod?.Id);
+        ModPaneVM.QueueLoadMod(selectedMod?.Id);
 
         if (selectedMod is null)
             return;
+
+        var recentlyAddedModNotifications = args.Mods.SelectMany(x =>
+            x.ModNotifications.Where(notification => notification.AttentionType == AttentionType.Added)).ToArray();
+
+        if (recentlyAddedModNotifications.Length == 0) return;
+
+
+        foreach (var modNotification in recentlyAddedModNotifications)
+        {
+            await _modNotificationManager.RemoveModNotificationAsync(modNotification.Id);
+
+            foreach (var newModModel in args.Mods)
+            {
+                var notification = newModModel.ModNotifications.FirstOrDefault(x => x.Id == modNotification.Id);
+                if (notification is not null) newModModel.ModNotifications.Remove(notification);
+            }
+        }
+
 
         // TODO: Handle notification
     }
@@ -211,31 +232,39 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     public void OnNavigatedFrom()
     {
-        _navigationCancellationTokenSource.Cancel();
-        ModGridVM.OnModsSelected -= OnModsSelected;
-        ModGridVM.OnNavigateFrom();
-        ModPaneVM.OnNavigatedFrom();
-
-
-        Task.Run(async () =>
+        try
         {
-            var delay = Task.Delay(TimeSpan.FromSeconds(2), CancellationToken.None);
+            _navigationCancellationTokenSource.Cancel();
+            ModGridVM.OnModsSelected -= OnModsSelected;
+            ModGridVM.OnNavigateFrom();
+            ModPaneVM.OnNavigatedFrom();
 
-            var settings = await ReadSettingsAsync().ConfigureAwait(false);
-            settings.SortingMethod = ModGridVM.CurrentSortingMethod.SortingMethodType;
-            settings.SortByDescending = ModGridVM.IsDescendingSort;
-            await SaveSettingsAsync(settings).ConfigureAwait(false);
-            await delay.ConfigureAwait(false);
 
-            try
+            Task.Run(async () =>
             {
-                _navigationCancellationTokenSource?.Dispose();
-            }
-            catch (Exception e)
-            {
-                // ignored
-            }
-        }, CancellationToken.None);
+                var delay = Task.Delay(TimeSpan.FromSeconds(2), CancellationToken.None);
+
+                var settings = await ReadSettingsAsync().ConfigureAwait(false);
+                settings.SortingMethod = ModGridVM.CurrentSortingMethod.SortingMethodType;
+                settings.SortByDescending = ModGridVM.IsDescendingSort;
+                await SaveSettingsAsync(settings).ConfigureAwait(false);
+                await delay.ConfigureAwait(false);
+
+                try
+                {
+                    _navigationCancellationTokenSource?.Dispose();
+                }
+                catch (Exception e)
+                {
+                    // ignored
+                }
+            }, CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while navigating from CharacterDetailsViewModel");
+            Debugger.Break();
+        }
     }
 
 
@@ -306,15 +335,15 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     }
 
     private IRelayCommand[]? _viewModelCommands;
+
     private void NotifyCommands()
     {
-
         if (_viewModelCommands is null)
         {
             var commands = new List<IRelayCommand>();
             foreach (var propertyInfo in GetType()
                          .GetProperties()
-                         .Where(p=> p.PropertyType.IsAssignableTo(typeof(IRelayCommand))))
+                         .Where(p => p.PropertyType.IsAssignableTo(typeof(IRelayCommand))))
             {
                 var value = propertyInfo.GetValue(this);
 
@@ -324,6 +353,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
             _viewModelCommands = commands.ToArray();
         }
+
         _viewModelCommands.ForEach(c => c.NotifyCanExecuteChanged());
     }
 }
@@ -333,12 +363,10 @@ public partial class BusySetter(CharacterDetailsViewModel viewModel) : Observabl
     private readonly CharacterDetailsViewModel _viewModel = viewModel;
 
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
     private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
 
     public bool IsNotSoftBusy => !IsSoftBusy;

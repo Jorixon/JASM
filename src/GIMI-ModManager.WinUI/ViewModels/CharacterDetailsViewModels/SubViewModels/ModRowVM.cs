@@ -1,8 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Entities;
 using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Services.Notifications;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 
@@ -27,14 +29,18 @@ public partial class ModRowVM : ObservableObject
     [ObservableProperty] private string[] _presets = [];
     [ObservableProperty] private string _inPresets = string.Empty;
 
-    public ModRowVM(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings, IEnumerable<string> presetNames)
+    public ObservableCollection<ModRowVM_ModNotificationVM> ModNotifications { get; } = new();
+
+
+    public ModRowVM(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings, IEnumerable<string> presetNames,
+        IEnumerable<ModNotification> modNotifications)
     {
         Id = characterSkinEntry.Mod.Id;
-        UpdateModel(characterSkinEntry, modSettings, presetNames);
+        UpdateModel(characterSkinEntry, modSettings, presetNames, modNotifications);
     }
 
     public void UpdateModel(CharacterSkinEntry characterSkinEntry, ModSettings? modSettings,
-        IEnumerable<string> presetNames)
+        IEnumerable<string> presetNames, IEnumerable<ModNotification> modNotifications)
     {
         IsEnabled = characterSkinEntry.IsEnabled;
         DisplayName = modSettings?.CustomName ?? characterSkinEntry.Mod.GetDisplayName();
@@ -45,6 +51,8 @@ public partial class ModRowVM : ObservableObject
         Author = modSettings?.Author ?? string.Empty;
         Presets = presetNames.ToArray();
         InPresets = string.Join(',', Presets);
+        ModNotifications.Clear();
+        ModNotifications.AddRange(modNotifications.Select(m => new ModRowVM_ModNotificationVM(m)));
 
 
         SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:D}";
@@ -53,6 +61,15 @@ public partial class ModRowVM : ObservableObject
     public string SearchableText { get; private set; } = string.Empty;
 
     public required IAsyncRelayCommand ToggleEnabledCommand { get; init; }
+}
+
+/// Referencing nested types does not work from xaml
+public partial class ModRowVM_ModNotificationVM(ModNotification modNotification) : ObservableObject
+{
+    public DateTime Time { get; init; } = modNotification.Time;
+    public Guid Id { get; init; } = modNotification.Id;
+    public Guid ModId { get; init; } = modNotification.ModId;
+    public AttentionType AttentionType { get; init; } = modNotification.AttentionType;
 }
 
 public sealed class ModGridSortingMethod : SortingMethod<ModRowVM>
