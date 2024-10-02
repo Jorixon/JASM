@@ -538,6 +538,7 @@
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Mortefi.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Rover.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Sanhua.png" />
+		<Content Remove="Assets\Games\WuWa\Images\Characters\Shorekeeper.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Taoqi.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Verina.png" />
 		<Content Remove="Assets\Games\WuWa\Images\Characters\Xiangliyao.png" />
