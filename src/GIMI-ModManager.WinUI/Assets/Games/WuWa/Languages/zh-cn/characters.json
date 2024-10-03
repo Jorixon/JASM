@@ -283,7 +283,7 @@
   {
     "Keys": ["shorekeeper"],
     "ReleaseDate": "2024-09-29T00:00:00",
-    "Image": "Shorekeeper.png",
+    "Image": "shorekeeper.png",
     "Rarity": 5,
     "Element": "Spectro",
     "Class": "Rectifier",
@@ -292,5 +292,18 @@
     "InGameSkins": [],
     "InternalName": "Shorekeeper",
     "DisplayName": "守岸人"
+  },
+  {
+    "Keys": ["YOUHU"],
+    "ReleaseDate": "2024-10-24T00:00:00",
+    "Image": "YouHu.png",
+    "Rarity": 4,
+    "Element": "Glacio",
+    "Class": "Gauntlet",
+    "Region": ["Huanglong"],
+    "ModFilesName": "YouHu",
+    "InGameSkins": [],
+    "InternalName": "YouHu",
+    "DisplayName": "釉瑚"
   }
 ]
