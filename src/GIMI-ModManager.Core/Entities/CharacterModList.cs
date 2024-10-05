@@ -330,6 +330,21 @@ public sealed class CharacterModList : ICharacterModList
         }
     }
 
+    public bool ToggleMod(Guid modId)
+    {
+        var mod = _mods.FirstOrDefault(m => m.Id == modId)?.Mod;
+        if (mod is null)
+            throw new InvalidOperationException("Mod not found");
+        if (IsModEnabled(mod))
+        {
+            DisableMod(modId);
+            return false;
+        }
+
+        EnableMod(modId);
+        return true;
+    }
+
     public bool IsModEnabled(ISkinMod mod)
     {
         if (!ModAlreadyAdded(mod))

@@ -62,7 +62,8 @@ public class ModCrawlerService
         }
     }
 
-    public ICharacterSkin? GetFirstSubSkinRecursive(string absPath, string? internalName = null)
+    public ICharacterSkin? GetFirstSubSkinRecursive(string absPath, string? internalName = null,
+        CancellationToken cancellationToken = default)
     {
         var folder = new DirectoryInfo(absPath);
         if (!folder.Exists) throw new DirectoryNotFoundException($"Could not find folder {folder.FullName}");
@@ -72,9 +73,9 @@ public class ModCrawlerService
 
 
         var subSkins = internalName.IsNullOrEmpty()
-            ? characters
-                .SelectMany(character => character.Skins)
+            ? characters.SelectMany(character => character.Skins)
             : characters.First(ch => ch.InternalNameEquals(internalName)).Skins;
+        cancellationToken.ThrowIfCancellationRequested();
 
         // Order by default skin first, so that 
         subSkins = subSkins.OrderBy(skin => skin.IsDefault).ToArray();
@@ -82,6 +83,7 @@ public class ModCrawlerService
 
         foreach (var file in RecursiveGetFiles(folder))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var subSkin = subSkins.FirstOrDefault(skin => IsOfSkinType(file, skin));
             if (subSkin is null) continue;
 

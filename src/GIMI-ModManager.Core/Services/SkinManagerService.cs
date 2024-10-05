@@ -594,16 +594,10 @@ public sealed class SkinManagerService : ISkinManagerService
         return characterModList;
     }
 
-    public ICharacterModList GetCharacterModList(IModdableObject character)
-    {
-        return GetCharacterModList(character.InternalName);
-    }
+    public ICharacterModList GetCharacterModList(IModdableObject character) => GetCharacterModList(character.InternalName);
 
 
-    public ICharacterModList? GetCharacterModListOrDefault(string internalName)
-    {
-        return _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
-    }
+    public ICharacterModList? GetCharacterModListOrDefault(string internalName) => _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
 
     public async Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)

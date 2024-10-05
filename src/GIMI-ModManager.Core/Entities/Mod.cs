@@ -11,6 +11,7 @@ namespace GIMI_ModManager.Core.Entities;
 public class Mod : IMod
 {
     private protected DirectoryInfo _modDirectory;
+    private float? folderSizeInBytes;
     public string FullPath => _modDirectory.FullName;
     public string Name => _modDirectory.Name;
     public string OnlyPath => _modDirectory.Parent!.FullName;
@@ -131,6 +132,22 @@ public class Mod : IMod
         md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
 
         return md5.Hash ?? Array.Empty<byte>();
+    }
+
+    public float GetSizeInGB()
+    {
+        if (folderSizeInBytes is not null)
+            return folderSizeInBytes.Value / 1024f / 1024f / 1024f;
+
+        _modDirectory.Refresh();
+        var allFiles = _modDirectory.GetFiles("*", SearchOption.AllDirectories);
+        folderSizeInBytes = allFiles.Sum(f => f.Length);
+        return folderSizeInBytes.Value / 1024f / 1024f / 1024f;
+    }
+
+    public void Refresh()
+    {
+        folderSizeInBytes = null;
     }
 
     public int GetHashCode(IMod obj)

@@ -154,7 +154,7 @@ public class NavigationService : INavigationService
                 for (int i = 0; i < maxBackStackEntries - 1; i++)
                 {
                     frame.BackStack.RemoveAt(0);
-                    GC.Collect();
+                    //GC.Collect();
                 }
             }
 

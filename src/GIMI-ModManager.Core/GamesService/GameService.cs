@@ -303,7 +303,7 @@ public class GameService : IGameService
         return characters.FirstOrDefault(x => x.InternalNameEquals(internalName));
     }
 
-    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName,
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName? internalName,
         GetOnly getOnlyStatus = GetOnly.Enabled)
     {
         return GetAllModdableObjects(getOnlyStatus).FirstOrDefault(x => x.InternalNameEquals(internalName));

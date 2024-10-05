@@ -139,7 +139,7 @@ public partial class StartupViewModel : ObservableRecipient, INavigationAware
         _windowManagerService.ResizeWindowPercent(_windowManagerService.MainWindow, 80, 80);
         _windowManagerService.MainWindow.CenterOnScreen();
         App.GetService<NotificationManager>().ShowNotification("Startup settings saved",
-            $"Startup settings saved successfully to '{_localSettingsService.SettingsLocation}'",
+            $"Startup settings saved successfully to '{_localSettingsService.GameScopedSettingsLocation}'",
             TimeSpan.FromSeconds(7));
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         Task.Run(async () =>

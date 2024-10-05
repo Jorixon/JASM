@@ -39,4 +39,17 @@ public static class Extensions
     {
         return string.IsNullOrWhiteSpace(value);
     }
+
+
+    public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
+    {
+        var list = new List<T>();
+
+        await foreach (var item in asyncEnumerable.ConfigureAwait(false))
+        {
+            list.Add(item);
+        }
+
+        return list;
+    }
 }
