@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.1](https://github.com/Jorixon/JASM/compare/v2.16.0...v2.16.1) (2024-10-05)
+
+
+### Miscellaneous
+
+* **WuWa:** Added Shorekeeper and Youhu ([#267](https://github.com/Jorixon/JASM/issues/267)) ([d7854e1](https://github.com/Jorixon/JASM/commit/d7854e19c0c395de026a91598c3ee8c3b98b7fca))
+
 ## [2.16.0](https://github.com/Jorixon/JASM/compare/v2.15.0...v2.16.0) (2024-09-21)
 
 
