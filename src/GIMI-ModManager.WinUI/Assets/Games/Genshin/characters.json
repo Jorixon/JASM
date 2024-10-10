@@ -1697,5 +1697,56 @@
     "InGameSkins": [],
     "InternalName": "Xilonen",
     "DisplayName": "Xilonen"
+  },
+  {
+    "Keys": [
+      "Chasca"
+    ],
+    "ReleaseDate": "2024-11-20T00:00:00",
+    "Image": "Character_Chasca_Thumb.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Bow",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Chasca",
+    "InGameSkins": [],
+    "InternalName": "Chasca",
+    "DisplayName": "Chasca"
+  },
+  {
+    "Keys": [
+      "Olorun"
+    ],
+    "ReleaseDate": "2024-11-20T00:00:00",
+    "Image": "Character_Olorun_Thumb.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Bow",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Olorun",
+    "InGameSkins": [],
+    "InternalName": "Olorun",
+    "DisplayName": "Olorun"
+  },
+  {
+    "Keys": [
+      "Citlali"
+    ],
+    "ReleaseDate": "",
+    "Image": "Character_Citlali_Thumb.png",
+    "Rarity": 5,
+    "Element": "",
+    "Class": "",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Citlali",
+    "InGameSkins": [],
+    "InternalName": "Citlali",
+    "DisplayName": "Citlali"
   }
 ]
