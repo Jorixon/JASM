@@ -1717,20 +1717,20 @@
   },
   {
     "Keys": [
-      "Olorun"
+      "Ororon"
     ],
     "ReleaseDate": "2024-11-20T00:00:00",
-    "Image": "Character_Olorun_Thumb.png",
+    "Image": "Character_Ororon_Thumb.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Bow",
     "Region": [
       "Natlan"
     ],
-    "ModFilesName": "Olorun",
+    "ModFilesName": "Ororon",
     "InGameSkins": [],
-    "InternalName": "Olorun",
-    "DisplayName": "Olorun"
+    "InternalName": "Ororon",
+    "DisplayName": "Ororon"
   },
   {
     "Keys": [
