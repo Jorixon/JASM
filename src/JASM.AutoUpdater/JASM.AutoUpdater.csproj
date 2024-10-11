@@ -10,11 +10,12 @@
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 	<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <UseWinUI>true</UseWinUI>
-		<Nullable>enable</Nullable>
-	  <EnableMsixTooling>true</EnableMsixTooling>
-	  <WindowsPackageType>None</WindowsPackageType>
-	  <Title>JASM - Auto Updater</Title>
-	  <AssemblyName>JASM - Auto Updater</AssemblyName>
+	<Nullable>enable</Nullable>
+	<EnableMsixTooling>true</EnableMsixTooling>
+	<WindowsPackageType>None</WindowsPackageType>
+	<Title>JASM - Auto Updater</Title>
+	<AssemblyName>JASM - Auto Updater</AssemblyName>
+	<CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\7z\7-zip.dll" />
