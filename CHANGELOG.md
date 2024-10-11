@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.3](https://github.com/Jorixon/JASM/compare/v2.16.2...v2.16.3) (2024-10-11)
+
+
+### Miscellaneous
+
+* Fix name for Ororon ([#273](https://github.com/Jorixon/JASM/issues/273)) ([baab6b5](https://github.com/Jorixon/JASM/commit/baab6b55c04a72738c5753a31feb6013db064b52))
+
 ## [2.16.2](https://github.com/Jorixon/JASM/compare/v2.16.1...v2.16.2) (2024-10-11)
 
 
