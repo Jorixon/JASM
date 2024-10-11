@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.16.2](https://github.com/Jorixon/JASM/compare/v2.16.1...v2.16.2) (2024-10-11)
+
+
+### Miscellaneous
+
+* Add Genshin 5.1 and 5.2 characters ([#270](https://github.com/Jorixon/JASM/issues/270)) ([3eb44b4](https://github.com/Jorixon/JASM/commit/3eb44b418ad32db7708ce274ffda9a0b16001299))
+* Updated packages and winappsdk ([#271](https://github.com/Jorixon/JASM/issues/271)) ([4a22f2d](https://github.com/Jorixon/JASM/commit/4a22f2d4778593f91a5686f173b49cefe21694fb))
+
 ## [2.16.1](https://github.com/Jorixon/JASM/compare/v2.16.0...v2.16.1) (2024-10-05)
 
 
