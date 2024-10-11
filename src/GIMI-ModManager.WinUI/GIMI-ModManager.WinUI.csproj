@@ -21,6 +21,7 @@
 		<Title>JASM - Just Another Skin Manager</Title>
 		<AssemblyName>JASM - Just Another Skin Manager</AssemblyName>
 		<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
+		<CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
 	</PropertyGroup>
 
 
