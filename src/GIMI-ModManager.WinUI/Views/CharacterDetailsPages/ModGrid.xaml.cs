@@ -151,6 +151,24 @@ public sealed partial class ModGrid : UserControl
 
             mod.UpdateModSettingsCommand.ExecuteAsync(arg);
         }
+        else if (e.Column.Tag.ToString() == nameof(ModRowVM.DisplayName))
+        {
+            var textBox = (TextBox)e.EditingElement;
+            var newValue = textBox.Text.Trim();
+
+            if (newValue == mod.DisplayName)
+                return;
+
+            var arg = new ModGridVM.UpdateModSettingsArgument(mod, new UpdateSettingsRequest()
+            {
+                SetCustomName = newValue
+            });
+
+            if (mod.UpdateModSettingsCommand.CanExecute(arg) == false)
+                return;
+
+            mod.UpdateModSettingsCommand.ExecuteAsync(arg);
+        }
         else
         {
             // Unsupported edit
