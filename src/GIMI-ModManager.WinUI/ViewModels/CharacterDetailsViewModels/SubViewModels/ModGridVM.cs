@@ -26,7 +26,8 @@ public partial class ModGridVM(
     NotificationManager notificationService,
     ModPresetService presetService,
     ILocalSettingsService localSettingsService,
-    ModNotificationManager modNotificationManager)
+    ModNotificationManager modNotificationManager,
+    ModSettingsService modSettingsService)
     : ObservableRecipient, IRecipient<ModChangedMessage>
 {
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
@@ -35,6 +36,7 @@ public partial class ModGridVM(
     private readonly ModPresetService _presetService = presetService;
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly ModNotificationManager _modNotificationManager = modNotificationManager;
+    private readonly ModSettingsService _modSettingsService = modSettingsService;
 
     private DispatcherQueue _dispatcherQueue = null!;
     private CancellationToken _navigationCt = default;
@@ -81,12 +83,14 @@ public partial class ModGridVM(
         IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
         await InitModsAsync();
         _modList.ModsChanged += ModListOnModsChanged;
+        Messenger.RegisterAll(this);
         IsBusy = false;
         IsInitialized = true;
     }
 
     public void OnNavigateFrom()
     {
+        Messenger.UnregisterAll(this);
         _modList.ModsChanged -= ModListOnModsChanged;
     }
 
@@ -201,11 +205,12 @@ public partial class ModGridVM(
 
         return new ModRowVM(characterSkinEntry, skinModSettings, presetNames, modNotifications)
         {
-            ToggleEnabledCommand = new AsyncRelayCommand<ModRowVM>(ToggleModAsync)
+            ToggleEnabledCommand = new AsyncRelayCommand<ModRowVM>(ToggleModAsync),
+            UpdateModSettingsCommand = new AsyncRelayCommand<UpdateModSettingsArgument>(UpdateModSettingsAsync)
         };
     }
 
-    private async Task UpdateModVm(CharacterSkinEntry characterSkinEntry, bool useSettingsCache = true,
+    private async Task UpdateModVmAsync(CharacterSkinEntry characterSkinEntry, bool useSettingsCache = true,
         CancellationToken cancellationToken = default)
     {
         var existingMod = _gridModsBackend.FirstOrDefault(mod => mod.Id == characterSkinEntry.Id);
@@ -258,7 +263,13 @@ public partial class ModGridVM(
 
     public void Receive(ModChangedMessage message)
     {
-        // TODO: Implement
+        if (message.sender == this)
+            return;
+
+        var existingMod = _gridModsBackend.FirstOrDefault(mod => mod.Id == message.SkinEntry.Id);
+        if (existingMod is null)
+            return;
+        _ = UpdateModVmAsync(message.SkinEntry, cancellationToken: CancellationToken.None);
     }
 
     public void SetSelectedMod(Guid modId, bool ignoreFilters = false)
@@ -310,10 +321,11 @@ public partial class ModGridVM(
             }, CancellationToken.None);
 
 
-            await UpdateModVm(modEntryToToggle, false, CancellationToken.None);
+            await UpdateModVmAsync(modEntryToToggle, false, CancellationToken.None);
             foreach (var otherModEntry in otherMods)
             {
-                await UpdateModVm(otherModEntry, false, CancellationToken.None);
+                await UpdateModVmAsync(otherModEntry, false, CancellationToken.None);
+                Messenger.Send(new ModChangedMessage(this, otherModEntry, null));
             }
         }
         catch (Exception e)
@@ -321,8 +333,46 @@ public partial class ModGridVM(
             _notificationService.ShowNotification("An error occured toggling mod", e.Message, TimeSpan.FromSeconds(5));
         }
 
-        Messenger.Send(new ModChangedMessage(modEntryToToggle, null));
+        Messenger.Send(new ModChangedMessage(this, modEntryToToggle, null));
     }
+
+    private async Task UpdateModSettingsAsync(UpdateModSettingsArgument? arg)
+    {
+        if (arg is null)
+            return;
+
+        var (modVm, updateSettingsRequest, messageBody) = arg;
+
+        using var _ = BusySetter.StartSoftBusy();
+
+        var mod = _modsBackend.FirstOrDefault(x => x.Id == modVm.Id);
+        if (mod is null)
+            return;
+
+
+        var result = await Task.Run(
+            async () => await _modSettingsService.SaveSettingsAsync(mod.Id, updateSettingsRequest, CancellationToken.None).ConfigureAwait(false),
+            CancellationToken.None);
+
+        if (result.IsError)
+        {
+            if (result.HasNotification)
+                _notificationService.ShowNotification(result.Notification);
+            else
+                _notificationService.ShowNotification("An error occured saving mod settings", result.Exception?.ToString() ?? result.ErrorMessage ?? "",
+                    TimeSpan.FromSeconds(6));
+        }
+
+        if (result.IsSuccess)
+        {
+            _notificationService.ShowNotification("Mod settings saved", messageBody, TimeSpan.FromSeconds(3));
+        }
+
+        await UpdateModVmAsync(mod, true, CancellationToken.None);
+        Messenger.Send(new ModChangedMessage(this, mod, null));
+    }
+
+    public record UpdateModSettingsArgument(ModRowVM ModVm, UpdateSettingsRequest UpdateSettingsRequest, string MessageBody = "");
 
     public void ClearSelection() => SelectModEvent?.Invoke(this, new SelectModRowEventArgs(-1));
 

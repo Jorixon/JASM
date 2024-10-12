@@ -10,6 +10,7 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 using OneOf;
 using OneOf.Types;
 using Serilog;
+using static GIMI_ModManager.WinUI.Helpers.HandlerServiceHelpers;
 using Success = ErrorOr.Success;
 
 namespace GIMI_ModManager.WinUI.Services.ModHandling;
@@ -30,7 +31,7 @@ public class ModSettingsService
     }
 
 
-    public async Task<OneOf<Success, ModNotFound, Error<Exception>>> SaveSettingsAsync(ModModel modModel)
+    public async Task<OneOf<Success, ModNotFound, Error<Exception>>> LegacySaveSettingsAsync(ModModel modModel)
     {
         var mod = _skinManagerService.GetModById(modModel.Id);
 
@@ -149,6 +150,44 @@ public class ModSettingsService
     }
 
 
+    public async Task<Result<ModSettings>> SaveSettingsAsync(Guid modId, UpdateSettingsRequest change, CancellationToken cancellationToken = default)
+    {
+        return await CommandWrapperAsync(async () =>
+        {
+            if (!change.AnyUpdates)
+                return Result<ModSettings>.Error(new SimpleNotification("No changes were detected", "Mod settings not updated"));
+
+            var mod = _skinManagerService.GetModById(modId);
+
+            if (mod is null)
+                throw new ModNotFoundException(modId);
+
+            var oldModSettings = await mod.Settings.TryReadSettingsAsync(cancellationToken: cancellationToken);
+
+            if (oldModSettings is null)
+                throw new ModSettingsNotFoundException(mod);
+
+
+            var newModSettings = oldModSettings.DeepCopyWithProperties(
+                author: change.Author.EmptyStringToNull()
+            );
+
+
+            await mod.Settings.SaveSettingsAsync(newModSettings).ConfigureAwait(false);
+
+            _logger.Information("Updated modSettings for mod {ModName} ({ModPath})", mod.GetDisplayName(), mod.FullPath);
+
+
+            newModSettings = await mod.Settings.TryReadSettingsAsync(useCache: true, cancellationToken: cancellationToken);
+
+            if (newModSettings is null)
+                throw new ModSettingsNotFoundException(mod);
+
+
+            return Result<ModSettings>.Success(newModSettings);
+        }).ConfigureAwait(false);
+    }
+
     public async Task<Result> SetModIniAsync(Guid modId, string modIni, bool autoDetect = false)
     {
         try
@@ -240,6 +279,43 @@ public readonly struct ModNotFound
     }
 
     public Guid ModId { get; }
+}
+
+public class ModNotFoundException(Guid modId) : Exception($"Could not find mod with id {modId}");
+
+public class UpdateSettingsRequest
+{
+    public bool AnyUpdates =>
+        GetType()
+            .GetProperties()
+            .Where(p => p.CanRead && p.Name != nameof(AnyUpdates))
+            .Select(p => p.GetValue(this))
+            .Any(value => value is not null);
+
+    public NewValue<string?>? Author { get; private set; }
+
+    public string? SetAuthor
+    {
+        set => Author = NewValue<string?>.Set(value);
+    }
+
+    // TODO: Could do later, too big for this PR
+    //public List<string> CreateUpdateLogEntries(ModSettings newModSettings)
+    //{
+    //    var changeEntries = new List<string>();
+
+    //    if (Author is not null && newModSettings.Author != Author.Value)
+    //    {
+
+    //    }
+
+    //    return changeEntries;
+
+    //    string CreateLogEntry(string propertyName,string oldValue, string newValue)
+    //    {
+    //        return $""
+    //    }
+    //}
 }
 
 public record Result : IResult

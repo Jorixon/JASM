@@ -51,6 +51,12 @@
                         <FontIcon Glyph="&#xE894;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+
+                <!--
+                    TESTING
+                    TODO: Remove this
+                -->
+                <MenuFlyoutItem Click="MenuFlyoutItem_OnClick" Text="DEBUG NAVIGATE" />
             </MenuFlyout>
         </Grid.Resources>
 

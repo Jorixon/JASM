@@ -1,10 +1,12 @@
 using CommunityToolkit.WinUI.UI.Controls;
+using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using ModRowVM = GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels.ModRowVM;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -121,5 +123,49 @@ public sealed partial class ModGrid : UserControl
     private void NotificationButton_OnPointerExited(object sender, PointerRoutedEventArgs e)
     {
         ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+    }
+
+    private void ModListGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (e.EditAction == DataGridEditAction.Cancel)
+            return;
+
+        var mod = (ModRowVM)e.Row.DataContext;
+
+
+        if (e.Column.Tag.ToString() == nameof(ModRowVM.Author))
+        {
+            var textBox = (TextBox)e.EditingElement;
+            var newValue = textBox.Text.Trim();
+
+            if (newValue == mod.Author)
+                return;
+
+            var arg = new ModGridVM.UpdateModSettingsArgument(mod, new UpdateSettingsRequest()
+            {
+                SetAuthor = newValue
+            });
+
+            if (mod.UpdateModSettingsCommand.CanExecute(arg) == false)
+                return;
+
+            mod.UpdateModSettingsCommand.ExecuteAsync(arg);
+        }
+        else
+        {
+            // Unsupported edit
+            //Debugger.Break();
+        }
+    }
+
+    private void ModListGrid_OnCellEditEnded(object? sender, DataGridCellEditEndedEventArgs e)
+    {
+        if (e.EditAction == DataGridEditAction.Cancel)
+            return;
+
+        if (e.Row.DataContext is not ModRowVM mod)
+            return;
+
+        mod.TriggerPropertyChanged(string.Empty);
     }
 }

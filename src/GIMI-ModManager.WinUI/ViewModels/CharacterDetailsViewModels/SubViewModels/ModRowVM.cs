@@ -58,9 +58,12 @@ public partial class ModRowVM : ObservableObject
         SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:D}";
     }
 
+    public void TriggerPropertyChanged(string? propertyName) => OnPropertyChanged(propertyName ?? string.Empty);
+
     public string SearchableText { get; private set; } = string.Empty;
 
     public required IAsyncRelayCommand ToggleEnabledCommand { get; init; }
+    public required IAsyncRelayCommand UpdateModSettingsCommand { get; set; }
 }
 
 /// Referencing nested types does not work from xaml

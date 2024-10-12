@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.Core.Contracts.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.FileModels;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
 
@@ -166,4 +167,15 @@ public readonly struct NewValue<T>
     public static implicit operator T(NewValue<T> newValue) => newValue.Value;
 
     public static NewValue<T> Set(T value) => new(value);
+}
+
+public static class NewValueExtensions
+{
+    public static NewValue<string?>? EmptyStringToNull([NotNullIfNotNull(nameof(newValue))] this NewValue<string?>? newValue)
+    {
+        if (newValue is null)
+            return null;
+
+        return string.IsNullOrWhiteSpace(newValue.Value) ? NewValue<string?>.Set(null) : newValue;
+    }
 }

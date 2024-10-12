@@ -82,9 +82,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private string _modNotificationsToggleText = string.Empty;
     [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    [NotifyCanExecuteChangedFor(nameof(ApplyPresetCommand))]
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))] [NotifyCanExecuteChangedFor(nameof(ApplyPresetCommand))]
     private bool _isBusy;
 
     public bool IsNotBusy => !IsBusy;
@@ -441,7 +439,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             if (distinctReleaseDates == 1 &&
                 SortingMethods.FirstOrDefault(x => x.SortingMethodType == Sorter.ReleaseDateSortName) is
-                { } releaseDateSortingMethod)
+                    { } releaseDateSortingMethod)
             {
                 SortingMethods.Remove(releaseDateSortingMethod);
             }

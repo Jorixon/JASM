@@ -62,6 +62,8 @@
             AutoGenerateColumns="False"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
+            CellEditEnded="ModListGrid_OnCellEditEnded"
+            CellEditEnding="ModListGrid_OnCellEditEnding"
             ContextFlyout="{Binding ElementName=ModRowFlyout, Mode=OneTime}"
             FrozenColumnCount="3"
             GridLinesVisibility="All"
@@ -147,23 +149,14 @@
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
 
-                <controls:DataGridTemplateColumn
+                <controls:DataGridTextColumn
                     Width="SizeToCells"
+                    Binding="{Binding DisplayName, Mode=OneWay}"
                     CanUserSort="True"
                     Header="Mod Name"
                     IsReadOnly="True"
-                    Tag="DisplayName">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="subViewModels:ModRowVM">
-                            <Grid Margin="8,0">
-                                <TextBlock
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Bind DisplayName, Mode=OneTime}" />
-                            </Grid>
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
+                    Tag="DisplayName" />
+
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
                     Binding="{Binding FolderName, Mode=OneWay}"
@@ -175,10 +168,9 @@
 
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
-                    Binding="{Binding Author, Mode=OneTime}"
+                    Binding="{Binding Author, Mode=OneWay}"
                     CanUserSort="True"
                     Header="Author"
-                    IsReadOnly="True"
                     Tag="Author" />
 
                 <controls:DataGridTemplateColumn

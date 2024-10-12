@@ -104,6 +104,8 @@ public sealed partial class ModPaneVM(ISkinManagerService skinManagerService, No
 
     public void Receive(ModChangedMessage message)
     {
+        if (_loadedModId != message.SkinEntry.Id)
+            return;
     }
 
     public Task OnNavigatedToAsync(DispatcherQueue dispatcherQueue, CancellationToken navigationCt)
