@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>GIMI_ModManager.Core</RootNamespace>
-    <Platforms>x86;x64;arm64;AnyCPU</Platforms>
+    <Platforms>x86;x64;arm64</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
