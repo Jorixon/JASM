@@ -96,10 +96,7 @@ public class ImageHandlerService
 
         var imageStream = RandomAccessStreamReference.CreateFromFile(file);
         package.SetBitmap(imageStream);
-        package.SetStorageItems(new List<IStorageItem>()
-        {
-            file
-        });
+        package.SetStorageItems([file]);
 
         Clipboard.SetContent(package);
         Clipboard.Flush();

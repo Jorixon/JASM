@@ -43,7 +43,7 @@ public partial class ModRowVM : ObservableObject
         IEnumerable<string> presetNames, IEnumerable<ModNotification> modNotifications)
     {
         IsEnabled = characterSkinEntry.IsEnabled;
-        DisplayName = modSettings?.CustomName ?? characterSkinEntry.Mod.GetDisplayName();
+        DisplayName = characterSkinEntry.Mod.GetDisplayName();
         FolderName = characterSkinEntry.Mod.Name;
         AbsFolderPath = characterSkinEntry.Mod.FullPath;
         DateAdded = modSettings?.DateAdded ?? DateTime.MinValue;

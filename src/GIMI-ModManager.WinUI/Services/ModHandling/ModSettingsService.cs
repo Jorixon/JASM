@@ -169,7 +169,13 @@ public class ModSettingsService
 
 
             var newModSettings = oldModSettings.DeepCopyWithProperties(
-                author: change.Author.EmptyStringToNull()
+                author: change.Author.EmptyStringToNull(),
+                modUrl: change.ModUrl,
+                imagePath: change.ImagePath != null && change.ImagePath.Value == ImageHandlerService.StaticPlaceholderImageUri
+                    ? NewValue<Uri?>.Set(null)
+                    : change.ImagePath,
+                characterSkinOverride: change.CharacterSkinOverride.EmptyStringToNull(),
+                customName: change.CustomName.EmptyStringToNull()
             );
 
 
@@ -184,7 +190,11 @@ public class ModSettingsService
                 throw new ModSettingsNotFoundException(mod);
 
 
-            return Result<ModSettings>.Success(newModSettings);
+            return Result<ModSettings>.Success(newModSettings, new SimpleNotification(
+                title: "Mod settings updated",
+                message: $"Mod settings have been updated for {mod.GetDisplayName()}",
+                null
+            ));
         }).ConfigureAwait(false);
     }
 
@@ -298,6 +308,35 @@ public class UpdateSettingsRequest
     {
         set => Author = NewValue<string?>.Set(value);
     }
+
+    public NewValue<Uri?>? ModUrl { get; private set; }
+
+    public Uri? SetModUrl
+    {
+        set => ModUrl = NewValue<Uri?>.Set(value);
+    }
+
+    public NewValue<Uri?>? ImagePath { get; private set; }
+
+    public Uri? SetImagePath
+    {
+        set => ImagePath = NewValue<Uri?>.Set(value);
+    }
+
+    public NewValue<string?>? CharacterSkinOverride { get; private set; }
+
+    public string? SetCharacterSkinOverride
+    {
+        set => CharacterSkinOverride = NewValue<string?>.Set(value);
+    }
+
+    public NewValue<string?>? CustomName { get; private set; }
+
+    public string? SetCustomName
+    {
+        set => CustomName = NewValue<string?>.Set(value);
+    }
+
 
     // TODO: Could do later, too big for this PR
     //public List<string> CreateUpdateLogEntries(ModSettings newModSettings)
