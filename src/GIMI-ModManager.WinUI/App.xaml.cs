@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -23,9 +24,12 @@ using GIMI_ModManager.WinUI.Views.CharacterManager;
 using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Polly;
+using Polly.Contrib.WaitAndRetry;
+using Polly.Extensions.Http;
 using Polly.RateLimiting;
 using Polly.Retry;
 using Serilog;
@@ -161,6 +165,7 @@ public partial class App : Application
                 services.AddHttpClient<IApiGameBananaClient, ApiGameBananaClient>(client =>
                     {
                         client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
+                        client.DefaultRequestHeaders.Add("Jasm-Version", $"{Assembly.GetExecutingAssembly().GetName().Version!}");
                         client.DefaultRequestHeaders.Add("Accept", "application/json");
                     })
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
@@ -206,6 +211,17 @@ public partial class App : Application
                 });
                 services.AddSingleton<ModUpdateAvailableChecker>();
                 services.AddSingleton<ModInstallerService>();
+
+
+                services.AddHttpClient(Options.DefaultName, (client) =>
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager");
+                    client.DefaultRequestHeaders.Add("Jasm-Version", $"{Assembly.GetExecutingAssembly().GetName().Version!}");
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                }).AddPolicyHandler(
+                    HttpPolicyExtensions.HandleTransientHttpError()
+                        .WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500), 3, null, true))
+                );
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();

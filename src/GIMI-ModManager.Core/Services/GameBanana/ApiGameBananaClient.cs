@@ -19,7 +19,7 @@ public sealed class ApiGameBananaClient(
     private readonly ILogger _logger = logger.ForContext<ApiGameBananaClient>();
     private readonly HttpClient _httpClient = httpClient;
     private readonly ResiliencePipeline _resiliencePipeline = resiliencePipelineProvider.GetPipeline(HttpClientName);
-    public const string HttpClientName = "GameBanana";
+    public const string HttpClientName = nameof(IApiGameBananaClient);
 
     private const string DownloadUrl = "https://gamebanana.com/dl/";
     private const string ApiUrl = "https://gamebanana.com/apiv11/Mod/";
