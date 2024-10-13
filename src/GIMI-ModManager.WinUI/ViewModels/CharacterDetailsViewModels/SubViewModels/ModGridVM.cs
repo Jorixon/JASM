@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Channels;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -14,8 +15,10 @@ using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.Core.Services.ModPresetService.Models;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.Views;
 using Serilog;
 using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
@@ -28,7 +31,8 @@ public partial class ModGridVM(
     ModPresetService presetService,
     ILocalSettingsService localSettingsService,
     ModNotificationManager modNotificationManager,
-    ModSettingsService modSettingsService)
+    ModSettingsService modSettingsService,
+    IWindowManagerService windowManagerService)
     : ObservableRecipient, IRecipient<ModChangedMessage>
 {
     private readonly ISkinManagerService _skinManagerService = skinManagerService;
@@ -38,6 +42,7 @@ public partial class ModGridVM(
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly ModNotificationManager _modNotificationManager = modNotificationManager;
     private readonly ModSettingsService _modSettingsService = modSettingsService;
+    private readonly IWindowManagerService _windowManagerService = windowManagerService;
     private readonly ILogger _logger = Log.ForContext<ModGridVM>();
 
     private DispatcherQueue _dispatcherQueue = null!;
@@ -74,6 +79,38 @@ public partial class ModGridVM(
 
     public int TrackedMods => _modsBackend.Count;
 
+    private readonly Channel<QueueRefresh> _modRefreshChannel = Channel.CreateBounded<QueueRefresh>(new BoundedChannelOptions(1)
+    {
+        AllowSynchronousContinuations = false,
+        FullMode = BoundedChannelFullMode.DropOldest,
+        SingleReader = true,
+        SingleWriter = false
+    });
+
+    public readonly struct QueueRefresh(TimeSpan? minWaitTime = null)
+    {
+        public TimeSpan? MinWaitTime { get; } = minWaitTime;
+    };
+
+    private async Task ModRefreshLoopAsync()
+    {
+        // Runs on the UI thread
+        await foreach (var loadModMessage in _modRefreshChannel.Reader.ReadAllAsync(_navigationCt))
+        {
+            try
+            {
+                await ReloadAllModsAsync(loadModMessage.MinWaitTime);
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (Exception e)
+            {
+                _notificationService.ShowNotification("Error refreshing mods", e.Message, null);
+            }
+        }
+    }
+
     public async Task InitializeAsync(ModDetailsPageContext context, CancellationToken navigationCt = default)
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
@@ -86,12 +123,14 @@ public partial class ModGridVM(
         await InitModsAsync();
         _modList.ModsChanged += ModListOnModsChanged;
         Messenger.RegisterAll(this);
+        _ = _dispatcherQueue.EnqueueAsync(ModRefreshLoopAsync);
         IsBusy = false;
         IsInitialized = true;
     }
 
     public void OnNavigateFrom()
     {
+        _modRefreshChannel.Writer.TryComplete();
         Messenger.UnregisterAll(this);
         _modList.ModsChanged -= ModListOnModsChanged;
         try
@@ -137,6 +176,8 @@ public partial class ModGridVM(
         GridMods.AddRange(_gridModsBackend);
         SetModSorting(CurrentSortingMethod.SortingMethodType, IsDescendingSort);
     }
+
+    public bool QueueModRefresh(TimeSpan? minWaitTime = null) => _modRefreshChannel.Writer.TryWrite(new QueueRefresh(minWaitTime));
 
     public async Task ReloadAllModsAsync(TimeSpan? minimumWaitTime = null)
     {
@@ -386,6 +427,46 @@ public partial class ModGridVM(
 
     public void ClearSelection() => SelectModEvent?.Invoke(this, new SelectModRowEventArgs(-1));
 
+    [RelayCommand]
+    private async Task OpenNewModsWindowAsync(object? modNotification)
+    {
+        if (modNotification is not ModRowVM_ModNotificationVM notification)
+        {
+            _logger.Warning("OpenNewModsWindowAsync called with null modModel.");
+            return;
+        }
+
+        var skinEntry = _modList.Mods.FirstOrDefault(mod => mod.Id == notification.ModId);
+
+        if (skinEntry is null)
+        {
+            return;
+        }
+
+        var existingWindow = _windowManagerService.GetWindow(notification.Id);
+        if (existingWindow is not null)
+        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Run(async () =>
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            {
+                await Task.Delay(100);
+                existingWindow.BringToFront();
+            });
+            return;
+        }
+
+
+        var modWindow = new ModUpdateAvailableWindow(notification.Id)
+        {
+            Title =
+                $"New Mod Files Available: {ModFolderHelpers.GetFolderNameWithoutDisabledPrefix(skinEntry.Mod.Name)}"
+        };
+        _windowManagerService.CreateWindow(modWindow, identifier: notification.Id);
+        await Task.Delay(100);
+        modWindow.BringToFront();
+    }
+
     private void ModListOnModsChanged(object? sender, ModFolderChangedArgs e)
     {
         if (!IsInitialized)
@@ -397,7 +478,7 @@ public partial class ModGridVM(
             TimeSpan.FromSeconds(5));
 
 
-        var _ = _dispatcherQueue.EnqueueAsync(() => ReloadAllModsAsync());
+        QueueModRefresh();
     }
 
 

@@ -160,11 +160,16 @@
                     x:Name="MainContentArea"
                     Grid.Row="1"
                     AllowDrop="False"
-                    Background="Transparent">
+                    Background="Transparent"
+                    DragEnter="ModListArea_OnDragEnter"
+                    DragOver="ModListArea_OnDragEnter"
+                    Drop="ModListArea_OnDrop">
+
                     <!--
-                        DragOver="ModListArea_OnDragOver"
-                        Drop="ModListArea_OnDrop"
+                        We need drop handling on both  MainContentArea and ModListArea, but only one is active at the time
+                        This is because of the "This character has no mods" page that is shown if there are no mods
                     -->
+
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="7*" />
@@ -174,11 +179,10 @@
                             x:Name="ModListArea"
                             AllowDrop="True"
                             Background="Transparent"
-                            CornerRadius="10">
-                            <!--
-                                DragOver="ModListArea_OnDragOver"
-                                Drop="ModListArea_OnDrop"
-                            -->
+                            CornerRadius="10"
+                            DragEnter="ModListArea_OnDragEnter"
+                            DragOver="ModListArea_OnDragEnter"
+                            Drop="ModListArea_OnDrop">
                             <characterDetailsPages:ModGrid x:Name="ModGrid" IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}" />
 
                         </Grid>

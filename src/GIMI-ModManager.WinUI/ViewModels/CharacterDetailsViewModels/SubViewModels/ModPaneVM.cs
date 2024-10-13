@@ -83,11 +83,13 @@ public sealed partial class ModPaneVM(
                 {
                     await UnloadModAsync();
                     NotifyAllCommands();
+                    OnPropertyChanged(nameof(IsModLoaded));
                     continue;
                 }
 
                 await LoadModAsync(loadModMessage.ModId.Value, loadModMessage.Force);
                 NotifyAllCommands();
+                OnPropertyChanged(nameof(IsModLoaded));
             }
             catch (TaskCanceledException)
             {
@@ -172,7 +174,7 @@ public sealed partial class ModPaneVM(
     {
         _dispatcherQueue = dispatcherQueue;
         _cancellationToken = navigationCt;
-        _dispatcherQueue.EnqueueAsync(ModLoaderLoopAsync);
+        _ = _dispatcherQueue.EnqueueAsync(ModLoaderLoopAsync);
         Messenger.RegisterAll(this);
         BusySetter.HardBusyChanged += BusySetter_HardBusyChanged;
         return Task.CompletedTask;

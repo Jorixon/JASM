@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.WinUI.UI.Animations;
+﻿using Windows.ApplicationModel.DataTransfer;
+using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers.Xaml;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
@@ -207,5 +208,40 @@ public sealed partial class CharacterDetailsPage : Page
     private void SearchModsTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         ViewModel.SearchMods(SearchModsTextBox.Text);
+    }
+
+    private async void ModListArea_OnDragEnter(object sender, DragEventArgs e)
+    {
+        var deferral = e.GetDeferral();
+        if (e.DataView.Contains(StandardDataFormats.WebLink))
+        {
+            var uri = await e.DataView.GetWebLinkAsync();
+            if (ViewModel.CanDragDropModUrl(uri))
+                e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+        else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            var storageItems = await e.DataView.GetStorageItemsAsync();
+            if (ViewModel.CanDragDropMod(storageItems))
+                e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        deferral.Complete();
+    }
+
+    private async void ModListArea_OnDrop(object sender, DragEventArgs e)
+    {
+        var deferral = e.GetDeferral();
+        if (e.DataView.Contains(StandardDataFormats.WebLink))
+        {
+            await ViewModel.DragDropModUrlAsync(await e.DataView.GetWebLinkAsync());
+        }
+        else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            await ViewModel.DragDropModAsync(await e.DataView.GetStorageItemsAsync());
+        }
+        //await ViewModel.DragAndDropCommand.ExecuteAsync(await e.DataView.GetStorageItemsAsync());
+
+        deferral.Complete();
     }
 }

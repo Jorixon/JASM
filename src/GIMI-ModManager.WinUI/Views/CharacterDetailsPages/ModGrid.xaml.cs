@@ -186,4 +186,14 @@ public sealed partial class ModGrid : UserControl
 
         mod.TriggerPropertyChanged(string.Empty);
     }
+
+    private void Notification_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        if (button.DataContext is not ModRowVM_ModNotificationVM modNotification) return;
+        if (modNotification.AttentionType != AttentionType.UpdateAvailable) return;
+
+        if (ViewModel.OpenNewModsWindowCommand.CanExecute(modNotification))
+            ViewModel.OpenNewModsWindowCommand.ExecuteAsync(modNotification);
+    }
 }

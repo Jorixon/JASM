@@ -40,13 +40,12 @@
             MinWidth="200"
             MinHeight="200"
             AllowDrop="True"
-            DragEnter="PaneImage_OnDragEnter"
-            DragOver="PaneImage_OnDragOver"
-            Drop="PaneImage_OnDrop"
             Background="{ThemeResource ControlFillColorTertiaryBrush}"
-            CornerRadius="10">
+            CornerRadius="10"
+            DragEnter="PaneImage_OnDragEnter"
+            DragOver="PaneImage_OnDragEnter"
+            Drop="PaneImage_OnDrop">
             <!--
-
             -->
             <!--<Image Stretch="Uniform">
                 <Image.Source>
@@ -140,7 +139,7 @@
 
         <ScrollViewer Grid.Row="3">
 
-            <controls1:SwitchPresenter Grid.Row="3" Value="{x:Bind ViewModel.ModModel.IsKeySwapManagementEnabled, Mode=OneWay}">
+            <controls1:SwitchPresenter Visibility="{x:Bind ViewModel.IsModLoaded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Value="{x:Bind ViewModel.ModModel.IsKeySwapManagementEnabled, Mode=OneWay}">
                 <controls1:Case Value="true">
                     <StackPanel>
                         <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModModel.KeySwaps, Mode=OneWay}">

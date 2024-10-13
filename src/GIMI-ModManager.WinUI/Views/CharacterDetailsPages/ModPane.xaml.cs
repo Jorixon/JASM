@@ -34,21 +34,16 @@ public sealed partial class ModPane : UserControl
     {
     }
 
-    private void PaneImage_OnDragEnter(object sender, DragEventArgs e)
-    {
-        if (ViewModel.IsReadOnly)
-            return;
-        e.AcceptedOperation = DataPackageOperation.Copy;
-    }
 
-    private async void PaneImage_OnDragOver(object sender, DragEventArgs e)
+    private async void PaneImage_OnDragEnter(object sender, DragEventArgs e)
     {
         if (ViewModel.IsReadOnly || ViewModel.BusySetter.IsHardBusy)
             return;
+        var deferral = e.GetDeferral();
 
-        if (e.DataView.Contains(StandardDataFormats.Uri))
+        if (e.DataView.Contains(StandardDataFormats.WebLink))
         {
-            var url = await e.DataView.GetUriAsync();
+            var url = await e.DataView.GetWebLinkAsync();
             var isValidHttpLink = ViewModel.CanSetImageFromDragDropWeb(url);
             if (isValidHttpLink)
                 e.AcceptedOperation = DataPackageOperation.Copy;
@@ -59,6 +54,8 @@ public sealed partial class ModPane : UserControl
             if (ViewModel.CanSetImageFromDragDropStorageItem(data))
                 e.AcceptedOperation = DataPackageOperation.Copy;
         }
+
+        deferral.Complete();
     }
 
     private async void PaneImage_OnDrop(object sender, DragEventArgs e)

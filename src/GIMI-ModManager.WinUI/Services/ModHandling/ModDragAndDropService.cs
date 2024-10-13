@@ -67,16 +67,17 @@ public class ModDragAndDropService
 
         var storageItem = storageItems.FirstOrDefault();
 
+        InstallMonitor? installMonitor;
         if (storageItem is StorageFile)
         {
             var scanner = new DragAndDropScanner();
             var extractResult = scanner.ScanAndGetContents(storageItem.Path);
 
 
-            await _modInstallerService.StartModInstallationAsync(
+            installMonitor = await _modInstallerService.StartModInstallationAsync(
                 new DirectoryInfo(extractResult.ExtractedFolder.FullPath), modList);
 
-            return null;
+            return installMonitor;
         }
 
         if (storageItem is not StorageFolder sourceFolder)
@@ -132,7 +133,7 @@ public class ModDragAndDropService
             throw;
         }
 
-        var installMonitor = await _modInstallerService.StartModInstallationAsync(destDirectoryInfo.Parent!, modList)
+        installMonitor = await _modInstallerService.StartModInstallationAsync(destDirectoryInfo.Parent!, modList)
             .ConfigureAwait(false);
         DragAndDropFinished?.Invoke(this, new DragAndDropFinishedArgs(new List<ExtractPaths>()));
         return installMonitor;

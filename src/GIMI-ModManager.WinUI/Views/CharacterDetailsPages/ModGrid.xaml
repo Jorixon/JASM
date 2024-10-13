@@ -73,9 +73,7 @@
             SelectionMode="{x:Bind ViewModel.GridSelectionMode, Mode=OneWay}"
             Sorting="OnColumnSort">
             <!--
-                Sorting="ModListGrid_OnSorting"
                 KeyDown="ModListGrid_OnKeyDown"
-                CellEditEnded="ModListGrid_OnCellEditEnded"
             -->
 
 
@@ -128,10 +126,9 @@
                                                     CornerRadius="0"
                                                     DataContext="{x:Bind}"
                                                     PointerEntered="NotificationButton_OnPointerEntered"
-                                                    PointerExited="NotificationButton_OnPointerExited">
-                                                    <!--
-                                                        Click="ButtonBase_OnClick"
-                                                    -->
+                                                    PointerExited="NotificationButton_OnPointerExited"
+                                                    Click="Notification_OnClick"
+                                                >
                                                     <Button.Content>
                                                         <FontIcon
                                                             VerticalAlignment="Bottom"

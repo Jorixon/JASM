@@ -90,6 +90,7 @@ public sealed class InstallMonitor : IDisposable
     private readonly WindowEx _modInstallerWindow;
     private CancellationTokenRegistration? _cancellationTokenRegistration;
 
+    public Task Task => _taskCompletionSource.Task;
 
     public InstallMonitor(ModInstallerPage modInstallerPage, WindowEx modInstallerWindow)
     {
