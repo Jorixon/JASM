@@ -225,6 +225,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private async Task InitModPaneAsync()
     {
         // Init Mod Pane
+        ModPaneVM.BusySetter = _busySetter;
         await ModPaneVM.OnNavigatedToAsync(DispatcherQueue.GetForCurrentThread(), CancellationToken);
         if (IsReturning)
             return;

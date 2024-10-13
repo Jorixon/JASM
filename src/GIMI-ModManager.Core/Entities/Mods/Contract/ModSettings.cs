@@ -157,14 +157,14 @@ public record ModSettings
 
 public readonly struct NewValue<T>
 {
-    private NewValue(T value)
+    private NewValue(T valueToSet)
     {
-        Value = value;
+        ValueToSet = valueToSet;
     }
 
-    public T Value { get; }
+    public T ValueToSet { get; }
 
-    public static implicit operator T(NewValue<T> newValue) => newValue.Value;
+    public static implicit operator T(NewValue<T> newValue) => newValue.ValueToSet;
 
     public static NewValue<T> Set(T value) => new(value);
 }

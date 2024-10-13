@@ -55,7 +55,7 @@ public partial class ModRowVM : ObservableObject
         ModNotifications.AddRange(modNotifications.Select(m => new ModRowVM_ModNotificationVM(m)));
 
 
-        SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:D}";
+        SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:d}";
     }
 
     public void TriggerPropertyChanged(string? propertyName) => OnPropertyChanged(propertyName ?? string.Empty);

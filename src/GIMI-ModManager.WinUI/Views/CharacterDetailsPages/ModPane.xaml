@@ -40,12 +40,13 @@
             MinWidth="200"
             MinHeight="200"
             AllowDrop="True"
+            DragEnter="PaneImage_OnDragEnter"
+            DragOver="PaneImage_OnDragOver"
+            Drop="PaneImage_OnDrop"
             Background="{ThemeResource ControlFillColorTertiaryBrush}"
             CornerRadius="10">
             <!--
-                DragEnter="ModDetailsPaneImage_OnDragEnter"
-                DragOver="ModDetailsPaneImage_OnDragOver"
-                Drop="ModDetailsPaneImage_OnDrop"
+
             -->
             <!--<Image Stretch="Uniform">
                 <Image.Source>

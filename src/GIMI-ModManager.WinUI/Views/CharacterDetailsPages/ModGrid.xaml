@@ -154,6 +154,7 @@
                     Binding="{Binding DisplayName, Mode=OneWay}"
                     CanUserSort="True"
                     Header="Mod Name"
+                    IsReadOnly="True"
                     Tag="DisplayName" />
 
                 <controls:DataGridTextColumn

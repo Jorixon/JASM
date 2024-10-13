@@ -167,6 +167,18 @@ public class ModSettingsService
             if (oldModSettings is null)
                 throw new ModSettingsNotFoundException(mod);
 
+            if (change.ImagePath.HasValue
+                && change.ImagePath.Value.ValueToSet != null
+                && change.ImagePath.Value.ValueToSet.IsFile
+                && !File.Exists(change.ImagePath.Value.ValueToSet.LocalPath)
+               )
+            {
+                change.ImagePath = null;
+                _notificationManager.ShowNotification("Image path not found",
+                    "When saving mod settings the currently set image could not be found",
+                    TimeSpan.FromSeconds(5));
+            }
+
 
             var newModSettings = oldModSettings.DeepCopyWithProperties(
                 author: change.Author.EmptyStringToNull(),
@@ -302,35 +314,35 @@ public class UpdateSettingsRequest
             .Select(p => p.GetValue(this))
             .Any(value => value is not null);
 
-    public NewValue<string?>? Author { get; private set; }
+    public NewValue<string?>? Author { get; set; }
 
     public string? SetAuthor
     {
         set => Author = NewValue<string?>.Set(value);
     }
 
-    public NewValue<Uri?>? ModUrl { get; private set; }
+    public NewValue<Uri?>? ModUrl { get; set; }
 
     public Uri? SetModUrl
     {
         set => ModUrl = NewValue<Uri?>.Set(value);
     }
 
-    public NewValue<Uri?>? ImagePath { get; private set; }
+    public NewValue<Uri?>? ImagePath { get; set; }
 
     public Uri? SetImagePath
     {
         set => ImagePath = NewValue<Uri?>.Set(value);
     }
 
-    public NewValue<string?>? CharacterSkinOverride { get; private set; }
+    public NewValue<string?>? CharacterSkinOverride { get; set; }
 
     public string? SetCharacterSkinOverride
     {
         set => CharacterSkinOverride = NewValue<string?>.Set(value);
     }
 
-    public NewValue<string?>? CustomName { get; private set; }
+    public NewValue<string?>? CustomName { get; set; }
 
     public string? SetCustomName
     {

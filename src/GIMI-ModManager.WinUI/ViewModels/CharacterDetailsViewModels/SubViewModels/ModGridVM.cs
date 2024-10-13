@@ -16,6 +16,7 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using Serilog;
 using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
@@ -37,6 +38,7 @@ public partial class ModGridVM(
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly ModNotificationManager _modNotificationManager = modNotificationManager;
     private readonly ModSettingsService _modSettingsService = modSettingsService;
+    private readonly ILogger _logger = Log.ForContext<ModGridVM>();
 
     private DispatcherQueue _dispatcherQueue = null!;
     private CancellationToken _navigationCt = default;
@@ -92,6 +94,14 @@ public partial class ModGridVM(
     {
         Messenger.UnregisterAll(this);
         _modList.ModsChanged -= ModListOnModsChanged;
+        try
+        {
+            _modRefreshLock.Dispose();
+        }
+        catch (Exception e)
+        {
+            _logger.Warning(e, "Failed to dispose mod refresh lock");
+        }
     }
 
     private async Task InitModsAsync()

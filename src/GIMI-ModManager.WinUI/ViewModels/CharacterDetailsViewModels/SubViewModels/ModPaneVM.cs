@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Threading.Channels;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -36,6 +38,7 @@ public sealed partial class ModPaneVM(
     private readonly AsyncLock _loadModLock = new();
     private CancellationToken _cancellationToken = new();
     private DispatcherQueue _dispatcherQueue = null!;
+    public BusySetter BusySetter { get; set; } = null!;
 
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotReadOnly))]
@@ -132,10 +135,10 @@ public sealed partial class ModPaneVM(
     }
 
     private void ModModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) => SaveModSettingsCommand.NotifyCanExecuteChanged();
+    private void BusySetter_HardBusyChanged(object? sender, EventArgs eventArgs) => NotifyAllCommands();
 
     private Task UnloadModAsync()
     {
-        // Unload mod
         _loadedModId = null;
         _loadedMod = null;
         if (ModModel.IsLoaded)
@@ -171,6 +174,7 @@ public sealed partial class ModPaneVM(
         _cancellationToken = navigationCt;
         _dispatcherQueue.EnqueueAsync(ModLoaderLoopAsync);
         Messenger.RegisterAll(this);
+        BusySetter.HardBusyChanged += BusySetter_HardBusyChanged;
         return Task.CompletedTask;
     }
 
@@ -178,17 +182,28 @@ public sealed partial class ModPaneVM(
     {
         _channel.Writer.TryComplete();
         Messenger.UnregisterAll(this);
+        try
+        {
+            _loadModLock.Dispose();
+        }
+        catch (Exception e)
+        {
+            _logger.Warning(e, "Failed to dispose of load mod lock");
+        }
     }
+
+    private bool DefaultCanExecute => IsModLoaded && IsNotReadOnly && BusySetter.IsNotHardBusy;
 
     #region Commands
 
-    private bool CanSetModIniFile() => IsModLoaded && IsNotReadOnly;
+    private bool CanSetModIniFile() => DefaultCanExecute;
 
     [RelayCommand(CanExecute = nameof(CanSetModIniFile))]
     private async Task SetModIniFileAsync()
     {
         if (!IsModLoaded) return;
         var filePicker = new FileOpenPicker();
+        filePicker.SettingsIdentifier = "IniFilerPicker";
         filePicker.FileTypeFilter.Add(".ini");
         filePicker.CommitButtonText = "Set";
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
@@ -213,7 +228,7 @@ public sealed partial class ModPaneVM(
         QueueLoadMod(_loadedModId, true);
     }
 
-    private bool CanClearSetModIniFile() => IsModLoaded && IsNotReadOnly;
+    private bool CanClearSetModIniFile() => DefaultCanExecute;
 
     [RelayCommand(CanExecute = nameof(CanClearSetModIniFile))]
     private async Task ClearSetModIniFileAsync()
@@ -237,17 +252,20 @@ public sealed partial class ModPaneVM(
         }).ConfigureAwait(false);
     }
 
-    private bool CanPickImageUri() => IsModLoaded && IsNotReadOnly;
+    private bool CanPickImageUri() => DefaultCanExecute;
 
     [RelayCommand(CanExecute = nameof(CanPickImageUri))]
     private async Task PickImageUriAsync()
     {
         if (!IsModLoaded) return;
         var filePicker = new FileOpenPicker();
+        filePicker.CommitButtonText = "Set Image";
+        filePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+        filePicker.SettingsIdentifier = "ImagePicker";
         foreach (var supportedImageExtension in Constants.SupportedImageExtensions)
             filePicker.FileTypeFilter.Add(supportedImageExtension);
 
-        filePicker.CommitButtonText = "Set Image";
+
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
 
@@ -258,7 +276,7 @@ public sealed partial class ModPaneVM(
         ModModel.ImageUri = imageUri;
     }
 
-    private bool CanCopyImageToClipboard() => IsModLoaded && IsNotReadOnly;
+    private bool CanCopyImageToClipboard() => DefaultCanExecute;
 
     [RelayCommand(CanExecute = nameof(CanCopyImageToClipboard))]
     private async Task CopyImageToClipboardAsync()
@@ -278,7 +296,7 @@ public sealed partial class ModPaneVM(
     }
 
 
-    private bool CanClearImage() => IsModLoaded && IsNotReadOnly && ModModel.ImageUri != ImageHandlerService.StaticPlaceholderImageUri;
+    private bool CanClearImage() => DefaultCanExecute && ModModel.ImageUri != ImageHandlerService.StaticPlaceholderImageUri;
 
     [RelayCommand(CanExecute = nameof(CanClearImage))]
     private void ClearImage()
@@ -287,7 +305,7 @@ public sealed partial class ModPaneVM(
         ModModel.ImageUri = ImageHandlerService.StaticPlaceholderImageUri;
     }
 
-    private bool CanSaveModSettings() => IsModLoaded && ModModel.AnyChanges && IsNotReadOnly;
+    private bool CanSaveModSettings() => DefaultCanExecute && ModModel.AnyChanges;
 
     [RelayCommand(CanExecute = nameof(CanSaveModSettings))]
     private async Task SaveModSettingsAsync()
@@ -295,7 +313,6 @@ public sealed partial class ModPaneVM(
         await CommandWrapper(async () =>
         {
             if (!IsModLoaded) return;
-
 
             var updateRequest = new UpdateSettingsRequest();
 
@@ -318,7 +335,7 @@ public sealed partial class ModPaneVM(
                     result = await _modSettingsService.SaveSettingsAsync(_loadedModId.Value, updateRequest).ConfigureAwait(false);
                 }
 
-                if (!_loadedMod.Mod.Settings.HasMergedIni && !ModModel.KeySwaps.Any() || _loadedMod.Mod.KeySwaps is null)
+                if (!_loadedMod.Mod.Settings.HasMergedIni && !ModModel.KeySwaps.Any() || _loadedMod.Mod.KeySwaps is null || !ModModel.IsKeySwapsChanged)
                     return;
 
                 // TODO: Will need to redo keyswap handling at some point doing a quick solution here
@@ -359,13 +376,15 @@ public sealed partial class ModPaneVM(
             if (savingKeySwapException is not null)
                 _notificationService.ShowNotification("Failed to save key swaps", savingKeySwapException.Message, null);
 
+            _cancellationToken.ThrowIfCancellationRequested();
+
 
             Messenger.Send(new ModChangedMessage(this, _loadedMod, null));
             QueueLoadMod(_loadedModId, true);
         }).ConfigureAwait(false);
     }
 
-    private bool CanOpenModFolder() => IsModLoaded && IsNotReadOnly;
+    private bool CanOpenModFolder() => DefaultCanExecute;
 
     [RelayCommand(CanExecute = nameof(CanOpenModFolder))]
     private async Task OpenModFolderAsync()
@@ -386,13 +405,71 @@ public sealed partial class ModPaneVM(
 
     #endregion
 
+    #region DragAndDropHandlers
 
-    private async Task CommandWrapper(Func<Task> command)
+    public bool CanSetImageFromDragDropWeb(Uri? url)
+    {
+        if (!DefaultCanExecute)
+            return false;
+
+        if (url is null || !url.IsAbsoluteUri)
+            return false;
+
+        if (url.Scheme != Uri.UriSchemeHttps && url.Scheme != Uri.UriSchemeHttp)
+            return false;
+
+        return Constants.SupportedImageExtensions.Contains(Path.GetExtension(url.AbsolutePath));
+    }
+
+    public async Task SetImageFromDragDropWeb(Uri uri)
+    {
+        await CommandWrapper(async () =>
+        {
+            var image = await _imageHandlerService.DownloadImageAsync(uri, _cancellationToken);
+            ModModel.ImageUri = new Uri(image.Path);
+        }, true, useDefaultExceptionHandler: true).ConfigureAwait(false);
+    }
+
+    public bool CanSetImageFromDragDropStorageItem(IReadOnlyList<IStorageItem> storageItems)
+    {
+        if (!DefaultCanExecute)
+            return false;
+
+        if (storageItems.Count != 1)
+            return false;
+
+        var file = storageItems.First();
+
+        if (!Uri.TryCreate(file.Path, UriKind.Absolute, out _))
+            return false;
+
+        return Constants.SupportedImageExtensions.Contains(Path.GetExtension(file.Name));
+    }
+
+    public async Task SetImageFromDragDropFile(IReadOnlyList<IStorageItem> storageItems)
+    {
+        await CommandWrapper(() =>
+        {
+            var file = storageItems.First();
+
+            var filePath = new Uri(file.Path);
+
+            ModModel.ImageUri = filePath;
+            return Task.CompletedTask;
+        }, true, useDefaultExceptionHandler: true).ConfigureAwait(false);
+    }
+
+    #endregion
+
+    private async Task CommandWrapper(Func<Task> command, bool hardBusy = false, Action<Exception>? uncaughtErrorHandler = null,
+        bool useDefaultExceptionHandler = false, [CallerMemberName] string commandName = "")
     {
         try
         {
             using var _ = await LockAsync().ConfigureAwait(false);
-            await command().ConfigureAwait(false);
+            using var busy = hardBusy ? BusySetter.StartHardBusy() : BusySetter.StartSoftBusy();
+
+            await command();
         }
         catch (TaskCanceledException)
         {
@@ -400,13 +477,28 @@ public sealed partial class ModPaneVM(
         catch (OperationCanceledException)
         {
         }
+        catch (Exception e)
+        {
+            if (useDefaultExceptionHandler)
+            {
+                _logger.Error(e, "An error occured while executing command {CommandName}", commandName);
+                _notificationService.ShowNotification($"An error occured running command {commandName}", e.Message, null);
+                return;
+            }
+
+            if (uncaughtErrorHandler is null) throw;
+
+            var ex = ExceptionDispatchInfo.Capture(e);
+            uncaughtErrorHandler(ex.SourceException);
+        }
     }
 
-    private async Task CommandWrapper(Action command)
+    private async Task CommandWrapper(Action command, bool hardBusy = false)
     {
         try
         {
             using var _ = await LockAsync().ConfigureAwait(false);
+            using var busy = hardBusy ? BusySetter.StartHardBusy() : BusySetter.StartSoftBusy();
             command();
         }
         catch (TaskCanceledException)
