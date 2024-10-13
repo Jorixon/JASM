@@ -75,7 +75,7 @@ public class ImageHandlerService
 
         var client = _httpClientFactory.CreateClient();
 
-        var responseStream = await client.GetStreamAsync(url, cancellationToken).ConfigureAwait(false);
+        await using var responseStream = await client.GetStreamAsync(url, cancellationToken).ConfigureAwait(false);
 
         await using var fileStream = File.Create(tmpFile);
         await responseStream.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
@@ -96,10 +96,7 @@ public class ImageHandlerService
 
         var imageStream = RandomAccessStreamReference.CreateFromFile(file);
         package.SetBitmap(imageStream);
-        package.SetStorageItems(new List<IStorageItem>()
-        {
-            file
-        });
+        package.SetStorageItems([file]);
 
         Clipboard.SetContent(package);
         Clipboard.Flush();

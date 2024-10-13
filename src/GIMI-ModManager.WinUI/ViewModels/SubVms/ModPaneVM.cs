@@ -327,7 +327,7 @@ public partial class ModPaneVM : ObservableRecipient
 
 
         var saveResult =
-            await Task.Run(() => _modSettingsService.SaveSettingsAsync(SelectedModModel), cancellationToken);
+            await Task.Run(() => _modSettingsService.LegacySaveSettingsAsync(SelectedModModel), cancellationToken);
 
         if (saveResult.TryPickT2(out var error, out var notFoundOrSuccess))
         {

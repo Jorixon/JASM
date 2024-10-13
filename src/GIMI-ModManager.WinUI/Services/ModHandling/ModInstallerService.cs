@@ -90,6 +90,7 @@ public sealed class InstallMonitor : IDisposable
     private readonly WindowEx _modInstallerWindow;
     private CancellationTokenRegistration? _cancellationTokenRegistration;
 
+    public Task Task => _taskCompletionSource.Task;
 
     public InstallMonitor(ModInstallerPage modInstallerPage, WindowEx modInstallerWindow)
     {
@@ -109,16 +110,17 @@ public sealed class InstallMonitor : IDisposable
         };
     }
 
-    public Task<CloseRequestedArgs> WaitForCloseAsync(CancellationToken cancellationToken = default)
+    public Task<CloseRequestedArgs> WaitForCloseAsync(CancellationToken? cancellationToken = null)
     {
-        _cancellationTokenRegistration = cancellationToken.Register(() =>
-        {
-            if (!_taskCompletionSource.Task.IsCompleted)
+        if (cancellationToken is not null)
+            _cancellationTokenRegistration = cancellationToken.Value.Register(() =>
             {
-                _taskCompletionSource.TrySetCanceled();
-                _modInstallerWindow.Close();
-            }
-        });
+                if (!_taskCompletionSource.Task.IsCompleted)
+                {
+                    _taskCompletionSource.TrySetCanceled();
+                    _modInstallerWindow.Close();
+                }
+            });
 
         return _taskCompletionSource.Task;
     }
