@@ -8,6 +8,7 @@ using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Activation;
+using GIMI_ModManager.WinUI.Configuration;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
@@ -156,6 +157,7 @@ public partial class App : Application
                 services.AddSingleton<CommandService>();
                 services.AddSingleton<CommandHandlerService>();
 
+                services.AddSingleton<HttpLoggerHandler>();
                 services.AddSingleton<GameBananaService>();
 
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
@@ -171,7 +173,7 @@ public partial class App : Application
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
                     {
                         PooledConnectionLifetime = TimeSpan.FromMinutes(10)
-                    });
+                    }).AddHttpMessageHandler<HttpLoggerHandler>();
 
                 // I'm preeeetty sure this is not correctly set up, not used to polly 8.x.x
                 // But it does rate limit, so I guess it's fine for now
@@ -214,14 +216,16 @@ public partial class App : Application
 
 
                 services.AddHttpClient(Options.DefaultName, (client) =>
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager");
-                    client.DefaultRequestHeaders.Add("Jasm-Version", $"{Assembly.GetExecutingAssembly().GetName().Version!}");
-                    client.DefaultRequestHeaders.Add("Accept", "application/json");
-                }).AddPolicyHandler(
-                    HttpPolicyExtensions.HandleTransientHttpError()
-                        .WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500), 3, null, true))
-                );
+                    {
+                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager");
+                        client.DefaultRequestHeaders.Add("Jasm-Version", $"{Assembly.GetExecutingAssembly().GetName().Version!}");
+                        client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    })
+                    .AddHttpMessageHandler<HttpLoggerHandler>()
+                    .AddPolicyHandler(
+                        HttpPolicyExtensions.HandleTransientHttpError()
+                            .WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500), 3, null, true))
+                    );
 
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
