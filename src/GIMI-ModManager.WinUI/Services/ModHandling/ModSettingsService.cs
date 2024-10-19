@@ -187,7 +187,8 @@ public class ModSettingsService
                     ? NewValue<Uri?>.Set(null)
                     : change.ImagePath,
                 characterSkinOverride: change.CharacterSkinOverride.EmptyStringToNull(),
-                customName: change.CustomName.EmptyStringToNull()
+                customName: change.CustomName.EmptyStringToNull(),
+                description: change.Description.EmptyStringToNull()
             );
 
 
@@ -347,6 +348,13 @@ public class UpdateSettingsRequest
     public string? SetCustomName
     {
         set => CustomName = NewValue<string?>.Set(value);
+    }
+
+    public NewValue<string?>? Description { get; set; }
+
+    public string? SetDescription
+    {
+        set => Description = NewValue<string?>.Set(value);
     }
 
 

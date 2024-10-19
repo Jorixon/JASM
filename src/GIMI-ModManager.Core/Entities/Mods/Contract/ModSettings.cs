@@ -32,7 +32,8 @@ public record ModSettings
         NewValue<string?>? characterSkinOverride = null,
         NewValue<DateTime?>? newLastChecked = null, NewValue<Uri?>? mergedIniPath = null,
         NewValue<bool>? ignoreMergedIni = null,
-        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null
+        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null,
+        NewValue<string?>? description = null
     )
     {
         return new ModSettings(
@@ -43,7 +44,7 @@ public record ModSettings
             modUrl ?? ModUrl,
             imagePath ?? ImagePath,
             characterSkinOverride ?? CharacterSkinOverride,
-            Description,
+            description ?? Description,
             DateAdded,
             newLastChecked ?? LastChecked,
             mergedIniPath ?? MergedIniPath,

@@ -71,6 +71,7 @@ public sealed partial class CharacterDetailsPage : Page
     private void OnInitializingFinished(object? sender, EventArgs e)
     {
         ViewModel.OnInitializingFinished -= OnInitializingFinished;
+        ModGrid.DataGrid.Focus(FocusState.Programmatic);
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

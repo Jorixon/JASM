@@ -97,6 +97,7 @@
 		<None Remove="Views\CharacterDetailsPages\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharacterDetailsPages\ModGrid.xaml" />
 		<None Remove="Views\CharacterDetailsPages\ModPane.xaml" />
+		<None Remove="Views\CharacterDetailsPages\ResourceDictionary1.xaml" />
 		<None Remove="Views\CharacterGalleryPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
@@ -196,9 +197,6 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\ModListOverview.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\DebugPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\CharacterDetailsPage.xaml">
@@ -608,6 +606,12 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\DebugPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\CharacterDetailsPages\ResourceDictionary1.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\CharacterDetailsPages\CharacterCard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

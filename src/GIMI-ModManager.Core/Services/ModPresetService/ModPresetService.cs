@@ -386,9 +386,9 @@ public sealed class ModPresetService(
         await WritePresetsAsync().ConfigureAwait(false);
     }
 
-    public async Task<Dictionary<Guid, ModPreset[]>> FindPresetsForModsAsync(IEnumerable<Guid> modIds)
+    public async Task<Dictionary<Guid, ModPreset[]>> FindPresetsForModsAsync(IEnumerable<Guid> modIds, CancellationToken cancellationToken = default)
     {
-        using var _ = await LockAsync().ConfigureAwait(false);
+        using var _ = await LockAsync(cancellationToken).ConfigureAwait(false);
 
 
         var mapping = new Dictionary<Guid, ModPreset[]>();

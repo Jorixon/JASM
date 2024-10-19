@@ -8,11 +8,13 @@ using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
@@ -31,6 +33,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private readonly ILocalSettingsService _localSettingsService = App.GetService<ILocalSettingsService>();
     private readonly ModNotificationManager _modNotificationManager = App.GetService<ModNotificationManager>();
     private readonly ModDragAndDropService _modDragAndDropService = App.GetService<ModDragAndDropService>();
+    private readonly IWindowManagerService _windowManagerService = App.GetService<IWindowManagerService>();
+    private readonly ModPresetService _presetService = App.GetService<ModPresetService>();
 
     public Func<Task>? GridLoadedAwaiter { get; set; }
 
@@ -179,6 +183,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     {
         ModGridVM.BusySetter = _busySetter;
         ModGridVM.OnModsReloaded += OnModsReloaded;
+        ModGridVM.DeleteModKeyTriggered += ModGridVM_DeleteModKeyTriggered;
         await SetSortOrder();
         await ModGridVM.InitializeAsync(CreateContext(), CancellationToken);
         ModGridVM.OnModsSelected += OnModsSelected;
@@ -188,6 +193,13 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
         ModGridVM.IsBusy = false;
         OnModsLoaded?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ModGridVM_DeleteModKeyTriggered(object? sender, EventArgs e)
+    {
+        if (!DeleteModsCommand.CanExecute(null))
+            return;
+        DeleteModsCommand.ExecuteAsync(null);
     }
 
     private void OnModsReloaded(object? sender, EventArgs e) => UpdateTrackedMods();
@@ -237,6 +249,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         {
             _navigationCancellationTokenSource.Cancel();
             ModGridVM.OnModsSelected -= OnModsSelected;
+            ModGridVM.OnModsReloaded -= OnModsReloaded;
+            ModGridVM.DeleteModKeyTriggered -= ModGridVM_DeleteModKeyTriggered;
             ModGridVM.OnNavigateFrom();
             ModPaneVM.OnNavigatedFrom();
 

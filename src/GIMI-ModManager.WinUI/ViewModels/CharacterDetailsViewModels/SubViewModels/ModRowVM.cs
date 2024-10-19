@@ -29,6 +29,9 @@ public partial class ModRowVM : ObservableObject
     [ObservableProperty] private string[] _presets = [];
     [ObservableProperty] private string _inPresets = string.Empty;
 
+    [ObservableProperty] private string _description = string.Empty;
+
+
     public ObservableCollection<ModRowVM_ModNotificationVM> ModNotifications { get; } = new();
 
 
@@ -49,13 +52,14 @@ public partial class ModRowVM : ObservableObject
         DateAdded = modSettings?.DateAdded ?? DateTime.MinValue;
         DateAddedFormated = DateAdded.ToString("d");
         Author = modSettings?.Author ?? string.Empty;
+        Description = modSettings?.Description ?? string.Empty;
         Presets = presetNames.ToArray();
         InPresets = string.Join(',', Presets);
         ModNotifications.Clear();
         ModNotifications.AddRange(modNotifications.Select(m => new ModRowVM_ModNotificationVM(m)));
 
 
-        SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:d}";
+        SearchableText = $"{DisplayName}{FolderName}{Author}{string.Join(null, Presets)}{DateAdded:d}{Description}";
     }
 
     public void TriggerPropertyChanged(string? propertyName) => OnPropertyChanged(propertyName ?? string.Empty);

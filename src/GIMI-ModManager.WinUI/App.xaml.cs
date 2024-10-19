@@ -14,6 +14,7 @@ using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
+using GIMI_ModManager.WinUI.Services.ModExport;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
@@ -139,6 +140,7 @@ public partial class App : Application
 
                 services.AddSingleton<LifeCycleService>();
                 services.AddSingleton<BusyService>();
+                services.AddSingleton<JsonExporterService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
@@ -157,7 +159,7 @@ public partial class App : Application
                 services.AddSingleton<CommandService>();
                 services.AddSingleton<CommandHandlerService>();
 
-                services.AddSingleton<HttpLoggerHandler>();
+                services.AddTransient<HttpLoggerHandler>();
                 services.AddSingleton<GameBananaService>();
 
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"

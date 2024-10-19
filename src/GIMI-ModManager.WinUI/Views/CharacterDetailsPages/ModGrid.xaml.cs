@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI.UI.Controls;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
@@ -15,7 +16,7 @@ namespace GIMI_ModManager.WinUI.Views.CharacterDetailsPages;
 
 public sealed partial class ModGrid : UserControl
 {
-    public DataGrid DataGrid;
+    public DataGrid DataGrid { get; }
 
     public ModGrid()
     {
@@ -50,6 +51,14 @@ public sealed partial class ModGrid : UserControl
     {
         viewModel.SelectModEvent += ViewModelOnSelectModEvent;
         viewModel.SortEvent += SetSortUiEventHandler;
+        viewModel.OnInitialized += ViewModel_OnInitialized;
+    }
+
+    private void ViewModel_OnInitialized(object? sender, EventArgs e)
+    {
+        var mods = new List<ModRowVM>(ViewModel.GridMods);
+        if (mods.All(m => m.Description.IsNullOrEmpty()))
+            NotesColumn.Width = DataGridLength.SizeToHeader;
     }
 
     private void ViewModelOnSelectModEvent(object? sender, ModGridVM.SelectModRowEventArgs e)
@@ -63,6 +72,7 @@ public sealed partial class ModGrid : UserControl
         {
             ViewModel.SelectModEvent -= ViewModelOnSelectModEvent;
             ViewModel.SortEvent -= SetSortUiEventHandler;
+            ViewModel.OnInitialized -= ViewModel_OnInitialized;
         }
         catch (Exception)
         {
@@ -107,6 +117,7 @@ public sealed partial class ModGrid : UserControl
 
     private async void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
+        e.Handled = true;
         await ViewModel.OnKeyDown_EventHandlerAsync(e.Key).ConfigureAwait(false);
     }
 
@@ -135,44 +146,61 @@ public sealed partial class ModGrid : UserControl
 
         if (e.Column.Tag.ToString() == nameof(ModRowVM.Author))
         {
-            var textBox = (TextBox)e.EditingElement;
-            var newValue = textBox.Text.Trim();
+            if (!IsValueUpdated(mod.Author, out var newValue)) return;
 
-            if (newValue == mod.Author)
-                return;
-
-            var arg = new ModGridVM.UpdateModSettingsArgument(mod, new UpdateSettingsRequest()
+            var updateRequest = new UpdateSettingsRequest()
             {
                 SetAuthor = newValue
-            });
+            };
 
-            if (mod.UpdateModSettingsCommand.CanExecute(arg) == false)
-                return;
-
-            mod.UpdateModSettingsCommand.ExecuteAsync(arg);
+            _ = UpdateModSettingsAsync(updateRequest);
         }
         else if (e.Column.Tag.ToString() == nameof(ModRowVM.DisplayName))
         {
-            var textBox = (TextBox)e.EditingElement;
-            var newValue = textBox.Text.Trim();
+            if (!IsValueUpdated(mod.DisplayName, out var newValue)) return;
 
-            if (newValue == mod.DisplayName)
-                return;
-
-            var arg = new ModGridVM.UpdateModSettingsArgument(mod, new UpdateSettingsRequest()
+            var updateRequest = new UpdateSettingsRequest()
             {
                 SetCustomName = newValue
-            });
+            };
 
-            if (mod.UpdateModSettingsCommand.CanExecute(arg) == false)
-                return;
+            _ = UpdateModSettingsAsync(updateRequest);
+        }
+        else if (e.Column.Tag.ToString() == nameof(ModRowVM.Description))
+        {
+            if (!IsValueUpdated(mod.Description, out var newValue)) return;
 
-            mod.UpdateModSettingsCommand.ExecuteAsync(arg);
+            var updateRequest = new UpdateSettingsRequest()
+            {
+                SetDescription = newValue
+            };
+
+            _ = UpdateModSettingsAsync(updateRequest);
         }
         else
         {
             // Unsupported edit
             //Debugger.Break();
+        }
+
+        return;
+
+        bool IsValueUpdated(string oldValue, out string newValue)
+        {
+            var textBox = (TextBox)e.EditingElement;
+            newValue = textBox.Text.Trim();
+
+            return newValue != oldValue;
+        }
+
+        async Task UpdateModSettingsAsync(UpdateSettingsRequest updateRequest)
+        {
+            var arg = new ModGridVM.UpdateModSettingsArgument(mod, updateRequest);
+
+            if (mod.UpdateModSettingsCommand.CanExecute(arg) == false)
+                return;
+
+            await mod.UpdateModSettingsCommand.ExecuteAsync(arg).ConfigureAwait(false);
         }
     }
 

@@ -68,6 +68,7 @@ public partial class ModGridVM(
     public bool IsInitialized { get; private set; }
 
     private List<CharacterSkinEntry> _modsBackend = [];
+    public List<CharacterSkinEntry> GetModsBackend() => [.._modsBackend];
     private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
     private readonly List<ModRowVM> _gridModsBackend = [];
     public ObservableCollection<ModRowVM> GridMods { get; } = [];
@@ -122,17 +123,22 @@ public partial class ModGridVM(
         IsModFolderNameColumnVisible = settings.ModFolderNameColumnVisible;
         await InitModsAsync();
         _modList.ModsChanged += ModListOnModsChanged;
+        _modNotificationManager.OnModNotification += _modNotificationManager_OnModNotification;
         Messenger.RegisterAll(this);
         _ = _dispatcherQueue.EnqueueAsync(ModRefreshLoopAsync);
         IsBusy = false;
         IsInitialized = true;
+        OnInitialized?.Invoke(this, EventArgs.Empty);
     }
+
+    private void _modNotificationManager_OnModNotification(object? sender, ModNotificationManager.ModNotificationEvent e) => QueueModRefresh();
 
     public void OnNavigateFrom()
     {
         _modRefreshChannel.Writer.TryComplete();
         Messenger.UnregisterAll(this);
         _modList.ModsChanged -= ModListOnModsChanged;
+        _modNotificationManager.OnModNotification -= _modNotificationManager_OnModNotification;
         try
         {
             _modRefreshLock.Dispose();
@@ -522,6 +528,9 @@ public partial class ModGridVM(
     // Only to be used by code behind
     public async Task OnKeyDown_EventHandlerAsync(VirtualKey key)
     {
+        if (BusySetter.IsHardBusy)
+            return;
+
         var selectedMods = SelectedMods.ToArray();
         if (selectedMods.Length == 0)
             return;
@@ -534,7 +543,7 @@ public partial class ModGridVM(
 
         if (key == VirtualKey.Delete)
         {
-            _notificationService.ShowNotification("Not implemented", "", null);
+            DeleteModKeyTriggered?.Invoke(this, EventArgs.Empty);
             return;
         }
 
@@ -556,10 +565,13 @@ public partial class ModGridVM(
 
     // Set single selected from code
     public event EventHandler<SelectModRowEventArgs>? SelectModEvent;
+    public event EventHandler? DeleteModKeyTriggered;
 
     public event EventHandler<SortEvent>? SortEvent;
 
     public event EventHandler? OnModsReloaded;
+
+    public event EventHandler? OnInitialized;
 
     public class ModRowSelectedEventArgs(IEnumerable<ModRowVM> mods) : EventArgs
     {

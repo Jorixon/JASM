@@ -64,6 +64,7 @@
             CanUserResizeColumns="True"
             CellEditEnded="ModListGrid_OnCellEditEnded"
             CellEditEnding="ModListGrid_OnCellEditEnding"
+            ClipboardCopyMode="ExcludeHeader"
             ContextFlyout="{Binding ElementName=ModRowFlyout, Mode=OneTime}"
             FrozenColumnCount="3"
             GridLinesVisibility="All"
@@ -82,6 +83,7 @@
                     Width="SizeToHeader"
                     CanUserResize="False"
                     CanUserSort="True"
+                    ClipboardContentBinding="{Binding IsEnabled, Mode=OneWay}"
                     Header="Enabled"
                     Tag="IsEnabled">
 
@@ -123,12 +125,11 @@
                                                     Margin="0"
                                                     Padding="0"
                                                     BorderThickness="0"
+                                                    Click="Notification_OnClick"
                                                     CornerRadius="0"
                                                     DataContext="{x:Bind}"
                                                     PointerEntered="NotificationButton_OnPointerEntered"
-                                                    PointerExited="NotificationButton_OnPointerExited"
-                                                    Click="Notification_OnClick"
-                                                >
+                                                    PointerExited="NotificationButton_OnPointerExited">
                                                     <Button.Content>
                                                         <FontIcon
                                                             VerticalAlignment="Bottom"
@@ -173,6 +174,7 @@
                 <controls:DataGridTemplateColumn
                     Width="SizeToCells"
                     CanUserSort="True"
+                    ClipboardContentBinding="{Binding DateAddedFormated, Mode=OneTime}"
                     Header="Added"
                     IsReadOnly="True"
                     Tag="DateAdded">
@@ -193,12 +195,24 @@
 
                 <controls:DataGridTextColumn
                     Width="SizeToCells"
-                    Binding="{Binding InPresets, Mode=OneTime}"
+                    Binding="{Binding InPresets, Mode=OneWay}"
                     CanUserSort="True"
                     Header="Presets"
                     IsReadOnly="True"
                     Tag="Presets" />
+
+                <controls:DataGridTextColumn
+                    x:Name="NotesColumn"
+                    Width="SizeToCells"
+                    Binding="{Binding Description, Mode=OneWay}"
+                    CanUserSort="False"
+                    Header="Notes"
+                    IsReadOnly="False"
+                    Tag="Description" />
+
             </controls:DataGrid.Columns>
+
+
 
         </controls:DataGrid>
     </Grid>
