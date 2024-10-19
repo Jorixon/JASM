@@ -271,6 +271,7 @@ public partial class App : Application
                 services.AddTransient<ViewModels.CharacterDetailsViewModels.CharacterDetailsViewModel>();
                 services.AddTransient<ModPaneVM>();
                 services.AddTransient<ModGridVM>();
+                services.AddTransient<ContextMenuVM>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

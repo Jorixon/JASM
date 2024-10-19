@@ -125,6 +125,7 @@ public partial class CharacterDetailsViewModel
                     characterTemplate.InternalName,
                     StringComparison.OrdinalIgnoreCase);
 
+            ContextMenuVM.ChangeSkin(CreateContext());
             await ModGridVM.OnChangeSkinAsync(CreateContext());
             AutoSelectFirstMod();
         }).ConfigureAwait(false);

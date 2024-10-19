@@ -26,87 +26,89 @@ public partial class CharacterDetailsViewModel
     [RelayCommand(CanExecute = nameof(CanDeleteMods))]
     private async Task DeleteModsAsync()
     {
+        var selectedMods = ModGridVM.SelectedMods.Select(m => new ModToDelete(m.Id, m.DisplayName, m.AbsFolderPath, m.FolderName)).ToList();
+
+        if (selectedMods.Count == 0)
+            return;
+
+
+        var shownCharacterName = ShownModObject.DisplayName;
+        var selectedModsCount = selectedMods.Count;
+
+        var modsToDeleteErrored = new List<ModToDelete>();
+        var modsToDeletePresetError = new List<ModToDelete>();
+
+        var modsDeleted = new List<ModToDelete>(selectedModsCount);
+
+        var moveToRecycleBinCheckBox = new CheckBox()
+        {
+            Content = "Move to Recycle Bin?",
+            IsChecked = _moveToRecycleBinCheckBox
+        };
+
+        var removeFromPresetsCheckBox = new CheckBox()
+        {
+            Content = "Remove from Presets?",
+            IsChecked = _removeFromPresetCheckBox
+        };
+
+
+        var mods = new ListView()
+        {
+            ItemsSource = selectedMods.Select(m => m.DisplayName + " - " + m.FolderName),
+            SelectionMode = ListViewSelectionMode.None
+        };
+
+        var scrollViewer = new ScrollViewer()
+        {
+            Content = mods,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            Height = 400
+        };
+        var stackPanel = new StackPanel()
+        {
+            Children =
+            {
+                moveToRecycleBinCheckBox,
+                removeFromPresetsCheckBox,
+                scrollViewer
+            }
+        };
+
+        var contentWrapper = new Grid()
+        {
+            MinWidth = 500,
+            Children =
+            {
+                stackPanel
+            }
+        };
+
+        var dialog = new ContentDialog()
+        {
+            Title = $"Delete These {selectedModsCount} Mods?",
+            Content = contentWrapper,
+            PrimaryButtonText = "Delete",
+            SecondaryButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+
+        var result = await _windowManagerService.ShowDialogAsync(dialog);
+
+        var recycleMods = moveToRecycleBinCheckBox.IsChecked == true;
+        var removeFromPresets = removeFromPresetsCheckBox.IsChecked == true;
+        _moveToRecycleBinCheckBox = recycleMods;
+        _removeFromPresetCheckBox = removeFromPresets;
+
+
+        if (result != ContentDialogResult.Primary)
+            return;
+
+
         await CommandWrapperAsync(true, async () =>
         {
-            var selectedMods = ModGridVM.SelectedMods.Select(m => new ModToDelete(m.Id, m.DisplayName, m.AbsFolderPath, m.FolderName)).ToList();
-
-            if (selectedMods.Count == 0)
-                return;
-
-
-            var shownCharacterName = ShownModObject.DisplayName;
-            var selectedModsCount = selectedMods.Count;
-
-            var modsToDeleteErrored = new List<ModToDelete>();
-            var modsToDeletePresetError = new List<ModToDelete>();
-
-            var modsDeleted = new List<ModToDelete>(selectedModsCount);
-
-            var moveToRecycleBinCheckBox = new CheckBox()
-            {
-                Content = "Move to Recycle Bin?",
-                IsChecked = _moveToRecycleBinCheckBox
-            };
-
-            var removeFromPresetsCheckBox = new CheckBox()
-            {
-                Content = "Remove from Presets?",
-                IsChecked = _removeFromPresetCheckBox
-            };
-
-
-            var mods = new ListView()
-            {
-                ItemsSource = selectedMods.Select(m => m.DisplayName + " - " + m.FolderName),
-                SelectionMode = ListViewSelectionMode.None
-            };
-
-            var scrollViewer = new ScrollViewer()
-            {
-                Content = mods,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Height = 400
-            };
-            var stackPanel = new StackPanel()
-            {
-                Children =
-                {
-                    moveToRecycleBinCheckBox,
-                    removeFromPresetsCheckBox,
-                    scrollViewer
-                }
-            };
-
-            var contentWrapper = new Grid()
-            {
-                MinWidth = 500,
-                Children =
-                {
-                    stackPanel
-                }
-            };
-
-            var dialog = new ContentDialog()
-            {
-                Title = $"Delete These {selectedModsCount} Mods?",
-                Content = contentWrapper,
-                PrimaryButtonText = "Delete",
-                SecondaryButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary
-            };
-
-
-            var result = await _windowManagerService.ShowDialogAsync(dialog);
-
-            if (result != ContentDialogResult.Primary)
-                return;
-            var recycleMods = moveToRecycleBinCheckBox.IsChecked == true;
-            var removeFromPresets = removeFromPresetsCheckBox.IsChecked == true;
-            _moveToRecycleBinCheckBox = recycleMods;
-            _removeFromPresetCheckBox = removeFromPresets;
-
-
             await Task.Run(async () =>
             {
                 if (removeFromPresets)

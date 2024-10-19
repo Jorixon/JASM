@@ -48,6 +48,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private readonly BusySetter _busySetter;
 
+    [ObservableProperty] private string _loadingItemText = "Character";
+
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
@@ -83,6 +85,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     public ModGridVM ModGridVM { get; private set; } = App.GetService<ModGridVM>();
     public ModPaneVM ModPaneVM { get; private set; } = App.GetService<ModPaneVM>();
+    public ContextMenuVM ContextMenuVM { get; private set; } = App.GetService<ContextMenuVM>();
 
     public async void OnNavigatedTo(object parameter)
     {
@@ -116,22 +119,23 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
         // Init character card
         InitCharacterCard(parameter);
+        LoadingItemText = "Mods";
 
         // Yield to UI, render character card, specifically the image
         await Task.Delay(100, CancellationToken);
-        if (IsReturning)
-            return;
+        if (IsReturning) return;
+
 
         // Load mods
         await InitModGridAsync();
-        if (IsReturning)
-            return;
+        LoadingItemText = "ModPane";
+
+        if (IsReturning) return;
 
         // Yield to UI, render grid
         await Task.Delay(50, CancellationToken);
         commandTracker.Finish();
-        if (IsReturning)
-            return;
+        if (IsReturning) return;
 
 #if DEBUG
         stopwatch.Stop();
@@ -141,10 +145,15 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
         // Init Mod Pane
         await InitModPaneAsync();
-        if (IsReturning)
-            return;
+        LoadingItemText = "Toolbar";
+        if (IsReturning) return;
 
         await InitToolbarAsync();
+        LoadingItemText = "Context Menu";
+
+        await InitContextMenuAsync();
+        LoadingItemText = "Grid";
+
 
         // Wait for the grid to load the datasource
         if (GridLoadedAwaiter is not null)
@@ -153,6 +162,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
         // Now that the grid is loaded, we can select the first mod
         AutoSelectFirstMod();
+
 
         // Finished initializing
         IsNavigationFinished = true;
@@ -195,6 +205,17 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         OnModsLoaded?.Invoke(this, EventArgs.Empty);
     }
 
+    private async Task InitContextMenuAsync()
+    {
+        await ContextMenuVM.InitializeAsync(CreateContext(), _busySetter, CancellationToken);
+        ContextMenuVM.ModsMoved += ContextMenuVM_ModsMoved;
+    }
+
+    private void ContextMenuVM_ModsMoved(object? sender, EventArgs e)
+    {
+        ModGridVM.QueueModRefresh();
+    }
+
     private void ModGridVM_DeleteModKeyTriggered(object? sender, EventArgs e)
     {
         if (!DeleteModsCommand.CanExecute(null))
@@ -206,6 +227,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private async void OnModsSelected(object? sender, ModGridVM.ModRowSelectedEventArgs args)
     {
+        ContextMenuVM.SetSelectedMods(args.Mods.Select(m => m.Id));
+        DeleteModsCommand.NotifyCanExecuteChanged();
         var selectedMod = args.Mods.FirstOrDefault();
 
         ModPaneVM.QueueLoadMod(selectedMod?.Id);
@@ -250,6 +273,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             _navigationCancellationTokenSource.Cancel();
             ModGridVM.OnModsSelected -= OnModsSelected;
             ModGridVM.OnModsReloaded -= OnModsReloaded;
+            ContextMenuVM.ModsMoved -= ContextMenuVM_ModsMoved;
             ModGridVM.DeleteModKeyTriggered -= ModGridVM_DeleteModKeyTriggered;
             ModGridVM.OnNavigateFrom();
             ModPaneVM.OnNavigatedFrom();

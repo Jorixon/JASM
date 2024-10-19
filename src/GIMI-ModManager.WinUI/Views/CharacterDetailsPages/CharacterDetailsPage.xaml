@@ -8,16 +8,125 @@
     xmlns:controls1="using:GIMI_ModManager.WinUI.Views.Controls"
     xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:interfaces="using:GIMI_ModManager.Core.GamesService.Interfaces"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:GIMI_ModManager.WinUI.Models"
     xmlns:notifications="using:GIMI_ModManager.WinUI.Services.Notifications"
+    xmlns:subViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels"
     xmlns:viewModels="using:GIMI_ModManager.WinUI.Models.ViewModels"
     xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     x:Name="CharacterDetailsRoot"
     mc:Ignorable="d">
 
     <Grid Margin="{StaticResource NegativeNavigationViewPageContentMargin}">
+
+
+        <Grid.Resources>
+            <Flyout
+                x:Name="ModRowFlyout"
+                Closing="ModRowFlyout_OnClosing"
+                Opened="ModRowFlyout_OnOpened"
+                Opening="ModRowFlyout_OnOpening"
+                Placement="RightEdgeAlignedBottom">
+                <Grid MinWidth="200">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid BorderBrush="{ThemeResource ControlElevationBorderBrush}" BorderThickness="0,0,0,4">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+
+                                <TextBlock
+                                    Margin="0,0,4,0"
+                                    HorizontalAlignment="Left"
+                                    Text="Mods Selected:" />
+                                <TextBlock HorizontalAlignment="Left" Text="{x:Bind ViewModel.ContextMenuVM.SelectedModsCount, Mode=OneWay}" />
+                            </StackPanel>
+                            <Button
+                                Padding="0"
+                                HorizontalAlignment="Right"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Command="{x:Bind ViewModel.DeleteModsCommand}">
+                                <FontIcon FontSize="16" Glyph="&#xE74D;" />
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Button
+                            x:Name="MoveModsButton"
+                            Margin="0,8,16,0"
+                            Command="{x:Bind ViewModel.ContextMenuVM.MoveModsCommand}"
+                            Content="Move" />
+                        <StackPanel>
+                            <TextBlock Text="Move Mods To Another Character: " />
+                            <AutoSuggestBox
+                                x:Name="MoveModSearchBox"
+                                IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}"
+                                ItemsSource="{x:Bind ViewModel.ContextMenuVM.SuggestedModdableObjects, Mode=OneWay}"
+                                PlaceholderText="Search..."
+                                QuerySubmitted="MoveModSearch_OnQuerySubmitted"
+                                TextChanged="MoveModSearch_OnTextChanged"
+                                Text="{x:Bind ViewModel.ContextMenuVM.MoveModsSearchText, Mode=TwoWay}">
+                                <AutoSuggestBox.ItemTemplate>
+                                    <DataTemplate x:DataType="subViewModels:SuggestedModObject">
+                                        <TextBlock FontFamily="{StaticResource GenshinFont}" Text="{x:Bind DisplayName}" />
+                                    </DataTemplate>
+                                </AutoSuggestBox.ItemTemplate>
+                            </AutoSuggestBox>
+                            <!--
+                                QuerySubmitted="MoveModSearch_OnQuerySubmitted"
+                                SuggestionChosen="MoveModSearch_OnSuggestionChosen"
+                            -->
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <!--<StackPanel
+                        Grid.Row="2"
+                        Margin="0,4,0,4"
+                        Padding="0,4,0,0"
+                        BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                        BorderThickness="0,4,0,0">
+                        <Expander
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            ExpandDirection="Down"
+                            Header="Move Mods to another Skin"
+                            IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}"
+                            IsExpanded="False">
+                            <Expander.Content>
+                                <StackPanel>
+                                    <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.MoveModsFlyoutVM.SelectableCharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.MoveModsFlyoutVM.SelectNewCharacterSkinCommand}" />
+
+                                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                        <Button HorizontalAlignment="Left" Command="{x:Bind ViewModel.MoveModsFlyoutVM.OverrideModCharacterSkinCommand}">
+                                            <Button.Content>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
+                                                    <TextBlock Text="Override" />
+                                                </StackPanel>
+                                            </Button.Content>
+                                        </Button>
+
+                                        <StackPanel Margin="4,0,0,0" Visibility="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModHasCharacterSkinOverride, Mode=OneWay}">
+                                            <TextBlock Text="Override Skin Set To: " />
+                                            <TextBlock HorizontalAlignment="Center" Text="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModCharacterSkinOverrideDisplayName, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                    </StackPanel>-->
+                </Grid>
+            </Flyout>
+
+        </Grid.Resources>
 
 
         <Grid>
@@ -35,7 +144,12 @@
                     VerticalAlignment="Center"
                     Visibility="Visible">
                     <ProgressRing />
-                    <TextBlock Text="Loading Mods..." />
+                    <TextBlock>
+                        <Run Text="Loading" />
+                        <Run Text="{x:Bind ViewModel.LoadingItemText, Mode=OneWay}" />
+                        <Run Text="..." />
+
+                    </TextBlock>
                 </StackPanel>
             </Grid>
 

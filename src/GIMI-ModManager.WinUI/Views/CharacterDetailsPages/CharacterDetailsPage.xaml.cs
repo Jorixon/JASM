@@ -3,6 +3,7 @@ using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers.Xaml;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -71,6 +72,7 @@ public sealed partial class CharacterDetailsPage : Page
     private void OnInitializingFinished(object? sender, EventArgs e)
     {
         ViewModel.OnInitializingFinished -= OnInitializingFinished;
+        ModGrid.DataGrid.ContextFlyout = ModRowFlyout;
         ModGrid.DataGrid.Focus(FocusState.Programmatic);
     }
 
@@ -241,8 +243,43 @@ public sealed partial class CharacterDetailsPage : Page
         {
             await ViewModel.DragDropModAsync(await e.DataView.GetStorageItemsAsync());
         }
-        //await ViewModel.DragAndDropCommand.ExecuteAsync(await e.DataView.GetStorageItemsAsync());
 
         deferral.Complete();
     }
+
+    #region ModRowFlyout
+
+    private void ModRowFlyout_OnOpening(object? sender, object e)
+    {
+        if (!ViewModel.ContextMenuVM.CanOpenContextMenu)
+        {
+            ModRowFlyout.Hide();
+            return;
+        }
+    }
+
+    private void ModRowFlyout_OnOpened(object? sender, object e)
+    {
+        MoveModSearchBox.Focus(FocusState.Programmatic);
+    }
+
+
+    private void ModRowFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+    {
+        ViewModel.ContextMenuVM.OnFlyoutClosing();
+    }
+
+    private void MoveModSearch_OnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            ViewModel.ContextMenuVM.SearchTextChanged(sender.Text);
+    }
+
+    private void MoveModSearch_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        ViewModel.ContextMenuVM.OnSuggestionChosen((SuggestedModObject)args.ChosenSuggestion);
+        MoveModsButton.Focus(FocusState.Programmatic);
+    }
+
+    #endregion
 }

@@ -1,9 +1,10 @@
 ﻿using System.Globalization;
+using System.Numerics;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 
 namespace GIMI_ModManager.Core.GamesService.Models;
 
-public sealed class InternalName : IEquatable<InternalName>, IEquatable<string>
+public sealed class InternalName : IEquatable<InternalName>, IEquatable<string>, IEqualityOperators<InternalName, InternalName, bool>
 {
     public string Id { get; }
 
