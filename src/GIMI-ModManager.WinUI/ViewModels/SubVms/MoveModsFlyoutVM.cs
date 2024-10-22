@@ -281,7 +281,7 @@ public partial class MoveModsFlyoutVM : ObservableRecipient
         foreach (var modModel in SelectedMods)
         {
             var result =
-                await _modSettingsService.SetCharacterSkinOverride(modModel.Id, characterSkinToSet.InternalName);
+                await _modSettingsService.SetCharacterSkinOverrideLegacy(modModel.Id, characterSkinToSet.InternalName);
 
             if (result.IsT0) continue;
 

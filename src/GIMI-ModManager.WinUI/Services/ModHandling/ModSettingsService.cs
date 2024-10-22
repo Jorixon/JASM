@@ -75,7 +75,7 @@ public class ModSettingsService
         }
     }
 
-    public async Task<OneOf<Success, NotFound, ModNotFound, Error<Exception>>> SetCharacterSkinOverride(Guid modId,
+    public async Task<OneOf<Success, NotFound, ModNotFound, Error<Exception>>> SetCharacterSkinOverrideLegacy(Guid modId,
         string skinName)
     {
         var mod = _skinManagerService.GetModById(modId);

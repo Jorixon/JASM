@@ -4,9 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.WinUI.Models.CustomControlTemplates;
-using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Services;
-using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.Views;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
@@ -143,20 +141,6 @@ public partial class CharacterDetailsViewModel
         _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, ShownModObject.InternalName);
     }
 
-
-    [RelayCommand]
-    private async Task GoToGalleryScreen()
-    {
-        var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
-            CharacterDetailsSettings.Key);
-
-        settings.GalleryView = true;
-
-        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings);
-
-        _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, ShownModObject.InternalName);
-        _navigationService.ClearBackStack(1);
-    }
 
     [RelayCommand]
     private void GoBackToGrid()

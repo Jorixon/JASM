@@ -18,6 +18,7 @@ using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using Microsoft.UI.Dispatching;
 using Serilog;
 
@@ -209,7 +210,9 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     {
         await ContextMenuVM.InitializeAsync(CreateContext(), _busySetter, CancellationToken);
         ContextMenuVM.ModsMoved += ContextMenuVM_ModsMoved;
+        ContextMenuVM.ModCharactersSkinOverriden += ContextMenuVM_ModsMoved;
     }
+
 
     private void ContextMenuVM_ModsMoved(object? sender, EventArgs e)
     {
@@ -274,6 +277,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             ModGridVM.OnModsSelected -= OnModsSelected;
             ModGridVM.OnModsReloaded -= OnModsReloaded;
             ContextMenuVM.ModsMoved -= ContextMenuVM_ModsMoved;
+            ContextMenuVM.ModCharactersSkinOverriden -= ContextMenuVM_ModsMoved;
             ModGridVM.DeleteModKeyTriggered -= ModGridVM_DeleteModKeyTriggered;
             ModGridVM.OnNavigateFrom();
             ModPaneVM.OnNavigatedFrom();
@@ -344,6 +348,19 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         });
     }
 
+    [RelayCommand]
+    private async Task GoToGalleryScreen()
+    {
+        var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
+            CharacterDetailsSettings.Key);
+
+        settings.GalleryView = true;
+
+        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings);
+
+        _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, ShownModObject.InternalName);
+        _navigationService.ClearBackStack(1);
+    }
 
     private Task<CharacterDetailsSettings> ReadSettingsAsync() =>
         _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(CharacterDetailsSettings.Key,

@@ -79,15 +79,11 @@
                                     </DataTemplate>
                                 </AutoSuggestBox.ItemTemplate>
                             </AutoSuggestBox>
-                            <!--
-                                QuerySubmitted="MoveModSearch_OnQuerySubmitted"
-                                SuggestionChosen="MoveModSearch_OnSuggestionChosen"
-                            -->
                         </StackPanel>
 
                     </StackPanel>
 
-                    <!--<StackPanel
+                    <StackPanel
                         Grid.Row="2"
                         Margin="0,4,0,4"
                         Padding="0,4,0,0"
@@ -98,14 +94,14 @@
                             VerticalAlignment="Top"
                             ExpandDirection="Down"
                             Header="Move Mods to another Skin"
-                            IsEnabled="{x:Bind ViewModel.MultipleInGameSkins, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.ContextMenuVM.MultipleSkins, Mode=OneWay}"
                             IsExpanded="False">
                             <Expander.Content>
                                 <StackPanel>
-                                    <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.MoveModsFlyoutVM.SelectableCharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.MoveModsFlyoutVM.SelectNewCharacterSkinCommand}" />
+                                    <controls1:SelectCharacterFromGrid GridSource="{x:Bind ViewModel.ContextMenuVM.SelectableCharacterSkins, Mode=OneWay}" ItemClickedCommand="{x:Bind ViewModel.ContextMenuVM.SelectNewCharacterSkinCommand}" />
 
                                     <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
-                                        <Button HorizontalAlignment="Left" Command="{x:Bind ViewModel.MoveModsFlyoutVM.OverrideModCharacterSkinCommand}">
+                                        <Button HorizontalAlignment="Left" Command="{x:Bind ViewModel.ContextMenuVM.OverrideModCharacterSkinCommand}">
                                             <Button.Content>
                                                 <StackPanel Orientation="Horizontal">
                                                     <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
@@ -114,15 +110,15 @@
                                             </Button.Content>
                                         </Button>
 
-                                        <StackPanel Margin="4,0,0,0" Visibility="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModHasCharacterSkinOverride, Mode=OneWay}">
+                                        <StackPanel Margin="4,0,0,0" Visibility="{x:Bind ViewModel.ContextMenuVM.ModHasCharacterSkinOverride, Mode=OneWay}">
                                             <TextBlock Text="Override Skin Set To: " />
-                                            <TextBlock HorizontalAlignment="Center" Text="{x:Bind ViewModel.MoveModsFlyoutVM.SelectedModCharacterSkinOverrideDisplayName, Mode=OneWay}" />
+                                            <TextBlock HorizontalAlignment="Center" Text="{x:Bind ViewModel.ContextMenuVM.ModCharacterSkinOverride.DisplayName, FallbackValue='', Mode=OneWay}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
-                    </StackPanel>-->
+                    </StackPanel>
                 </Grid>
             </Flyout>
 
@@ -218,6 +214,11 @@
                                     IsChecked="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay}"
                                     Text="Show 'Mod Folder Names' column" />
                             </MenuBarItem>
+
+                            <MenuBarItem Title="Mod Preferences" IsEnabled="False">
+                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="." Text="Save preferences for selected mods" />
+                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="." Text="Read preferences for selected mods" />
+                            </MenuBarItem>
                         </MenuBar>
 
                     </StackPanel>
@@ -260,8 +261,8 @@
                             x:Name="ViewToggleSwitch"
                             IsOn="False"
                             OffContent="Detailed View"
-                            OnContent="Gallery View" />
-                        <!--  Toggled="ViewToggleSwitch_OnToggled"  -->
+                            OnContent="Gallery View"
+                            Toggled="ViewToggleSwitch_OnToggled" />
 
                         <Grid MinWidth="32">
                             <ProgressRing IsActive="{x:Bind ViewModel.IsWorking, Mode=OneWay}" />

@@ -29,7 +29,10 @@ public sealed partial class CharacterDetailsPage : Page
         ViewModel.OnModObjectLoaded += OnModObjectLoaded;
         ViewModel.OnModsLoaded += OnModsLoaded;
         ViewModel.OnInitializingFinished += OnInitializingFinished;
+
+        ViewModel.ContextMenuVM.CloseFlyout += ContextMenuVM_CloseFlyout;
     }
+
 
     private void OnModObjectLoaded(object? sender, EventArgs e)
     {
@@ -247,7 +250,15 @@ public sealed partial class CharacterDetailsPage : Page
         deferral.Complete();
     }
 
+    private void ViewToggleSwitch_OnToggled(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.GoToGalleryScreenCommand.CanExecute(null))
+            ViewModel.GoToGalleryScreenCommand.ExecuteAsync(null);
+    }
+
     #region ModRowFlyout
+
+    private void ContextMenuVM_CloseFlyout(object? sender, EventArgs e) => ModRowFlyout.Hide();
 
     private void ModRowFlyout_OnOpening(object? sender, object e)
     {
@@ -258,16 +269,10 @@ public sealed partial class CharacterDetailsPage : Page
         }
     }
 
-    private void ModRowFlyout_OnOpened(object? sender, object e)
-    {
-        MoveModSearchBox.Focus(FocusState.Programmatic);
-    }
+    private void ModRowFlyout_OnOpened(object? sender, object e) => MoveModSearchBox.Focus(FocusState.Programmatic);
 
 
-    private void ModRowFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
-    {
-        ViewModel.ContextMenuVM.OnFlyoutClosing();
-    }
+    private void ModRowFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args) => ViewModel.ContextMenuVM.OnFlyoutClosing();
 
     private void MoveModSearch_OnTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
