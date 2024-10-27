@@ -47,7 +47,8 @@ public partial class ContextMenuVM(
 
     public ObservableCollection<SuggestedModObject> SuggestedModdableObjects { get; } = new();
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(MoveModsCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(MoveModsCommand))]
     private SuggestedModObject? _selectedSuggestedModObject;
 
     [ObservableProperty] private string _moveModsSearchText = string.Empty;

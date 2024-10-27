@@ -148,7 +148,17 @@
                             ToolTipService.ToolTip="If checked then the main window position is saved when JASM exits" />
                     </StackPanel>
 
+
+
                 </StackPanel>
+
+                <TextBlock Text="Legacy: " />
+
+                <CheckBox
+                    Command="{x:Bind ViewModel.ToggleLegacyCharacterDetailsCommand}"
+                    Content="Use old legacy character details page (this setting will be removed later)"
+                    IsChecked="{x:Bind ViewModel.LegacyCharacterDetails, Mode=OneWay}"
+                    ToolTipService.ToolTip="The character details page is where you see the mods in a grid. This page has been rewritten. Due to potential bugs arising there is a transition period where the old version will still be available. This checkbox will be removed at some point." />
 
                 <TextBlock
                     Style="{ThemeResource SubtitleTextBlockStyle}"

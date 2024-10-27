@@ -51,7 +51,8 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     [ObservableProperty] private string _loadingItemText = "Character";
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
 
@@ -231,6 +232,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private async void OnModsSelected(object? sender, ModGridVM.ModRowSelectedEventArgs args)
     {
         ContextMenuVM.SetSelectedMods(args.Mods.Select(m => m.Id));
+        IsSingleModSelected = args.Mods.Count == 1;
         DeleteModsCommand.NotifyCanExecuteChanged();
         var selectedMod = args.Mods.FirstOrDefault();
 
@@ -352,11 +354,11 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
     private async Task GoToGalleryScreen()
     {
         var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
-            CharacterDetailsSettings.Key);
+            CharacterDetailsSettings.Key, SettingScope.App);
 
         settings.GalleryView = true;
 
-        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings);
+        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings, SettingScope.App);
 
         _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, ShownModObject.InternalName);
         _navigationService.ClearBackStack(1);
@@ -419,10 +421,12 @@ public partial class BusySetter(CharacterDetailsViewModel viewModel) : Observabl
     private readonly CharacterDetailsViewModel _viewModel = viewModel;
 
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotSoftBusy), nameof(IsWorking))]
     private bool _isSoftBusy; // App is doing something, but the user can still do other things
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotHardBusy), nameof(IsWorking))]
     private bool _isHardBusy; // App is doing something, and the user can't do anything on the page
 
     public bool IsNotSoftBusy => !IsSoftBusy;

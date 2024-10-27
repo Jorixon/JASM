@@ -55,7 +55,8 @@ public partial class ModGridVM(
     public ModGridSortingMethod CurrentSortingMethod { get; private set; } = new(ModRowSorter.IsEnabledSorter);
 
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool _isBusy = true;
 
     public bool IsNotBusy => !IsBusy;
@@ -68,7 +69,7 @@ public partial class ModGridVM(
     public bool IsInitialized { get; private set; }
 
     private List<CharacterSkinEntry> _modsBackend = [];
-    public List<CharacterSkinEntry> GetModsBackend() => [.._modsBackend];
+    public List<CharacterSkinEntry> GetModsBackend() => [.. _modsBackend];
     private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
     private readonly List<ModRowVM> _gridModsBackend = [];
     public ObservableCollection<ModRowVM> GridMods { get; } = [];

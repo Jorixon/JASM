@@ -41,7 +41,8 @@ public sealed partial class ModPaneVM(
     public BusySetter BusySetter { get; set; } = null!;
 
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotReadOnly))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotReadOnly))]
     private bool _isReadOnly = true;
 
     [ObservableProperty] private bool _isEditingModName;

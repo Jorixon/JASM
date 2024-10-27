@@ -108,6 +108,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
     public PathPicker PathToGIMIFolderPicker { get; }
     public PathPicker PathToModsFolderPicker { get; }
 
+    [ObservableProperty] private bool _legacyCharacterDetails;
+
 
     private static bool _showElevatorStartDialog = true;
 
@@ -786,6 +788,9 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         var windowSettings =
             await _localSettingsService.ReadOrCreateSettingAsync<ScreenSizeSettings>(ScreenSizeSettings.Key);
 
+        var characterDetailsSettings = await _localSettingsService.ReadCharacterDetailsSettingsAsync(SettingScope.App);
+
+        LegacyCharacterDetails = characterDetailsSettings.LegacyCharacterDetails;
         PersistWindowSize = windowSettings.PersistWindowSize;
         PersistWindowPosition = windowSettings.PersistWindowPosition;
         await GenshinProcessManager.TryInitialize();
@@ -812,6 +817,17 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         MaxCacheLimit = maxValue;
         SetCacheString(maxValue);
+    }
+
+    [RelayCommand]
+    private async Task ToggleLegacyCharacterDetailsAsync()
+    {
+        var settings = await _localSettingsService.ReadCharacterDetailsSettingsAsync(SettingScope.App);
+
+        LegacyCharacterDetails = !LegacyCharacterDetails;
+        settings.LegacyCharacterDetails = LegacyCharacterDetails;
+
+        await _localSettingsService.SaveCharacterDetailsSettingsAsync(settings, SettingScope.App).ConfigureAwait(false);
     }
 
 

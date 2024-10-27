@@ -13,8 +13,10 @@ public partial class CharacterDetailsViewModel
 {
     [ObservableProperty] private bool _isSingleSelectEnabled;
     [ObservableProperty] private bool _isModFolderNameColumnVisible;
+    [ObservableProperty] private bool _isSingleModSelected;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddModArchiveCommand), nameof(AddModFolderCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AddModArchiveCommand), nameof(AddModFolderCommand))]
     private bool _isAddingModFolder;
 
 

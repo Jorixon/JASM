@@ -215,9 +215,13 @@
                                     Text="Show 'Mod Folder Names' column" />
                             </MenuBarItem>
 
-                            <MenuBarItem Title="Mod Preferences" IsEnabled="False">
-                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="." Text="Save preferences for selected mods" />
-                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="." Text="Read preferences for selected mods" />
+                            <MenuBarItem
+                                Title="Mod Preferences"
+                                IsEnabled="{x:Bind ViewModel.IsSingleModSelected, Mode=OneWay}"
+                                Visibility="Collapsed">
+                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="Reads 3Dmigoto mod preferences (d3dx_user.ini) for the selected mod and stores the settings in the Mod's .JASM_Config.json file" Text="Save preferences for selected mod" />
+                                <MenuFlyoutSeparator />
+                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="Reads the currently selected mod's preferences from .JASM_Config.json and writes them to d3dx_user.ini for 3Dmigoto to read" Text="Read preferences for selected mod" />
                             </MenuBarItem>
                         </MenuBar>
 

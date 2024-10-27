@@ -1,6 +1,5 @@
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.WinUI;
-using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -144,18 +143,5 @@ public sealed partial class CharactersPage : Page
     private void SortingComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         ViewModel.SortByCommand.Execute(e.AddedItems.OfType<SortingMethod>());
-    }
-
-    // TODO: Remove this
-    private void MenuFlyoutItem_OnClick(object sender, RoutedEventArgs e)
-    {
-#if RELEASE
-        dwad wad awd
-
-        throw newad
-#endif
-
-        var test = (CharacterGridItemModel)(sender as MenuFlyoutItem)!.DataContext;
-        App.GetService<INavigationService>().NavigateTo(typeof(CharacterDetailsViewModel).FullName!, test);
     }
 }

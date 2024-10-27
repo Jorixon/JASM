@@ -8,6 +8,8 @@ public class CharacterDetailsSettings
 
     public bool GalleryView { get; set; } = false;
 
+    public bool LegacyCharacterDetails { get; set; } = false;
+
     public bool SingleSelect { get; set; }
     public string? SortingMethod { get; set; }
     public bool? SortByDescending { get; set; }
