@@ -88,8 +88,12 @@ public sealed class ModGridSortingMethod : SortingMethod<ModRowVM>
 
     public static readonly ModRowSorter[] AllSorters =
     [
-        ModRowSorter.IsEnabledSorter, ModRowSorter.DatedAddedSorter, ModRowSorter.DisplayNameSorter,
-        ModRowSorter.ModFolderSorter, ModRowSorter.AuthSorter, ModRowSorter.PresetsSorter
+        ModRowSorter.IsEnabledSorter,
+        ModRowSorter.DatedAddedSorter,
+        ModRowSorter.DisplayNameSorter,
+        ModRowSorter.ModFolderSorter,
+        ModRowSorter.AuthSorter,
+        ModRowSorter.PresetsSorter
     ];
 }
 

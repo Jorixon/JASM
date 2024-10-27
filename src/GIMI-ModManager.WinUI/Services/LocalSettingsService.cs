@@ -59,6 +59,13 @@ public class LocalSettingsService : ILocalSettingsService
     {
         if (!_isInitialized)
         {
+            if (!Directory.Exists(_jasmApplicationDataFolder))
+                Directory.CreateDirectory(_jasmApplicationDataFolder);
+
+            if (!Directory.Exists(_applicationDataFolder))
+                Directory.CreateDirectory(_applicationDataFolder);
+
+
             var readAppSettingsTask = Task.Run(() =>
             {
                 if (!File.Exists(AppScopedSettingsLocation))
