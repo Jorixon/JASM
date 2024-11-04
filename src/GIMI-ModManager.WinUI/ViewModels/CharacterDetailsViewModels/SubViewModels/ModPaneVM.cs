@@ -279,6 +279,35 @@ public sealed partial class ModPaneVM(
         ModModel.ImageUri = imageUri;
     }
 
+    private bool CanPasteImage() => DefaultCanExecute;
+
+    [RelayCommand(CanExecute = nameof(CanPasteImage))]
+    private async Task PasteImageFromClipboardAsync()
+    {
+        await CommandWrapper(async () =>
+        {
+            if (!IsModLoaded) return;
+
+            var clipboardHasValidImage = await _imageHandlerService.ClipboardContainsImageAsync();
+
+            if (!clipboardHasValidImage)
+            {
+                _notificationService.ShowNotification("Clipboard does not contain a valid image", "", null);
+                return;
+            }
+
+            var imagePath = await _imageHandlerService.GetImageFromClipboardAsync();
+
+            if (imagePath == null)
+            {
+                _notificationService.ShowNotification("Could not retrieve image from clipboard", "", null);
+                return;
+            }
+
+            ModModel.ImageUri = imagePath;
+        }).ConfigureAwait(false);
+    }
+
     private bool CanCopyImageToClipboard() => DefaultCanExecute;
 
     [RelayCommand(CanExecute = nameof(CanCopyImageToClipboard))]

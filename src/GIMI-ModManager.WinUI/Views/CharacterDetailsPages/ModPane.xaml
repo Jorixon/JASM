@@ -73,7 +73,8 @@
                 CopyButtonCommand="{x:Bind ViewModel.CopyImageToClipboardCommand}"
                 EditButtonCommand="{x:Bind ViewModel.PickImageUriCommand}"
                 ImageUri="{x:Bind ViewModel.ModModel.ImageUri, Mode=OneWay}"
-                IsContextMenuEnabled="True" />
+                IsContextMenuEnabled="True"
+                PasteButtonCommand="{x:Bind ViewModel.PasteImageFromClipboardCommand}" />
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
