@@ -115,11 +115,7 @@ public sealed partial class ModGrid : UserControl
                 dgColumn.SortDirection = null;
     }
 
-    private async void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        e.Handled = true;
-        await ViewModel.OnKeyDown_EventHandlerAsync(e.Key).ConfigureAwait(false);
-    }
+    private async void ModListGrid_OnKeyDown(object sender, KeyRoutedEventArgs e) => await ViewModel.OnKeyDown_EventHandlerAsync(e.Key).ConfigureAwait(false);
 
     private void NotificationButton_OnPointerEntered(object sender, PointerRoutedEventArgs e)
     {
