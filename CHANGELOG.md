@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.17.0](https://github.com/Jorixon/JASM/compare/v2.16.3...v2.17.0) (2024-11-04)
+
+
+### Features
+
+* Rewrite code for CharacterDetailsPage ([#262](https://github.com/Jorixon/JASM/issues/262)) ([1bb8a6c](https://github.com/Jorixon/JASM/commit/1bb8a6cd2d7d1d9756b1252319e28b3f029c9aaa))
+
+
+### Bug Fixes
+
+* Don't remove mod notification if closing window while loading mod info ([1bb8a6c](https://github.com/Jorixon/JASM/commit/1bb8a6cd2d7d1d9756b1252319e28b3f029c9aaa))
+
 ## [2.16.3](https://github.com/Jorixon/JASM/compare/v2.16.2...v2.16.3) (2024-10-11)
 
 
