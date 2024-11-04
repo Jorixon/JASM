@@ -132,7 +132,7 @@ public partial class ModUpdateVM : ObservableRecipient
 
         if (_modPageInfo is null)
         {
-            await LogErrorAndClose(new InvalidOperationException("Failed to get mod page info, mod does not exist"));
+            await LogErrorAndClose(new InvalidOperationException("Failed to get mod page info, mod does not exist"), removeNotification: false);
             return;
         }
 

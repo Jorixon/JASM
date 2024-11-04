@@ -270,7 +270,7 @@
                         VerticalAlignment="Center"
                         IsTextSelectionEnabled="True"
                         TextWrapping="WrapWholeWords"
-                        Text="The Mod Update Checker checks for updates on startup and periodically in the background, only support for GameBanana.&#x0a;Does a check every 30 minutes when enabled, however, it only checks mods that have not been checked in at least 15 minutes.&#x0a;Manually checking for updates always checks GameBanana directly"
+                        Text="The Mod Update Checker checks for updates on startup and periodically in the background, only support for GameBanana.&#x0a;Does a check every 2 hours when enabled, however, it only checks mods that have not been checked in at least 1 hour.&#x0a;Manually checking for updates always checks GameBanana directly"
                         l:Uids.Uid="/Settings/ModUpdateCheckerDescription" />
 
                 </StackPanel>
