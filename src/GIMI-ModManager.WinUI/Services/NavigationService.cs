@@ -195,8 +195,11 @@ public class NavigationService : INavigationService
         }
     }
 
-    public void SetListDataItemForNextConnectedAnimation(object item) =>
-        Frame.SetListDataItemForNextConnectedAnimation(item);
+    public void SetListDataItemForNextConnectedAnimation(object item)
+    {
+        if (item != null!) // Trying to fix an argument null exception
+            Frame.SetListDataItemForNextConnectedAnimation(item);
+    }
 
     public void ClearBackStack(int amountToClear = -1, bool clearFromMostRecent = true)
     {

@@ -82,7 +82,8 @@ public sealed partial class CharacterDetailsPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        this.RegisterElementForConnectedAnimation("animationKeyContentGrid", CharacterCard.ItemHero);
+        if (CharacterCard?.ItemHero != null) // Trying to fix an argument null exception
+            this.RegisterElementForConnectedAnimation("animationKeyContentGrid", CharacterCard.ItemHero);
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

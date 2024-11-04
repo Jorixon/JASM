@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -38,6 +39,7 @@ public sealed partial class ModPaneVM(
     private readonly AsyncLock _loadModLock = new();
     private CancellationToken _cancellationToken = new();
     private DispatcherQueue _dispatcherQueue = null!;
+    public bool IsInitialized { get; private set; }
     public BusySetter BusySetter { get; set; } = null!;
 
 
@@ -73,8 +75,10 @@ public sealed partial class ModPaneVM(
     private async Task ModLoaderLoopAsync()
     {
         // Runs on the UI thread
-        await foreach (var loadModMessage in _channel.Reader.ReadAllAsync(_cancellationToken))
+        await foreach (var loadModMessage in _channel.Reader.ReadAllAsync(CancellationToken.None))
         {
+            if (_cancellationToken.IsCancellationRequested)
+                break;
             using var _ = await LockAsync().ConfigureAwait(false);
             IsReadOnly = true;
             IsEditingModName = false;
@@ -92,7 +96,7 @@ public sealed partial class ModPaneVM(
                 NotifyAllCommands();
                 OnPropertyChanged(nameof(IsModLoaded));
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
             }
             catch (Exception e)
@@ -107,31 +111,44 @@ public sealed partial class ModPaneVM(
         if (modId == _loadedModId && force == false)
             return;
 
-        var modEntry = _skinManagerService.GetModEntryById(modId);
-        if (modEntry == null)
+        var modPaneData = await Task.Run(async () =>
+        {
+            var modEntry = _skinManagerService.GetModEntryById(modId);
+            if (modEntry == null)
+                return null;
+
+            var mod = modEntry.Mod;
+
+            var modSettings =
+                await mod.Settings.TryReadSettingsAsync(useCache: false, cancellationToken: _cancellationToken);
+
+            if (modSettings is null)
+                return null;
+
+            ICollection<KeySwapSection>? keySwaps = null;
+            try
+            {
+                if (mod.KeySwaps is not null)
+                    keySwaps = (await mod.KeySwaps.ReadKeySwapConfiguration(_cancellationToken)).ToArray();
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                _notificationService.ShowNotification($"Failed to load keyswaps for mod {mod.GetDisplayName()}", e.Message, null);
+            }
+
+            return new { modEntry, modSettings, keySwaps };
+        }, _cancellationToken);
+
+        if (modPaneData is null)
             return;
 
-        var mod = modEntry.Mod;
 
-        var modSettings =
-            await mod.Settings.TryReadSettingsAsync(useCache: false, cancellationToken: _cancellationToken);
-
-        if (modSettings is null)
-            return;
-
-        ICollection<KeySwapSection>? keySwaps = null;
-        try
-        {
-            if (mod.KeySwaps is not null)
-                keySwaps = (await mod.KeySwaps.ReadKeySwapConfiguration(_cancellationToken)).ToArray();
-        }
-        catch (Exception e)
-        {
-            _notificationService.ShowNotification($"Failed to load keyswaps for mod {mod.GetDisplayName()}", e.Message, null);
-        }
-
-        _loadedMod = modEntry;
-        ModModel = ModPaneFieldsVm.FromModEntry(modEntry, modSettings, keySwaps ?? []);
+        _loadedMod = modPaneData.modEntry;
+        ModModel = ModPaneFieldsVm.FromModEntry(modPaneData.modEntry, modPaneData.modSettings, modPaneData.keySwaps ?? []);
         ModModel.PropertyChanged += ModModel_PropertyChanged;
         _loadedModId = modId;
         IsReadOnly = false;
@@ -178,6 +195,7 @@ public sealed partial class ModPaneVM(
         _ = _dispatcherQueue.EnqueueAsync(ModLoaderLoopAsync);
         Messenger.RegisterAll(this);
         BusySetter.HardBusyChanged += BusySetter_HardBusyChanged;
+        IsInitialized = true;
         return Task.CompletedTask;
     }
 
@@ -344,7 +362,9 @@ public sealed partial class ModPaneVM(
     {
         await CommandWrapper(async () =>
         {
-            if (!IsModLoaded) return;
+            if (!CanSaveModSettings()) return;
+
+            var existingModSettings = await _loadedMod!.Mod.Settings.ReadSettingsAsync();
 
             var updateRequest = new UpdateSettingsRequest();
 
@@ -367,7 +387,10 @@ public sealed partial class ModPaneVM(
                     result = await _modSettingsService.SaveSettingsAsync(_loadedModId.Value, updateRequest).ConfigureAwait(false);
                 }
 
-                if (!_loadedMod.Mod.Settings.HasMergedIni && !ModModel.KeySwaps.Any() || _loadedMod.Mod.KeySwaps is null || !ModModel.IsKeySwapsChanged)
+                if (!_loadedMod.Mod.Settings.HasMergedIni && !ModModel.KeySwaps.Any()
+                    || _loadedMod.Mod.KeySwaps is null ||
+                    !ModModel.IsKeySwapsChanged ||
+                    existingModSettings.IgnoreMergedIni)
                     return;
 
                 // TODO: Will need to redo keyswap handling at some point doing a quick solution here
@@ -609,6 +632,8 @@ public partial class ModPaneFieldsVm : ObservableObject
                 Type = keySwap.Type,
                 VariationsCount = keySwap.Variants?.ToString() ?? "Unknown"
             });
+
+            KeySwaps.Last().PropertyChanged += (_, e) => { OnPropertyChanged(nameof(KeySwaps)); };
         }
 
         PropertyChanged += (_, e) =>
@@ -666,6 +691,9 @@ public partial class ModPaneFieldsVm : ObservableObject
         if (UnchangedValue is null)
             return false;
 
+        if (UnchangedValue.IgnoreMergedIni)
+            return false;
+
         if (KeySwaps.Count != UnchangedValue.KeySwaps.Count)
             return true;
 
@@ -674,14 +702,15 @@ public partial class ModPaneFieldsVm : ObservableObject
             var oldKeySwap = UnchangedValue.KeySwaps[i];
             var newKeySwap = KeySwaps[i];
 
-            anyChanges |= oldKeySwap.ForwardHotkey != newKeySwap.ForwardHotkey;
-            anyChanges |= oldKeySwap.BackwardHotkey != newKeySwap.BackwardHotkey;
+            anyChanges |= (oldKeySwap.ForwardHotkey ?? "") != (newKeySwap.ForwardHotkey ?? "");
+            anyChanges |= (oldKeySwap.BackwardHotkey ?? "") != (newKeySwap.BackwardHotkey ?? "");
         }
 
         return anyChanges;
     }
 }
 
+[DebuggerDisplay("Section: {_sectionKey} - {_forwardHotkey} - {_backwardHotkey}")]
 public partial class ModPaneFieldsKeySwapVm : ObservableObject
 {
     [ObservableProperty] private string _sectionKey = string.Empty;

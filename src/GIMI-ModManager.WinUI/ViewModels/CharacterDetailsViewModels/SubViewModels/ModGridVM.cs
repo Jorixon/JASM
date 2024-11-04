@@ -97,13 +97,15 @@ public partial class ModGridVM(
     private async Task ModRefreshLoopAsync()
     {
         // Runs on the UI thread
-        await foreach (var loadModMessage in _modRefreshChannel.Reader.ReadAllAsync(_navigationCt))
+        await foreach (var loadModMessage in _modRefreshChannel.Reader.ReadAllAsync(CancellationToken.None))
         {
+            if (_navigationCt.IsCancellationRequested)
+                break;
             try
             {
                 await ReloadAllModsAsync(loadModMessage.MinWaitTime);
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
             }
             catch (Exception e)
@@ -159,7 +161,7 @@ public partial class ModGridVM(
         await Task.Run(async () =>
         {
             var refreshResult = await _skinManagerService
-                .RefreshModsAsync(_context.ShownModObject.InternalName)
+                .RefreshModsAsync(_context.ShownModObject.InternalName, ct: _navigationCt)
                 .ConfigureAwait(false);
 
             await LoadModsAsync().ConfigureAwait(false);
@@ -561,7 +563,8 @@ public partial class ModGridVM(
         }
     }
 
-    // Used by parent view model
+    #region Events
+
     public event EventHandler<ModRowSelectedEventArgs>? OnModsSelected;
 
     // Set single selected from code
@@ -583,6 +586,10 @@ public partial class ModGridVM(
     {
         public int Index { get; } = index;
     }
+
+    #endregion
+
+    // Used by parent view model
 
     public void SetModSorting(string sortColumn, bool isDescending, bool isUiTriggered = false)
     {

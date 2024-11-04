@@ -110,10 +110,6 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
 
     private async Task InitAsync(object parameter, BusySetter.CommandTracker commandTracker)
     {
-#if DEBUG
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-#endif
         CancellationToken = _navigationCancellationTokenSource.Token;
         if (IsReturning)
             return;
@@ -138,12 +134,6 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         await Task.Delay(50, CancellationToken);
         commandTracker.Finish();
         if (IsReturning) return;
-
-#if DEBUG
-        stopwatch.Stop();
-        Log.Logger.Information("Grid loading time {ElapsedMilliseconds} ms",
-            stopwatch.ElapsedMilliseconds);
-#endif
 
         // Init Mod Pane
         await InitModPaneAsync();
@@ -271,21 +261,33 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
             return;
     }
 
-    public void OnNavigatedFrom()
+    public async void OnNavigatedFrom()
     {
         try
         {
-            _navigationCancellationTokenSource.Cancel();
+            await _navigationCancellationTokenSource.CancelAsync();
             ModGridVM.OnModsSelected -= OnModsSelected;
             ModGridVM.OnModsReloaded -= OnModsReloaded;
             ContextMenuVM.ModsMoved -= ContextMenuVM_ModsMoved;
             ContextMenuVM.ModCharactersSkinOverriden -= ContextMenuVM_ModsMoved;
             ModGridVM.DeleteModKeyTriggered -= ModGridVM_DeleteModKeyTriggered;
-            ModGridVM.OnNavigateFrom();
-            ModPaneVM.OnNavigatedFrom();
+
+            try
+            {
+                await Task.Run(() => _navigationCancellationTokenSource.Token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(500)));
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
+
+            if (ModGridVM.IsInitialized)
+                ModGridVM.OnNavigateFrom();
+            if (ModPaneVM.IsInitialized)
+                ModPaneVM.OnNavigatedFrom();
 
 
-            Task.Run(async () =>
+            await Task.Run(async () =>
             {
                 var delay = Task.Delay(TimeSpan.FromSeconds(2), CancellationToken.None);
 

@@ -37,7 +37,7 @@ public interface ISkinManagerService : IDisposable
     /// <summary>
     /// This looks for mods in characters mod folder that are not tracked by the mod manager and adds them to the mod manager.
     /// </summary>
-    public Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null);
+    public Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null, CancellationToken ct = default);
 
     public Task<OneOf<Success, Error<string>[]>> TransferMods(ICharacterModList source, ICharacterModList destination,
         IEnumerable<Guid> modsEntryIds);

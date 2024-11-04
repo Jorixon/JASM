@@ -136,7 +136,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public async Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null)
+    public async Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null, CancellationToken ct = default)
     {
         var modsUntracked = new List<string>();
         var newModsFound = new List<ISkinMod>();
@@ -145,6 +145,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         foreach (var characterModList in _characterModLists)
         {
+            ct.ThrowIfCancellationRequested();
             if (refreshForCharacter is not null &&
                 !characterModList.Character.InternalNameEquals(refreshForCharacter)) continue;
 
