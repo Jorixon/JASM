@@ -125,8 +125,10 @@ public partial class ModUpdateVM : ObservableRecipient
             return;
         }
 
-        _modPageInfo =
-            await _gameBananaCoreService.GetModProfileAsync(new GbModId(_notification.ModsRetrievedResult.ModId), _ct);
+        using (var _ = IgnorePollyLimiterScope.Ignore())
+        {
+            _modPageInfo = await _gameBananaCoreService.GetModProfileAsync(new GbModId(_notification.ModsRetrievedResult.ModId), _ct);
+        }
 
         if (_modPageInfo is null)
         {

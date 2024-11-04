@@ -197,15 +197,21 @@ public sealed class ApiGameBananaClient(
         {
             await Task.Delay(200, cancellationToken).ConfigureAwait(false);
 
-            // Use anonymous state object to avoid closure allocation
-            var state = new { url = downloadsApiUrl, httpClient = _httpClient };
+            if (IgnorePollyLimiterScope.IsIgnored)
+            {
+                response = await _httpClient.GetAsync(downloadsApiUrl, cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                // Use anonymous state object to avoid closure allocation
+                var state = new { url = downloadsApiUrl, httpClient = _httpClient };
 
-
-            response = await _resiliencePipeline.ExecuteAsync(
-                    async (context, token) => await context.httpClient.GetAsync(context.url, token)
-                        .ConfigureAwait(false),
-                    state, cancellationToken)
-                .ConfigureAwait(false);
+                response = await _resiliencePipeline.ExecuteAsync(
+                        async (context, token) => await context.httpClient.GetAsync(context.url, token)
+                            .ConfigureAwait(false),
+                        state, cancellationToken)
+                    .ConfigureAwait(false);
+            }
         }
         catch (RateLimiterRejectedException e)
         {

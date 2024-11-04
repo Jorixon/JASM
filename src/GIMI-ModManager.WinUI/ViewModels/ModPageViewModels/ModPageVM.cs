@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
-using GIMI_ModManager.Core.Entities;
-using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
@@ -76,6 +74,10 @@ public partial class ModPageVM : ObservableRecipient
             await InternalInitialize();
             Initializing = "false";
         }
+        catch (OperationCanceledException)
+        {
+            _window.Close();
+        }
         catch (Exception e)
         {
             await LogErrorAndClose(e);
@@ -102,7 +104,10 @@ public partial class ModPageVM : ObservableRecipient
             return;
         }
 
-        _modPageInfo = await _gameBananaCoreService.GetModProfileAsync(_gbModId, _ct);
+        using (var _ = IgnorePollyLimiterScope.Ignore())
+        {
+            _modPageInfo = await _gameBananaCoreService.GetModProfileAsync(_gbModId, _ct);
+        }
 
         if (_modPageInfo is null)
         {
