@@ -8,7 +8,6 @@ using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.GameBanana.Models;
-using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.ModPageViewModels;
@@ -75,6 +74,10 @@ public partial class ModUpdateVM : ObservableRecipient
         {
             await InternalInitialize();
             Initializing = "false";
+        }
+        catch (OperationCanceledException e)
+        {
+            _window.Close();
         }
         catch (Exception e)
         {
