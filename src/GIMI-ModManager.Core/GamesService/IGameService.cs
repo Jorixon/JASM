@@ -62,7 +62,7 @@ public interface IGameService
     public List<T> GetAllModdableObjectsAsCategory<T>(GetOnly getOnlyStatus = GetOnly.Enabled)
         where T : IModdableObject;
 
-    public IModdableObject? GetModdableObjectByIdentifier(InternalName internalName,
+    public IModdableObject? GetModdableObjectByIdentifier(InternalName? internalName,
         GetOnly getOnlyStatus = GetOnly.Enabled);
 
     public bool IsMultiMod(IModdableObject moddableObject);

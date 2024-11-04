@@ -136,7 +136,7 @@ public sealed class SkinManagerService : ISkinManagerService
         }
     }
 
-    public async Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null)
+    public async Task<RefreshResult> RefreshModsAsync(string? refreshForCharacter = null, CancellationToken ct = default)
     {
         var modsUntracked = new List<string>();
         var newModsFound = new List<ISkinMod>();
@@ -145,6 +145,7 @@ public sealed class SkinManagerService : ISkinManagerService
 
         foreach (var characterModList in _characterModLists)
         {
+            ct.ThrowIfCancellationRequested();
             if (refreshForCharacter is not null &&
                 !characterModList.Character.InternalNameEquals(refreshForCharacter)) continue;
 
@@ -594,16 +595,10 @@ public sealed class SkinManagerService : ISkinManagerService
         return characterModList;
     }
 
-    public ICharacterModList GetCharacterModList(IModdableObject character)
-    {
-        return GetCharacterModList(character.InternalName);
-    }
+    public ICharacterModList GetCharacterModList(IModdableObject character) => GetCharacterModList(character.InternalName);
 
 
-    public ICharacterModList? GetCharacterModListOrDefault(string internalName)
-    {
-        return _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
-    }
+    public ICharacterModList? GetCharacterModListOrDefault(string internalName) => _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
 
     public async Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)

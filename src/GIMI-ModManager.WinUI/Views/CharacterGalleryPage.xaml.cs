@@ -73,7 +73,8 @@ public sealed partial class CharacterGalleryPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        this.RegisterElementForConnectedAnimation("animationKeyContentGrid", itemHero);
+        if (itemHero != null) // Trying to fix an argument null exception
+            this.RegisterElementForConnectedAnimation("animationKeyContentGrid", itemHero);
     }
 
     private void ToggleModButton_OnPointerEntered(object sender, PointerRoutedEventArgs e) =>

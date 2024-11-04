@@ -280,7 +280,7 @@
                             FontFamily="{StaticResource GenshinFont}"
                             IsTextSelectionEnabled="True"
                             TextWrapping="WrapWholeWords"
-                            Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.SelectedInGameSkin.DisplayName, Mode=OneWay, FallbackValue=Default}" />
                         <Button
                             Margin="0,16,0,0"
                             HorizontalAlignment="Center"
@@ -432,12 +432,11 @@
                                             <DataTemplate x:DataType="models:ModModel">
                                                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <CheckBox
-                                                        Command="{x:Bind ToggleModCommand}"
-                                                        IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
-                                                        IsTabStop="False"
                                                         Width="Auto"
                                                         MinWidth="0"
-                                                        />
+                                                        Command="{x:Bind ToggleModCommand}"
+                                                        IsChecked="{x:Bind IsEnabled, Mode=OneWay}"
+                                                        IsTabStop="False" />
                                                 </Grid>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
@@ -446,11 +445,11 @@
 
                                     <controls:DataGridTemplateColumn
                                         Width="SizeToCells"
+                                        MinWidth="0"
                                         CanUserSort="False"
                                         Header=""
                                         IsReadOnly="True"
-                                        Tag="NotificationColumn"
-                                        MinWidth="0">
+                                        Tag="NotificationColumn">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate x:DataType="models:ModModel">
 

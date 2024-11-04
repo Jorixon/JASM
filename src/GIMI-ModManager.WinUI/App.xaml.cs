@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Threading.RateLimiting;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
@@ -7,14 +8,17 @@ using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.Core.Services.ModPresetService;
 using GIMI_ModManager.WinUI.Activation;
+using GIMI_ModManager.WinUI.Configuration;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Models.Options;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.AppManagement.Updating;
+using GIMI_ModManager.WinUI.Services.ModExport;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.Views;
@@ -22,14 +26,18 @@ using GIMI_ModManager.WinUI.Views.CharacterManager;
 using GIMI_ModManager.WinUI.Views.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Polly;
+using Polly.Contrib.WaitAndRetry;
+using Polly.Extensions.Http;
 using Polly.RateLimiting;
 using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
+using CharacterDetailsPage = GIMI_ModManager.WinUI.Views.CharacterDetailsPage;
 using CreateCommandViewModel = GIMI_ModManager.WinUI.ViewModels.SettingsViewModels.CreateCommandViewModel;
 using GameBananaService = GIMI_ModManager.WinUI.Services.ModHandling.GameBananaService;
 using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
@@ -132,6 +140,7 @@ public partial class App : Application
 
                 services.AddSingleton<LifeCycleService>();
                 services.AddSingleton<BusyService>();
+                services.AddSingleton<JsonExporterService>();
 
                 // Core Services
                 services.AddSingleton<IFileService, FileService>();
@@ -150,6 +159,7 @@ public partial class App : Application
                 services.AddSingleton<CommandService>();
                 services.AddSingleton<CommandHandlerService>();
 
+                services.AddTransient<HttpLoggerHandler>();
                 services.AddSingleton<GameBananaService>();
 
                 // Even though I've followed the docs, I keep getting "Exception thrown: 'System.IO.IOException' in System.Net.Sockets.dll"
@@ -159,12 +169,13 @@ public partial class App : Application
                 services.AddHttpClient<IApiGameBananaClient, ApiGameBananaClient>(client =>
                     {
                         client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager-Update-Checker");
+                        client.DefaultRequestHeaders.Add("Jasm-Version", $"{Assembly.GetExecutingAssembly().GetName().Version!}");
                         client.DefaultRequestHeaders.Add("Accept", "application/json");
                     })
                     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
                     {
                         PooledConnectionLifetime = TimeSpan.FromMinutes(10)
-                    });
+                    }).AddHttpMessageHandler<HttpLoggerHandler>();
 
                 // I'm preeeetty sure this is not correctly set up, not used to polly 8.x.x
                 // But it does rate limit, so I guess it's fine for now
@@ -205,6 +216,19 @@ public partial class App : Application
                 services.AddSingleton<ModUpdateAvailableChecker>();
                 services.AddSingleton<ModInstallerService>();
 
+
+                services.AddHttpClient(Options.DefaultName, (client) =>
+                    {
+                        client.DefaultRequestHeaders.Add("User-Agent", "JASM-Just_Another_Skin_Manager");
+                        client.DefaultRequestHeaders.Add("Jasm-Version", $"{Assembly.GetExecutingAssembly().GetName().Version!}");
+                        client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    })
+                    .AddHttpMessageHandler<HttpLoggerHandler>()
+                    .AddPolicyHandler(
+                        HttpPolicyExtensions.HandleTransientHttpError()
+                            .WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500), 3, null, true))
+                    );
+
                 // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
                 services.AddTransient<SettingsPage>();
@@ -244,6 +268,10 @@ public partial class App : Application
                 services.AddTransient<CommandProcessViewerViewModel>();
                 services.AddTransient<CreateCommandView>();
                 services.AddTransient<CreateCommandViewModel>();
+                services.AddTransient<ViewModels.CharacterDetailsViewModels.CharacterDetailsViewModel>();
+                services.AddTransient<ModPaneVM>();
+                services.AddTransient<ModGridVM>();
+                services.AddTransient<ContextMenuVM>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

@@ -309,7 +309,7 @@ public partial class ModsOverviewVM(
             return;
         }
 
-        App.GetService<INavigationService>().NavigateTo(typeof(CharacterDetailsViewModel).FullName!, character);
+        App.GetService<INavigationService>().NavigateToCharacterDetails(character.InternalName);
     }
 }
 

@@ -40,6 +40,12 @@ public interface ICharacterModList : IDisposable
     /// </summary>
     public void DisableMod(Guid modId);
 
+    /// <summary>
+    /// Toggle a mod. This enables the mod if it is disabled and disables the mod if it is enabled.
+    /// </summary>
+    /// <returns>True if mod is now enabled, False if mod is now disabled</returns>
+    public bool ToggleMod(Guid modId);
+
     public bool IsModEnabled(ISkinMod mod);
 
     public void RenameMod(ISkinMod mod, string newName);

@@ -3,6 +3,9 @@ using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
+using GIMI_ModManager.WinUI.Models.Settings;
+using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
@@ -13,6 +16,7 @@ namespace GIMI_ModManager.WinUI.Services;
 // https://github.com/microsoft/TemplateStudio/blob/main/docs/WinUI/navigation.md
 public class NavigationService : INavigationService
 {
+    private readonly ILocalSettingsService _localSettingsService;
     private readonly IPageService _pageService;
     private object? _lastParameterUsed;
     private Frame? _frame;
@@ -47,9 +51,10 @@ public class NavigationService : INavigationService
     [MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
     public bool CanGoForward => Frame != null && Frame.CanGoForward;
 
-    public NavigationService(IPageService pageService)
+    public NavigationService(IPageService pageService, ILocalSettingsService localSettingsService)
     {
         _pageService = pageService;
+        _localSettingsService = localSettingsService;
     }
 
     private void RegisterFrameEvents()
@@ -67,6 +72,7 @@ public class NavigationService : INavigationService
             _frame.Navigated -= OnNavigated;
         }
     }
+
 
     public bool GoForward()
     {
@@ -137,6 +143,23 @@ public class NavigationService : INavigationService
         return false;
     }
 
+
+    public bool NavigateToCharacterDetails(string internalName, bool clearNavigation = false)
+    {
+        var settings = _localSettingsService.ReadSetting<CharacterDetailsSettings>(CharacterDetailsSettings.Key, SettingScope.App);
+
+        if (settings?.GalleryView == true)
+        {
+            return NavigateTo(typeof(CharacterGalleryViewModel).FullName!, internalName, clearNavigation: clearNavigation);
+        }
+
+        var pageKey = settings is null || !settings.LegacyCharacterDetails
+            ? typeof(ViewModels.CharacterDetailsViewModels.CharacterDetailsViewModel).FullName
+            : typeof(CharacterDetailsViewModel).FullName;
+
+        return NavigateTo(pageKey!, internalName, clearNavigation);
+    }
+
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
         if (sender is Frame frame)
@@ -154,7 +177,7 @@ public class NavigationService : INavigationService
                 for (int i = 0; i < maxBackStackEntries - 1; i++)
                 {
                     frame.BackStack.RemoveAt(0);
-                    GC.Collect();
+                    //GC.Collect();
                 }
             }
 
@@ -172,8 +195,11 @@ public class NavigationService : INavigationService
         }
     }
 
-    public void SetListDataItemForNextConnectedAnimation(object item) =>
-        Frame.SetListDataItemForNextConnectedAnimation(item);
+    public void SetListDataItemForNextConnectedAnimation(object item)
+    {
+        if (item != null!) // Trying to fix an argument null exception
+            Frame.SetListDataItemForNextConnectedAnimation(item);
+    }
 
     public void ClearBackStack(int amountToClear = -1, bool clearFromMostRecent = true)
     {

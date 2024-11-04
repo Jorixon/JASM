@@ -5,6 +5,8 @@ namespace GIMI_ModManager.WinUI.ViewModels;
 
 public partial class DebugViewModel() : ObservableRecipient, INavigationAware
 {
+    public static bool UseNewModel = true;
+
     public void OnNavigatedTo(object parameter)
     {
     }

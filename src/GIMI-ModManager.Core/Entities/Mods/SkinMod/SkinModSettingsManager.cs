@@ -215,7 +215,13 @@ public class SkinModSettingsManager
         if (imagePath is null)
             return false;
 
-        return imagePath.LocalPath.StartsWith(ImageName, StringComparison.OrdinalIgnoreCase);
+        if (!imagePath.IsFile)
+            return false;
+
+        var fsPath = imagePath.LocalPath;
+
+        return Path.GetFileName(fsPath).StartsWith(ImageName, StringComparison.OrdinalIgnoreCase)
+               && SkinModHelpers.IsInModFolder(_skinMod, imagePath);
     }
 
     private static void DeleteOldImage(Uri? oldImageUri)

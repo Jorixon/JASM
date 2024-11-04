@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GIMI_ModManager.WinUI.Views.CharacterDetailsPages.ModPane"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:GIMI_ModManager.WinUI.Views.Controls"
+    xmlns:controls1="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GIMI_ModManager.WinUI.Views.CharacterDetailsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:subViewModels="using:GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
+    IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <xaml:StringToUri x:Name="StringToUri" />
+    </UserControl.Resources>
+
+    <Grid
+        x:Name="ModDetailsPane"
+        Grid.Column="1"
+        Margin="0,0,0,8"
+        Padding="5,5,5,5"
+        Background="{ThemeResource ControlFillColorDefaultBrush}"
+        CornerRadius="10">
+
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
+
+        <Grid
+            Grid.Row="0"
+            MinWidth="200"
+            MinHeight="200"
+            AllowDrop="True"
+            Background="{ThemeResource ControlFillColorTertiaryBrush}"
+            CornerRadius="10"
+            DragEnter="PaneImage_OnDragEnter"
+            DragOver="PaneImage_OnDragEnter"
+            Drop="PaneImage_OnDrop">
+            <!--
+            -->
+            <!--<Image Stretch="Uniform">
+                <Image.Source>
+                    <BitmapImage CreateOptions="IgnoreImageCache" UriSource="{x:Bind ViewModel.ModModel.ImageUri, Mode=OneWay}" />
+                </Image.Source>
+            </Image>
+            <Button
+                Margin="0,20,20,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}">
+            -->
+            <!--
+                Command="{x:Bind ViewModel.ModPaneVM.SetImageUriCommand}"
+            -->
+            <!--
+                <FontIcon Glyph="&#xE70F;" />
+            </Button>-->
+
+            <controls:CustomImage
+                x:Name="ModDetailsPaneImage"
+                ButtonHorizontalAlignment="Right"
+                ButtonVerticalAlignment="Top"
+                ClearButtonCommand="{x:Bind ViewModel.ClearImageCommand}"
+                CopyButtonCommand="{x:Bind ViewModel.CopyImageToClipboardCommand}"
+                EditButtonCommand="{x:Bind ViewModel.PickImageUriCommand}"
+                ImageUri="{x:Bind ViewModel.ModModel.ImageUri, Mode=OneWay}"
+                IsContextMenuEnabled="True"
+                PasteButtonCommand="{x:Bind ViewModel.PasteImageFromClipboardCommand}" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:EditableTextBlock
+                x:Name="ModNameTextBlock"
+                Margin="0,8"
+                HorizontalAlignment="Stretch"
+                IsEditMode="{x:Bind ViewModel.IsEditingModName, Mode=OneWay}"
+                Style="{ThemeResource SubtitleTextBlockStyle}"
+                TextAlignment="Center"
+                ToolTipService.ToolTip="Change mod display name"
+                Text="{x:Bind ViewModel.ModModel.ModDisplayName, Mode=TwoWay}" />
+
+
+
+            <SplitButton
+                Grid.Column="1"
+                Command="{x:Bind ViewModel.ToggleEditingModNameCommand}"
+                IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}">
+                <FontIcon Glyph="&#xE70F;" />
+                <SplitButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.SetModIniFileCommand}"
+                            ToolTipService.ToolTip="Set the mod .ini file to be read by JASM"
+                            Text="Set mod .ini file" />
+                        <MenuFlyoutItem
+                            Command="{x:Bind ViewModel.ClearSetModIniFileCommand}"
+                            Icon="Clear"
+                            ToolTipService.ToolTip="JASM will not look for merged.ini/Script.ini file and ignore keyswaps for this mod"
+                            Text="Ignore .ini file for this mod" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+
+            </SplitButton>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                VerticalAlignment="Center"
+                Header="Mod Url:"
+                IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}"
+                Text="{x:Bind ViewModel.ModModel.ModUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <HyperlinkButton
+                Grid.Column="1"
+                VerticalAlignment="Bottom"
+                IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}"
+                NavigateUri="{x:Bind ViewModel.ModModel.ModUrl, Mode=OneWay, Converter={StaticResource StringToUri}}">
+                <FontIcon FontSize="18" Glyph="&#xE8A7;" />
+            </HyperlinkButton>
+
+        </Grid>
+
+
+
+        <ScrollViewer Grid.Row="3">
+
+            <controls1:SwitchPresenter Visibility="{x:Bind ViewModel.IsModLoaded, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Value="{x:Bind ViewModel.ModModel.IsKeySwapManagementEnabled, Mode=OneWay}">
+                <controls1:Case Value="true">
+                    <StackPanel>
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.ModModel.KeySwaps, Mode=OneWay}">
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="subViewModels:ModPaneFieldsKeySwapVm">
+                                    <Grid Margin="0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox
+                                            MinWidth="100"
+                                            HorizontalAlignment="Left"
+                                            Header="Forward Key"
+                                            Text="{x:Bind ForwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock HorizontalAlignment="Center" Text="{x:Bind SectionKey}" />
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,4,0" Text="Variations: " />
+                                                <TextBlock Text="{x:Bind VariationsCount, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBox
+                                            Grid.Column="2"
+                                            MinWidth="100"
+                                            HorizontalAlignment="Right"
+                                            Header="Backward Key"
+                                            Text="{x:Bind BackwardHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+
+                    </StackPanel>
+                </controls1:Case>
+
+                <controls1:Case Value="false">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        TextWrapping="WrapWholeWords"
+                        Text="Key swap management is disabled for this mod" />
+
+                </controls1:Case>
+            </controls1:SwitchPresenter>
+        </ScrollViewer>
+
+
+        <Grid Grid.Row="4" Padding="0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Background="{ThemeResource SystemFillColorAttentionBrush}"
+                Command="{x:Bind ViewModel.SaveModSettingsCommand}"
+                IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Margin="0,0,4,0" Glyph="&#xE74E;" />
+                        <TextBlock Text="Save" />
+                    </StackPanel>
+                </Button.Content>
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="S" Modifiers="Control" />
+                </Button.KeyboardAccelerators>
+
+            </Button>
+
+            <Grid Grid.Column="1" Visibility="{x:Bind ViewModel.ModModel.IsEnabled, Mode=OneWay}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="1"
+                    Background="{ThemeResource AccentFillColorSelectedTextBackgroundBrush}"
+                    CornerRadius="10">
+                    <TextBlock
+                        Padding="4,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="Mod Enabled" />
+                </Border>
+
+            </Grid>
+
+
+            <Button
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                Command="{x:Bind ViewModel.OpenModFolderCommand}"
+                Content="Open Mod Folder..."
+                IsEnabled="{x:Bind ViewModel.IsNotReadOnly, Mode=OneWay}" />
+        </Grid>
+    </Grid>
+</UserControl>

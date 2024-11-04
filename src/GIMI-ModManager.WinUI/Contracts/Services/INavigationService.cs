@@ -15,6 +15,7 @@ public interface INavigationService
     bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false,
         NavigationTransitionInfo? transitionInfo = null);
 
+    bool NavigateToCharacterDetails(string internalName, bool clearNavigation = false);
     bool GoForward();
 
     bool GoBack();

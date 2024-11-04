@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.Core.Contracts.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.FileModels;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
 
@@ -31,7 +32,8 @@ public record ModSettings
         NewValue<string?>? characterSkinOverride = null,
         NewValue<DateTime?>? newLastChecked = null, NewValue<Uri?>? mergedIniPath = null,
         NewValue<bool>? ignoreMergedIni = null,
-        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null
+        NewValue<string?>? author = null, NewValue<Uri?>? modUrl = null, NewValue<Uri?>? imagePath = null,
+        NewValue<string?>? description = null
     )
     {
         return new ModSettings(
@@ -42,7 +44,7 @@ public record ModSettings
             modUrl ?? ModUrl,
             imagePath ?? ImagePath,
             characterSkinOverride ?? CharacterSkinOverride,
-            Description,
+            description ?? Description,
             DateAdded,
             newLastChecked ?? LastChecked,
             mergedIniPath ?? MergedIniPath,
@@ -156,14 +158,25 @@ public record ModSettings
 
 public readonly struct NewValue<T>
 {
-    private NewValue(T value)
+    private NewValue(T valueToSet)
     {
-        Value = value;
+        ValueToSet = valueToSet;
     }
 
-    public T Value { get; }
+    public T ValueToSet { get; }
 
-    public static implicit operator T(NewValue<T> newValue) => newValue.Value;
+    public static implicit operator T(NewValue<T> newValue) => newValue.ValueToSet;
 
     public static NewValue<T> Set(T value) => new(value);
+}
+
+public static class NewValueExtensions
+{
+    public static NewValue<string?>? EmptyStringToNull([NotNullIfNotNull(nameof(newValue))] this NewValue<string?>? newValue)
+    {
+        if (newValue is null)
+            return null;
+
+        return string.IsNullOrWhiteSpace(newValue.Value) ? NewValue<string?>.Set(null) : newValue;
+    }
 }

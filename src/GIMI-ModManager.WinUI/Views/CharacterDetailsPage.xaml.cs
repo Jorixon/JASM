@@ -107,7 +107,8 @@ public sealed partial class CharacterDetailsPage : Page
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        this.RegisterElementForConnectedAnimation("animationKeyContentGrid", itemHero);
+        if (itemHero != null) // Trying to fix an argument null exception
+            this.RegisterElementForConnectedAnimation("animationKeyContentGrid", itemHero);
         ViewModel.ModListVM.BackendMods.CollectionChanged += (sender, args) => CheckIfAnyMods();
         CheckIfAnyMods();
     }

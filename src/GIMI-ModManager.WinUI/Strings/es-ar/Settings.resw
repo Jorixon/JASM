@@ -161,7 +161,7 @@ JASM soporta parcialmente WUWA y ZZZ</value>
   </data>
   <data name="ModUpdateCheckerDescription.Text" xml:space="preserve">
     <value>Mod Update Checker verifica la disponibilidad de actualizaciones de mods al inicio y periódicamente en segundo plano.
-Al activarse, verifica cada 30 minutos, pero solo los mods que no se han verificado en al menos 15 minutos.
+Al activarse, verifica cada 240 minutos, pero solo los mods que no se han verificado en al menos 60 minutos.
 La verificación manual de actualizaciones siempre consulta directamente a GameBanana.</value>
   </data>
   <data name="ModUpdateCheckerNextText.Text" xml:space="preserve">

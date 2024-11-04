@@ -1,11 +1,13 @@
-﻿namespace GIMI_ModManager.WinUI.Contracts.Services;
+﻿using GIMI_ModManager.WinUI.Services;
+
+namespace GIMI_ModManager.WinUI.Contracts.Services;
 
 public interface ILocalSettingsService
 {
     /// <summary>
     /// JASM/ folder
     /// </summary>
-    public string SettingsLocation { get; }
+    public string GameScopedSettingsLocation { get; }
 
     /// <summary>
     /// JASM/ApplicationData_Genshin
@@ -14,11 +16,13 @@ public interface ILocalSettingsService
 
     public void SetApplicationDataFolderName(string folderName);
 
-    Task<T?> ReadSettingAsync<T>(string key);
+    public Task<T?> ReadSettingAsync<T>(string key, SettingScope settingScope = SettingScope.Game);
 
-    Task<T> ReadOrCreateSettingAsync<T>(string key) where T : new();
+    public Task<T> ReadOrCreateSettingAsync<T>(string key, SettingScope settingScope = SettingScope.Game)
+        where T : new();
 
-    Task SaveSettingAsync<T>(string key, T value) where T : notnull;
+    public Task SaveSettingAsync<T>(string key, T value, SettingScope settingScope = SettingScope.Game)
+        where T : notnull;
 
-    T? ReadSetting<T>(string key);
+    public T? ReadSetting<T>(string key, SettingScope settingScope = SettingScope.Game);
 }

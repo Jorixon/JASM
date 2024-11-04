@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -27,11 +28,14 @@ public class CharacterSkinService
     }
 
     public async IAsyncEnumerable<ISkinMod> FilterModsToSkinAsync(ICharacterSkin skin,
-        IEnumerable<ISkinMod> mods, bool ignoreUndetectableMods = false)
+        IEnumerable<ISkinMod> mods, bool useSettingsCache = false, bool ignoreUndetectableMods = false,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         foreach (var mod in mods)
         {
-            var modSettings = await mod.Settings.TryReadSettingsAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var modSettings = await mod.Settings.TryReadSettingsAsync(useCache: useSettingsCache, cancellationToken: cancellationToken);
 
             if (modSettings is null)
             {
@@ -61,9 +65,18 @@ public class CharacterSkinService
                 continue;
             }
 
+            ICharacterSkin? detectedSkin;
+            try
+            {
+                detectedSkin =
+                    _modCrawlerService.GetFirstSubSkinRecursive(mod.FullPath, skin.Character.InternalName,
+                        cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                yield break;
+            }
 
-            var detectedSkin =
-                _modCrawlerService.GetFirstSubSkinRecursive(mod.FullPath, skin.Character.InternalName);
 
             // If we can detect the skin, and the mod has no override skin, check if the detected skin matches the shown skin.
             if (modSkin is null && detectedSkin is not null && detectedSkin.InternalNameEquals(skin.InternalName))
@@ -90,14 +103,20 @@ public class CharacterSkinService
             yield return skinMod;
     }
 
-    public async IAsyncEnumerable<CharacterSkinEntry> GetCharacterSkinEntriesForSkinAsync(ICharacterSkin skin,
-        bool ignoreUndetectableMods = false)
+    public async IAsyncEnumerable<CharacterSkinEntry> GetCharacterSkinEntriesForSkinAsync(ICharacterSkin skin, bool useSettingsCache = false,
+        bool ignoreUndetectableMods = false, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var modList = _skinManagerService.GetCharacterModList(skin.Character);
 
         var mods = modList.Mods.ToArray();
-        await foreach (var skinMod in FilterModsToSkinAsync(skin, mods.Select(ske => ske.Mod), ignoreUndetectableMods))
+        await foreach (var skinMod in FilterModsToSkinAsync(skin, mods.Select(ske => ske.Mod),
+                           ignoreUndetectableMods: ignoreUndetectableMods, useSettingsCache: useSettingsCache,
+                           cancellationToken: cancellationToken).ConfigureAwait(false))
+        {
+
             yield return mods.First(m => m.Id == skinMod.Id);
+        }
+
     }
 
 

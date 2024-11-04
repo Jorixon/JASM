@@ -1,7 +1,8 @@
+using System.Text.Json;
+using Windows.Storage.Pickers;
 using GIMI_ModManager.Core.Services.CommandService;
-using GIMI_ModManager.Core.Services.CommandService.Models;
 using GIMI_ModManager.WinUI.Services.AppManagement;
-using GIMI_ModManager.WinUI.Views.Settings;
+using GIMI_ModManager.WinUI.Services.ModExport;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -13,6 +14,8 @@ public sealed partial class DebugPage : Page
 
     public IWindowManagerService WindowManagerService { get; } = App.GetService<IWindowManagerService>();
 
+    public JsonExporterService JsonExporterService { get; } = App.GetService<JsonExporterService>();
+
     public DebugPage()
     {
         InitializeComponent();
@@ -21,61 +24,29 @@ public sealed partial class DebugPage : Page
 
     private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        var execOptions = new CommandExecutionOptions()
+        var saveFilePicker = new FileSavePicker
         {
-            UseShellExecute = true,
-            RunAsAdmin = true,
-            Command = "E:\\Genshin Impact\\Genshin Impact game\\GenshinImpact.exe"
+            SuggestedFileName = "ModManagerExport.json",
+            FileTypeChoices = { { "JSON", [".json"] } },
+            SettingsIdentifier = "JSON_MOD_EXPORT"
         };
 
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+        WinRT.Interop.InitializeWithWindow.Initialize(saveFilePicker, hwnd);
 
-        var command = CommandService.CreateCommand(new CommandDefinition()
+        var exportInfo = await JsonExporterService.CreateExportJsonAsync();
+
+        var json = JsonSerializer.Serialize(exportInfo, new JsonSerializerOptions()
         {
-            CommandDisplayName = "test",
-            KillOnMainAppExit = false,
-            ExecutionOptions = execOptions
+            WriteIndented = true
         });
 
-        command.Start();
+        var file = await saveFilePicker.PickSaveFileAsync();
 
-        await command.WaitForExitAsync().ConfigureAwait(false);
-    }
+        if (file is null) return;
 
-    private async void ButtonBase_OnClickOpenDialog(object sender, RoutedEventArgs e)
-    {
-        var window = App.MainWindow;
+        Windows.Storage.CachedFileManager.DeferUpdates(file);
 
-        var execOptions = new CommandExecutionOptions()
-        {
-            CreateWindow = true,
-            Command = "python",
-            Arguments = "-u F:\\test.py"
-        };
-
-        var command = CommandService.CreateCommand(new CommandDefinition()
-        {
-            CommandDisplayName = "test",
-            KillOnMainAppExit = true,
-            ExecutionOptions = execOptions
-        });
-
-
-        command.Start();
-        await command.WaitForExitAsync().ConfigureAwait(false);
-
-
-        //var page = new CommandProcessViewer(command);
-
-
-        //WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
-    }
-
-    private void CreateCommand_OnClick(object sender, RoutedEventArgs e)
-    {
-        var window = App.MainWindow;
-
-        var page = new CreateCommandView();
-
-        WindowManagerService.ShowFullScreenDialogAsync(page, XamlRoot, window);
+        await Windows.Storage.FileIO.WriteTextAsync(file, json);
     }
 }

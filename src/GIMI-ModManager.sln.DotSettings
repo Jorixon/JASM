@@ -6,4 +6,5 @@
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/SilentCleanupProfile/@EntryValue">Jasm</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CommonFormatter/ENFORCE_LINE_ENDING_STYLE/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=GIMI/@EntryIndexedValue">GIMI</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=JASM/@EntryIndexedValue">JASM</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=ZZZ/@EntryIndexedValue">ZZZ</s:String></wpf:ResourceDictionary>

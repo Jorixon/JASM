@@ -714,11 +714,11 @@ public partial class CharacterDetailsViewModel : ObservableRecipient, INavigatio
     private async Task GoToGalleryScreen()
     {
         var settings = await _localSettingsService.ReadOrCreateSettingAsync<CharacterDetailsSettings>(
-            CharacterDetailsSettings.Key);
+            CharacterDetailsSettings.Key, SettingScope.App);
 
         settings.GalleryView = true;
 
-        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings);
+        await _localSettingsService.SaveSettingAsync(CharacterDetailsSettings.Key, settings, SettingScope.App);
 
         _navigationService.NavigateTo(typeof(CharacterGalleryViewModel).FullName!, ShownCharacter.InternalName);
         _navigationService.ClearBackStack(1);

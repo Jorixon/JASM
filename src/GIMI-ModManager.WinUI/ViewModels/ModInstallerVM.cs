@@ -1019,7 +1019,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
 
         if (detectedSkin is not null && !detectedSkin.InternalNameEquals(_inGameSkin.InternalName))
         {
-            await _modSettingsService.SetCharacterSkinOverride(installedMod.Id, _inGameSkin.InternalName)
+            await _modSettingsService.SetCharacterSkinOverrideLegacy(installedMod.Id, _inGameSkin.InternalName)
                 .ConfigureAwait(false);
         }
 

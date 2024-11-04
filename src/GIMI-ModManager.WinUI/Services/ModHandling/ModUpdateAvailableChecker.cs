@@ -25,7 +25,8 @@ public sealed class ModUpdateAvailableChecker
     private CancellationTokenSource? _stoppingCancellationTokenSource;
     private CancellationTokenSource? _producerWaitingCancellationTokenSource;
 
-    private readonly TimeSpan _waitTime = TimeSpan.FromMinutes(30);
+    private readonly TimeSpan _waitTime = TimeSpan.FromHours(2);
+    private readonly TimeSpan _minWaitTimePerMod = TimeSpan.FromMinutes(60);
 
     private readonly BlockingCollection<ModCheckRequest>
         _modCheckRequests = new(new ConcurrentQueue<ModCheckRequest>());
@@ -261,7 +262,7 @@ public sealed class ModUpdateAvailableChecker
         }
 
         if (skinModSettings.LastChecked is not null && !ignoreLastCheckedTime &&
-            skinModSettings.LastChecked > DateTime.Now.Subtract(TimeSpan.FromMinutes(15)))
+            skinModSettings.LastChecked > DateTime.Now.Subtract(_minWaitTimePerMod))
         {
             _logger.Verbose("Skipping update check for {ModName}, last update check was {lastUpdate}",
                 skinEntry.Mod.FullPath, skinModSettings.LastChecked);
