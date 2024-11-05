@@ -159,6 +159,7 @@ public partial class CharacterDetailsViewModel : ObservableObject, INavigationAw
         // Finished initializing
         IsNavigationFinished = true;
         OnInitializingFinished?.Invoke(this, EventArgs.Empty);
+        NotifyCommands();
     }
 
     private void AutoSelectFirstMod()

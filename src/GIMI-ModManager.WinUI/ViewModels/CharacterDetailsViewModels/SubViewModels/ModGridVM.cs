@@ -72,6 +72,7 @@ public partial class ModGridVM(
     public List<CharacterSkinEntry> GetModsBackend() => [.. _modsBackend];
     private Dictionary<Guid, ModPreset[]> _modToPresetMapping = [];
     private readonly List<ModRowVM> _gridModsBackend = [];
+    public List<ModRowVM> GetGridModsBackend() => [.. _gridModsBackend];
     public ObservableCollection<ModRowVM> GridMods { get; } = [];
     public ObservableCollection<ModRowVM> SelectedMods { get; } = [];
 
