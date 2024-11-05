@@ -838,6 +838,14 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
         return dialog.ShowDialogAsync();
     }
 
+
+    [RelayCommand]
+    private Task ShowDisableAllModsDialogAsync()
+    {
+        var dialog = new DisableAllModsDialog();
+        return dialog.ShowDialogAsync();
+    }
+
     public void OnNavigatedFrom()
     {
     }
