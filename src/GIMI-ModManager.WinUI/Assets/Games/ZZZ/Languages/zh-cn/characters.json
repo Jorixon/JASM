@@ -408,7 +408,7 @@
       "Caesar",
       "King"
     ],
-    "ReleaseDate": "2025-11-28T00:00:00",
+    "ReleaseDate": "2024-10-25T00:00:00",
     "Image": "Caesar.webp",
     "Rarity": 5,
     "Element": "Physical",
@@ -426,7 +426,7 @@
       "Burnice",
       "White"
     ],
-    "ReleaseDate": "2025-11-28T00:00:00",
+    "ReleaseDate": "2024-10-25T00:00:00",
     "Image": "Burnice.webp",
     "Rarity": 5,
     "Element": "Fire",
@@ -438,5 +438,23 @@
     "InGameSkins": [],
     "InternalName": "Burnice",
     "DisplayName": "柏妮思"
+  },
+  {
+    "Keys": [
+      "Yanagi",
+      "Tsukishiro"
+    ],
+    "ReleaseDate": "2024-11-6T00:00:00",
+    "Image": "Yanagi.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Anomoly",
+    "Region": [
+      "Section6"
+    ],
+    "ModFilesName": "Yanagi",
+    "InGameSkins": [],
+    "InternalName": "Yanagi",
+    "DisplayName": "月城柳"
   }
 ]
