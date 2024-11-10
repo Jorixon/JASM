@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.1](https://github.com/Jorixon/JASM/compare/v2.17.0...v2.17.1) (2024-11-08)
+
+
+### Miscellaneous
+
+* **ZZZ:** Add Yanagi ([#282](https://github.com/Jorixon/JASM/issues/282)) ([626f507](https://github.com/Jorixon/JASM/commit/626f507ca2b630b2fc2042620ce9dfd11935e279))
+
 ## [2.17.0](https://github.com/Jorixon/JASM/compare/v2.16.3...v2.17.0) (2024-11-04)
 
 
