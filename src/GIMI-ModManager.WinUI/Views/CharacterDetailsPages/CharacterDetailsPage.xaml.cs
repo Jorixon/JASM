@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Serilog;
 
 namespace GIMI_ModManager.WinUI.Views.CharacterDetailsPages;
 
@@ -237,12 +238,18 @@ public sealed partial class CharacterDetailsPage : Page
                     if (ViewModel.CanDragDropMod(storageItems))
                         e.AcceptedOperation = DataPackageOperation.Copy;
                 }
-                catch (COMException exception) when (exception.HResult == -2147221404)
+                catch (COMException exception)
                 {
                     // When drag and dropping a folder from within an archive in WinRAR, GetStorageItemsAsync throws a COMException
                     // For this case, assume this is a valid drag and drop operation as the command itself will also check if the items are valid
+                    // when (exception.HResult == -2147221404) HResult that is thrown specifically for WinRAR
 
                     e.AcceptedOperation = DataPackageOperation.Copy;
+
+                    if (exception.HResult != -2147221404)
+                    {
+                        Log.Error(exception, "Error while checking if the dragged items are valid.");
+                    }
                 }
             }
         }
