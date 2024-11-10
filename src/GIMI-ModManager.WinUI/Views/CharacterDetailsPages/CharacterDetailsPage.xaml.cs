@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.DataTransfer;
+﻿using System.Runtime.InteropServices;
+using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.WinUI.UI.Animations;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Helpers.Xaml;
@@ -220,35 +221,55 @@ public sealed partial class CharacterDetailsPage : Page
     private async void ModListArea_OnDragEnter(object sender, DragEventArgs e)
     {
         var deferral = e.GetDeferral();
-        if (e.DataView.Contains(StandardDataFormats.WebLink))
+        try
         {
-            var uri = await e.DataView.GetWebLinkAsync();
-            if (ViewModel.CanDragDropModUrl(uri))
-                e.AcceptedOperation = DataPackageOperation.Copy;
-        }
-        else if (e.DataView.Contains(StandardDataFormats.StorageItems))
-        {
-            var storageItems = await e.DataView.GetStorageItemsAsync();
-            if (ViewModel.CanDragDropMod(storageItems))
-                e.AcceptedOperation = DataPackageOperation.Copy;
-        }
+            if (e.DataView.Contains(StandardDataFormats.WebLink))
+            {
+                var uri = await e.DataView.GetWebLinkAsync();
+                if (ViewModel.CanDragDropModUrl(uri))
+                    e.AcceptedOperation = DataPackageOperation.Copy;
+            }
+            else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                try
+                {
+                    var storageItems = await e.DataView.GetStorageItemsAsync();
+                    if (ViewModel.CanDragDropMod(storageItems))
+                        e.AcceptedOperation = DataPackageOperation.Copy;
+                }
+                catch (COMException exception) when (exception.HResult == -2147221404)
+                {
+                    // When drag and dropping a folder from within an archive in WinRAR, GetStorageItemsAsync throws a COMException
+                    // For this case, assume this is a valid drag and drop operation as the command itself will also check if the items are valid
 
-        deferral.Complete();
+                    e.AcceptedOperation = DataPackageOperation.Copy;
+                }
+            }
+        }
+        finally
+        {
+            deferral.Complete();
+        }
     }
 
     private async void ModListArea_OnDrop(object sender, DragEventArgs e)
     {
         var deferral = e.GetDeferral();
-        if (e.DataView.Contains(StandardDataFormats.WebLink))
+        try
         {
-            await ViewModel.DragDropModUrlAsync(await e.DataView.GetWebLinkAsync());
+            if (e.DataView.Contains(StandardDataFormats.WebLink))
+            {
+                await ViewModel.DragDropModUrlAsync(await e.DataView.GetWebLinkAsync());
+            }
+            else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                await ViewModel.DragDropModAsync(await e.DataView.GetStorageItemsAsync());
+            }
         }
-        else if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        finally
         {
-            await ViewModel.DragDropModAsync(await e.DataView.GetStorageItemsAsync());
+            deferral.Complete();
         }
-
-        deferral.Complete();
     }
 
     private void ViewToggleSwitch_OnToggled(object sender, RoutedEventArgs e)
