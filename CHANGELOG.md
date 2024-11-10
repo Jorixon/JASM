@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.18.0](https://github.com/Jorixon/JASM/compare/v2.17.1...v2.18.0) (2024-11-10)
+
+
+### Features
+
+* Added disable all mods button on settings page ([5c617df](https://github.com/Jorixon/JASM/commit/5c617df0885c7d69ca07c7bc35110c9374196b8f))
+* Added disable all mods for character button to character details page ([#287](https://github.com/Jorixon/JASM/issues/287)) ([5c617df](https://github.com/Jorixon/JASM/commit/5c617df0885c7d69ca07c7bc35110c9374196b8f))
+* Added filter option to only show characters with at least one enabled mod ([5c617df](https://github.com/Jorixon/JASM/commit/5c617df0885c7d69ca07c7bc35110c9374196b8f))
+* Show number of mods enabled on the character card and show colored underline if any mods are enabled ([5c617df](https://github.com/Jorixon/JASM/commit/5c617df0885c7d69ca07c7bc35110c9374196b8f))
+
+
+### Bug Fixes
+
+* Potential fix for drag and drop not working for WinRAR ([#288](https://github.com/Jorixon/JASM/issues/288)) ([45026dc](https://github.com/Jorixon/JASM/commit/45026dc1934f051d2217f8f4d892123ecbf061fe))
+
+
+### Miscellaneous
+
+* Updated ui text for description field on the mod installer window ([ddbc628](https://github.com/Jorixon/JASM/commit/ddbc6283f4b34eaba3cf1647b3b122864ddd83fe))
+
 ## [2.17.1](https://github.com/Jorixon/JASM/compare/v2.17.0...v2.17.1) (2024-11-08)
 
 
