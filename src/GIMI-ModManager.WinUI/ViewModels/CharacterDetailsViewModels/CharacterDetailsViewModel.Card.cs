@@ -156,6 +156,35 @@ public partial class CharacterDetailsViewModel
         _navigationService.NavigateTo(typeof(CharactersViewModel).FullName!, ShownModObject.ModCategory);
     }
 
+    private bool CanDisableAllMods => IsNotHardBusy && IsNotSoftBusy && IsNavigationFinished && ModGridVM.ModdableObjectHasAnyMods;
+
+    [RelayCommand(CanExecute = nameof(CanDisableAllMods))]
+    private async Task DisableAllModsAsync()
+    {
+        var gridMods = ModGridVM.GetGridModsBackend();
+        var modsToDisable = gridMods.Where(mod => mod.IsEnabled).ToArray();
+
+        if (modsToDisable.Length == 0)
+            return;
+
+        var canDisableAllMods = modsToDisable.All(mod => mod.ToggleEnabledCommand.CanExecute(mod));
+
+        if (!canDisableAllMods)
+        {
+            _notificationService.ShowNotification("Error while disabling mods", "Could not disable all mods.",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        await CommandWrapperAsync(true, async () =>
+        {
+            foreach (var mod in modsToDisable)
+            {
+                await mod.ToggleEnabledCommand.ExecuteAsync(mod);
+            }
+        }).ConfigureAwait(false);
+    }
+
     private void UpdateTrackedMods() => TrackedModsCount = ModGridVM.TrackedMods.ToString();
 
     private ModDetailsPageContext CreateContext() => new(ShownModObject, SelectedSkin);

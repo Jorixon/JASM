@@ -318,6 +318,11 @@
                             Margin="40,0,0,0"
                             Command="{x:Bind ViewModel.ShowCleanModsFolderDialogCommand}"
                             Content="Clean Mods folder" />
+
+                        <Button
+                            Margin="40,0,0,0"
+                            Command="{x:Bind ViewModel.ShowDisableAllModsDialogCommand}"
+                            Content="Disable All Mods" />
                     </StackPanel>
 
                     <StackPanel Margin="0,16,0,0" Orientation="Horizontal">

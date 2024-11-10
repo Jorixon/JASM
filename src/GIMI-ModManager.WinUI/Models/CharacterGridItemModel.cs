@@ -18,20 +18,40 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     [ObservableProperty] private bool _notification;
     [ObservableProperty] private AttentionType _notificationType;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasMods))]
-    private int _modCount;
+    [ObservableProperty] private int _modCount;
+
+    [ObservableProperty] private string _modCountString = string.Empty;
 
     [ObservableProperty] private bool _hasMods;
+    [ObservableProperty] private bool _hasEnabledMods;
 
-    [ObservableProperty] private ObservableCollection<CharacterModItem> _mods = new();
+    public ObservableCollection<CharacterModItem> Mods { get; } = new();
 
-    public CharacterGridItemModel(IModdableObject character, int modCount = 0)
+    public CharacterGridItemModel(IModdableObject character)
     {
         Character = character;
         ImageUri = character.ImageUri ?? ModModel.PlaceholderImagePath;
-        ModCount = modCount;
-        _hasMods = modCount > 0;
+    }
+
+    public void SetMods(IEnumerable<CharacterModItem> mods)
+    {
+        Mods.Clear();
+        var enabledMods = 0;
+        foreach (var mod in mods)
+        {
+            Mods.Add(mod);
+            if (mod.IsEnabled)
+                enabledMods++;
+        }
+
+        ModCount = Mods.Count;
+        HasMods = ModCount > 0;
+        HasEnabledMods = enabledMods > 0;
+
+        if (HasEnabledMods)
+            ModCountString = enabledMods == ModCount ? enabledMods.ToString() : $"{enabledMods} / {ModCount}";
+        else
+            ModCountString = ModCount.ToString();
     }
 
     public bool Equals(CharacterGridItemModel? other)
@@ -66,4 +86,4 @@ public partial class CharacterGridItemModel : ObservableObject, IEquatable<Chara
     }
 }
 
-public record CharacterModItem(string Name, DateTime DateAdded);
+public record CharacterModItem(string Name, bool IsEnabled, DateTime DateAdded);

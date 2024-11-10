@@ -247,6 +247,9 @@ public class SkinModSettingsManager
         return modSettings is not null;
     }
 
+    /// <summary>
+    /// This is helper wrapper function for <see cref="ReadSettingsAsync(bool, CancellationToken)"/> that returns null instead of throwing an exception.
+    /// </summary>
     public async Task<ModSettings?> TryReadSettingsAsync(bool useCache = false,
         CancellationToken cancellationToken = default)
     {

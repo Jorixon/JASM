@@ -262,6 +262,11 @@
                                             Content="{x:Bind ViewModel.ModToggleText, Mode=OneWay}"
                                             IsChecked="{x:Bind ViewModel.ShowOnlyCharactersWithMods, Mode=OneWay}" />
                                         <ToggleButton
+                                            Command="{x:Bind ViewModel.ShowOnlyCharactersWithEnabledModsCommand}"
+                                            Content="{x:Bind ViewModel.ModEnabledToggleText, Mode=OneWay}"
+                                            IsChecked="{x:Bind ViewModel.ShowOnlyWithEnabledMods, Mode=OneWay}"
+                                            ToolTipService.ToolTip="Only show if at least one mod is enabled" />
+                                        <ToggleButton
                                             Command="{x:Bind ViewModel.ShowOnlyCharactersWithModNotificationsCommand}"
                                             Content="{x:Bind ViewModel.ModNotificationsToggleText, Mode=OneWay}"
                                             IsChecked="{x:Bind ViewModel.ShowOnlyModsWithNotifications, Mode=OneWay}" />
@@ -442,12 +447,17 @@
                                 Glyph="&#xE74B;"
                                 Visibility="Collapsed" />
 
-                            <TextBlock
+                            <StackPanel
                                 Margin="0,0,-16,0"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Visibility="{x:Bind HasMods, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}"
-                                Text="{x:Bind ModCount, Mode=OneWay}" />
+                                VerticalAlignment="Bottom">
+                                <TextBlock Visibility="{x:Bind HasMods, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" Text="{x:Bind ModCountString, Mode=OneWay}" />
+                                <Border
+                                    BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                    BorderThickness="0,0,0,2"
+                                    Visibility="{x:Bind HasEnabledMods, Mode=OneWay, Converter={StaticResource BoolToVisibleConverter}}" />
+                            </StackPanel>
+
 
                             <TextBlock
                                 Grid.Row="1"

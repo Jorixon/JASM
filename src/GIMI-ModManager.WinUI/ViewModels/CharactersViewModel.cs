@@ -78,6 +78,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private string _categoryPageTitle = string.Empty;
     [ObservableProperty] private string _modToggleText = string.Empty;
+    [ObservableProperty] private string _modEnabledToggleText = string.Empty;
     [ObservableProperty] private string _modNotificationsToggleText = string.Empty;
     [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
@@ -315,6 +316,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         CategoryPageTitle =
             $"{category.DisplayName} {_localizer.GetLocalizedStringOrDefault("Overview", useUidAsDefaultValue: true)}";
         ModToggleText = $"Show only {category.DisplayNamePlural} with Mods";
+        ModEnabledToggleText = $"Show only {category.DisplayNamePlural} with Enabled Mods";
         ModNotificationsToggleText = $"Show only {category.DisplayNamePlural} with Mod Notifications";
         SearchBoxPlaceHolder = $"Search {category.DisplayNamePlural}...";
 
@@ -390,26 +392,18 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         foreach (var characterGridItemModel in _backendCharacters)
         {
             var modList = _skinManagerService.GetCharacterModList(characterGridItemModel.Character);
-            characterGridItemModel.ModCount = modList.Mods.Count;
-            characterGridItemModel.HasMods = characterGridItemModel.ModCount > 0;
-
 
             var task = Task.Run(async () =>
             {
                 var characterModItems = new List<CharacterModItem>();
 
-                var mods = modList.Mods.Select(ske => ske.Mod).ToArray();
+                var modEntries = modList.Mods.ToArray();
 
-                foreach (var skinMod in mods)
+                foreach (var skinModEntry in modEntries)
                 {
-                    var modSettings = await skinMod.Settings.TryReadSettingsAsync(true);
+                    var modSettings = await skinModEntry.Mod.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
 
-                    if (modSettings is null)
-                        continue;
-
-
-                    characterModItems.Add(new CharacterModItem(skinMod.Name,
-                        modSettings.DateAdded ?? default));
+                    characterModItems.Add(new CharacterModItem(skinModEntry.Mod.GetDisplayName(), skinModEntry.IsEnabled, modSettings?.DateAdded ?? default));
                 }
 
                 return characterModItems;
@@ -424,7 +418,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
             characterTasks.Remove(characterGridItemModel);
 
-            characterGridItemModel.Mods = new ObservableCollection<CharacterModItem>(await completedTask);
+            characterGridItemModel.SetMods(await completedTask);
         }
 
 
@@ -476,6 +470,13 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
             _filters[FilterType.HasModNotifications] =
                 new GridFilter(characterGridItemModel => characterGridItemModel.Notification);
         }
+
+        if (settings.ShowOnlyCharactersWithEnabledMods)
+        {
+            ShowOnlyWithEnabledMods = true;
+            _filters[FilterType.HasEnabledMods] = new GridFilter(characterGridItemModel => characterGridItemModel.Mods.Any(m => m.IsEnabled));
+        }
+
 
         SortByDescending = settings.SortByDescending;
 
@@ -702,6 +703,41 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var settings = await ReadCharacterSettings();
 
         settings.ShowOnlyModsWithNotifications = ShowOnlyModsWithNotifications;
+
+        await SaveCharacterSettings(settings).ConfigureAwait(false);
+    }
+
+    [ObservableProperty] private bool _showOnlyWithEnabledMods;
+
+    [RelayCommand]
+    private async Task ShowOnlyCharactersWithEnabledMods()
+    {
+        if (ShowOnlyWithEnabledMods)
+        {
+            ShowOnlyWithEnabledMods = false;
+
+            _filters.Remove(FilterType.HasEnabledMods);
+
+            ResetContent();
+
+            var settingss = await ReadCharacterSettings();
+
+            settingss.ShowOnlyCharactersWithEnabledMods = ShowOnlyWithEnabledMods;
+
+            await SaveCharacterSettings(settingss);
+
+            return;
+        }
+
+        _filters[FilterType.HasEnabledMods] = new GridFilter(characterGridItem => characterGridItem.Mods.Any(m => m.IsEnabled));
+
+        ShowOnlyWithEnabledMods = true;
+
+        ResetContent();
+
+        var settings = await ReadCharacterSettings();
+
+        settings.ShowOnlyCharactersWithEnabledMods = ShowOnlyWithEnabledMods;
 
         await SaveCharacterSettings(settings).ConfigureAwait(false);
     }
@@ -1031,7 +1067,8 @@ public enum FilterType
     Element,
     Search,
     HasMods,
-    HasModNotifications
+    HasModNotifications,
+    HasEnabledMods
 }
 
 public sealed class SortingMethod
