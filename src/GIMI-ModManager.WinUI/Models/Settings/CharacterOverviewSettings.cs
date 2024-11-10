@@ -8,6 +8,7 @@ public class CharacterOverviewSettings
     public string[] PinedCharacters { get; set; } = Array.Empty<string>();
     public string[] HiddenCharacters { get; set; } = Array.Empty<string>();
     public bool ShowOnlyCharactersWithMods { get; set; } = false;
+    public bool ShowOnlyCharactersWithEnabledMods { get; set; } = false;
     public bool SortByDescending { get; set; } = false;
     public string? SortingMethod { get; set; }
     public bool ShowOnlyModsWithNotifications { get; set; }
