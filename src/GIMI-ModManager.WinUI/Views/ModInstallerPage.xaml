@@ -237,7 +237,7 @@
                     Grid.Row="2"
                     Header="Mod Custom Name"
                     IsReadOnly="{x:Bind ViewModel.IsRetrievingModInfo, Mode=OneWay}"
-                    PlaceholderText="Custom Name display throughout JASM"
+                    PlaceholderText="Custom Name displayed throughout JASM"
                     Text="{x:Bind ViewModel.CustomName, Mode=TwoWay}" />
                 <TextBox
                     Grid.Row="3"
@@ -246,10 +246,10 @@
                     Text="{x:Bind ViewModel.Author, Mode=TwoWay}" />
                 <TextBox
                     Grid.Row="4"
-                    Height="100"
-                    AcceptsReturn="True"
-                    Header="Description"
-                    PlaceholderText="The description is currently not shown anywhere in JASM"
+                    Margin="0,0,0,8"
+                    AcceptsReturn="False"
+                    Header="Note"
+                    PlaceholderText="Custom free text note, shown in grid on character details page"
                     Text="{x:Bind ViewModel.Description, Mode=TwoWay}" />
             </Grid>
 
