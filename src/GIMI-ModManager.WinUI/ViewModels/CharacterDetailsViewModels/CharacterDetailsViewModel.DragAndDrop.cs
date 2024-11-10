@@ -35,6 +35,14 @@ public partial class CharacterDetailsViewModel
 
     public async Task DragDropModAsync(IReadOnlyList<IStorageItem> items)
     {
+        if (!CanDragDropMod(items))
+        {
+            _notificationService.ShowNotification("Drag And Drop operation failed",
+                "The operation failed because the selected item is not a valid mod file or folder.",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
         await CommandWrapperAsync(true, async () =>
         {
             try
@@ -77,6 +85,14 @@ public partial class CharacterDetailsViewModel
 
     public async Task DragDropModUrlAsync(Uri uri)
     {
+        if (!CanDragDropModUrl(uri))
+        {
+            _notificationService.ShowNotification("Drag And Drop operation failed",
+                "The operation failed because the selected item is not a valid https GameBanana mod URL.",
+                TimeSpan.FromSeconds(5));
+            return;
+        }
+
         await CommandWrapperAsync(true, async () =>
         {
             try

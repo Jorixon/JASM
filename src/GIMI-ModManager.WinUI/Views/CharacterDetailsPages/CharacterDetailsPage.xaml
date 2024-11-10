@@ -281,7 +281,6 @@
                     AllowDrop="False"
                     Background="Transparent"
                     DragEnter="ModListArea_OnDragEnter"
-                    DragOver="ModListArea_OnDragEnter"
                     Drop="ModListArea_OnDrop">
 
                     <!--
@@ -300,7 +299,6 @@
                             Background="Transparent"
                             CornerRadius="10"
                             DragEnter="ModListArea_OnDragEnter"
-                            DragOver="ModListArea_OnDragEnter"
                             Drop="ModListArea_OnDrop">
                             <characterDetailsPages:ModGrid x:Name="ModGrid" IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}" />
 
