@@ -121,7 +121,7 @@ public partial class CreateCommandViewModel : ObservableObject
             index++;
         }
 
-        if (charBuffer != null && charBuffer.LastIndexOf('\0') == -1)
+        if (!charBuffer.IsEmpty && charBuffer.LastIndexOf('\0') == -1)
             throw new ArgumentException("Required null terminator missing.");
 
         fixed (char* p = charBuffer)
