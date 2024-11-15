@@ -389,5 +389,22 @@
     "InGameSkins": [],
     "InternalName": "Youhu",
     "DisplayName": "Youhu"
+  },
+  {
+    "Keys": [
+      "Camellya"
+    ],
+    "ReleaseDate": "2024-11-14T00:00:00",
+    "Image": "Camellya.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Sword",
+    "Region": [
+      "Bshores"
+    ],
+    "ModFilesName": "Camellya",
+    "InGameSkins": [],
+    "InternalName": "Camellya",
+    "DisplayName": "Camellya"
   }
 ]
