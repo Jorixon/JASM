@@ -1,10 +1,10 @@
-using System.Text.Json;
-using Windows.Storage.Pickers;
 using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.ModExport;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+
+//using NativeFileDialogs.Net;
 
 namespace GIMI_ModManager.WinUI.Views;
 
@@ -24,29 +24,19 @@ public sealed partial class DebugPage : Page
 
     private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        var saveFilePicker = new FileSavePicker
-        {
-            SuggestedFileName = "ModManagerExport.json",
-            FileTypeChoices = { { "JSON", [".json"] } },
-            SettingsIdentifier = "JSON_MOD_EXPORT"
-        };
+        //NfdStatus result = Nfd.OpenDialog(out string? outPath, new Dictionary<string, string>()
+        //{
+        //    { "python", "py" }
+        //}, defaultPath: "F:\\");
 
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-        WinRT.Interop.InitializeWithWindow.Initialize(saveFilePicker, hwnd);
-
-        var exportInfo = await JsonExporterService.CreateExportJsonAsync();
-
-        var json = JsonSerializer.Serialize(exportInfo, new JsonSerializerOptions()
-        {
-            WriteIndented = true
-        });
-
-        var file = await saveFilePicker.PickSaveFileAsync();
-
-        if (file is null) return;
-
-        Windows.Storage.CachedFileManager.DeferUpdates(file);
-
-        await Windows.Storage.FileIO.WriteTextAsync(file, json);
+        //if (result == NfdStatus.Ok && outPath is { } path)
+        //{
+        //    Console.WriteLine("Success!");
+        //    Console.WriteLine(path);
+        //}
+        //else
+        //{
+        //    Console.WriteLine("User pressed Cancel.");
+        //}
     }
 }
