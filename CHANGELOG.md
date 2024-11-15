@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.1](https://github.com/Jorixon/JASM/compare/v2.18.0...v2.18.1) (2024-11-15)
+
+
+### Miscellaneous
+
+* Add Camellya, Fugue, and Sunday ([#292](https://github.com/Jorixon/JASM/issues/292)) ([b75ad63](https://github.com/Jorixon/JASM/commit/b75ad6334a12b180f22ec92ca54b3a46c2bdb471))
+
 ## [2.18.0](https://github.com/Jorixon/JASM/compare/v2.17.1...v2.18.0) (2024-11-10)
 
 
