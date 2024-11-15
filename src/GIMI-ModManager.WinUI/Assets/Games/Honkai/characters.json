@@ -957,5 +957,39 @@
     "InGameSkins": [],
     "InternalName": "Moze",
     "DisplayName": "Moze"
+  },
+  {
+    "Keys": [
+      "Fugue"
+    ],
+    "ReleaseDate": "2024-12-03T00:00:00",
+    "Image": "fugue.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "The Xianzhou Yaoqing"
+    ],
+    "ModFilesName": "Fugue",
+    "InGameSkins": [],
+    "InternalName": "Fugue",
+    "DisplayName": "Fugue"
+  },
+  {
+    "Keys": [
+      "Sunday"
+    ],
+    "ReleaseDate": "2024-12-03T00:00:00",
+    "Image": "sunday.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Harmony",
+    "Region": [
+      "Penacony"
+    ],
+    "ModFilesName": "Sunday",
+    "InGameSkins": [],
+    "InternalName": "Sunday",
+    "DisplayName": "Sunday"
   }
 ]
