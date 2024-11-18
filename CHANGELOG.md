@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.18.2](https://github.com/Jorixon/JASM/compare/v2.18.1...v2.18.2) (2024-11-18)
+
+
+### Miscellaneous
+
+* **Honkai:** Added Rappa ([#296](https://github.com/Jorixon/JASM/issues/296)) ([6a9de77](https://github.com/Jorixon/JASM/commit/6a9de778eb6ebdabf79d9a244e827672f63fc981))
+* Updated to .NET 9 ([b247e30](https://github.com/Jorixon/JASM/commit/b247e30c3efd66abd6529833f2ed0e76106562d1))
+
 ## [2.18.1](https://github.com/Jorixon/JASM/compare/v2.18.0...v2.18.1) (2024-11-15)
 
 
