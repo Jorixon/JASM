@@ -977,6 +977,24 @@
   },
   {
     "Keys": [
+      "Rappa",
+      "AK-A-3"
+    ],
+    "ReleaseDate": "2024-10-23T00:00:00",
+    "Image": "Rappa.png",
+    "Rarity": 5,
+    "Element": "Erudition",
+    "Class": "Nihility",
+    "Region": [
+      "Cosmic"
+    ],
+    "ModFilesName": "Rappa",
+    "InGameSkins": [],
+    "InternalName": "Rappa",
+    "DisplayName": "Rappa"
+  },
+  {
+    "Keys": [
       "Sunday"
     ],
     "ReleaseDate": "2024-12-03T00:00:00",
