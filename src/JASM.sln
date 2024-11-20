@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GIMI-ModManager.WinUI", "GIMI-ModManager.WinUI\GIMI-ModManager.WinUI.csproj", "{5261FF70-0D80-43C2-B211-36D913ACF3D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JASM.WinUI", "JASM.WinUI\JASM.WinUI.csproj", "{5261FF70-0D80-43C2-B211-36D913ACF3D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GIMI-ModManager.Core", "GIMI-ModManager.Core\GIMI-ModManager.Core.csproj", "{C436FF57-7FEC-40CA-B483-E93538CC0AC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JASM.Core", "JASM.Core\JASM.Core.csproj", "{C436FF57-7FEC-40CA-B483-E93538CC0AC8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elevator", "Elevator\Elevator.csproj", "{3C239075-C121-4DDB-88C5-B181863797B7}"
 EndProject

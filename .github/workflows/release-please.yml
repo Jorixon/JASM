@@ -20,7 +20,7 @@ jobs:
           release-type: simple
           package-name: jasm
           extra-files: |
-                        src/GIMI-ModManager.WinUI/GIMI-ModManager.WinUI.csproj
+                        src/JASM.WinUI/JASM.WinUI.csproj
           changelog-types: >
             [
               { "type": "revert", "section": "Reverts", "hidden": false },

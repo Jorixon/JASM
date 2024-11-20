@@ -8,8 +8,8 @@ import sys
 ELEVATOR_CSPROJ = "src\\Elevator\\Elevator.csproj"
 ELEVATOR_OUTPUT_FILE = "src\\Elevator\\bin\\Release\\Publish\\Elevator.exe"
 
-JASM_CSPROJ = "src\\GIMI-ModManager.WinUI\\GIMI-ModManager.WinUI.csproj"
-JASM_OUTPUT = "src\\GIMI-ModManager.WinUI\\bin\\Release\Publish\\"
+JASM_CSPROJ = "src\\JASM.WinUI\\JASM.WinUI.csproj"
+JASM_OUTPUT = "src\\JASM.WinUI\\bin\\Release\Publish\\"
 
 JASM_Updater_CSPROJ = "src\\JASM.AutoUpdater\\JASM.AutoUpdater.csproj"
 JASM_Updater_OUTPUT = "src\\\\JASM.AutoUpdater\\bin\\Release\Publish\\"

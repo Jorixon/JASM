@@ -383,7 +383,7 @@ public partial class MainPageVM : ObservableRecipient
         Log("Clean up finished");
     }
 
-    // Copied from GIMI-ModManager.WinUI/Services/UpdateChecker.cs
+    // Copied from JASM.WinUI/Services/UpdateChecker.cs
     private const string ReleasesApiUrl = "https://api.github.com/repos/Jorixon/JASM/releases?per_page=2";
 
     private async Task<ApiGitHubRelease?> GetLatestVersionAsync(CancellationToken cancellationToken)

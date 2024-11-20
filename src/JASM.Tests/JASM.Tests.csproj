@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
+    <ProjectReference Include="..\JASM.Core\JASM.Core.csproj" />
   </ItemGroup>
 
 </Project>

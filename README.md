@@ -3,8 +3,6 @@
 JASM is a skin manager for a certain game. Made using WinUI 3 with WinAppSDK. 
 I made this for fun, for myself and to learn WinUI, but it kinda took off over time.
 
-There may be some "GIMI-ModManager" references throughout the app, that is what I originally called this project. I'll change them eventually.
-
 
 Download link and images are also available over at [GameBanana](https://gamebanana.com/tools/14574)
 

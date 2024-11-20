@@ -132,7 +132,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CommunityToolkitWrapper\CommunityToolkitWrapper.csproj" />
-		<ProjectReference Include="..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
+		<ProjectReference Include="..\JASM.Core\JASM.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="appsettings.json">

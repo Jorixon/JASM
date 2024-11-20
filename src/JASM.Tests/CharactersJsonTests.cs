@@ -8,7 +8,7 @@ namespace JASM.Tests;
 public class CharactersJsonTests : IDisposable
 {
     private readonly string AssetsUriPath =
-        Path.GetFullPath("..\\..\\..\\..\\GIMI-ModManager.WinUI\\Assets\\Games\\Genshin");
+        Path.GetFullPath("..\\..\\..\\..\\JASM.WinUI\\Assets\\Games\\Genshin");
 
     private readonly string _tmpDataDirectory =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

@@ -1,0 +1,30 @@
+[
+	{
+		"InternalName": "Pyro",
+		"DisplayName": "火"
+	},
+	{
+		"InternalName": "Hydro",
+		"DisplayName": "水"
+	},
+	{
+		"InternalName": "Anemo",
+		"DisplayName": "风"
+	},
+	{
+		"InternalName": "Electro",
+		"DisplayName": "雷"
+	},
+	{
+		"InternalName": "Dendro",
+		"DisplayName": "草"
+	},
+	{
+		"InternalName": "Cryo",
+		"DisplayName": "冰"
+	},
+	{
+		"InternalName": "Geo",
+		"DisplayName": "岩"
+	}
+]
