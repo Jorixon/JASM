@@ -36,6 +36,8 @@ public class GameService : IGameService
     private readonly EnableableList<IGameObject> _gameObjects = new();
     private readonly EnableableList<IWeapon> _weapons = new();
 
+    private readonly List<IModdableObject> _duplicateInternalNames = new();
+
     private readonly List<ICategory> _categories = new();
 
     private Elements Elements { get; set; } = null!;
@@ -88,7 +90,7 @@ public class GameService : IGameService
         var settingsDirectory = new DirectoryInfo(options.LocalSettingsDirectory);
         settingsDirectory.Create();
 
-        _gameSettingsManager = new GameSettingsManager(settingsDirectory);
+        _gameSettingsManager = new GameSettingsManager(_logger, settingsDirectory);
 
         await InitializeGameInfoAsync().ConfigureAwait(false);
 
@@ -108,11 +110,15 @@ public class GameService : IGameService
 
         await MapCategoriesLanguageOverrideAsync().ConfigureAwait(false);
 
+        await InitializeCustomCharactersAsync().ConfigureAwait(false);
+
         CheckIfDuplicateInternalNameExists();
 
         _initialized = true;
         Initialized?.Invoke(this, EventArgs.Empty);
     }
+
+   
 
 
     public static async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
@@ -475,7 +481,7 @@ public class GameService : IGameService
         var characterSkinPath = Path.Combine(_assetsDirectory.FullName, "Images", "AltCharacterSkins");
 
         var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName).ConfigureAwait(false);
-        var overrideSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
+        var customSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
 
         foreach (var jsonCharacter in jsonCharacters)
         {
@@ -508,7 +514,7 @@ public class GameService : IGameService
         foreach (var enableableCharacter in _characters)
         {
             var character = enableableCharacter.ModdableObject;
-            var characterOverride = overrideSettings.CharacterOverrides.FirstOrDefault(x =>
+            var characterOverride = customSettings.CharacterOverrides.FirstOrDefault(x =>
                 x.Key.Equals(character.InternalName.Id, StringComparison.OrdinalIgnoreCase)).Value;
 
             if (characterOverride is null) continue;
@@ -629,6 +635,75 @@ public class GameService : IGameService
             await MapDisplayNames(categoriesFileName, GetCategories()).ConfigureAwait(false);
     }
 
+    private async Task InitializeCustomCharactersAsync()
+    {
+        var allCharacters = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both).ToList();
+        var otherModdableObjects = GetAllModdableObjects(GetOnly.Both).Except(allCharacters).ToList();
+
+        var customSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
+
+        var customCharacters = customSettings.CustomCharacters;
+
+       foreach (var (internalName, jsonCustomCharacter) in customCharacters)
+       {
+            // Check against legacy predefined multi mods
+            if (getOthersCharacter().InternalName.Equals(internalName) ||
+                getGlidersCharacter().InternalName.Equals(internalName) ||
+                getWeaponsCharacter().InternalName.Equals(internalName))
+            {
+                _logger.Error("Internal name {InternalName} is reserved for predefined multi mods. However, a custom character was found using it.", internalName);
+                continue;
+            }
+
+            var otherModConflict = otherModdableObjects.FirstOrDefault(x => x.InternalNameEquals(internalName));
+
+            if (otherModConflict is not null)
+            {
+                _logger.Error("Internal name {InternalName} is already used by another moddable object type. However, a custom character was found using it.", internalName);
+                continue;
+            }
+
+            var existingCharacter = allCharacters.FirstOrDefault(x => x.InternalNameEquals(internalName));
+
+            // For characters category, custom characters override existing characters
+            if (existingCharacter is not null)
+            {
+                _characters.Remove(existingCharacter);
+                _duplicateInternalNames.Add(existingCharacter);
+
+                _logger.Warning("Custom character found with internal name {InternalName}. However a predefined character also exists. JASM will prioritize custom character", internalName);
+            }
+
+            var jsonCharacter = new JsonCharacter()
+            {
+                InternalName = internalName,
+                DisplayName = jsonCustomCharacter.DisplayName,
+                Keys = jsonCustomCharacter.Keys,
+                Image = jsonCustomCharacter.Image,
+                Rarity = jsonCustomCharacter.Rarity,
+                Element = jsonCustomCharacter.Element,
+                Class = jsonCustomCharacter.Class,
+                Region = jsonCustomCharacter.Region,
+                ReleaseDate = jsonCustomCharacter.ReleaseDate,
+                ModFilesName = jsonCustomCharacter.ModFilesName,
+                IsMultiMod = jsonCustomCharacter.IsMultiMod,
+            };
+
+
+            var character = Character
+                .FromJson(jsonCharacter)
+                .SetRegion(Regions.AllRegions)
+                .SetElement(Elements.AllElements)
+                .SetClass(Classes.AllClasses)
+                .CreateCharacter(imageFolder: _gameSettingsManager.CustomCharacterImageFolder.FullName,
+                    characterSkinImageFolder: _gameSettingsManager.CustomCharacterSkinImageFolder.FullName);
+
+
+       }
+
+
+    }
+
     [MemberNotNullWhen(true, nameof(_languageOverrideDirectory))]
     private bool LanguageOverrideAvailable()
     {
@@ -645,22 +720,26 @@ public class GameService : IGameService
     }
 
 
-    private async Task<IEnumerable<T>> SerializeAsync<T>(string fileName, bool throwIfNotFound = true)
+    private Task<IEnumerable<T>> SerializeAsync<T>(string fileName, bool throwIfNotFound = true)
     {
-        var objFileName = fileName;
-        var objFilePath = Path.Combine(_assetsDirectory.FullName, objFileName);
+        var objFilePath = Path.Combine(_assetsDirectory.FullName, fileName);
 
-        if (!File.Exists(objFilePath))
+        return SerializeFileAsync<T>(filePath: objFilePath, throwIfNotFound: throwIfNotFound);
+    }
+
+    private async Task<IEnumerable<T>> SerializeFileAsync<T>(string filePath, bool throwIfNotFound = true)
+    {
+        if (!File.Exists(filePath))
         {
             if (throwIfNotFound)
-                throw new FileNotFoundException($"{objFileName} File not found at path: {objFilePath}");
+                throw new FileNotFoundException($"File not found at path: {filePath}");
             else
                 return Array.Empty<T>();
         }
 
         return JsonSerializer.Deserialize<IEnumerable<T>>(
-            await File.ReadAllTextAsync(objFilePath).ConfigureAwait(false),
-            _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
+            await File.ReadAllTextAsync(filePath).ConfigureAwait(false),
+            _jsonSerializerOptions) ?? throw new InvalidOperationException($"{filePath} is empty");
     }
 
     public string OtherCharacterInternalName => "Others";
