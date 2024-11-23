@@ -960,10 +960,28 @@
   },
   {
     "Keys": [
+      "Rappa",
+      "AK-A-3"
+    ],
+    "ReleaseDate": "2024-10-23T00:00:00",
+    "Image": "Rappa.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Erudition",
+    "Region": [
+      "Cosmic"
+    ],
+    "ModFilesName": "Rappa",
+    "InGameSkins": [],
+    "InternalName": "Rappa",
+    "DisplayName": "Rappa"
+  },
+  {
+    "Keys": [
       "Fugue"
     ],
     "ReleaseDate": "2024-12-03T00:00:00",
-    "Image": "fugue.png",
+    "Image": "tingyun5s.png",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Nihility",
@@ -991,5 +1009,22 @@
     "InGameSkins": [],
     "InternalName": "Sunday",
     "DisplayName": "Sunday"
+  },
+  {
+    "Keys": [
+      "The Herta"
+    ],
+    "ReleaseDate": "2025-01-15T00:00:00",
+    "Image": "herta5s.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Erudition",
+    "Region": [
+      "Herta Space Station"
+    ],
+    "ModFilesName": "The Herta",
+    "InGameSkins": [],
+    "InternalName": "The Herta",
+    "DisplayName": "The Herta"
   }
 ]
