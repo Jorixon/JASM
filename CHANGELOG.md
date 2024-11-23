@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.18.3](https://github.com/Jorixon/JASM/compare/v2.18.2...v2.18.3) (2024-11-23)
+
+
+### Miscellaneous
+
+* Added 'The Herta' ([#298](https://github.com/Jorixon/JASM/issues/298)) ([0e27b0a](https://github.com/Jorixon/JASM/commit/0e27b0a67dbaa349e6b9e727d427f329744ef146))
+* Updated WinAppSdk to 1.6.3 ([#300](https://github.com/Jorixon/JASM/issues/300)) ([b93d6ce](https://github.com/Jorixon/JASM/commit/b93d6ce3f6f36cc2ea8a4576b3bc7602b7ecd294))
+
 ## [2.18.2](https://github.com/Jorixon/JASM/compare/v2.18.1...v2.18.2) (2024-11-18)
 
 
