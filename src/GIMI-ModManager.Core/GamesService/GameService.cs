@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using FuzzySharp;
+using GIMI_ModManager.Core.Contracts;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService.Exceptions;
 using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.GamesService.Internals;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.Helpers;
@@ -117,8 +120,6 @@ public class GameService : IGameService
         _initialized = true;
         Initialized?.Invoke(this, EventArgs.Empty);
     }
-
-   
 
 
     public static async Task<GameInfo?> GetGameInfoAsync(SupportedGames game)
@@ -287,11 +288,106 @@ public class GameService : IGameService
         throw new ArgumentException($"Type {typeof(T)} is not supported");
     }
 
-    public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
-        Uri? imageUri = null,
-        IGameClass? gameClass = null, IGameElement? gameElement = null, ICollection<IRegion>? regions = null,
-        ICollection<ICharacterSkin>? additionalSkins = null, DateTime? releaseDate = null) =>
-        throw new NotImplementedException();
+    public async Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest)
+    {
+        if (characterRequest.InternalName?.Id == null || characterRequest.InternalName.Id.IsNullOrEmpty())
+            throw new InvalidModdableObjectException("InternalName must not be null or empty");
+
+        if (GetAllModdableObjects(GetOnly.Both).Any(m => m.InternalNameEquals(characterRequest.InternalName)))
+            throw new InvalidModdableObjectException("A moddable object with the same internal name already exists. InternalName must be unique");
+
+
+        var internalCreateRequest = new InternalCreateCharacterRequest()
+        {
+            InternalName = new InternalName(characterRequest.InternalName),
+            DisplayName = characterRequest.DisplayName,
+            Keys = characterRequest.Keys,
+            Class = characterRequest.Class,
+            Element = characterRequest.Element,
+            Image = characterRequest.Image?.LocalPath,
+            IsMultiMod = characterRequest.IsMultiMod,
+            Region = characterRequest.Region,
+            ModFilesName = characterRequest.ModFilesName,
+            Rarity = characterRequest.Rarity,
+            ReleaseDate = characterRequest.ReleaseDate
+        };
+
+        FileInfo? sourceImage = null;
+        if (characterRequest.Image is not null)
+        {
+            var isImageValid = characterRequest.Image.IsFile && File.Exists(characterRequest.Image.LocalPath);
+
+            if (!isImageValid)
+                throw new InvalidModdableObjectException("Image must be a valid existing filesystem file");
+
+            var imageExtension = Path.GetExtension(characterRequest.Image.LocalPath);
+
+            if (imageExtension.IsNullOrEmpty())
+                throw new InvalidModdableObjectException("Image must have an extension");
+
+            if (Constants.SupportedImageExtensions.All(x => x != imageExtension))
+                throw new InvalidModdableObjectException("Image must have a supported extension. Supported extensions are: " +
+                                                         string.Join(", ", Constants.SupportedImageExtensions));
+
+            sourceImage = new FileInfo(characterRequest.Image.LocalPath);
+        }
+
+
+        Character character;
+        try
+        {
+            character = Character
+                .FromCustomCharacter(internalCreateRequest)
+                .SetRegion(Regions.AllRegions)
+                .SetElement(Elements.AllElements)
+                .SetClass(Classes.AllClasses)
+                .CreateCharacter();
+        }
+        catch (Exception e)
+        {
+            throw new InvalidModdableObjectException($"Failed to create character: {e.Message}", e);
+        }
+
+
+        // If character was successfully created, now we can copy the image to the correct folder if it exists
+
+        if (sourceImage is not null)
+        {
+            try
+            {
+                var destinationImagePath =
+                    Path.Combine(_gameSettingsManager.CustomCharacterImageFolder.FullName, character.InternalName + sourceImage.Extension);
+                await using (var sourceImageStream = File.OpenRead(sourceImage.FullName))
+                {
+                    await using var destinationImageStream = File.Create(destinationImagePath);
+                    await sourceImageStream.CopyToAsync(destinationImageStream).ConfigureAwait(false);
+                }
+
+                if (File.Exists(destinationImagePath))
+                    character.ImageUri = new Uri(destinationImagePath);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidModdableObjectException($"Failed to copy custom image: {e.Message}", e);
+            }
+        }
+
+        character.DefaultCharacter = character.Clone();
+
+        try
+        {
+            await _gameSettingsManager.AddCustomCharacterAsync(character).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidModdableObjectException($"Failed to save custom character: {e.Message}", e);
+        }
+
+
+        _characters.Add(character);
+
+        return character;
+    }
 
     public ICharacter? QueryCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
         int minScore = 100)
@@ -644,14 +740,15 @@ public class GameService : IGameService
 
         var customCharacters = customSettings.CustomCharacters;
 
-       foreach (var (internalName, jsonCustomCharacter) in customCharacters)
-       {
+        foreach (var (internalName, jsonCustomCharacter) in customCharacters)
+        {
             // Check against legacy predefined multi mods
             if (getOthersCharacter().InternalName.Equals(internalName) ||
                 getGlidersCharacter().InternalName.Equals(internalName) ||
                 getWeaponsCharacter().InternalName.Equals(internalName))
             {
-                _logger.Error("Internal name {InternalName} is reserved for predefined multi mods. However, a custom character was found using it.", internalName);
+                _logger.Error("Internal name {InternalName} is reserved for predefined multi mods. However, a custom character was found using it.",
+                    internalName);
                 continue;
             }
 
@@ -659,8 +756,10 @@ public class GameService : IGameService
 
             if (otherModConflict is not null)
             {
-                _logger.Error("Internal name {InternalName} is already used by another moddable object type. However, a custom character was found using it.", internalName);
-                continue;
+                _logger.Warning(
+                    "Internal name {InternalName} is used by another moddable object type. However, a custom character was found using it. JASM will prioritize custom character",
+                    internalName);
+                otherModdableObjects.Remove(otherModConflict);
             }
 
             var existingCharacter = allCharacters.FirstOrDefault(x => x.InternalNameEquals(internalName));
@@ -671,27 +770,14 @@ public class GameService : IGameService
                 _characters.Remove(existingCharacter);
                 _duplicateInternalNames.Add(existingCharacter);
 
-                _logger.Warning("Custom character found with internal name {InternalName}. However a predefined character also exists. JASM will prioritize custom character", internalName);
+                _logger.Warning(
+                    "Custom character found with internal name {InternalName}. However a predefined character also exists. JASM will prioritize custom character",
+                    internalName);
             }
-
-            var jsonCharacter = new JsonCharacter()
-            {
-                InternalName = internalName,
-                DisplayName = jsonCustomCharacter.DisplayName,
-                Keys = jsonCustomCharacter.Keys,
-                Image = jsonCustomCharacter.Image,
-                Rarity = jsonCustomCharacter.Rarity,
-                Element = jsonCustomCharacter.Element,
-                Class = jsonCustomCharacter.Class,
-                Region = jsonCustomCharacter.Region,
-                ReleaseDate = jsonCustomCharacter.ReleaseDate,
-                ModFilesName = jsonCustomCharacter.ModFilesName,
-                IsMultiMod = jsonCustomCharacter.IsMultiMod,
-            };
 
 
             var character = Character
-                .FromJson(jsonCharacter)
+                .FromJson(internalName, jsonCustomCharacter)
                 .SetRegion(Regions.AllRegions)
                 .SetElement(Elements.AllElements)
                 .SetClass(Classes.AllClasses)
@@ -699,9 +785,8 @@ public class GameService : IGameService
                     characterSkinImageFolder: _gameSettingsManager.CustomCharacterSkinImageFolder.FullName);
 
 
-       }
-
-
+            _characters.Add(character);
+        }
     }
 
     [MemberNotNullWhen(true, nameof(_languageOverrideDirectory))]

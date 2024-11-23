@@ -1,4 +1,5 @@
-﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+﻿using GIMI_ModManager.Core.Contracts;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 
 namespace GIMI_ModManager.Core.GamesService;
@@ -28,10 +29,7 @@ public interface IGameService
     public Task ResetOverrideForCharacterAsync(ICharacter character);
 
 
-    public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
-        Uri? imageUri = null, IGameClass? gameClass = null, IGameElement? gameElement = null,
-        ICollection<IRegion>? regions = null, ICollection<ICharacterSkin>? additionalSkins = null,
-        DateTime? releaseDate = null);
+    public Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest);
 
     public ICharacter? QueryCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
@@ -92,13 +90,13 @@ public enum GetOnly
 
 // Genshin => weapon
 // Honkai => Path
-public interface IGameClass : IImageSupport, INameable
+public interface IGameClass : IImageSupport, INameable, IEquatable<IGameClass>
 {
 }
 
 // Genshin => Element
 // Honkai => Element
-public interface IGameElement : IImageSupport, INameable
+public interface IGameElement : IImageSupport, INameable, IEquatable<IGameElement>
 {
 }
 

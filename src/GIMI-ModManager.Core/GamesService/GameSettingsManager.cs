@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
-using GIMI_ModManager.Core.GamesService.JsonModels;
+using System.Diagnostics.CodeAnalysis;
+using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -31,6 +32,7 @@ internal class GameSettingsManager
         CustomCharacterSkinImageFolder.Create();
     }
 
+    [MemberNotNull(nameof(_settings))]
     internal async Task<GameServiceRoot> ReadSettingsAsync(bool useCache = true)
     {
         if (useCache && _settings != null)
@@ -52,7 +54,9 @@ internal class GameSettingsManager
 
             var characterOverrides = await ParseUntypedJsonAsync<JsonCharacterOverride>(rootSettings.CharacterOverrides).ConfigureAwait(false);
 
-            var customCharacters = await ParseUntypedJsonAsync<JsonCustomCharacter>(rootSettings.CustomCharacters).ConfigureAwait(false);
+            var characterCategory = Category.CreateForCharacter();
+            var customCharacters = await ParseUntypedJsonAsync<JsonCustomCharacter>(rootSettings.CustomModObjects[characterCategory.InternalName])
+                .ConfigureAwait(false);
 
             _settings = new GameServiceRoot
             {
@@ -69,8 +73,11 @@ internal class GameSettingsManager
 
         return _settings;
 
-        Task<Dictionary<string, T>> ParseUntypedJsonAsync<T>(Dictionary<string, object> unTypedDictionary)
+        Task<Dictionary<string, T>> ParseUntypedJsonAsync<T>(Dictionary<string, object>? unTypedDictionary)
         {
+            if (unTypedDictionary == null)
+                return Task.FromResult(new Dictionary<string, T>());
+
             var characterOverrides = new Dictionary<string, T>();
             foreach (var (key, value) in unTypedDictionary)
             {
@@ -99,8 +106,13 @@ internal class GameSettingsManager
         }
     }
 
-    private Task SaveSettingsAsync() =>
-        File.WriteAllTextAsync(_settingsFile, JsonConvert.SerializeObject(_settings, Formatting.Indented));
+    private async Task SaveSettingsAsync()
+    {
+        if (_settings is null)
+            return;
+
+        await File.WriteAllTextAsync(_settingsFile, JsonConvert.SerializeObject(_settings.ToJson(), Formatting.Indented)).ConfigureAwait(false);
+    }
 
     internal async Task SetDisplayNameOverride(InternalName id, string displayName)
     {
@@ -168,18 +180,62 @@ internal class GameSettingsManager
     {
         return Path.Combine(_customImageFolder.FullName, $"{id.Id}{imageFile.Extension}");
     }
+
+    internal async Task AddCustomCharacterAsync(ICharacter customCharacter)
+    {
+        await ReadSettingsAsync().ConfigureAwait(false);
+
+
+        var jsonCustomCharacter = new JsonCustomCharacter
+        {
+            DisplayName = customCharacter.DisplayName,
+            Keys = customCharacter.Keys.ToArray(),
+            ReleaseDate = customCharacter.ReleaseDate == null || customCharacter.ReleaseDate == DateTime.MinValue ||
+                          customCharacter.ReleaseDate == DateTime.MaxValue
+                ? null
+                : customCharacter.ReleaseDate.Value.ToString("O"),
+            Image = customCharacter.ImageUri != null ? Path.GetFileName(customCharacter.ImageUri.ToString()) : null,
+            Rarity = customCharacter.Rarity,
+            Element = customCharacter.Element.Equals(Element.NoneElement()) ? null : customCharacter.Element.InternalName.ToString(),
+            Class = customCharacter.Class.Equals(Class.NoneClass()) ? null : customCharacter.Class.InternalName.ToString(),
+            Region = customCharacter.Regions.Count == 0 ? null : customCharacter.Regions.Select(r => r.InternalName.ToString()).ToArray(),
+            ModFilesName = customCharacter.ModFilesName == "" ? null : customCharacter.ModFilesName,
+            IsMultiMod = customCharacter.IsMultiMod == false ? null : customCharacter.IsMultiMod
+        };
+
+        _settings.CustomCharacters[customCharacter.InternalName.Id] = jsonCustomCharacter;
+
+        await SaveSettingsAsync().ConfigureAwait(false);
+    }
 }
 
 internal class GameServiceRoot
 {
-    public Dictionary<string, JsonCharacterOverride> CharacterOverrides { get; set; } = new();
-    public Dictionary<string, JsonCustomCharacter> CustomCharacters { get; set; } = new();
+    public Dictionary<string, JsonCharacterOverride> CharacterOverrides { get; init; } = new();
+    public Dictionary<string, JsonCustomCharacter> CustomCharacters { get; init; } = new();
+
+    internal GameServiceRootUntyped ToJson()
+    {
+        var characterOverrides = CharacterOverrides.ToDictionary(kv => kv.Key, kv => (object)kv.Value);
+
+        var customModObjects = new Dictionary<string, Dictionary<string, object>>
+        {
+            { Category.CreateForCharacter().InternalName, CustomCharacters.ToDictionary(kv => kv.Key, kv => (object)kv.Value) }
+        };
+
+
+        return new GameServiceRootUntyped
+        {
+            CharacterOverrides = characterOverrides,
+            CustomModObjects = customModObjects
+        };
+    }
 }
 
 internal class GameServiceRootUntyped
 {
     public Dictionary<string, object> CharacterOverrides { get; set; } = new();
-    public Dictionary<string, object> CustomCharacters { get; set; } = new();
+    public Dictionary<string, Dictionary<string, object>> CustomModObjects { get; set; } = new();
 }
 
 internal class JsonCharacterOverride
@@ -204,34 +260,51 @@ internal class JsonCustomCharacter
 {
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? DisplayName { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
     public string[]? Keys { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
     public string? ReleaseDate { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? Image { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public int? Rarity { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? Element { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? Class { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string[]? Region { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? ModFilesName { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public bool? IsMultiMod { get; set; }
 
 
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public JsonCustomCharacterSkin[]? InGameSkins { get; set; }
+    //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    //public JsonCustomCharacterSkin[]? InGameSkins { get; set; }
 }
 
-internal class JsonCustomCharacterSkin : JsonBaseNameable
-{
-    public string? ModFilesName { get; set; }
+//internal class JsonCustomCharacterSkin : JsonBaseNameable
+//{
+//    public string? ModFilesName { get; set; }
 
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public string? Image { get; set; }
+//    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+//    public string? Image { get; set; }
 
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public string? ReleaseDate { get; set; }
+//    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+//    public string? ReleaseDate { get; set; }
 
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public int? Rarity { get; set; }
-}
+//    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+//    public int? Rarity { get; set; }
+//}
