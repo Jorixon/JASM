@@ -15,7 +15,6 @@ internal class GameSettingsManager
     private readonly string _settingsFile;
     private readonly DirectoryInfo _customImageFolder;
     internal readonly DirectoryInfo CustomCharacterImageFolder;
-    internal readonly DirectoryInfo CustomCharacterSkinImageFolder;
 
     private GameServiceRoot? _settings;
 
@@ -26,88 +25,80 @@ internal class GameSettingsManager
         _customImageFolder = new DirectoryInfo(Path.Combine(settingsDirectory.FullName, "CustomImages"));
         _customImageFolder.Create();
 
-        CustomCharacterImageFolder = new DirectoryInfo(Path.Combine(_customImageFolder.FullName, "Characters"));
+        CustomCharacterImageFolder = new DirectoryInfo(Path.Combine(_customImageFolder.FullName, "CustomModdableObjects",
+            Category.CreateForCharacter().InternalName));
         CustomCharacterImageFolder.Create();
-
-        CustomCharacterSkinImageFolder = new DirectoryInfo(Path.Combine(_customImageFolder.FullName, "CharacterSkins"));
-        CustomCharacterSkinImageFolder.Create();
     }
 
 
-    internal async Task PostGameServiceInitializeAsync(List<IModdableObject> allModdableObjects)
-    {
-        await ReadSettingsAsync(useCache: false).ConfigureAwait(false);
-        var customModObjects = allModdableObjects.Where(mo => mo.IsCustomModObject).ToList();
-        var nonCustomModObjects = allModdableObjects.Where(mo => !mo.IsCustomModObject).ToList();
+    // TODO: Handle cleanup of unused images
+    //internal async Task PostGameServiceInitializeAsync(List<IModdableObject> allModdableObjects)
+    //{
+    //    await ReadSettingsAsync(useCache: false).ConfigureAwait(false);
+    //    var customModObjects = allModdableObjects.Where(mo => mo.IsCustomModObject).ToList();
+    //    var nonCustomModObjects = allModdableObjects.Where(mo => !mo.IsCustomModObject).ToList();
 
 
-        // Remove invalid overrides
-        var missingOverrideObject = _settings.CharacterOverrides.Where(kv => allModdableObjects.All(mo => !mo.InternalNameEquals(kv.Key))).ToList();
+    //    // Remove invalid overrides
+    //    var missingOverrideObject = _settings.CharacterOverrides.Where(kv => allModdableObjects.All(mo => !mo.InternalNameEquals(kv.Key))).ToList();
 
 
-        var overrideImagesToDelete = new Dictionary<string, Uri>();
+    //    var overrideImagesToDelete = new Dictionary<string, Uri>();
 
 
-        foreach (var (key, value) in _settings.CharacterOverrides)
-        {
-            if (value.Image.IsNullOrEmpty())
-            {
-                value.Image = null;
-                continue;
-            }
+    //    foreach (var (key, value) in _settings.CharacterOverrides)
+    //    {
+    //        if (value.Image.IsNullOrEmpty())
+    //        {
+    //            value.Image = null;
+    //            continue;
+    //        }
 
 
-            if (!Uri.TryCreate(value.Image, UriKind.Absolute, out var imageUri))
-            {
-                value.Image = null;
-                continue;
-            }
+    //        if (!Uri.TryCreate(value.Image, UriKind.Absolute, out var imageUri))
+    //        {
+    //            value.Image = null;
+    //            continue;
+    //        }
 
 
-            if (!File.Exists(imageUri.LocalPath))
-            {
-                _logger.Warning("Image override for {Key} does not exist", key);
-                value.Image = null;
-                continue;
-            }
+    //        if (!File.Exists(imageUri.LocalPath))
+    //        {
+    //            _logger.Warning("Image override for {Key} does not exist", key);
+    //            value.Image = null;
+    //            continue;
+    //        }
 
-            if (missingOverrideObject.Any(kv => kv.Key == key))
-            {
-                overrideImagesToDelete.Add(key, imageUri);
-                value.Image = null;
-            }
-        }
+    //        if (missingOverrideObject.Any(kv => kv.Key == key))
+    //        {
+    //            overrideImagesToDelete.Add(key, imageUri);
+    //            value.Image = null;
+    //        }
+    //    }
 
-        foreach (var (key, value) in missingOverrideObject)
-        {
-            _settings.CharacterOverrides.Remove(key);
-        }
+    //    foreach (var (key, value) in missingOverrideObject)
+    //    {
+    //        _settings.CharacterOverrides.Remove(key);
+    //    }
 
-        foreach (var (_, imageUri) in overrideImagesToDelete)
-        {
-            File.Delete(imageUri.LocalPath);
-        }
-
-
-        // Remove images that are not in use
-
-        var allImageFiles = CustomCharacterImageFolder.GetFiles()
-            .Concat(CustomCharacterSkinImageFolder.GetFiles())
-            .Concat(_customImageFolder.GetFiles())
-            .Where(f => Constants.SupportedImageExtensions.Contains(f.Extension, StringComparer.OrdinalIgnoreCase))
-            .Select(f => new Uri(f.FullName))
-            .ToList();
-
-        //var usedImageUris = _settings.CharacterOverrides
-        //    .Select(kv => kv.Value.Image)
-        //    .Where(i => !i.IsNullOrEmpty())
-        //    .Select(i => new Uri(i!))
-        //    .Concat(_settings.CustomCharacters.Where(kv => !kv.Value.Image.IsNullOrEmpty()).Select(c => c.Value.Image))
-        //    .ToList();
+    //    foreach (var (_, imageUri) in overrideImagesToDelete)
+    //    {
+    //        File.Delete(imageUri.LocalPath);
+    //    }
 
 
-        throw new NotImplementedException();
-    }
+    //    // Remove images that are not in use
+
+    //    //var usedImageUris = _settings.CharacterOverrides
+    //    //    .Select(kv => kv.Value.Image)
+    //    //    .Where(i => !i.IsNullOrEmpty())
+    //    //    .Select(i => new Uri(i!))
+    //    //    .Concat(_settings.CustomCharacters.Where(kv => !kv.Value.Image.IsNullOrEmpty()).Select(c => c.Value.Image))
+    //    //    .ToList();
+
+
+    //    throw new NotImplementedException();
+    //}
 
     [MemberNotNull(nameof(_settings))]
     internal async Task<GameServiceRoot> ReadSettingsAsync(bool useCache = true)
@@ -254,9 +245,10 @@ internal class GameSettingsManager
 
 
     private string GetAbsImagePath(InternalName id, FileSystemInfo imageFile)
-    {
-        return Path.Combine(_customImageFolder.FullName, $"{id.Id}{imageFile.Extension}");
-    }
+        => Path.Combine(_customImageFolder.FullName, $"{id.Id}{imageFile.Extension}");
+
+    private string GetAbsImagePath(DirectoryInfo imageFolder, string imageFileName)
+        => Path.Combine(imageFolder.FullName, imageFileName);
 
     internal async Task AddCustomCharacterAsync(ICharacter customCharacter)
     {
@@ -281,6 +273,27 @@ internal class GameSettingsManager
         var newJsonCustomCharacter = JsonCustomCharacter.FromCharacter(customCharacter);
 
         _settings.CustomCharacters[customCharacter.InternalName.Id] = newJsonCustomCharacter;
+
+        await SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    internal async Task DeleteCustomCharacterAsync(InternalName internalName)
+    {
+        await ReadSettingsAsync(useCache: false).ConfigureAwait(false);
+
+        if (!_settings.CustomCharacters.Remove(internalName, out var customCharacter))
+            throw new InvalidOperationException("Character to delete not found. Try restarting JASM");
+
+        if (!customCharacter.Image.IsNullOrEmpty())
+        {
+            var imageFilePath = GetAbsImagePath(CustomCharacterImageFolder, customCharacter.Image);
+
+            if (File.Exists(imageFilePath))
+                File.Delete(imageFilePath);
+            else
+                _logger.Warning("Image file for {InternalName} not found at {ImageFilePath}", internalName, imageFilePath);
+        }
+
 
         await SaveSettingsAsync().ConfigureAwait(false);
     }
@@ -329,6 +342,9 @@ internal class JsonCharacterOverride
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public ICollection<string>? DisabledKeys { get; set; }
 
+    /// <summary>
+    /// Full image path
+    /// </summary>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? Image { get; set; }
 }
@@ -346,6 +362,9 @@ internal class JsonCustomCharacter
 
     public string? ReleaseDate { get; set; }
 
+    /// <summary>
+    /// Only the filename + extension
+    /// </summary>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string? Image { get; set; }
 
@@ -378,7 +397,7 @@ internal class JsonCustomCharacter
                           customCharacter.ReleaseDate == DateTime.MaxValue
                 ? null
                 : customCharacter.ReleaseDate.Value.ToString("O"),
-            Image = customCharacter.ImageUri != null ? Path.GetFileName(customCharacter.ImageUri.ToString()) : null,
+            Image = customCharacter.ImageUri != null ? Path.GetFileName(customCharacter.ImageUri.LocalPath) : null,
             Rarity = customCharacter.Rarity,
             Element = customCharacter.Element.Equals(Models.Element.NoneElement()) ? null : customCharacter.Element.InternalName.ToString(),
             Class = customCharacter.Class.Equals(Models.Class.NoneClass()) ? null : customCharacter.Class.InternalName.ToString(),

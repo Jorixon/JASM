@@ -17,12 +17,12 @@ namespace GIMI_ModManager.WinUI.Views;
 
 public sealed partial class DebugPage : Page
 {
-    public IGameService GameService { get; } = App.GetService<IGameService>();
-    public CommandService CommandService { get; } = App.GetService<CommandService>();
+    public IGameService GameService = App.GetService<IGameService>();
+    public CommandService CommandService = App.GetService<CommandService>();
 
-    public IWindowManagerService WindowManagerService { get; } = App.GetService<IWindowManagerService>();
+    public IWindowManagerService WindowManagerService = App.GetService<IWindowManagerService>();
 
-    public JsonExporterService JsonExporterService { get; } = App.GetService<JsonExporterService>();
+    public JsonExporterService JsonExporterService = App.GetService<JsonExporterService>();
 
     private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
 
@@ -62,5 +62,29 @@ public sealed partial class DebugPage : Page
         var newCharacter = await GameService.CreateCharacterAsync(createCharacterRequest);
 
         await _skinManagerService.EnableModListAsync(newCharacter);
+    }
+
+    private async void ButtonBase_OnClick1(object sender, RoutedEventArgs e)
+    {
+        var character = GameService.GetCharacterByIdentifier("DebugTest");
+
+        character ??= GameService.GetCharacterByIdentifier("NewName");
+
+        var editCharacterRequest = new EditCustomCharacterRequest()
+        {
+            DisplayName = NewValue<string>.Set(character.DisplayName == "DebugTest" ? "NewName" : "DebugTest")
+        };
+
+        await GameService.EditCustomCharacterAsync(character.InternalName, editCharacterRequest);
+    }
+
+    private async void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
+    {
+        var character = GameService.GetCharacterByIdentifier("DebugTest");
+
+        character ??= GameService.GetCharacterByIdentifier("NewName");
+
+        await GameService.DeleteCustomCharacterAsync(character.InternalName);
+        await _skinManagerService.DisableModListAsync(character);
     }
 }

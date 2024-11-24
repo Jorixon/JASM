@@ -33,6 +33,9 @@ public interface IGameService
 
     public Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest);
 
+    public Task<ICharacter> DeleteCustomCharacterAsync(InternalName internalName);
+
+
     public ICharacter? QueryCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
 

@@ -431,6 +431,26 @@ public class GameService : IGameService
         return customCharacter;
     }
 
+    public async Task<ICharacter> DeleteCustomCharacterAsync(InternalName internalName)
+    {
+        var character = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both)
+            .Where(c => c.IsCustomModObject)
+            .FirstOrDefault(c => c.InternalNameEquals(internalName));
+
+        if (character is null)
+            throw new ModObjectNotFoundException($"Character with internal name {internalName} not found");
+
+
+        await _gameSettingsManager.DeleteCustomCharacterAsync(character.InternalName).ConfigureAwait(false);
+
+        var result = _characters.Remove(character);
+
+        if (!result)
+            _logger.Warning("Failed to remove character {InternalName} from internal GameService list", internalName);
+
+        return character;
+    }
+
     public ICharacter? QueryCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
         int minScore = 100)
     {
@@ -824,8 +844,7 @@ public class GameService : IGameService
                 .SetRegion(Regions.AllRegions)
                 .SetElement(Elements.AllElements)
                 .SetClass(Classes.AllClasses)
-                .CreateCharacter(imageFolder: _gameSettingsManager.CustomCharacterImageFolder.FullName,
-                    characterSkinImageFolder: _gameSettingsManager.CustomCharacterSkinImageFolder.FullName);
+                .CreateCharacter(imageFolder: _gameSettingsManager.CustomCharacterImageFolder.FullName);
 
 
             _characters.Add(character);
@@ -1301,6 +1320,14 @@ internal sealed class EnableableList<T> : List<Enableable<T>> where T : IModdabl
     };
 
 
-    /// <inheritdoc cref="List{T}.Add"/>
-    public bool Remove(T moddableObject) => base.Remove(moddableObject);
+    /// <inheritdoc cref="List{T}.Remove"/>
+    public bool Remove(T moddableObject)
+    {
+        var enabledWrapper = this.FirstOrDefault(e => moddableObject.Equals(e.ModdableObject));
+
+        if (enabledWrapper is null)
+            return false;
+
+        return base.Remove(enabledWrapper);
+    }
 }
