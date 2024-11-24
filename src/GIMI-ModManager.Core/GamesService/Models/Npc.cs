@@ -12,6 +12,7 @@ public class Npc : INpc
     public bool IsMultiMod { get; internal set; }
     public DateTime? ReleaseDate { get; set; } = DateTime.MinValue;
     public ICategory ModCategory { get; internal init; } = Category.CreateForNpc();
+    public bool IsCustomModObject { get; init; }
     public INpc DefaultNPC { get; internal init; } = null!;
     public ICollection<IRegion> Regions { get; internal set; } = Array.Empty<IRegion>();
 

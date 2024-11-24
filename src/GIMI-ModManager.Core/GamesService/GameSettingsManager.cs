@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
@@ -30,6 +31,82 @@ internal class GameSettingsManager
 
         CustomCharacterSkinImageFolder = new DirectoryInfo(Path.Combine(_customImageFolder.FullName, "CharacterSkins"));
         CustomCharacterSkinImageFolder.Create();
+    }
+
+
+    internal async Task PostGameServiceInitializeAsync(List<IModdableObject> allModdableObjects)
+    {
+        await ReadSettingsAsync(useCache: false).ConfigureAwait(false);
+        var customModObjects = allModdableObjects.Where(mo => mo.IsCustomModObject).ToList();
+        var nonCustomModObjects = allModdableObjects.Where(mo => !mo.IsCustomModObject).ToList();
+
+
+        // Remove invalid overrides
+        var missingOverrideObject = _settings.CharacterOverrides.Where(kv => allModdableObjects.All(mo => !mo.InternalNameEquals(kv.Key))).ToList();
+
+
+        var overrideImagesToDelete = new Dictionary<string, Uri>();
+
+
+        foreach (var (key, value) in _settings.CharacterOverrides)
+        {
+            if (value.Image.IsNullOrEmpty())
+            {
+                value.Image = null;
+                continue;
+            }
+
+
+            if (!Uri.TryCreate(value.Image, UriKind.Absolute, out var imageUri))
+            {
+                value.Image = null;
+                continue;
+            }
+
+
+            if (!File.Exists(imageUri.LocalPath))
+            {
+                _logger.Warning("Image override for {Key} does not exist", key);
+                value.Image = null;
+                continue;
+            }
+
+            if (missingOverrideObject.Any(kv => kv.Key == key))
+            {
+                overrideImagesToDelete.Add(key, imageUri);
+                value.Image = null;
+            }
+        }
+
+        foreach (var (key, value) in missingOverrideObject)
+        {
+            _settings.CharacterOverrides.Remove(key);
+        }
+
+        foreach (var (_, imageUri) in overrideImagesToDelete)
+        {
+            File.Delete(imageUri.LocalPath);
+        }
+
+
+        // Remove images that are not in use
+
+        var allImageFiles = CustomCharacterImageFolder.GetFiles()
+            .Concat(CustomCharacterSkinImageFolder.GetFiles())
+            .Concat(_customImageFolder.GetFiles())
+            .Where(f => Constants.SupportedImageExtensions.Contains(f.Extension, StringComparer.OrdinalIgnoreCase))
+            .Select(f => new Uri(f.FullName))
+            .ToList();
+
+        //var usedImageUris = _settings.CharacterOverrides
+        //    .Select(kv => kv.Value.Image)
+        //    .Where(i => !i.IsNullOrEmpty())
+        //    .Select(i => new Uri(i!))
+        //    .Concat(_settings.CustomCharacters.Where(kv => !kv.Value.Image.IsNullOrEmpty()).Select(c => c.Value.Image))
+        //    .ToList();
+
+
+        throw new NotImplementedException();
     }
 
     [MemberNotNull(nameof(_settings))]
@@ -186,24 +263,24 @@ internal class GameSettingsManager
         await ReadSettingsAsync().ConfigureAwait(false);
 
 
-        var jsonCustomCharacter = new JsonCustomCharacter
-        {
-            DisplayName = customCharacter.DisplayName,
-            Keys = customCharacter.Keys.ToArray(),
-            ReleaseDate = customCharacter.ReleaseDate == null || customCharacter.ReleaseDate == DateTime.MinValue ||
-                          customCharacter.ReleaseDate == DateTime.MaxValue
-                ? null
-                : customCharacter.ReleaseDate.Value.ToString("O"),
-            Image = customCharacter.ImageUri != null ? Path.GetFileName(customCharacter.ImageUri.ToString()) : null,
-            Rarity = customCharacter.Rarity,
-            Element = customCharacter.Element.Equals(Element.NoneElement()) ? null : customCharacter.Element.InternalName.ToString(),
-            Class = customCharacter.Class.Equals(Class.NoneClass()) ? null : customCharacter.Class.InternalName.ToString(),
-            Region = customCharacter.Regions.Count == 0 ? null : customCharacter.Regions.Select(r => r.InternalName.ToString()).ToArray(),
-            ModFilesName = customCharacter.ModFilesName == "" ? null : customCharacter.ModFilesName,
-            IsMultiMod = customCharacter.IsMultiMod == false ? null : customCharacter.IsMultiMod
-        };
+        var jsonCustomCharacter = JsonCustomCharacter.FromCharacter(customCharacter);
 
         _settings.CustomCharacters[customCharacter.InternalName.Id] = jsonCustomCharacter;
+
+        await SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    internal async Task EditCustomCharacterAsync(ICharacter customCharacter)
+    {
+        await ReadSettingsAsync().ConfigureAwait(false);
+
+        if (!_settings.CustomCharacters.TryGetValue(customCharacter.InternalName.Id, out _))
+            throw new InvalidOperationException("Character to edit not found. Try restarting JASM");
+
+
+        var newJsonCustomCharacter = JsonCustomCharacter.FromCharacter(customCharacter);
+
+        _settings.CustomCharacters[customCharacter.InternalName.Id] = newJsonCustomCharacter;
 
         await SaveSettingsAsync().ConfigureAwait(false);
     }
@@ -289,6 +366,29 @@ internal class JsonCustomCharacter
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public bool? IsMultiMod { get; set; }
+
+
+    public static JsonCustomCharacter FromCharacter(ICharacter customCharacter)
+    {
+        var jsonCustomCharacter = new JsonCustomCharacter
+        {
+            DisplayName = customCharacter.DisplayName,
+            Keys = customCharacter.Keys.ToArray(),
+            ReleaseDate = customCharacter.ReleaseDate == null || customCharacter.ReleaseDate == DateTime.MinValue ||
+                          customCharacter.ReleaseDate == DateTime.MaxValue
+                ? null
+                : customCharacter.ReleaseDate.Value.ToString("O"),
+            Image = customCharacter.ImageUri != null ? Path.GetFileName(customCharacter.ImageUri.ToString()) : null,
+            Rarity = customCharacter.Rarity,
+            Element = customCharacter.Element.Equals(Models.Element.NoneElement()) ? null : customCharacter.Element.InternalName.ToString(),
+            Class = customCharacter.Class.Equals(Models.Class.NoneClass()) ? null : customCharacter.Class.InternalName.ToString(),
+            Region = customCharacter.Regions.Count == 0 ? null : customCharacter.Regions.Select(r => r.InternalName.ToString()).ToArray(),
+            ModFilesName = customCharacter.ModFilesName == "" ? null : customCharacter.ModFilesName,
+            IsMultiMod = customCharacter.IsMultiMod == false ? null : customCharacter.IsMultiMod
+        };
+
+        return jsonCustomCharacter;
+    }
 
 
     //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

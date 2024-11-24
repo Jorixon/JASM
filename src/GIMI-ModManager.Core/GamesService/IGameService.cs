@@ -1,6 +1,6 @@
-﻿using GIMI_ModManager.Core.Contracts;
-using GIMI_ModManager.Core.GamesService.Interfaces;
+﻿using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.GamesService.Requests;
 
 namespace GIMI_ModManager.Core.GamesService;
 
@@ -30,6 +30,8 @@ public interface IGameService
 
 
     public Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest);
+
+    public Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest);
 
     public ICharacter? QueryCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);

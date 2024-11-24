@@ -1,19 +1,20 @@
 ﻿using GIMI_ModManager.Core.GamesService.Models;
 
-namespace GIMI_ModManager.Core.GamesService.Internals;
+namespace GIMI_ModManager.Core.GamesService.Requests;
 
-internal class InternalCreateCharacterRequest
+public class CreateCharacterRequest
 {
     public required InternalName InternalName { get; set; }
-
-    public string? DisplayName { get; set; }
-
+    public required string DisplayName { get; set; }
+    public string[]? Keys { get; set; }
     public DateTime? ReleaseDate { get; set; }
 
-    public string? Image { get; set; }
+    /// <summary>
+    /// Will be copied when new character is created
+    /// </summary>
+    public Uri? Image { get; set; }
 
-    public int Rarity { get; set; }
-
+    public required int Rarity { get; set; }
     public string? Element { get; set; }
 
     public string? Class { get; set; }
@@ -23,6 +24,4 @@ internal class InternalCreateCharacterRequest
     public string? ModFilesName { get; set; }
 
     public bool IsMultiMod { get; set; }
-
-    public string[]? Keys { get; set; }
 }

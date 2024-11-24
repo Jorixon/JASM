@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using FuzzySharp;
-using GIMI_ModManager.Core.Contracts;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService.Exceptions;
 using GIMI_ModManager.Core.GamesService.Interfaces;
-using GIMI_ModManager.Core.GamesService.Internals;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.GamesService.Requests;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
 using JsonElement = GIMI_ModManager.Core.GamesService.JsonModels.JsonElement;
@@ -192,6 +191,8 @@ public class GameService : IGameService
     public async Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
     {
         ArgumentException.ThrowIfNullOrEmpty(newDisplayName, nameof(newDisplayName));
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
 
         await _gameSettingsManager.SetDisplayNameOverride(character.InternalName, newDisplayName).ConfigureAwait(false);
         character.DisplayName = newDisplayName;
@@ -200,6 +201,8 @@ public class GameService : IGameService
     public async Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
     {
         ArgumentNullException.ThrowIfNull(newImageUri, nameof(newImageUri));
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
 
         if (!File.Exists(newImageUri.LocalPath))
             throw new ArgumentException($"Image file does not exist at {newImageUri.LocalPath}", nameof(newImageUri));
@@ -297,27 +300,24 @@ public class GameService : IGameService
             throw new InvalidModdableObjectException("A moddable object with the same internal name already exists. InternalName must be unique");
 
 
-        var internalCreateRequest = new InternalCreateCharacterRequest()
+        var internalCreateRequest = new JsonCustomCharacter()
         {
-            InternalName = new InternalName(characterRequest.InternalName),
             DisplayName = characterRequest.DisplayName,
-            Keys = characterRequest.Keys,
+            Keys = characterRequest.Keys?.ToArray(),
             Class = characterRequest.Class,
             Element = characterRequest.Element,
             Image = characterRequest.Image?.LocalPath,
             IsMultiMod = characterRequest.IsMultiMod,
-            Region = characterRequest.Region,
+            Region = characterRequest.Region?.ToArray(),
             ModFilesName = characterRequest.ModFilesName,
             Rarity = characterRequest.Rarity,
-            ReleaseDate = characterRequest.ReleaseDate
+            ReleaseDate = characterRequest.ReleaseDate?.ToString("O")
         };
 
         FileInfo? sourceImage = null;
         if (characterRequest.Image is not null)
         {
-            var isImageValid = characterRequest.Image.IsFile && File.Exists(characterRequest.Image.LocalPath);
-
-            if (!isImageValid)
+            if (!characterRequest.Image.IsFile || !File.Exists(characterRequest.Image.LocalPath))
                 throw new InvalidModdableObjectException("Image must be a valid existing filesystem file");
 
             var imageExtension = Path.GetExtension(characterRequest.Image.LocalPath);
@@ -337,7 +337,7 @@ public class GameService : IGameService
         try
         {
             character = Character
-                .FromCustomCharacter(internalCreateRequest)
+                .FromJson(characterRequest.InternalName, internalCreateRequest)
                 .SetRegion(Regions.AllRegions)
                 .SetElement(Elements.AllElements)
                 .SetClass(Classes.AllClasses)
@@ -387,6 +387,48 @@ public class GameService : IGameService
         _characters.Add(character);
 
         return character;
+    }
+
+    public async Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest)
+    {
+        var character = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both)
+            .Where(c => c.IsCustomModObject)
+            .FirstOrDefault(c => c.InternalNameEquals(internalName));
+
+        if (character is null)
+            throw new ModObjectNotFoundException($"Character with internal name {internalName} not found");
+
+
+        if (character is not Character customCharacter)
+            throw new InvalidModdableObjectException("Currently only characters are supported");
+
+        if (!characterRequest.AnyValuesSet)
+        {
+            _logger.Warning("No values were set for editing character {InternalName}", internalName);
+            return customCharacter;
+        }
+
+        var revertsIfError = new List<Action>();
+
+        if (characterRequest.DisplayName.IsSet)
+        {
+            revertsIfError.Add(() => character.DisplayName = character.DefaultCharacter.DisplayName);
+            character.DisplayName = characterRequest.DisplayName;
+        }
+
+        try
+        {
+            await _gameSettingsManager.EditCustomCharacterAsync(character).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to edit custom character {InternalName}", internalName);
+            revertsIfError.ForEach(revert => revert());
+            throw;
+        }
+
+        customCharacter.DefaultCharacter = customCharacter.Clone();
+        return customCharacter;
     }
 
     public ICharacter? QueryCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
@@ -760,6 +802,7 @@ public class GameService : IGameService
                     "Internal name {InternalName} is used by another moddable object type. However, a custom character was found using it. JASM will prioritize custom character",
                     internalName);
                 otherModdableObjects.Remove(otherModConflict);
+                _duplicateInternalNames.Add(otherModConflict);
             }
 
             var existingCharacter = allCharacters.FirstOrDefault(x => x.InternalNameEquals(internalName));

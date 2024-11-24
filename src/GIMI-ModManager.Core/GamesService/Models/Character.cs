@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using GIMI_ModManager.Core.GamesService.Exceptions;
 using GIMI_ModManager.Core.GamesService.Interfaces;
-using GIMI_ModManager.Core.GamesService.Internals;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
@@ -18,6 +16,7 @@ public class Character : ICharacter, IEquatable<Character>
     public bool IsMultiMod { get; init; }
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }
+    public bool IsCustomModObject { get; private init; }
 
     public Uri? ImageUri
     {
@@ -43,7 +42,7 @@ public class Character : ICharacter, IEquatable<Character>
         return $"{DisplayName} ({InternalName})";
     }
 
-    internal static CharacterBuilder FromJson(JsonCharacter jsonCharacter)
+    internal static CharacterBuilder FromJson(JsonCharacter jsonCharacter, bool isCustomObject = false)
     {
         var internalName = jsonCharacter.InternalName ??
                            throw new InvalidJsonConfigException("InternalName can never be missing or null");
@@ -57,7 +56,8 @@ public class Character : ICharacter, IEquatable<Character>
             Keys = jsonCharacter.Keys ?? Array.Empty<string>(),
             Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var date) ? date : DateTime.MaxValue,
-            Skins = new List<ICharacterSkin>()
+            Skins = new List<ICharacterSkin>(),
+            IsCustomModObject = isCustomObject
         };
 
         // Add default skin
@@ -77,28 +77,28 @@ public class Character : ICharacter, IEquatable<Character>
     }
 
 
-    internal static CharacterBuilder FromCustomCharacter(InternalCreateCharacterRequest createCharacterRequest)
-    {
-        if (string.IsNullOrWhiteSpace(createCharacterRequest.InternalName))
-            throw new InvalidModdableObjectException("InternalName cannot be null or empty");
+    //internal static CharacterBuilder FromCustomCharacter(InternalCreateCharacterRequest createCharacterRequest)
+    //{
+    //    if (string.IsNullOrWhiteSpace(createCharacterRequest.InternalName))
+    //        throw new InvalidModdableObjectException("InternalName cannot be null or empty");
 
-        var character = new Character
-        {
-            InternalName = createCharacterRequest.InternalName,
-            ModFilesName = createCharacterRequest.ModFilesName ?? string.Empty,
-            DisplayName = createCharacterRequest.DisplayName ?? createCharacterRequest.InternalName,
-            IsMultiMod = createCharacterRequest.IsMultiMod,
-            Keys = createCharacterRequest.Keys?.ToArray() ?? [],
-            Rarity = createCharacterRequest.Rarity is >= 0 and <= 5 ? createCharacterRequest.Rarity : -1,
-            ReleaseDate = createCharacterRequest.ReleaseDate ?? DateTime.MaxValue,
-            Skins = new List<ICharacterSkin>()
-        };
+    //    var character = new Character
+    //    {
+    //        InternalName = createCharacterRequest.InternalName,
+    //        ModFilesName = createCharacterRequest.ModFilesName ?? string.Empty,
+    //        DisplayName = createCharacterRequest.DisplayName ?? createCharacterRequest.InternalName,
+    //        IsMultiMod = createCharacterRequest.IsMultiMod,
+    //        Keys = createCharacterRequest.Keys?.ToArray() ?? [],
+    //        Rarity = createCharacterRequest.Rarity is >= 0 and <= 5 ? createCharacterRequest.Rarity : -1,
+    //        ReleaseDate = createCharacterRequest.ReleaseDate ?? DateTime.MaxValue,
+    //        Skins = new List<ICharacterSkin>()
+    //    };
 
-        // Add default skin
-        character.Skins.Add(CreateDefaultSkin(character));
+    //    // Add default skin
+    //    character.Skins.Add(CreateDefaultSkin(character));
 
-        return new CharacterBuilder(character, createCharacterRequest);
-    }
+    //    return new CharacterBuilder(character, createCharacterRequest);
+    //}
 
     internal static CharacterBuilder FromJson(string internalName, JsonCustomCharacter jsonCustomCharacter)
     {
@@ -117,7 +117,7 @@ public class Character : ICharacter, IEquatable<Character>
             IsMultiMod = jsonCustomCharacter.IsMultiMod
         };
 
-        return FromJson(jsonCharacter);
+        return FromJson(jsonCharacter, isCustomObject: true);
     }
 
 
@@ -171,7 +171,8 @@ public class Character : ICharacter, IEquatable<Character>
             Class = Class,
             Element = Element,
             Regions = Regions,
-            ImageUri = ImageUri
+            ImageUri = ImageUri,
+            IsCustomModObject = IsCustomModObject
         };
     }
 
@@ -276,15 +277,6 @@ internal sealed class CharacterBuilder
         _element = jsonCharacter.Element;
         _image = jsonCharacter.Image;
         _jsonCharacterSkins = jsonCharacter.InGameSkins;
-    }
-
-    public CharacterBuilder(Character character, InternalCreateCharacterRequest characterRequest)
-    {
-        _character = character;
-        _regions = characterRequest.Region;
-        _class = characterRequest.Class;
-        _element = characterRequest.Element;
-        _image = characterRequest.Image;
     }
 
     public CharacterBuilder SetRegion(IReadOnlyCollection<IRegion> regions)

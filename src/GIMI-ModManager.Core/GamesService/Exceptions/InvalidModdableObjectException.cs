@@ -1,6 +1,6 @@
 ﻿namespace GIMI_ModManager.Core.GamesService.Exceptions;
 
-public class InvalidModdableObjectException : Exception
+public class InvalidModdableObjectException : GameServiceException
 {
     public InvalidModdableObjectException(string message) : base(message)
     {

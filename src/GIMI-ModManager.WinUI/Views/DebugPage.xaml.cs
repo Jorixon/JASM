@@ -1,7 +1,8 @@
 using Windows.Storage.Pickers;
-using GIMI_ModManager.Core.Contracts;
+using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.GamesService.Requests;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.Core.Services.CommandService;
 using GIMI_ModManager.WinUI.Services.AppManagement;
@@ -22,6 +23,8 @@ public sealed partial class DebugPage : Page
     public IWindowManagerService WindowManagerService { get; } = App.GetService<IWindowManagerService>();
 
     public JsonExporterService JsonExporterService { get; } = App.GetService<JsonExporterService>();
+
+    private readonly ISkinManagerService _skinManagerService = App.GetService<ISkinManagerService>();
 
     public DebugPage()
     {
@@ -56,6 +59,8 @@ public sealed partial class DebugPage : Page
             createCharacterRequest.Image = new Uri(file.Path);
         }
 
-        await GameService.CreateCharacterAsync(createCharacterRequest);
+        var newCharacter = await GameService.CreateCharacterAsync(createCharacterRequest);
+
+        await _skinManagerService.EnableModListAsync(newCharacter);
     }
 }

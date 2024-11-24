@@ -38,7 +38,4 @@
     <PackageReference Include="Serilog" Version="4.1.0" />
     <PackageReference Include="SharpCompress" Version="0.37.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GamesService\Exceptions\" />
-  </ItemGroup>
 </Project>

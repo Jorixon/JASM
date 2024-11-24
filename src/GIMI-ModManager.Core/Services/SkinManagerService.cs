@@ -335,7 +335,7 @@ public sealed class SkinManagerService : ISkinManagerService
         return modEntries.FirstOrDefault(x => x.Id == id);
     }
 
-    public Task EnableModListAsync(ICharacter moddableObject)
+    public Task EnableModListAsync(IModdableObject moddableObject)
     {
         var modList = new CharacterModList(moddableObject, GetCharacterModFolderPath(moddableObject), logger: _logger);
 
