@@ -448,5 +448,23 @@
     "InGameSkins": [],
     "InternalName": "Yanagi",
     "DisplayName": "Yanagi"
+  },
+  {
+    "Keys": [
+      "Asaba",
+      "Harumasa"
+    ],
+    "ReleaseDate": "2024-11-6T00:00:00",
+    "Image": "Harumasa.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Attack",
+    "Region": [
+      "Section6"
+    ],
+    "ModFilesName": "Harumasa",
+    "InGameSkins": [],
+    "InternalName": "Harumasa",
+    "DisplayName": "Harumasa"
   }
 ]
