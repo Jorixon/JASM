@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.18.4](https://github.com/Jorixon/JASM/compare/v2.18.3...v2.18.4) (2024-12-17)
+
+
+### Miscellaneous
+
+* **Genshin:** Updated character Citlali Info and added characters Mavuika and Lan Yan ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+* **Honkai:** Added character Aglaea ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+* **WuWa:** Added character Lumi ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+* **ZZZ:** Added characters Harumasa, Astra and Evelyn ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+
 ## [2.18.3](https://github.com/Jorixon/JASM/compare/v2.18.2...v2.18.3) (2024-11-23)
 
 
