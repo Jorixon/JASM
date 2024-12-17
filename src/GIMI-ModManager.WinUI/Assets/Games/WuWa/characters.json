@@ -406,5 +406,22 @@
     "InGameSkins": [],
     "InternalName": "Camellya",
     "DisplayName": "Camellya"
+  },
+  {
+    "Keys": [
+      "Lumi"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Lumi.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Broadblade",
+    "Region": [
+      "Huanglong"
+    ],
+    "ModFilesName": "Lumi",
+    "InGameSkins": [],
+    "InternalName": "Lumi",
+    "DisplayName": "Lumi"
   }
 ]
