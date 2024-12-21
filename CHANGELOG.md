@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.5](https://github.com/Jorixon/JASM/compare/v2.18.4...v2.18.5) (2024-12-21)
+
+
+### Miscellaneous
+
+* **zzz:** Added lighter and updated release dates of some characters ([#311](https://github.com/Jorixon/JASM/issues/311)) ([82b20ae](https://github.com/Jorixon/JASM/commit/82b20aeb31e2e9392816919f5741f2bebd64b682))
+
 ## [2.18.4](https://github.com/Jorixon/JASM/compare/v2.18.3...v2.18.4) (2024-12-17)
 
 
