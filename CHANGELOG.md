@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.6](https://github.com/Jorixon/JASM/compare/v2.18.5...v2.18.6) (2024-12-21)
+
+
+### Bug Fixes
+
+* Unable to set mod preview image by pasting a file image ([#313](https://github.com/Jorixon/JASM/issues/313)) ([572ab0c](https://github.com/Jorixon/JASM/commit/572ab0cff77e40ece137c16919396384caca1d02))
+
 ## [2.18.5](https://github.com/Jorixon/JASM/compare/v2.18.4...v2.18.5) (2024-12-21)
 
 
