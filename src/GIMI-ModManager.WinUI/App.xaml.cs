@@ -20,6 +20,7 @@ using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels.SubViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SettingsViewModels;
 using GIMI_ModManager.WinUI.Views;
 using GIMI_ModManager.WinUI.Views.CharacterManager;
@@ -272,6 +273,8 @@ public partial class App : Application
                 services.AddTransient<ModPaneVM>();
                 services.AddTransient<ModGridVM>();
                 services.AddTransient<ContextMenuVM>();
+                services.AddTransient<CreateCharacterPage>();
+                services.AddTransient<CreateCharacterViewModel>();
 
                 // Configuration
                 services.Configure<LocalSettingsOptions>(

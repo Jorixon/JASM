@@ -418,7 +418,7 @@ public class GameService : IGameService
 
         try
         {
-            await _gameSettingsManager.EditCustomCharacterAsync(character).ConfigureAwait(false);
+            await _gameSettingsManager.ReplaceCustomCharacterAsync(character).ConfigureAwait(false);
         }
         catch (Exception e)
         {

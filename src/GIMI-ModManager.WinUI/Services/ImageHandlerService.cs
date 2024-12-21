@@ -13,7 +13,7 @@ public class ImageHandlerService
 
     public readonly Uri PlaceholderImageUri = StaticPlaceholderImageUri;
 
-    public static Uri StaticPlaceholderImageUri => new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
+    public static Uri StaticPlaceholderImageUri { get; } = new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
 
     private readonly IHttpClientFactory _httpClientFactory;
 

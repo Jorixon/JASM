@@ -262,7 +262,7 @@ internal class GameSettingsManager
         await SaveSettingsAsync().ConfigureAwait(false);
     }
 
-    internal async Task EditCustomCharacterAsync(ICharacter customCharacter)
+    internal async Task ReplaceCustomCharacterAsync(ICharacter customCharacter)
     {
         await ReadSettingsAsync().ConfigureAwait(false);
 

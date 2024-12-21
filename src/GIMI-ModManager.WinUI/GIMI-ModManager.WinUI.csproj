@@ -25,7 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.1.240916" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240916" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
@@ -99,6 +99,7 @@
 		<None Remove="Views\CharacterDetailsPages\ModPane.xaml" />
 		<None Remove="Views\CharacterGalleryPage.xaml" />
 		<None Remove="Views\CharacterManagerPage.xaml" />
+		<None Remove="Views\CharacterManager\CreateCharacterPage.xaml" />
 		<None Remove="Views\CharacterManager\EditCharacterPage.xaml" />
 		<None Remove="Views\CharactersPage.xaml" />
 		<None Remove="Views\CommandProcessViewer.xaml" />
@@ -605,6 +606,12 @@
 	  <None Update="Assets\NPC_Icon.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\CharacterManager\InputWrapper.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\CharacterManager\CreateCharacterPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\DebugPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
