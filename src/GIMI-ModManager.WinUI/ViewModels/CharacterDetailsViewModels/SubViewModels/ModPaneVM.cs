@@ -306,15 +306,15 @@ public sealed partial class ModPaneVM(
         {
             if (!IsModLoaded) return;
 
-            var clipboardHasValidImage = await _imageHandlerService.ClipboardContainsImageAsync();
+            var clipboardHasValidImageResult = await _imageHandlerService.ClipboardContainsImageAsync();
 
-            if (!clipboardHasValidImage)
+            if (!clipboardHasValidImageResult.Result)
             {
                 _notificationService.ShowNotification("Clipboard does not contain a valid image", "", null);
                 return;
             }
 
-            var imagePath = await _imageHandlerService.GetImageFromClipboardAsync();
+            var imagePath = await _imageHandlerService.GetImageFromClipboardAsync(clipboardHasValidImageResult.DataPackage);
 
             if (imagePath == null)
             {
