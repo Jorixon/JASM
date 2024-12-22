@@ -106,31 +106,40 @@ public class ImageHandlerService
         return Task.CompletedTask;
     }
 
-    public async Task<bool> ClipboardContainsImageAsync()
+    public record ClipboardContainsImageResult(bool Result, DataPackageView? DataPackage = null);
+
+    public async Task<ClipboardContainsImageResult> ClipboardContainsImageAsync()
     {
         var package = Clipboard.GetContent();
-
         if (package is null)
-            return false;
+            return new ClipboardContainsImageResult(false, package);
 
         if (package.Contains(StandardDataFormats.Bitmap))
-            return true;
+            return new ClipboardContainsImageResult(true, package);
+
 
         if (!package.Contains(StandardDataFormats.StorageItems))
-            return false;
+            return new ClipboardContainsImageResult(false, package);
 
         var storageItems = await package.GetStorageItemsAsync();
 
-        return storageItems.Any(item =>
-            Constants.SupportedImageExtensions.Contains(Path.GetExtension(item.Name)));
+        var containsValidFileExtension =
+            storageItems.Any(item => Constants.SupportedImageExtensions.Contains(Path.GetExtension(item.Name), StringComparer.OrdinalIgnoreCase));
+
+        return new ClipboardContainsImageResult(containsValidFileExtension, package);
     }
 
-    public async Task<Uri?> GetImageFromClipboardAsync()
+    public async Task<Uri?> GetImageFromClipboardAsync(DataPackageView? clipboardContent = null)
     {
-        if (!await ClipboardContainsImageAsync().ConfigureAwait(false))
-            return null;
+        // Reuse the clipboard content if it's already been retrieved
+        // Calling Clipboard.GetContent() then GetStorageItemsAsync() twice gives a COMException, or at least seems to be the case
 
-        var package = Clipboard.GetContent();
+        var package = clipboardContent ?? await ClipboardContainsImageAsync() switch
+        {
+            (true, { } dataPackage) => dataPackage,
+            _ => null
+        };
+
 
         if (package is null)
             return null;
@@ -140,7 +149,7 @@ public class ImageHandlerService
             var storageItems = await package.GetStorageItemsAsync();
 
             var imageFile = storageItems.FirstOrDefault(item =>
-                Constants.SupportedImageExtensions.Contains(Path.GetExtension(item.Name)));
+                Constants.SupportedImageExtensions.Contains(Path.GetExtension(item.Name), StringComparer.OrdinalIgnoreCase));
 
             if (imageFile is null || !File.Exists(imageFile.Path))
                 return null;

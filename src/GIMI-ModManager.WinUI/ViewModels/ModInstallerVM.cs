@@ -504,7 +504,7 @@ public partial class ModInstallerVM : ObservableRecipient, INavigationAware, IDi
         Uri? imageUri;
         try
         {
-            imageUri = await Task.Run(() => _imageHandlerService.GetImageFromClipboardAsync());
+            imageUri = await _imageHandlerService.GetImageFromClipboardAsync();
             ImageSource = "Manual";
         }
         catch (Exception e)

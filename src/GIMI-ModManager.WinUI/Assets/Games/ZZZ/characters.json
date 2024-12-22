@@ -329,7 +329,7 @@
     "Keys": [
       "Miyabi"
     ],
-    "ReleaseDate": "2025-07-4T00:10:00",
+    "ReleaseDate": "2025-12-18T00:10:00",
     "Image": "Miyabi.webp",
     "Rarity": 5,
     "Element": "Ice",
@@ -382,7 +382,7 @@
       "Seth",
       "Lowell"
     ],
-    "ReleaseDate": "2024-08-14T00:00:00",
+    "ReleaseDate": "2024-09-04T00:00:00",
     "Image": "Seth.webp",
     "Rarity": 4,
     "Element": "Electric",
@@ -400,7 +400,7 @@
       "Caesar",
       "King"
     ],
-    "ReleaseDate": "2024-10-25T00:00:00",
+    "ReleaseDate": "2024-09-25T00:00:00",
     "Image": "Caesar.webp",
     "Rarity": 5,
     "Element": "Physical",
@@ -448,5 +448,74 @@
     "InGameSkins": [],
     "InternalName": "Yanagi",
     "DisplayName": "Yanagi"
+  },
+  {
+    "Keys": [
+      "Asaba",
+      "Harumasa"
+    ],
+    "ReleaseDate": "2024-12-18T00:00:00",
+    "Image": "Harumasa.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Attack",
+    "Region": [
+      "Section6"
+    ],
+    "ModFilesName": "Harumasa",
+    "InGameSkins": [],
+    "InternalName": "Harumasa",
+    "DisplayName": "Harumasa"
+  },
+  {
+    "Keys": [
+      "Astra",
+      "Yao"
+    ],
+    "Image": "Astra.webp",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Support",
+    "Region": [
+      "Lyra"
+    ],
+    "ModFilesName": "Astra",
+    "InGameSkins": [],
+    "InternalName": "Astra",
+    "DisplayName": "Astra"
+  },
+  {
+    "Keys": [
+      "Evelyn",
+      "Chevalier"
+    ],
+    "Image": "Evelyn.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Attack",
+    "Region": [
+      "Lyra"
+    ],
+    "ModFilesName": "Evelyn",
+    "InGameSkins": [],
+    "InternalName": "Evelyn",
+    "DisplayName": "Evelyn "
+  },
+  {
+    "Keys": [
+      "Lighter"
+    ],
+    "ReleaseDate": "2024-11-27T00:00:00",
+    "Image": "Lighter.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Stun",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Lighter",
+    "InGameSkins": [],
+    "InternalName": "Lighter",
+    "DisplayName": "Lighter "
   }
 ]

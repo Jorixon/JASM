@@ -1739,8 +1739,8 @@
     "ReleaseDate": "2024-11-20T00:00:00",
     "Image": "Character_Citlali_Thumb.png",
     "Rarity": 5,
-    "Element": "",
-    "Class": "",
+    "Element": "Cryo",
+    "Class": "Catalyst",
     "Region": [
       "Natlan"
     ],
@@ -1748,5 +1748,40 @@
     "InGameSkins": [],
     "InternalName": "Citlali",
     "DisplayName": "Citlali"
+  },
+  {
+    "Keys": [
+      "Mavuika"
+    ],
+    "ReleaseDate": "2024-11-20T00:00:00",
+    "Image": "Character_Mavuika_Thumb.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Claymore",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Mavuika",
+    "InGameSkins": [],
+    "InternalName": "Mavuika",
+    "DisplayName": "Mavuika"
+  },
+  {
+    "Keys": [
+      "Lan",
+      "Yan"
+    ],
+    "ReleaseDate": "2024-11-20T00:00:00",
+    "Image": "Character_Lan_Yan_Thumb.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Liyue"
+    ],
+    "ModFilesName": "LanYan",
+    "InGameSkins": [],
+    "InternalName": "Lan Yan",
+    "DisplayName": "Lan Yan"
   }
 ]

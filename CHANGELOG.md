@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.18.6](https://github.com/Jorixon/JASM/compare/v2.18.5...v2.18.6) (2024-12-21)
+
+
+### Bug Fixes
+
+* Unable to set mod preview image by pasting a file image ([#313](https://github.com/Jorixon/JASM/issues/313)) ([572ab0c](https://github.com/Jorixon/JASM/commit/572ab0cff77e40ece137c16919396384caca1d02))
+
+## [2.18.5](https://github.com/Jorixon/JASM/compare/v2.18.4...v2.18.5) (2024-12-21)
+
+
+### Miscellaneous
+
+* **zzz:** Added lighter and updated release dates of some characters ([#311](https://github.com/Jorixon/JASM/issues/311)) ([82b20ae](https://github.com/Jorixon/JASM/commit/82b20aeb31e2e9392816919f5741f2bebd64b682))
+
+## [2.18.4](https://github.com/Jorixon/JASM/compare/v2.18.3...v2.18.4) (2024-12-17)
+
+
+### Miscellaneous
+
+* **Genshin:** Updated character Citlali Info and added characters Mavuika and Lan Yan ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+* **Honkai:** Added character Aglaea ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+* **WuWa:** Added character Lumi ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+* **ZZZ:** Added characters Harumasa, Astra and Evelyn ([#307](https://github.com/Jorixon/JASM/issues/307)) ([3f40d5b](https://github.com/Jorixon/JASM/commit/3f40d5bfbdb7a37eb829063a30180877c4552b5a))
+
 ## [2.18.3](https://github.com/Jorixon/JASM/compare/v2.18.2...v2.18.3) (2024-11-23)
 
 
