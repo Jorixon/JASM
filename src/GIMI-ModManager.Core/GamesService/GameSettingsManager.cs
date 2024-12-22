@@ -12,7 +12,7 @@ namespace GIMI_ModManager.Core.GamesService;
 internal class GameSettingsManager
 {
     private readonly ILogger _logger;
-    private readonly string _settingsFile;
+    internal string SettingsFile { get; }
     private readonly DirectoryInfo _customImageFolder;
     internal readonly DirectoryInfo CustomCharacterImageFolder;
 
@@ -21,7 +21,7 @@ internal class GameSettingsManager
     internal GameSettingsManager(ILogger logger, DirectoryInfo settingsDirectory)
     {
         _logger = logger.ForContext<GameSettingsManager>();
-        _settingsFile = Path.Combine(settingsDirectory.FullName, "GameService.json");
+        SettingsFile = Path.Combine(settingsDirectory.FullName, "GameService.json");
         _customImageFolder = new DirectoryInfo(Path.Combine(settingsDirectory.FullName, "CustomImages"));
         _customImageFolder.Create();
 
@@ -106,7 +106,7 @@ internal class GameSettingsManager
         if (useCache && _settings != null)
             return _settings;
 
-        if (!File.Exists(_settingsFile))
+        if (!File.Exists(SettingsFile))
         {
             _settings = new GameServiceRoot();
             await SaveSettingsAsync().ConfigureAwait(false);
@@ -116,7 +116,7 @@ internal class GameSettingsManager
         try
         {
             var rootSettings =
-                JsonConvert.DeserializeObject<GameServiceRootUntyped>(await File.ReadAllTextAsync(_settingsFile)
+                JsonConvert.DeserializeObject<GameServiceRootUntyped>(await File.ReadAllTextAsync(SettingsFile)
                     .ConfigureAwait(false)) ??
                 new GameServiceRootUntyped();
 
@@ -179,7 +179,7 @@ internal class GameSettingsManager
         if (_settings is null)
             return;
 
-        await File.WriteAllTextAsync(_settingsFile, JsonConvert.SerializeObject(_settings.ToJson(), Formatting.Indented)).ConfigureAwait(false);
+        await File.WriteAllTextAsync(SettingsFile, JsonConvert.SerializeObject(_settings.ToJson(), Formatting.Indented)).ConfigureAwait(false);
     }
 
     internal async Task SetDisplayNameOverride(InternalName id, string displayName)

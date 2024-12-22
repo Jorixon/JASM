@@ -29,6 +29,7 @@ public class GameService : IGameService
     public string GameName => GameInfo.GameName;
     public string GameShortName => GameInfo.GameShortName;
     public string GameIcon => GameInfo.GameIcon;
+    public string GameServiceSettingsFilePath => _gameSettingsManager.SettingsFile;
     public Uri GameBananaUrl => GameInfo.GameBananaUrl;
     public event EventHandler? Initialized;
 

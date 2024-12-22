@@ -123,4 +123,13 @@ public sealed partial class CustomImage : UserControl
         get { return (Visibility)GetValue(EditButtonVisibilityProperty); }
         set { SetValue(EditButtonVisibilityProperty, value); }
     }
+
+    public static readonly DependencyProperty CopyButtonVisibilityProperty = DependencyProperty.Register(nameof(CopyButtonVisibility), typeof(Visibility),
+        typeof(CustomImage), new PropertyMetadata(default(Visibility)));
+
+    public Visibility CopyButtonVisibility
+    {
+        get => (Visibility)GetValue(CopyButtonVisibilityProperty);
+        set => SetValue(CopyButtonVisibilityProperty, value);
+    }
 }

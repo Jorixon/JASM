@@ -1,6 +1,7 @@
 using GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,11 +44,26 @@ public sealed partial class InputWrapper : UserControl
 
 
     public static readonly DependencyProperty InputFieldViewModelProperty = DependencyProperty.Register(
-        nameof(InputFieldViewModel), typeof(BaseInputFieldViewModel), typeof(InputWrapper), new PropertyMetadata(default(BaseInputFieldViewModel)));
+        nameof(InputFieldViewModel), typeof(BaseInputFieldViewModel), typeof(InputWrapper), new PropertyMetadata(new NoOpFieldViewModel()));
 
     public BaseInputFieldViewModel InputFieldViewModel
     {
         get { return (BaseInputFieldViewModel)GetValue(InputFieldViewModelProperty); }
-        set { SetValue(InputFieldViewModelProperty, value); }
+        set
+        {
+            if (value != null!)
+            {
+                var binding = new Binding
+                {
+                    Source = value,
+                    Path = new PropertyPath(nameof(BaseInputFieldViewModel.ValidationResults)),
+                    Mode = BindingMode.OneWay
+                };
+
+                ValidationResultsListView.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            }
+
+            SetValue(InputFieldViewModelProperty, value);
+        }
     }
 }

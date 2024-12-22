@@ -7,14 +7,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:GIMI_ModManager.WinUI.Views.CharacterManager"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xaml="using:GIMI_ModManager.WinUI.Helpers.Xaml"
     mc:Ignorable="d">
 
 
+    <UserControl.Resources>
+        <xaml:ValidationResultToInfoBarSeverityConverter x:Key="ValidationResultToInfoBarSeverityConverter" />
+    </UserControl.Resources>
+
     <Grid>
+
         <StackPanel Spacing="8">
             <StackPanel Orientation="Horizontal" Spacing="16">
 
-                <ContentPresenter Content="{x:Bind Input, Mode=OneWay}" />
+                <ContentPresenter MaxWidth="400" Content="{x:Bind Input, Mode=OneWay}" />
 
                 <Button
                     x:Name="HelpButton"
@@ -34,13 +40,28 @@
             </StackPanel>
 
             <ListView
+                x:Name="ValidationResultsListView"
                 Padding="12,0,0,0"
-                ItemsSource="{x:Bind InputFieldViewModel.ValidationResults, Mode=OneWay}"
+                IsTabStop="False"
                 SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="characterManagerViewModels:ValidationResult">
-                        <Grid>
-                            <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Message}" />
+                        <Grid IsTabStop="False">
+                            <InfoBar
+                                MaxWidth="300"
+                                HorizontalAlignment="Left"
+                                IsClosable="False"
+                                IsOpen="True"
+                                IsTabStop="False"
+                                Severity="{x:Bind Type, Converter={StaticResource ValidationResultToInfoBarSeverityConverter}}">
+                                <TextBlock
+                                    Margin="0,0,8,0"
+                                    IsTabStop="False"
+                                    IsTextSelectionEnabled="True"
+                                    TextWrapping="WrapWholeWords"
+                                    Text="{x:Bind Message}" />
+                            </InfoBar>
+
                         </Grid>
                     </DataTemplate>
 

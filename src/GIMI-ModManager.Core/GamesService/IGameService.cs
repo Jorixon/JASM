@@ -10,6 +10,8 @@ public interface IGameService
     public string GameName { get; }
     public string GameShortName { get; }
     public string GameIcon { get; }
+
+    public string GameServiceSettingsFilePath { get; }
     public Uri GameBananaUrl { get; }
 
     public event EventHandler? Initialized;
