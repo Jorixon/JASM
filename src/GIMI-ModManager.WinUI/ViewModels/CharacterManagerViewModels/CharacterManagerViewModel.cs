@@ -73,6 +73,7 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
     {
         ResetCharacter();
         Suggestions.Clear();
+        _lastSelectedCharacter = null;
         SetSelection?.Invoke(this, new SetSelectionArgs(true));
     }
 

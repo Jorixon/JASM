@@ -1,14 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.GamesService.Requests;
+using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
-using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
@@ -20,35 +24,39 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 {
     private readonly IGameService _gameService;
     private readonly ISkinManagerService _skinManagerService;
-    private ICharacter _character = null!;
     private readonly ILogger _logger;
-
+    private readonly NotificationManager _notificationManager;
     private readonly ImageHandlerService _imageHandlerService;
+    private readonly INavigationService _navigationService;
 
-    [ObservableProperty] private CharacterVM _characterVm = null!;
+    private ICharacter _character = null!;
+
+
     [ObservableProperty] private Uri _modFolderUri = null!;
     [ObservableProperty] private string _modFolderString = "";
     [ObservableProperty] private int _modsCount;
     [ObservableProperty] private string _keyToAddInput = string.Empty;
 
-    [ObservableProperty] private CharacterStatus _characterStatus = new();
+    public CharacterStatus CharacterStatus { get; } = new();
 
-    public ObservableCollection<ValidationErrors> ValidationErrors { get; } = new();
+    public EditCharacterForm Form { get; } = new();
 
 
     public EditCharacterViewModel(IGameService gameService, ILogger logger, ISkinManagerService skinManagerService,
-        ImageHandlerService imageHandlerService)
+        ImageHandlerService imageHandlerService, NotificationManager notificationManager, INavigationService navigationService)
     {
         _gameService = gameService;
-        _logger = logger;
+        _logger = logger.ForContext<EditCharacterViewModel>();
         _skinManagerService = skinManagerService;
         _imageHandlerService = imageHandlerService;
+        _notificationManager = notificationManager;
+        _navigationService = navigationService;
+        Form.PropertyChanged += NotifyAllCommands;
     }
 
 
     public void OnNavigatedTo(object parameter)
     {
-        CharacterVm = null!;
         if (parameter is not string internalName)
         {
             _logger.Error($"Invalid parameter type, {parameter}");
@@ -68,7 +76,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         }
 
         _character = character;
-        CharacterVm = CharacterVM.FromCharacter(_character);
+        CharacterStatus.SetIsCustomCharacter(_character.IsCustomModObject);
 
         if (!_gameService.GetDisabledCharacters().Contains(character))
         {
@@ -86,8 +94,8 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             ModsCount = 0;
         }
 
-
-        CharacterVm.PropertyChanged += CheckForChanges;
+        Form.Initialize(character);
+        NotifyAllCommands();
     }
 
     public void OnNavigatedFrom()
@@ -97,39 +105,35 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private void AddKey()
     {
-        KeyToAddInput = KeyToAddInput.Trim();
+        KeyToAddInput = KeyToAddInput.Trim().ToLowerInvariant();
+        var existingKeys = Form.Keys.Items.ToList();
 
         if (string.IsNullOrWhiteSpace(KeyToAddInput))
             return;
 
-        if (CharacterVm.Keys.Any(key => key.Equals(KeyToAddInput, StringComparison.CurrentCultureIgnoreCase)))
+        if (existingKeys.Contains(KeyToAddInput, StringComparer.OrdinalIgnoreCase))
             return;
 
-        CharacterVm.Keys.Add(KeyToAddInput.ToLower());
+        Form.Keys.Items.Add(KeyToAddInput);
         KeyToAddInput = string.Empty;
-        CheckForChanges();
+        NotifyAllCommands();
     }
 
     [RelayCommand]
-    private void RemoveKey(string key)
-    {
-        CharacterVm.Keys.Remove(key);
-        CheckForChanges();
-    }
+    private void RemoveKey(string key) => Form.Keys.Items.Remove(key);
 
     [RelayCommand]
     private async Task PickImage()
     {
         var image = await _imageHandlerService.PickImageAsync(copyToTmpFolder: false);
 
-        if (image is null)
+        if (image is null || !File.Exists(image.Path))
             return;
 
-        CharacterVm.ImageUri = new Uri(image.Path);
-        CheckForChanges();
+        Form.Image.Value = new Uri(image.Path);
     }
 
-    private bool CanDisableCharacter() => CharacterStatus.IsEnabled && !AnyChanges();
+    private bool CanDisableCharacter() => !_character.IsCustomModObject && CharacterStatus.IsEnabled && !AnyChanges();
 
     [RelayCommand(CanExecute = nameof(CanDisableCharacter))]
     private async Task DisableCharacter()
@@ -179,11 +183,64 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             $"Disabling character {_character.InternalName} with deleteFolder={deleteFolderCheckBox.IsChecked}");
 
         await _gameService.DisableCharacterAsync(_character);
-        await _skinManagerService.DisableModListAsync(_character, deleteFolderCheckBox.IsChecked ?? false);
+        await Task.Run(() => _skinManagerService.DisableModListAsync(_character, deleteFolderCheckBox.IsChecked ?? false));
         ResetState();
     }
 
-    private bool CanEnableCharacter() => CharacterStatus.IsDisabled && !AnyChanges();
+
+    private bool CanDeleteCustomCharacter() => _character.IsCustomModObject && CharacterStatus.IsEnabled && !Form.AnyFieldDirty;
+
+    [RelayCommand(CanExecute = nameof(CanDeleteCustomCharacter))]
+    private async Task DeleteCustomCharacterAsync()
+    {
+        var deleteFolderCheckBox = new CheckBox()
+        {
+            Content = "Delete Custom Character folder and its contents/Mods?\n" +
+                      "Files will be permanently deleted!",
+            IsChecked = false
+        };
+
+        var dialogContent = new StackPanel()
+        {
+            Children =
+            {
+                new TextBlock()
+                {
+                    Text =
+                        "Are you sure you want to delete this custom character? " +
+                        "This will remove the character, and JASM will no longer recognize the character. " +
+                        "This will be executed immediately on pressing yes",
+                    TextWrapping = TextWrapping.WrapWholeWords,
+                    Margin = new Thickness(0, 0, 0, 8)
+                },
+                deleteFolderCheckBox
+            }
+        };
+
+
+        var disableDialog = new ContentDialog
+        {
+            Title = "Delete Custom Character",
+            Content = dialogContent,
+            PrimaryButtonText = "Yes, delete this custom character",
+            CloseButtonText = "No",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = App.MainWindow.Content.XamlRoot
+        };
+
+        var result = await disableDialog.ShowAsync();
+
+        if (result != ContentDialogResult.Primary)
+            return;
+
+
+        _logger.Information($"Deleting custom character {_character.InternalName}");
+        await _gameService.DeleteCustomCharacterAsync(_character.InternalName);
+        await Task.Run(() => _skinManagerService.DisableModListAsync(_character, deleteFolderCheckBox.IsChecked ?? false));
+        ResetState();
+    }
+
+    private bool CanEnableCharacter() => !_character.IsCustomModObject && CharacterStatus.IsDisabled && !AnyChanges();
 
     [RelayCommand(CanExecute = nameof(CanEnableCharacter))]
     private async Task EnableCharacter()
@@ -219,69 +276,13 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         ResetState();
     }
 
-    private bool CanSaveChanges()
+    [RelayCommand]
+    private void GoToCharacter()
     {
-        ValidationErrors.Clear();
-
-        if (!AnyChanges())
-            return false;
-
-        var errors = new List<ValidationErrors>();
-
-        var characters = _gameService.GetCharacters();
-        if (!characters.Remove(_character))
-        {
-            _logger.Error($"Character {_character.InternalName} not found in game service");
-            return false;
-        }
-
-        var displayName = CharacterVm.DisplayName.Trim();
-
-        if (string.IsNullOrWhiteSpace(displayName))
-        {
-            errors.Add(new ValidationErrors
-            {
-                InputField = "Field: DisplayName",
-                ErrorMessage = "Display name cannot be empty"
-            });
-        }
-
-
-        // Check for duplicate display names
-        if (characters.FirstOrDefault(c =>
-                c.DisplayName.Equals(displayName, StringComparison.OrdinalIgnoreCase)) is
-            { } duplicateDisplayNameCharacter)
-        {
-            errors.Add(new ValidationErrors
-            {
-                InputField = "Field: DisplayName",
-                ErrorMessage =
-                    $"Display name already in use by Id: {duplicateDisplayNameCharacter.InternalName} | DisplayName: {duplicateDisplayNameCharacter.DisplayName}"
-            });
-        }
-
-        // Check for duplicate keys
-        // TODO: Implement key editing
-        //if (characters.FirstOrDefault(c => c.Keys.Any(key => CharacterVm.Keys.Contains(key))) is
-        //    { } duplicateKeyCharacter)
-        //{
-        //    errors.Add(new ValidationErrors
-        //    {
-        //        InputField = "Field: Keys",
-        //        ErrorMessage =
-        //            $"Key already in use by Id: {duplicateKeyCharacter.InternalName} | DisplayName: {duplicateKeyCharacter.DisplayName}"
-        //    });
-        //}
-
-        if (errors.Count > 0)
-        {
-            errors.ForEach(err => ValidationErrors.Add(err));
-            return false;
-        }
-
-
-        return true;
+        _navigationService.NavigateToCharacterDetails(_character.InternalName);
     }
+
+    private bool CanSaveChanges() => Form.AnyFieldDirty && Form.IsValid;
 
     [RelayCommand(CanExecute = nameof(CanSaveChanges))]
     private void DummySave()
@@ -296,16 +297,58 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         if (!AnyChanges())
             return;
 
-        var displayName = CharacterVm.DisplayName.Trim();
-        if (_character.DisplayName != displayName)
-            await _gameService.SetCharacterDisplayNameAsync(_character, displayName);
+        try
+        {
+            await InternalSaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to save changes to character");
+            _notificationManager.ShowNotification("Failed to save changes to character", e.Message, null);
+            return;
+        }
 
-        if (CharacterVm.ImageUri.LocalPath != _imageHandlerService.PlaceholderImagePath &&
-            _character.ImageUri != CharacterVm.ImageUri)
-            await _gameService.SetCharacterImageAsync(_character, CharacterVm.ImageUri);
 
         ResetState();
+
+        return;
+
+        async Task InternalSaveChangesAsync()
+        {
+            if (_character.IsCustomModObject)
+            {
+                var editRequest = new EditCustomCharacterRequest();
+
+                if (Form.DisplayName.IsDirty)
+                {
+                    Debug.Assert(Form.DisplayName.IsValid);
+                    editRequest.DisplayName = NewValue<string>.Set(Form.DisplayName.Value);
+                }
+
+                // TODO: Add more properties
+#if RELEASE
+           wdawd
+#endif
+
+                await _gameService.EditCustomCharacterAsync(_character.InternalName, editRequest);
+            }
+            else
+            {
+                if (Form.DisplayName.IsDirty)
+                {
+                    Debug.Assert(Form.DisplayName.IsValid);
+                    await _gameService.SetCharacterDisplayNameAsync(_character, Form.DisplayName.Value.Trim());
+                }
+
+                if (Form.Image.IsDirty && Form.Image.Value.LocalPath != _imageHandlerService.PlaceholderImagePath)
+                {
+                    Debug.Assert(Form.Image.IsValid);
+                    await _gameService.SetCharacterImageAsync(_character, Form.Image.Value);
+                }
+            }
+        }
     }
+
 
     private bool CanRevertChanges() => AnyChanges();
 
@@ -316,7 +359,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         ResetState();
     }
 
-    private bool CanResetCharacterToDefault() => true;
+    private bool CanResetCharacterToDefault() => !_character.IsCustomModObject;
 
     [RelayCommand(CanExecute = nameof(CanResetCharacterToDefault))]
     private async Task ResetCharacterToDefaultAsync()
@@ -328,41 +371,21 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
     private void ResetState()
     {
-        CharacterVm.PropertyChanged -= CheckForChanges;
         OnNavigatedTo(_character.InternalName.Id);
-        CheckForChanges();
+        NotifyAllCommands();
     }
 
-    private bool AnyChanges()
-    {
-        // TODO: Implement key editing
-        if (CharacterVm.Keys.Any(key => !_character.Keys.Contains(key)))
-            return false; // Remove this once key editing has been implemented
+    private bool AnyChanges() => Form.AnyFieldDirty;
 
-        if (CharacterVm.DisplayName.Trim() != _character.DisplayName)
-            return true;
-
-        if (CharacterVm.ImageUri.LocalPath != _imageHandlerService.PlaceholderImagePath &&
-            CharacterVm.ImageUri != _character.ImageUri)
-            return true;
-
-        //if (CharacterVm.Keys.Count != _character.Keys.Count)
-        //    return true;
-
-        //if (CharacterVm.Keys.Any(key => !_character.Keys.Contains(key)))
-        //    return true;
-
-
-        return false;
-    }
-
-    private void CheckForChanges(object? sender = null, PropertyChangedEventArgs? propertyChangedEventArgs = null)
+    private void NotifyAllCommands(object? sender = null, PropertyChangedEventArgs? propertyChangedEventArgs = null)
     {
         DummySaveCommand.NotifyCanExecuteChanged();
         DisableCharacterCommand.NotifyCanExecuteChanged();
         EnableCharacterCommand.NotifyCanExecuteChanged();
         SaveChangesCommand.NotifyCanExecuteChanged();
         RevertChangesCommand.NotifyCanExecuteChanged();
+        ResetCharacterToDefaultCommand.NotifyCanExecuteChanged();
+        DeleteCustomCharacterCommand.NotifyCanExecuteChanged();
     }
 
 
@@ -396,16 +419,10 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     }
 }
 
-public class ValidationErrors
-{
-    public string InputField { get; set; } = string.Empty;
-    public string ErrorMessage { get; set; } = string.Empty;
-}
-
-public record ModModelProperty(string Key, string Value);
-
 public class CharacterStatus : ObservableObject
 {
+    private bool _isCustomCharacter;
+    public bool IsCustomCharacter => _isCustomCharacter;
     private bool _isEnabled;
 
     public bool IsEnabled => _isEnabled;
@@ -414,10 +431,23 @@ public class CharacterStatus : ObservableObject
 
     public bool IsDisabled => _isDisabled;
 
+    public bool IsEnabledAndNotCustomCharacter => IsEnabled && !IsCustomCharacter;
+
+    public bool IsDisabledAndNotCustomCharacter => IsDisabled && !IsCustomCharacter;
+
+
+    public void SetIsCustomCharacter(bool isCustomCharacter)
+    {
+        SetProperty(ref _isCustomCharacter, isCustomCharacter, nameof(IsCustomCharacter));
+        OnPropertyChanged(nameof(IsDisabledAndNotCustomCharacter));
+        OnPropertyChanged(nameof(IsEnabledAndNotCustomCharacter));
+    }
 
     public void SetEnabled(bool enabled)
     {
         SetProperty(ref _isEnabled, enabled, nameof(IsEnabled));
         SetProperty(ref _isDisabled, !enabled, nameof(IsDisabled));
+        OnPropertyChanged(nameof(IsDisabledAndNotCustomCharacter));
+        OnPropertyChanged(nameof(IsEnabledAndNotCustomCharacter));
     }
 }

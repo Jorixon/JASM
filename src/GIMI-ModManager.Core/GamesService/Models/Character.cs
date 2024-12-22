@@ -54,7 +54,7 @@ public class Character : ICharacter, IEquatable<Character>
             DisplayName = jsonCharacter.DisplayName ?? internalName,
             IsMultiMod = jsonCharacter.IsMultiMod ?? false,
             Keys = jsonCharacter.Keys ?? Array.Empty<string>(),
-            Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
+            Rarity = jsonCharacter.Rarity is >= 0 and <= 10 ? jsonCharacter.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var date) ? date : DateTime.MaxValue,
             Skins = new List<ICharacterSkin>(),
             IsCustomModObject = isCustomObject

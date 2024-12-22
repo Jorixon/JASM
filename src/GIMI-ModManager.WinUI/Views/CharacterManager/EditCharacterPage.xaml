@@ -33,8 +33,10 @@
                 <TextBlock VerticalAlignment="Center" Text="Mod Folder Path:" />
                 <controls:LinkButton
                     Link="{x:Bind ViewModel.ModFolderUri, Mode=TwoWay}"
-                    Text="{x:Bind ViewModel.ModFolderString, Mode=TwoWay}"
-                    ToolTipService.ToolTip="Open Character's mod folder" />
+                    ToolTipService.ToolTip="Open Character's mod folder"
+                    Text="{x:Bind ViewModel.ModFolderString, Mode=TwoWay}" />
+
+                <Button Command="{x:Bind ViewModel.GoToCharacterCommand}">Go to character</Button>
             </StackPanel>
 
 
@@ -43,18 +45,27 @@
                 HorizontalAlignment="Right"
                 Command="{x:Bind ViewModel.DisableCharacterCommand, Mode=OneWay}"
                 Content="Disable Character"
-                IsEnabled="{x:Bind ViewModel.CharacterStatus.IsEnabled, Mode=OneWay}"
+                IsEnabled="{x:Bind ViewModel.CharacterStatus.IsEnabledAndNotCustomCharacter, Mode=OneWay}"
                 ToolTipService.ToolTip="Opens a popup first with more information"
-                Visibility="{x:Bind ViewModel.CharacterStatus.IsEnabled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                Visibility="{x:Bind ViewModel.CharacterStatus.IsEnabledAndNotCustomCharacter, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <Button
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 Command="{x:Bind ViewModel.EnableCharacterCommand, Mode=OneWay}"
                 Content="Enable Character"
-                IsEnabled="{x:Bind ViewModel.CharacterStatus.IsDisabled, Mode=OneWay}"
+                IsEnabled="{x:Bind ViewModel.CharacterStatus.IsDisabledAndNotCustomCharacter, Mode=OneWay}"
                 ToolTipService.ToolTip="Opens a popup first with more information"
-                Visibility="{x:Bind ViewModel.CharacterStatus.IsDisabled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                Visibility="{x:Bind ViewModel.CharacterStatus.IsDisabledAndNotCustomCharacter, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <Button
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Command="{x:Bind ViewModel.DeleteCustomCharacterCommand, Mode=OneWay}"
+                Content="Delete Custom Character"
+                IsEnabled="{x:Bind ViewModel.CharacterStatus.IsCustomCharacter, Mode=OneWay}"
+                ToolTipService.ToolTip="Opens a popup first with more information"
+                Visibility="{x:Bind ViewModel.CharacterStatus.IsCustomCharacter, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
 
 
@@ -78,29 +89,43 @@
                         Width="200"
                         ButtonHorizontalAlignment="Left"
                         EditButtonCommand="{x:Bind ViewModel.PickImageCommand}"
-                        ImageUri="{x:Bind ViewModel.CharacterVm.ImageUri, Mode=TwoWay}" />
+                        ImageUri="{x:Bind ViewModel.Form.Image.Value, Mode=TwoWay}" />
                     <StackPanel
                         Grid.Row="1"
                         Margin="0,4"
                         Background="{ThemeResource ControlFillColorSecondaryBrush}"
                         Orientation="Horizontal">
                         <TextBlock Margin="0,0,16,0" Text="Internal Name (Id): " />
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind ViewModel.CharacterVm.InternalName}" />
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind ViewModel.Form.InternalName.Value}" />
                     </StackPanel>
 
 
-                    <TextBlock
-                        Grid.Row="2"
-                        Margin="0,8,0,8"
-                        Text="Set Display Name:" />
-                    <TextBox
-                        Grid.Row="3"
-                        MaxWidth="300"
-                        HorizontalAlignment="Stretch"
-                        FontFamily="{StaticResource GenshinFont}"
-                        FontSize="16"
-                        Text="{x:Bind ViewModel.CharacterVm.DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TextAlignment="Center" />
+                    <StackPanel Grid.Row="2" Spacing="8">
+
+                        <local:InputWrapper InputField="{x:Bind ViewModel.Form.DisplayName}">
+                            <local:InputWrapper.Input>
+                                <TextBox
+                                    MinWidth="200"
+                                    Header="Display Name"
+                                    PlaceholderText="{x:Bind ViewModel.Form.DisplayName.PlaceHolderText, Mode=OneWay}"
+                                    Text="{x:Bind ViewModel.Form.DisplayName.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </local:InputWrapper.Input>
+                        </local:InputWrapper>
+
+                        <local:InputWrapper InputField="{x:Bind ViewModel.Form.IsMultiMod}">
+                            <local:InputWrapper.Input>
+                                <CheckBox Content="Is Multi Mod" IsChecked="{x:Bind ViewModel.Form.IsMultiMod.Value, Mode=TwoWay}" />
+                            </local:InputWrapper.Input>
+
+                            <local:InputWrapper.HelpInfo>
+                                <TextBlock IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords">
+                                    If Checked JASM won't show a warning when multiple mods are enabled for this mod object.
+                                </TextBlock>
+                            </local:InputWrapper.HelpInfo>
+                        </local:InputWrapper>
+                    </StackPanel>
+
+
 
 
 
@@ -142,7 +167,6 @@
                     <TextBlock FontSize="16" Text="Character Search Keys" />
                     <TextBox
                         Grid.Column="1"
-                        IsEnabled="False"
                         PlaceholderText="New Key Name..."
                         Text="{x:Bind ViewModel.KeyToAddInput, Mode=TwoWay}" />
                     <Button
@@ -150,13 +174,12 @@
                         Margin="0,0,10,0"
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.AddKeyCommand}"
-                        Content="Add Search Key"
-                        IsEnabled="False" />
+                        Content="Add Search Key" />
                 </Grid>
 
                 <ListView
                     Grid.Row="1"
-                    ItemsSource="{x:Bind ViewModel.CharacterVm.Keys, Mode=TwoWay}"
+                    ItemsSource="{x:Bind ViewModel.Form.Keys.Items}"
                     SelectionMode="None">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
@@ -173,14 +196,13 @@
                                     VerticalAlignment="Center"
                                     FontSize="16"
                                     IsTextSelectionEnabled="True"
-                                    Text="{Binding Mode=OneWay}" />
+                                    Text="{Binding Mode=OneTime}" />
                                 <Button
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
-                                    Command="{Binding ElementName=EditCharacterPageRoot, Path=ViewModel.RemoveKeyCommand, Mode=OneWay}"
-                                    CommandParameter="{Binding Mode=OneWay}"
-                                    Content="Remove"
-                                    IsEnabled="False" />
+                                    Command="{Binding ElementName=EditCharacterPageRoot, Path=ViewModel.RemoveKeyCommand, Mode=OneTime}"
+                                    CommandParameter="{Binding Mode=OneTime}"
+                                    Content="Remove" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -225,40 +247,12 @@
                 </Button>
 
 
-
-                <ListView
-                    Grid.Row="2"
-                    Margin="0,8"
-                    ItemsSource="{x:Bind ViewModel.ValidationErrors, Mode=OneWay}"
-                    SelectionMode="None">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:ValidationErrors">
-                            <StackPanel
-                                Margin="0,4"
-                                Padding="0,4"
-                                Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
-                                CornerRadius="4">
-                                <TextBlock
-                                    IsTextSelectionEnabled="True"
-                                    Text="{x:Bind InputField}"
-                                    TextWrapping="WrapWholeWords" />
-                                <TextBlock
-                                    IsTextSelectionEnabled="True"
-                                    Text="{x:Bind ErrorMessage}"
-                                    TextWrapping="WrapWholeWords" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-
-
-
                 <Button
                     Grid.Row="3"
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModel.ShowCharacterModelCommand}">
                     <Button.Content>
-                        <TextBlock Text="Show Character Data Model..." TextWrapping="WrapWholeWords" />
+                        <TextBlock TextWrapping="WrapWholeWords" Text="Show Character Data Model..." />
                     </Button.Content>
                 </Button>
 

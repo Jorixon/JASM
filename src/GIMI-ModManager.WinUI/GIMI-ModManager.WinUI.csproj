@@ -561,6 +561,7 @@
 		<Folder Include="Assets\Games\Genshin\custom\" />
 		<Folder Include="Assets\Games\Genshin\Images\custom\" />
 		<Folder Include="Assets\Games\Genshin\Template\[LangCode]\" />
+		<Folder Include="ViewModels\CharacterManagerViewModels\Validation\" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -34,7 +34,7 @@
 
                     <StackPanel>
                         <TextBlock Text="Character Image" />
-                        <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.Image}">
+                        <local:InputWrapper InputField="{x:Bind ViewModel.Form.Image}">
                             <local:InputWrapper.Input>
                                 <controls:CustomImage
                                     Width="300"
@@ -54,7 +54,7 @@
 
 
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.InternalName}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.InternalName}">
                         <local:InputWrapper.Input>
                             <TextBox
                                 MinWidth="200"
@@ -66,12 +66,13 @@
                         <local:InputWrapper.HelpInfo>
                             <TextBlock IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords">
                                 The Internal Name is used by JASM to identify characters/ModObjects. It is also used as the name of mod folder. Must be unique.
+                                Changing this after character has been created means JASM will identify this as a new character.
                             </TextBlock>
                         </local:InputWrapper.HelpInfo>
                     </local:InputWrapper>
 
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.DisplayName}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.DisplayName}">
                         <local:InputWrapper.Input>
                             <TextBox
                                 MinWidth="200"
@@ -79,18 +80,9 @@
                                 PlaceholderText="{x:Bind ViewModel.Form.DisplayName.PlaceHolderText, Mode=OneWay}"
                                 Text="{x:Bind ViewModel.Form.DisplayName.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </local:InputWrapper.Input>
-
-                        <local:InputWrapper.HelpInfo>
-                            <TextBlock
-                                IsTextSelectionEnabled="True"
-                                TextWrapping="WrapWholeWords"
-                                Text="{x:Bind ViewModel.Form.DisplayName.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                The Display Name
-                            </TextBlock>
-                        </local:InputWrapper.HelpInfo>
                     </local:InputWrapper>
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.ModFilesName}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.ModFilesName}">
                         <local:InputWrapper.Input>
                             <TextBox
                                 MinWidth="200"
@@ -110,13 +102,13 @@
                     </local:InputWrapper>
 
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.ReleaseDate}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.ReleaseDate}">
                         <local:InputWrapper.Input>
                             <CalendarDatePicker Date="{x:Bind ViewModel.Form.ReleaseDate.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Header="Release Date" />
                         </local:InputWrapper.Input>
                     </local:InputWrapper>
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.Rarity}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.Rarity}">
                         <local:InputWrapper.Input>
                             <StackPanel Orientation="Horizontal" Spacing="16">
                                 <Slider
@@ -134,7 +126,7 @@
                         </local:InputWrapper.Input>
                     </local:InputWrapper>
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.Element}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.Element}">
                         <local:InputWrapper.Input>
                             <ComboBox
                                 Header="Element"
@@ -143,7 +135,7 @@
                         </local:InputWrapper.Input>
                     </local:InputWrapper>
 
-                    <local:InputWrapper InputFieldViewModel="{x:Bind ViewModel.Form.IsMultiMod}">
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.IsMultiMod}">
                         <local:InputWrapper.Input>
                             <CheckBox Content="Is Multi Mod" IsChecked="{x:Bind ViewModel.Form.IsMultiMod.Value, Mode=TwoWay}" />
                         </local:InputWrapper.Input>
@@ -244,12 +236,15 @@
             </Grid>
 
 
-            <Grid Grid.Row="2" Grid.Column="1">
+            <Grid
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="0,16,0,0">
                 <StackPanel
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="40">
-                    <Button Command="{x:Bind ViewModel.OpenCustomCharacterJsonFileCommand}">Open Json file</Button>
+                    <Button Command="{x:Bind ViewModel.OpenCustomCharacterJsonFileCommand}">Open Character json file</Button>
                     <Button Command="{x:Bind ViewModel.SaveCharacterCommand}">Create Character</Button>
                 </StackPanel>
             </Grid>

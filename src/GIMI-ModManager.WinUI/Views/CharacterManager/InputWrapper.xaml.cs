@@ -43,12 +43,12 @@ public sealed partial class InputWrapper : UserControl
     }
 
 
-    public static readonly DependencyProperty InputFieldViewModelProperty = DependencyProperty.Register(
-        nameof(InputFieldViewModel), typeof(BaseInputFieldViewModel), typeof(InputWrapper), new PropertyMetadata(new NoOpFieldViewModel()));
+    public static readonly DependencyProperty InputFieldProperty = DependencyProperty.Register(
+        nameof(InputField), typeof(BaseInputField), typeof(InputWrapper), new PropertyMetadata(new NoOpField()));
 
-    public BaseInputFieldViewModel InputFieldViewModel
+    public BaseInputField InputField
     {
-        get { return (BaseInputFieldViewModel)GetValue(InputFieldViewModelProperty); }
+        get { return (BaseInputField)GetValue(InputFieldProperty); }
         set
         {
             if (value != null!)
@@ -56,14 +56,14 @@ public sealed partial class InputWrapper : UserControl
                 var binding = new Binding
                 {
                     Source = value,
-                    Path = new PropertyPath(nameof(BaseInputFieldViewModel.ValidationResults)),
+                    Path = new PropertyPath(nameof(BaseInputField.ValidationResults)),
                     Mode = BindingMode.OneWay
                 };
 
                 ValidationResultsListView.SetBinding(ItemsControl.ItemsSourceProperty, binding);
             }
 
-            SetValue(InputFieldViewModelProperty, value);
+            SetValue(InputFieldProperty, value);
         }
     }
 }
