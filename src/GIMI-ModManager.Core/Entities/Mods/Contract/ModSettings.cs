@@ -155,4 +155,3 @@ public record ModSettings
         _preferences = preferences;
     }
 }
-
