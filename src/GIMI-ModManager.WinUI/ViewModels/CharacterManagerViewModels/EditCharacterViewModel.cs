@@ -94,7 +94,10 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             ModsCount = 0;
         }
 
-        Form.Initialize(character);
+
+        var allModObjects = _gameService.GetAllModdableObjects(GetOnly.Both);
+
+        Form.Initialize(character, allModObjects);
         NotifyAllCommands();
     }
 

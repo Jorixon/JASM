@@ -44,12 +44,10 @@ public partial class CreateCharacterViewModel : ObservableObject
         _logger = logger.ForContext<CreateCharacterViewModel>();
 
         _allModObjects = _gameService.GetAllModdableObjects(GetOnly.Both);
-
-        var mapping = _allModObjects.ToDictionary(i => i.InternalName.Id, i => i);
-        var elementsMapping = _gameService.GetElements().ToDictionary(e => e.InternalName.Id, e => e);
-        Form.Initialize(mapping, elementsMapping);
-
         var elements = _gameService.GetElements();
+
+        Form.Initialize(_allModObjects, elements);
+
         Elements.AddRange(elements.Select(e => new ElementItemVM(e.InternalName, e.DisplayName)));
 
         SelectedElement = Elements.First(e => e.InternalName.Equals("None", StringComparison.OrdinalIgnoreCase));

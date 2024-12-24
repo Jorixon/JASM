@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
 
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public partial class InputField<T> : BaseInputField
 {
     public T DefaultValue { get; private set; }
@@ -21,7 +23,7 @@ public partial class InputField<T> : BaseInputField
         };
     }
 
-    public List<Func<ValidationContext<T, Form>, ValidationResult?>> ValidationRules { get; } = new();
+    public FieldValidators<T> ValidationRules { get; } = new();
 
     public override void Validate(Form form)
     {
@@ -59,4 +61,7 @@ public partial class InputField<T> : BaseInputField
         Validate(form);
         IsDirty = false;
     }
+
+    private string DebuggerDisplay =>
+        $"{nameof(Value)}: {Value} | {nameof(DefaultValue)}: {DefaultValue} | {nameof(IsDirty)}: {IsDirty} | {nameof(IsValid)}: {IsValid} | {nameof(ValidationRules)}.Count: {ValidationRules.Count}";
 }

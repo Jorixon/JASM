@@ -11,7 +11,6 @@ public abstract partial class Form : ObservableObject
 
     [ObservableProperty] private bool _anyFieldDirty;
 
-
     public List<BaseInputField> Fields { get; } = [];
 
 

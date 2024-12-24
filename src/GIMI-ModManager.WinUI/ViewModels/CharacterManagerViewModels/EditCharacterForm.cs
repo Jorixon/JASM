@@ -1,5 +1,6 @@
 ﻿using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.WinUI.Services;
+using GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels.Validation;
 
 namespace GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
 
@@ -9,17 +10,29 @@ public sealed partial class EditCharacterForm : Form
     {
     }
 
-    public void Initialize(ICharacter character)
+    public void Initialize(ICharacter character, ICollection<IModdableObject> allModdableObjects)
     {
         // TODO: Add validation
 #if RELEASE
 throw new NotImplementedException();
 #endif
 
+        allModdableObjects = allModdableObjects.Contains(character)
+            ? allModdableObjects.Where(mo => mo.Equals(character)).ToArray()
+            : allModdableObjects;
+
+        InternalName.ValidationRules.AddInternalNameValidators(allModdableObjects);
         InternalName.ReInitializeInput(character.InternalName);
+
+        DisplayName.ValidationRules.AddDisplayNameValidators(allModdableObjects);
         DisplayName.ReInitializeInput(character.DisplayName);
+
+        Image.ValidationRules.AddImageValidators();
         Image.ReInitializeInput(character.ImageUri ?? ImageHandlerService.StaticPlaceholderImageUri);
+
+        Keys.ValidationRules.AddKeysValidators(allModdableObjects.OfType<ICharacter>().ToList());
         Keys.ReInitializeInput(character.Keys);
+
         IsMultiMod.ReInitializeInput(character.IsMultiMod);
         IsInitialized = true;
     }
