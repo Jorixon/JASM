@@ -21,4 +21,9 @@ public interface IModdableObject : INameable, IEquatable<IModdableObject>, IImag
     /// What category this mod belongs to
     /// </summary>
     public ICategory ModCategory { get; }
+
+    /// <summary>
+    /// If true then the mod object is created by the user
+    /// </summary>
+    public bool IsCustomModObject { get; }
 }

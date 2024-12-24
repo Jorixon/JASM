@@ -13,7 +13,7 @@ public class ImageHandlerService
 
     public readonly Uri PlaceholderImageUri = StaticPlaceholderImageUri;
 
-    public static Uri StaticPlaceholderImageUri => new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
+    public static Uri StaticPlaceholderImageUri { get; } = new(Path.Combine(App.ASSET_DIR, "ModPanePlaceholder.webp"));
 
     private readonly IHttpClientFactory _httpClientFactory;
 
@@ -29,6 +29,9 @@ public class ImageHandlerService
         var filePicker = new FileOpenPicker();
         foreach (var supportedImageExtension in Constants.SupportedImageExtensions)
             filePicker.FileTypeFilter.Add(supportedImageExtension);
+
+        filePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+        filePicker.SettingsIdentifier = "PickImage";
 
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window ?? App.MainWindow);
         WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);

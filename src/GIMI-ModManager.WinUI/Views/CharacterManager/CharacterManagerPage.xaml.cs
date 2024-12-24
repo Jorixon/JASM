@@ -22,6 +22,8 @@ public sealed partial class CharacterManagerPage : Page
     {
         if (e.Character is not null)
             EditFrame.Navigate(typeof(EditCharacterPage), e.Character.InternalName.Id);
+        else if (e.NewCharacter)
+            EditFrame.Navigate(typeof(CreateCharacterPage));
         else
             EditFrame.Content = null;
     }

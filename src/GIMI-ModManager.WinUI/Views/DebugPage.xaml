@@ -8,7 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <Button Click="ButtonBase_OnClick">Export</Button>
-    </Grid>
+    <StackPanel>
+        <Button Click="ButtonBase_OnClick">Create</Button>
+        <Button Click="ButtonBase_OnClick1">Edit</Button>
+        <Button Click="ButtonBase_OnClick2">Delete</Button>
+    </StackPanel>
 </Page>

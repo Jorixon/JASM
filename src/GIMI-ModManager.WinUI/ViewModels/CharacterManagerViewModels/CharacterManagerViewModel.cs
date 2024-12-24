@@ -68,6 +68,15 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
     }
 
 
+    [RelayCommand]
+    private void OpenCreateCharacterForm()
+    {
+        ResetCharacter();
+        Suggestions.Clear();
+        _lastSelectedCharacter = null;
+        SetSelection?.Invoke(this, new SetSelectionArgs(true));
+    }
+
     public void OnNavigatedTo(object parameter)
     {
         _characters = _gameService.GetCharacters().Concat(_gameService.GetDisabledCharacters()).ToList();
@@ -128,9 +137,16 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
     {
         public INameable? Character { get; }
 
+        public bool NewCharacter { get; }
+
         public SetSelectionArgs(INameable? character)
         {
             Character = character;
+        }
+
+        public SetSelectionArgs(bool newCharacter)
+        {
+            NewCharacter = newCharacter;
         }
     }
 }

@@ -2,9 +2,11 @@
 using System.Text.Json;
 using FuzzySharp;
 using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService.Exceptions;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.GamesService.Requests;
 using GIMI_ModManager.Core.Helpers;
 using Serilog;
 using JsonElement = GIMI_ModManager.Core.GamesService.JsonModels.JsonElement;
@@ -27,6 +29,7 @@ public class GameService : IGameService
     public string GameName => GameInfo.GameName;
     public string GameShortName => GameInfo.GameShortName;
     public string GameIcon => GameInfo.GameIcon;
+    public string GameServiceSettingsFilePath => _gameSettingsManager.SettingsFile;
     public Uri GameBananaUrl => GameInfo.GameBananaUrl;
     public event EventHandler? Initialized;
 
@@ -35,6 +38,8 @@ public class GameService : IGameService
     private readonly EnableableList<INpc> _npcs = new();
     private readonly EnableableList<IGameObject> _gameObjects = new();
     private readonly EnableableList<IWeapon> _weapons = new();
+
+    private readonly List<IModdableObject> _duplicateInternalNames = new();
 
     private readonly List<ICategory> _categories = new();
 
@@ -88,7 +93,7 @@ public class GameService : IGameService
         var settingsDirectory = new DirectoryInfo(options.LocalSettingsDirectory);
         settingsDirectory.Create();
 
-        _gameSettingsManager = new GameSettingsManager(settingsDirectory);
+        _gameSettingsManager = new GameSettingsManager(_logger, settingsDirectory);
 
         await InitializeGameInfoAsync().ConfigureAwait(false);
 
@@ -107,6 +112,8 @@ public class GameService : IGameService
         await InitializeWeaponsAsync().ConfigureAwait(false);
 
         await MapCategoriesLanguageOverrideAsync().ConfigureAwait(false);
+
+        await InitializeCustomCharactersAsync().ConfigureAwait(false);
 
         CheckIfDuplicateInternalNameExists();
 
@@ -185,6 +192,8 @@ public class GameService : IGameService
     public async Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
     {
         ArgumentException.ThrowIfNullOrEmpty(newDisplayName, nameof(newDisplayName));
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
 
         await _gameSettingsManager.SetDisplayNameOverride(character.InternalName, newDisplayName).ConfigureAwait(false);
         character.DisplayName = newDisplayName;
@@ -193,6 +202,8 @@ public class GameService : IGameService
     public async Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
     {
         ArgumentNullException.ThrowIfNull(newImageUri, nameof(newImageUri));
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
 
         if (!File.Exists(newImageUri.LocalPath))
             throw new ArgumentException($"Image file does not exist at {newImageUri.LocalPath}", nameof(newImageUri));
@@ -281,11 +292,165 @@ public class GameService : IGameService
         throw new ArgumentException($"Type {typeof(T)} is not supported");
     }
 
-    public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
-        Uri? imageUri = null,
-        IGameClass? gameClass = null, IGameElement? gameElement = null, ICollection<IRegion>? regions = null,
-        ICollection<ICharacterSkin>? additionalSkins = null, DateTime? releaseDate = null) =>
-        throw new NotImplementedException();
+    public async Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest)
+    {
+        if (characterRequest.InternalName?.Id == null || characterRequest.InternalName.Id.IsNullOrEmpty())
+            throw new InvalidModdableObjectException("InternalName must not be null or empty");
+
+        if (GetAllModdableObjects(GetOnly.Both).Any(m => m.InternalNameEquals(characterRequest.InternalName)))
+            throw new InvalidModdableObjectException("A moddable object with the same internal name already exists. InternalName must be unique");
+
+
+        var internalCreateRequest = new JsonCustomCharacter()
+        {
+            DisplayName = characterRequest.DisplayName,
+            Keys = characterRequest.Keys?.ToArray(),
+            Class = characterRequest.Class,
+            Element = characterRequest.Element,
+            Image = characterRequest.Image?.LocalPath,
+            IsMultiMod = characterRequest.IsMultiMod,
+            Region = characterRequest.Region?.ToArray(),
+            ModFilesName = characterRequest.ModFilesName,
+            Rarity = characterRequest.Rarity,
+            ReleaseDate = characterRequest.ReleaseDate?.ToString("O")
+        };
+
+        FileInfo? sourceImage = null;
+        if (characterRequest.Image is not null)
+        {
+            if (!characterRequest.Image.IsFile || !File.Exists(characterRequest.Image.LocalPath))
+                throw new InvalidModdableObjectException("Image must be a valid existing filesystem file");
+
+            var imageExtension = Path.GetExtension(characterRequest.Image.LocalPath);
+
+            if (imageExtension.IsNullOrEmpty())
+                throw new InvalidModdableObjectException("Image must have an extension");
+
+            if (Constants.SupportedImageExtensions.All(x => x != imageExtension))
+                throw new InvalidModdableObjectException("Image must have a supported extension. Supported extensions are: " +
+                                                         string.Join(", ", Constants.SupportedImageExtensions));
+
+            sourceImage = new FileInfo(characterRequest.Image.LocalPath);
+        }
+
+
+        Character character;
+        try
+        {
+            character = Character
+                .FromJson(characterRequest.InternalName, internalCreateRequest)
+                .SetRegion(Regions.AllRegions)
+                .SetElement(Elements.AllElements)
+                .SetClass(Classes.AllClasses)
+                .CreateCharacter();
+        }
+        catch (Exception e)
+        {
+            throw new InvalidModdableObjectException($"Failed to create character: {e.Message}", e);
+        }
+
+
+        // If character was successfully created, now we can copy the image to the correct folder if it exists
+
+        if (sourceImage is not null)
+        {
+            try
+            {
+                var destinationImagePath =
+                    Path.Combine(_gameSettingsManager.CustomCharacterImageFolder.FullName, character.InternalName + sourceImage.Extension);
+                await using (var sourceImageStream = File.OpenRead(sourceImage.FullName))
+                {
+                    await using var destinationImageStream = File.Create(destinationImagePath);
+                    await sourceImageStream.CopyToAsync(destinationImageStream).ConfigureAwait(false);
+                }
+
+                if (File.Exists(destinationImagePath))
+                    character.ImageUri = new Uri(destinationImagePath);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidModdableObjectException($"Failed to copy custom image: {e.Message}", e);
+            }
+        }
+
+        character.DefaultCharacter = character.Clone();
+
+        try
+        {
+            await _gameSettingsManager.AddCustomCharacterAsync(character).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidModdableObjectException($"Failed to save custom character: {e.Message}", e);
+        }
+
+
+        _characters.Add(character);
+
+        return character;
+    }
+
+    public async Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest)
+    {
+        var character = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both)
+            .Where(c => c.IsCustomModObject)
+            .FirstOrDefault(c => c.InternalNameEquals(internalName));
+
+        if (character is null)
+            throw new ModObjectNotFoundException($"Character with internal name {internalName} not found");
+
+
+        if (character is not Character customCharacter)
+            throw new InvalidModdableObjectException("Currently only characters are supported");
+
+        if (!characterRequest.AnyValuesSet)
+        {
+            _logger.Warning("No values were set for editing character {InternalName}", internalName);
+            return customCharacter;
+        }
+
+        var revertsIfError = new List<Action>();
+
+        if (characterRequest.DisplayName.IsSet)
+        {
+            revertsIfError.Add(() => character.DisplayName = character.DefaultCharacter.DisplayName);
+            character.DisplayName = characterRequest.DisplayName;
+        }
+
+        try
+        {
+            await _gameSettingsManager.ReplaceCustomCharacterAsync(character).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to edit custom character {InternalName}", internalName);
+            revertsIfError.ForEach(revert => revert());
+            throw;
+        }
+
+        customCharacter.DefaultCharacter = customCharacter.Clone();
+        return customCharacter;
+    }
+
+    public async Task<ICharacter> DeleteCustomCharacterAsync(InternalName internalName)
+    {
+        var character = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both)
+            .Where(c => c.IsCustomModObject)
+            .FirstOrDefault(c => c.InternalNameEquals(internalName));
+
+        if (character is null)
+            throw new ModObjectNotFoundException($"Character with internal name {internalName} not found");
+
+
+        await _gameSettingsManager.DeleteCustomCharacterAsync(character.InternalName).ConfigureAwait(false);
+
+        var result = _characters.Remove(character);
+
+        if (!result)
+            _logger.Warning("Failed to remove character {InternalName} from internal GameService list", internalName);
+
+        return character;
+    }
 
     public ICharacter? QueryCharacter(string keywords, IEnumerable<ICharacter>? restrictToCharacters = null,
         int minScore = 100)
@@ -475,7 +640,7 @@ public class GameService : IGameService
         var characterSkinPath = Path.Combine(_assetsDirectory.FullName, "Images", "AltCharacterSkins");
 
         var jsonCharacters = await SerializeAsync<JsonCharacter>(characterFileName).ConfigureAwait(false);
-        var overrideSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
+        var customSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
 
         foreach (var jsonCharacter in jsonCharacters)
         {
@@ -508,7 +673,7 @@ public class GameService : IGameService
         foreach (var enableableCharacter in _characters)
         {
             var character = enableableCharacter.ModdableObject;
-            var characterOverride = overrideSettings.CharacterOverrides.FirstOrDefault(x =>
+            var characterOverride = customSettings.CharacterOverrides.FirstOrDefault(x =>
                 x.Key.Equals(character.InternalName.Id, StringComparison.OrdinalIgnoreCase)).Value;
 
             if (characterOverride is null) continue;
@@ -629,6 +794,64 @@ public class GameService : IGameService
             await MapDisplayNames(categoriesFileName, GetCategories()).ConfigureAwait(false);
     }
 
+    private async Task InitializeCustomCharactersAsync()
+    {
+        var allCharacters = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both).ToList();
+        var otherModdableObjects = GetAllModdableObjects(GetOnly.Both).Except(allCharacters).ToList();
+
+        var customSettings = await _gameSettingsManager.ReadSettingsAsync().ConfigureAwait(false);
+
+        var customCharacters = customSettings.CustomCharacters;
+
+        foreach (var (internalName, jsonCustomCharacter) in customCharacters)
+        {
+            // Check against legacy predefined multi mods
+            if (getOthersCharacter().InternalName.Equals(internalName) ||
+                getGlidersCharacter().InternalName.Equals(internalName) ||
+                getWeaponsCharacter().InternalName.Equals(internalName))
+            {
+                _logger.Error("Internal name {InternalName} is reserved for predefined multi mods. However, a custom character was found using it.",
+                    internalName);
+                continue;
+            }
+
+            var otherModConflict = otherModdableObjects.FirstOrDefault(x => x.InternalNameEquals(internalName));
+
+            if (otherModConflict is not null)
+            {
+                _logger.Warning(
+                    "Internal name {InternalName} is used by another moddable object type. However, a custom character was found using it. JASM will prioritize custom character",
+                    internalName);
+                otherModdableObjects.Remove(otherModConflict);
+                _duplicateInternalNames.Add(otherModConflict);
+            }
+
+            var existingCharacter = allCharacters.FirstOrDefault(x => x.InternalNameEquals(internalName));
+
+            // For characters category, custom characters override existing characters
+            if (existingCharacter is not null)
+            {
+                _characters.Remove(existingCharacter);
+                _duplicateInternalNames.Add(existingCharacter);
+
+                _logger.Warning(
+                    "Custom character found with internal name {InternalName}. However a predefined character also exists. JASM will prioritize custom character",
+                    internalName);
+            }
+
+
+            var character = Character
+                .FromJson(internalName, jsonCustomCharacter)
+                .SetRegion(Regions.AllRegions)
+                .SetElement(Elements.AllElements)
+                .SetClass(Classes.AllClasses)
+                .CreateCharacter(imageFolder: _gameSettingsManager.CustomCharacterImageFolder.FullName);
+
+
+            _characters.Add(character);
+        }
+    }
+
     [MemberNotNullWhen(true, nameof(_languageOverrideDirectory))]
     private bool LanguageOverrideAvailable()
     {
@@ -645,22 +868,26 @@ public class GameService : IGameService
     }
 
 
-    private async Task<IEnumerable<T>> SerializeAsync<T>(string fileName, bool throwIfNotFound = true)
+    private Task<IEnumerable<T>> SerializeAsync<T>(string fileName, bool throwIfNotFound = true)
     {
-        var objFileName = fileName;
-        var objFilePath = Path.Combine(_assetsDirectory.FullName, objFileName);
+        var objFilePath = Path.Combine(_assetsDirectory.FullName, fileName);
 
-        if (!File.Exists(objFilePath))
+        return SerializeFileAsync<T>(filePath: objFilePath, throwIfNotFound: throwIfNotFound);
+    }
+
+    private async Task<IEnumerable<T>> SerializeFileAsync<T>(string filePath, bool throwIfNotFound = true)
+    {
+        if (!File.Exists(filePath))
         {
             if (throwIfNotFound)
-                throw new FileNotFoundException($"{objFileName} File not found at path: {objFilePath}");
+                throw new FileNotFoundException($"File not found at path: {filePath}");
             else
                 return Array.Empty<T>();
         }
 
         return JsonSerializer.Deserialize<IEnumerable<T>>(
-            await File.ReadAllTextAsync(objFilePath).ConfigureAwait(false),
-            _jsonSerializerOptions) ?? throw new InvalidOperationException($"{objFileName} file is empty");
+            await File.ReadAllTextAsync(filePath).ConfigureAwait(false),
+            _jsonSerializerOptions) ?? throw new InvalidOperationException($"{filePath} is empty");
     }
 
     public string OtherCharacterInternalName => "Others";
@@ -1094,6 +1321,14 @@ internal sealed class EnableableList<T> : List<Enableable<T>> where T : IModdabl
     };
 
 
-    /// <inheritdoc cref="List{T}.Add"/>
-    public bool Remove(T moddableObject) => base.Remove(moddableObject);
+    /// <inheritdoc cref="List{T}.Remove"/>
+    public bool Remove(T moddableObject)
+    {
+        var enabledWrapper = this.FirstOrDefault(e => moddableObject.Equals(e.ModdableObject));
+
+        if (enabledWrapper is null)
+            return false;
+
+        return base.Remove(enabledWrapper);
+    }
 }
