@@ -34,14 +34,13 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <AutoSuggestBox
                 x:Name="CharacterSearchBox"
                 Width="300"
                 HorizontalAlignment="Left"
-                Header="Search for a character to edit"
+                Header="Search for a character to edit or add a new character"
                 ItemsSource="{x:Bind ViewModel.Suggestions}"
                 PlaceholderText="Start typing to search..."
                 QuerySubmitted="CharacterSearchBox_OnQuerySubmitted"
@@ -83,12 +82,6 @@
                 <FontIcon Glyph="&#xE710;" />
             </Button>
 
-            <InfoBar
-                Title="Experimental Feature"
-                Grid.Column="3"
-                IsClosable="False"
-                IsOpen="True"
-                Message="This feature is experimental and may not work as expected. I can not guarantee that settings will persist between releases for now" />
         </Grid>
 
 

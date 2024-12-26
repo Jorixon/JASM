@@ -14,23 +14,43 @@ public static class Validators
                 : null,
             context => allModdableObjects.FirstOrDefault(m => m.InternalNameEquals(context.Value)) is { } existingModdableObject
                 ? new ValidationResult { Message = $"Internal {context.Value} name already in use by {existingModdableObject.DisplayName}" }
-                : null
+                : null,
+            context =>
+            {
+                var invalidFileSystemChars = Path.GetInvalidFileNameChars();
+
+
+                foreach (var invalidChar in invalidFileSystemChars)
+                {
+                    if (context.Value.Contains(invalidChar))
+                    {
+                        return new ValidationResult
+                        {
+                            Message = $"Internal name contains invalid filesystem character '{invalidChar}'"
+                        };
+                    }
+                }
+
+                return null;
+            }
         ]);
     }
 
     public static void AddModFilesNameValidators(this FieldValidators<string> validators, ICollection<IModdableObject> allModdableObjects)
     {
-        validators.Add(context => allModdableObjects.FirstOrDefault(m => m.ModFilesName.Equals(context.Value.Trim(), StringComparison.OrdinalIgnoreCase)) is
-            { } existingModdableObject
-            ? new ValidationResult { Message = $"Mod files name already in use by {existingModdableObject.DisplayName}" }
-            : null);
-
         validators.Add(context => string.IsNullOrWhiteSpace(context.Value.Trim())
             ? new ValidationResult
             {
                 Message = "Mod files name is empty, automatic recognition of mod files will be disabled",
                 Type = ValidationType.Information
             }
+            : null);
+
+
+        validators.Add(context => !context.Value.Trim().IsNullOrEmpty() &&
+                                  allModdableObjects.FirstOrDefault(m => m.ModFilesName.Equals(context.Value.Trim(), StringComparison.OrdinalIgnoreCase)) is
+                                      { } existingModdableObject
+            ? new ValidationResult { Message = $"Mod files name already in use by {existingModdableObject.DisplayName}" }
             : null);
     }
 

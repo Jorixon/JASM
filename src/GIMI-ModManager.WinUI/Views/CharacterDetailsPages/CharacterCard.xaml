@@ -76,7 +76,7 @@
                 <Image HorizontalAlignment="Center" VerticalAlignment="Center">
 
                     <Image.Source>
-                        <BitmapImage DecodePixelHeight="200" UriSource="{x:Bind ViewModel.ShownModImageUri, Mode=OneWay}" />
+                        <BitmapImage DecodePixelHeight="300" UriSource="{x:Bind ViewModel.ShownModImageUri, Mode=OneWay}" />
                     </Image.Source>
 
                 </Image>

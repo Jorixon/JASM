@@ -96,7 +96,7 @@
                                 IsTextSelectionEnabled="True"
                                 TextWrapping="WrapWholeWords"
                                 Text="{x:Bind ViewModel.Form.ModFilesName.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                The Mod Files Name
+                                JASM can in some cases try and determine what character a mod is for. When doing this it uses the ModFilesName text to try and find a mod file with the same name. For example, lets say ModFilesName is 'paimon' then it will match a file with name: PaimonHeadLightMap.dds
                             </TextBlock>
                         </local:InputWrapper.HelpInfo>
                     </local:InputWrapper>

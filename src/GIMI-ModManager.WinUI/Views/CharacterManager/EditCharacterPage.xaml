@@ -85,19 +85,50 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <controls:CustomImage
-                        Width="200"
-                        ButtonHorizontalAlignment="Left"
-                        EditButtonCommand="{x:Bind ViewModel.PickImageCommand}"
-                        ImageUri="{x:Bind ViewModel.Form.Image.Value, Mode=TwoWay}" />
+
+                    <local:InputWrapper InputField="{x:Bind ViewModel.Form.Image}">
+                        <local:InputWrapper.Input>
+                            <controls:CustomImage
+                                Width="300"
+                                Height="200"
+                                ButtonHorizontalAlignment="Left"
+                                EditButtonCommand="{x:Bind ViewModel.PickImageCommand}"
+                                ImageUri="{x:Bind ViewModel.Form.Image.Value, Mode=TwoWay}" />
+                        </local:InputWrapper.Input>
+                    </local:InputWrapper>
+
                     <StackPanel
                         Grid.Row="1"
                         Margin="0,4"
-                        Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                        Orientation="Horizontal">
-                        <TextBlock Margin="0,0,16,0" Text="Internal Name (Id): " />
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind ViewModel.Form.InternalName.Value}" />
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock Text="Internal Name (Id): " />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind ViewModel.Form.InternalName.Value}" />
+                        </StackPanel>
+
+                        <Button Content="?">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <TextBlock
+                                        MaxWidth="300"
+                                        IsTextSelectionEnabled="True"
+                                        TextWrapping="WrapWholeWords">
+                                        The Internal Name is used by JASM to identify characters/ModObjects. It is also used as the name of mod folder. Must be unique.
+                                        Changing this after character has been created means JASM will identify this as a new character.
+                                    </TextBlock>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
                     </StackPanel>
+
 
 
                     <StackPanel Grid.Row="2" Spacing="8">
@@ -266,7 +297,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Content="Reset Character"
-                ToolTipService.ToolTip="Resets Character values to their default">
+                ToolTipService.ToolTip="Resets Character values to their default"
+                Visibility="{x:Bind ViewModel.IsNotCustomCharacter, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Button.Flyout>
                     <Flyout>
                         <Button Command="{x:Bind ViewModel.ResetCharacterToDefaultCommand}" Content="Reset Character Settings" />

@@ -188,7 +188,7 @@ public class GameService : IGameService
         return modDirectories;
     }
 
-
+    [Obsolete]
     public async Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
     {
         ArgumentException.ThrowIfNullOrEmpty(newDisplayName, nameof(newDisplayName));
@@ -199,6 +199,7 @@ public class GameService : IGameService
         character.DisplayName = newDisplayName;
     }
 
+    [Obsolete]
     public async Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
     {
         ArgumentNullException.ThrowIfNull(newImageUri, nameof(newImageUri));
@@ -212,8 +213,48 @@ public class GameService : IGameService
         character.ImageUri = newImageUri;
     }
 
+    public async Task SetCharacterOverrideAsync(ICharacter character, OverrideCharacterRequest request)
+    {
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
+
+        if (!request.AnyValuesSet)
+            throw new ArgumentException("No values were set for editing character");
+
+        await _gameSettingsManager.SetCharacterOverrideAsync(character.InternalName, (@override) =>
+        {
+            if (request.DisplayName.IsSet)
+                @override.DisplayName = request.DisplayName;
+
+            if (request.IsMultiMod.IsSet)
+                @override.IsMultiMod = request.IsMultiMod;
+
+            if (request.Keys.IsSet)
+                @override.Keys = request.Keys;
+        }).ConfigureAwait(false);
+
+        if (request.DisplayName.IsSet)
+            character.DisplayName = request.DisplayName.ValueToSet;
+
+        if (request.IsMultiMod.IsSet)
+            character.IsMultiMod = request.IsMultiMod.ValueToSet;
+
+        if (request.Keys.IsSet)
+            character.Keys = request.Keys.ValueToSet;
+
+
+        if (request.Image.IsSet)
+        {
+            var image = await _gameSettingsManager.SetCharacterImageOverrideAsync(character.InternalName, request.Image).ConfigureAwait(false);
+            character.ImageUri = image;
+        }
+    }
+
     public async Task DisableCharacterAsync(ICharacter character)
     {
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
+
         await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, true).ConfigureAwait(false);
         var internalCharacter =
             _characters.FirstOrDefault(x => x.ModdableObject.InternalName == character.InternalName);
@@ -226,6 +267,9 @@ public class GameService : IGameService
 
     public async Task EnableCharacterAsync(ICharacter character)
     {
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
+
         await _gameSettingsManager.SetIsDisabledOverride(character.InternalName, false).ConfigureAwait(false);
         var internalCharacter =
             _characters.FirstOrDefault(x => x.ModdableObject.InternalName == character.InternalName);
@@ -238,10 +282,14 @@ public class GameService : IGameService
 
     public async Task ResetOverrideForCharacterAsync(ICharacter character)
     {
+        if (character.IsCustomModObject)
+            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
+
         await _gameSettingsManager.RemoveOverride(character.InternalName).ConfigureAwait(false);
         character.DisplayName = character.DefaultCharacter.DisplayName;
         character.ImageUri = character.DefaultCharacter.ImageUri;
         character.Keys = character.DefaultCharacter.Keys;
+        character.IsMultiMod = character.DefaultCharacter.IsMultiMod;
     }
 
     public List<IModdableObject> GetModdableObjects(ICategory category, GetOnly getOnlyStatus = GetOnly.Enabled)
@@ -417,6 +465,19 @@ public class GameService : IGameService
             character.DisplayName = characterRequest.DisplayName;
         }
 
+        if (characterRequest.IsMultiMod.IsSet)
+        {
+            revertsIfError.Add(() => character.IsMultiMod = character.DefaultCharacter.IsMultiMod);
+            character.IsMultiMod = characterRequest.IsMultiMod;
+        }
+
+        if (characterRequest.Keys.IsSet)
+        {
+            revertsIfError.Add(() => character.Keys = character.DefaultCharacter.Keys);
+            character.Keys = characterRequest.Keys.ValueToSet;
+        }
+
+
         try
         {
             await _gameSettingsManager.ReplaceCustomCharacterAsync(character).ConfigureAwait(false);
@@ -426,6 +487,19 @@ public class GameService : IGameService
             _logger.Error(e, "Failed to edit custom character {InternalName}", internalName);
             revertsIfError.ForEach(revert => revert());
             throw;
+        }
+
+        // No revert if error after this point
+        if (characterRequest.Image.IsSet)
+        {
+            try
+            {
+                await _gameSettingsManager.SetCustomCharacterImageAsync(character, characterRequest.Image).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to update image for custom character {InternalName}", internalName);
+            }
         }
 
         customCharacter.DefaultCharacter = customCharacter.Clone();
@@ -491,8 +565,11 @@ public class GameService : IGameService
             var result = GetBaseSearchResult(searchQuery, character);
 
             // A character can have multiple keys, so we take the best one. The keys are only used to help with searching
-            var bestKeyMatch = character.Keys.Max(key => Fuzz.Ratio(key, searchQuery));
-            result += bestKeyMatch;
+            if (character.Keys.Count > 0)
+            {
+                var bestKeyMatch = character.Keys.Max(key => Fuzz.Ratio(key, searchQuery));
+                result += bestKeyMatch;
+            }
 
             if (character.Keys.Any(key => key.Equals(searchQuery, StringComparison.CurrentCultureIgnoreCase)))
                 result += 100;
@@ -678,7 +755,7 @@ public class GameService : IGameService
 
             if (characterOverride is null) continue;
 
-            MapCustomOverrides(character, characterOverride);
+            await MapCustomOverrides(character, characterOverride).ConfigureAwait(false);
 
             if (characterOverride?.IsDisabled is not null && characterOverride.IsDisabled.Value)
             {
@@ -1055,13 +1132,33 @@ public class GameService : IGameService
         }
     }
 
-    private void MapCustomOverrides(ICharacter character, JsonCharacterOverride @override)
+    private async Task MapCustomOverrides(ICharacter character, JsonCharacterOverride @override)
     {
         if (!@override.DisplayName.IsNullOrEmpty())
             character.DisplayName = @override.DisplayName;
 
+        if (@override.IsMultiMod is not null)
+            character.IsMultiMod = @override.IsMultiMod.Value;
+
+        if (@override.Keys is not null)
+            character.Keys = @override.Keys.ToList();
+
         if (!@override.Image.IsNullOrEmpty())
-            character.ImageUri = Uri.TryCreate(@override.Image, UriKind.Absolute, out var uri) ? uri : null;
+        {
+            // Used to save a full image path before, now only the filename is saved, need to check both cases
+
+            var uri = Uri.TryCreate(@override.Image, UriKind.Absolute, out var urii) ? urii : null;
+
+            if (uri is not null)
+            {
+                character.ImageUri = uri;
+            }
+            else
+            {
+                var imagePath = await _gameSettingsManager.GetCharacterImageOverrideAsync(character.InternalName).ConfigureAwait(false);
+                character.ImageUri = imagePath;
+            }
+        }
     }
 
     private async void LanguageChangedHandler(object? sender, EventArgs args)

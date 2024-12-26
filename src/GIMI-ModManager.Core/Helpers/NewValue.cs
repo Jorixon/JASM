@@ -2,7 +2,7 @@
 
 namespace GIMI_ModManager.Core.Helpers;
 
-public readonly struct NewValue<T>
+public readonly struct NewValue<T> : ISettableProperty
 {
     private NewValue(T valueToSet)
     {
@@ -16,6 +16,11 @@ public readonly struct NewValue<T>
     public static implicit operator T(NewValue<T> newValue) => newValue.ValueToSet;
 
     public static NewValue<T> Set(T value) => new(value);
+}
+
+public interface ISettableProperty
+{
+    bool IsSet { get; }
 }
 
 public static class NewValueExtensions

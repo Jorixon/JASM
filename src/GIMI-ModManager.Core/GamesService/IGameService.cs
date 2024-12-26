@@ -22,7 +22,12 @@ public interface IGameService
 
     public Task InitializeAsync(InitializationOptions options);
 
+    public Task SetCharacterOverrideAsync(ICharacter character, OverrideCharacterRequest request);
+
+    [Obsolete]
     public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName);
+
+    [Obsolete]
     public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri);
 
     public Task DisableCharacterAsync(ICharacter character);

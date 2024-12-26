@@ -12,8 +12,8 @@ public class Character : ICharacter, IEquatable<Character>
     private Uri? _imageUri;
     public ICategory ModCategory { get; } = Category.CreateForCharacter();
     public InternalName InternalName { get; init; } = null!;
-    public string ModFilesName { get; internal set; } = string.Empty;
-    public bool IsMultiMod { get; init; }
+    public string ModFilesName { get; set; } = string.Empty;
+    public bool IsMultiMod { get; set; }
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }
     public bool IsCustomModObject { get; private init; }
@@ -164,13 +164,13 @@ public class Character : ICharacter, IEquatable<Character>
             ModFilesName = ModFilesName,
             DisplayName = DisplayName,
             IsMultiMod = IsMultiMod,
-            Keys = Keys,
+            Keys = Keys.ToArray(),
             Rarity = Rarity,
             ReleaseDate = ReleaseDate,
             Skins = Skins.Select(skin => skin.Clone()).ToArray(),
             Class = Class,
             Element = Element,
-            Regions = Regions,
+            Regions = Regions.ToArray(),
             ImageUri = ImageUri,
             IsCustomModObject = IsCustomModObject
         };

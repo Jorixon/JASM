@@ -9,6 +9,7 @@ using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.GamesService.Requests;
 using GIMI_ModManager.Core.Helpers;
+using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using Serilog;
@@ -22,6 +23,7 @@ public partial class CreateCharacterViewModel : ObservableObject
     private readonly IGameService _gameService;
     private readonly NotificationManager _notificationManager;
     private readonly ImageHandlerService _imageHandlerService;
+    private readonly INavigationService _navigationService;
     private readonly ILogger _logger;
 
     private readonly List<IModdableObject> _allModObjects;
@@ -35,12 +37,13 @@ public partial class CreateCharacterViewModel : ObservableObject
     public ObservableCollection<ElementItemVM> Elements { get; } = new();
 
     public CreateCharacterViewModel(ISkinManagerService skinManagerService, IGameService gameService, NotificationManager notificationManager,
-        ImageHandlerService imageHandlerService, ILogger logger)
+        ImageHandlerService imageHandlerService, ILogger logger, INavigationService navigationService)
     {
         _skinManagerService = skinManagerService;
         _gameService = gameService;
         _notificationManager = notificationManager;
         _imageHandlerService = imageHandlerService;
+        _navigationService = navigationService;
         _logger = logger.ForContext<CreateCharacterViewModel>();
 
         _allModObjects = _gameService.GetAllModdableObjects(GetOnly.Both);
@@ -116,9 +119,6 @@ public partial class CreateCharacterViewModel : ObservableObject
         try
         {
             character = await Task.Run(() => _gameService.CreateCharacterAsync(createCharacterRequest));
-
-            if (character is null)
-                throw new Exception("Character was not created, null, was returned! Unknown error");
         }
         catch (Exception e)
         {
@@ -139,6 +139,7 @@ public partial class CreateCharacterViewModel : ObservableObject
         }
 
         IsFinished = true;
+        _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, character.InternalName);
         _notificationManager.ShowNotification("Character created", $"Character '{character.DisplayName}' was created successfully", null);
     }
 

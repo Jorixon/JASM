@@ -3,7 +3,7 @@ using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.Core.GamesService.Requests;
 
-public class EditCustomCharacterRequest
+public class OverrideCharacterRequest
 {
     public NewValue<string> DisplayName { get; set; }
 

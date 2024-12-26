@@ -14,8 +14,8 @@ public class BaseModdableObject : IModdableObject
     public InternalName InternalName { get; init; }
 
     public Uri? ImageUri { get; set; }
-    public string ModFilesName { get; private init; } = string.Empty;
-    public bool IsMultiMod { get; private init; }
+    public string ModFilesName { get; set; } = string.Empty;
+    public bool IsMultiMod { get; set; }
     public ICategory ModCategory { get; }
     public bool IsCustomModObject { get; init; }
 

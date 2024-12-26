@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GIMI_ModManager.Core.GamesService;
 using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 
@@ -82,7 +83,8 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         _characters = _gameService.GetCharacters().Concat(_gameService.GetDisabledCharacters()).ToList();
 
         ICharacter? character = null;
-        if (parameter is string internalName)
+        var internalName = (parameter as InternalName)?.Id ?? parameter as string ?? (parameter as ICharacter)?.InternalName.Id;
+        if (!internalName.IsNullOrEmpty())
         {
             character = _characters.FirstOrDefault(c => c.InternalNameEquals(internalName));
             if (character is not null)

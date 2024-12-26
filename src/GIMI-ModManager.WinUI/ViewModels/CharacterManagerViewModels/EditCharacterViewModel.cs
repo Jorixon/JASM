@@ -37,6 +37,11 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [ObservableProperty] private int _modsCount;
     [ObservableProperty] private string _keyToAddInput = string.Empty;
 
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotCustomCharacter))]
+    private bool _isCustomCharacter;
+
+    public bool IsNotCustomCharacter => !IsCustomCharacter;
+
     public CharacterStatus CharacterStatus { get; } = new();
 
     public EditCharacterForm Form { get; } = new();
@@ -76,6 +81,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         }
 
         _character = character;
+        IsCustomCharacter = _character.IsCustomModObject;
         CharacterStatus.SetIsCustomCharacter(_character.IsCustomModObject);
 
         if (!_gameService.GetDisabledCharacters().Contains(character))
@@ -123,7 +129,11 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     }
 
     [RelayCommand]
-    private void RemoveKey(string key) => Form.Keys.Items.Remove(key);
+    private void RemoveKey(string key)
+    {
+        Form.Keys.Items.Remove(key);
+        NotifyAllCommands();
+    }
 
     [RelayCommand]
     private async Task PickImage()
@@ -184,9 +194,12 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
         _logger.Information(
             $"Disabling character {_character.InternalName} with deleteFolder={deleteFolderCheckBox.IsChecked}");
-
-        await _gameService.DisableCharacterAsync(_character);
-        await Task.Run(() => _skinManagerService.DisableModListAsync(_character, deleteFolderCheckBox.IsChecked ?? false));
+        var deleteFolder = deleteFolderCheckBox.IsChecked ?? false;
+        await Task.Run(async () =>
+        {
+            await _gameService.DisableCharacterAsync(_character).ConfigureAwait(false);
+            await _skinManagerService.DisableModListAsync(_character, deleteFolder).ConfigureAwait(false);
+        });
         ResetState();
     }
 
@@ -238,9 +251,15 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
 
         _logger.Information($"Deleting custom character {_character.InternalName}");
-        await _gameService.DeleteCustomCharacterAsync(_character.InternalName);
-        await Task.Run(() => _skinManagerService.DisableModListAsync(_character, deleteFolderCheckBox.IsChecked ?? false));
-        ResetState();
+        var deleteFolder = deleteFolderCheckBox.IsChecked ?? false;
+        await Task.Run(async () =>
+        {
+            await _gameService.DeleteCustomCharacterAsync(_character.InternalName).ConfigureAwait(false);
+            await _skinManagerService.DisableModListAsync(_character, deleteFolder).ConfigureAwait(false);
+        });
+
+        _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, clearNavigation: true);
+        _notificationManager.ShowNotification("Custom Character Deleted", $"Custom Character '{_character.DisplayName}' was deleted successfully", null);
     }
 
     private bool CanEnableCharacter() => !_character.IsCustomModObject && CharacterStatus.IsDisabled && !AnyChanges();
@@ -325,29 +344,63 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
                 if (Form.DisplayName.IsDirty)
                 {
                     Debug.Assert(Form.DisplayName.IsValid);
-                    editRequest.DisplayName = NewValue<string>.Set(Form.DisplayName.Value);
+                    editRequest.DisplayName = NewValue<string>.Set(Form.DisplayName.Value.Trim());
                 }
 
-                // TODO: Add more properties
-#if RELEASE
-           wdawd
-#endif
+                if (Form.IsMultiMod.IsDirty)
+                {
+                    Debug.Assert(Form.IsMultiMod.IsValid);
+                    editRequest.IsMultiMod = NewValue<bool>.Set(Form.IsMultiMod.Value);
+                }
 
-                await _gameService.EditCustomCharacterAsync(_character.InternalName, editRequest);
+                if (Form.Image.IsDirty)
+                {
+                    Debug.Assert(Form.Image.IsValid);
+                    var image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri ? null : Form.Image.Value;
+                    editRequest.Image = NewValue<Uri?>.Set(image);
+                }
+
+                if (Form.Keys.IsDirty)
+                {
+                    Debug.Assert(Form.Keys.IsValid);
+                    editRequest.Keys = NewValue<string[]>.Set(Form.Keys.Items.ToArray());
+                }
+
+
+                Debug.Assert(editRequest.AnyValuesSet);
+                await Task.Run(() => _gameService.EditCustomCharacterAsync(_character.InternalName, editRequest)).ConfigureAwait(false);
             }
             else
             {
+                var overrideRequest = new OverrideCharacterRequest();
+
                 if (Form.DisplayName.IsDirty)
                 {
                     Debug.Assert(Form.DisplayName.IsValid);
-                    await _gameService.SetCharacterDisplayNameAsync(_character, Form.DisplayName.Value.Trim());
+                    overrideRequest.DisplayName = NewValue<string>.Set(Form.DisplayName.Value.Trim());
                 }
 
-                if (Form.Image.IsDirty && Form.Image.Value.LocalPath != _imageHandlerService.PlaceholderImagePath)
+                if (Form.IsMultiMod.IsDirty)
+                {
+                    Debug.Assert(Form.IsMultiMod.IsValid);
+                    overrideRequest.IsMultiMod = NewValue<bool>.Set(Form.IsMultiMod.Value);
+                }
+
+                if (Form.Image.IsDirty)
                 {
                     Debug.Assert(Form.Image.IsValid);
-                    await _gameService.SetCharacterImageAsync(_character, Form.Image.Value);
+                    var image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri ? null : Form.Image.Value;
+                    overrideRequest.Image = NewValue<Uri?>.Set(image);
                 }
+
+                if (Form.Keys.IsDirty)
+                {
+                    Debug.Assert(Form.Keys.IsValid);
+                    overrideRequest.Keys = NewValue<string[]>.Set(Form.Keys.Items.ToArray());
+                }
+
+                Debug.Assert(overrideRequest.AnyValuesSet);
+                await Task.Run(() => _gameService.SetCharacterOverrideAsync(_character, overrideRequest)).ConfigureAwait(false);
             }
         }
     }
@@ -397,6 +450,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     {
         var json = JsonConvert.SerializeObject(_character, Formatting.Indented);
 
+
         var content = new ScrollViewer()
         {
             Content = new TextBlock()
@@ -408,14 +462,31 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             }
         };
 
+
+        var dialogHeight = App.MainWindow.Height * 0.5;
+        var dialogWidth = App.MainWindow.Width * 0.7;
+        var contentWrapper = new Grid()
+        {
+            MinHeight = dialogHeight,
+            MinWidth = dialogWidth,
+            Children =
+            {
+                content
+            }
+        };
+
         var characterModelDialog = new ContentDialog
         {
             Title = "Character Model",
-            Content = content,
+            Content = contentWrapper,
             CloseButtonText = "Close",
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = App.MainWindow.Content.XamlRoot,
-            FullSizeDesired = true
+            Resources =
+            {
+                ["ContentDialogMaxWidth"] = 8000,
+                ["ContentDialogMaxHeight"] = 4000
+            }
         };
 
         await characterModelDialog.ShowAsync();

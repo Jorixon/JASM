@@ -12,13 +12,8 @@ public sealed partial class EditCharacterForm : Form
 
     public void Initialize(ICharacter character, ICollection<IModdableObject> allModdableObjects)
     {
-        // TODO: Add validation
-#if RELEASE
-throw new NotImplementedException();
-#endif
-
         allModdableObjects = allModdableObjects.Contains(character)
-            ? allModdableObjects.Where(mo => mo.Equals(character)).ToArray()
+            ? allModdableObjects.Where(mo => !mo.Equals(character)).ToArray()
             : allModdableObjects;
 
         InternalName.ValidationRules.AddInternalNameValidators(allModdableObjects);

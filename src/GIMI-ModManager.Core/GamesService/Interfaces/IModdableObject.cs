@@ -10,12 +10,12 @@ public interface IModdableObject : INameable, IEquatable<IModdableObject>, IImag
     /// Static should not be changed.
     /// If Empty => no automatic mod detection
     /// </summary>
-    public string ModFilesName { get; }
+    public string ModFilesName { get; internal set; }
 
     /// <summary>
     /// If true => Multiple mods can be active at the same time
     /// </summary>
-    public bool IsMultiMod { get; }
+    public bool IsMultiMod { get; internal set; }
 
     /// <summary>
     /// What category this mod belongs to
