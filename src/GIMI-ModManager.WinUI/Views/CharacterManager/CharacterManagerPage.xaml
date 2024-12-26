@@ -45,7 +45,8 @@
                 PlaceholderText="Start typing to search..."
                 QuerySubmitted="CharacterSearchBox_OnQuerySubmitted"
                 SuggestionChosen="CharacterSearchBox_OnSuggestionChosen"
-                TextChanged="CharacterSearchBox_OnTextChanged">
+                TextChanged="CharacterSearchBox_OnTextChanged"
+                Text="{x:Bind ViewModel.SearchBoxText, Mode=TwoWay}">
                 <AutoSuggestBox.KeyboardAccelerators>
                     <KeyboardAccelerator
                         Key="F"

@@ -185,9 +185,6 @@ public partial class CreateCharacterViewModel : ObservableObject
         if (newKey.IsNullOrEmpty())
             return;
 
-        if (_allModObjects.OfType<ICharacter>().SelectMany(c => c.Keys).Any(key => key.Equals(newKey, StringComparison.OrdinalIgnoreCase)))
-            return;
-
         if (Form.Keys.Items.Contains(newKey, StringComparer.OrdinalIgnoreCase))
             return;
 

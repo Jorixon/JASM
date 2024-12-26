@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,6 +11,7 @@ using GIMI_ModManager.Core.GamesService.Requests;
 using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
@@ -34,7 +36,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
     [ObservableProperty] private Uri _modFolderUri = null!;
     [ObservableProperty] private string _modFolderString = "";
-    [ObservableProperty] private int _modsCount;
+    [ObservableProperty] private string _modsCount;
     [ObservableProperty] private string _keyToAddInput = string.Empty;
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotCustomCharacter))]
@@ -45,6 +47,8 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     public CharacterStatus CharacterStatus { get; } = new();
 
     public EditCharacterForm Form { get; } = new();
+
+    public ObservableCollection<ModModel> Mods { get; } = new();
 
 
     public EditCharacterViewModel(IGameService gameService, ILogger logger, ISkinManagerService skinManagerService,
@@ -90,14 +94,15 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             var modList = _skinManagerService.GetCharacterModList(_character);
             ModFolderUri = new Uri(modList.AbsModsFolderPath);
             ModFolderString = ModFolderUri.LocalPath;
-            ModsCount = modList.Mods.Count;
+            ModsCount = modList.Mods.Count.ToString();
+            Mods.AddRange(modList.Mods.Select(m => ModModel.FromMod(m.Mod)));
         }
         else
         {
             CharacterStatus.SetEnabled(false);
             ModFolderUri = new Uri(_skinManagerService.ActiveModsFolderPath);
             ModFolderString = ModFolderUri.LocalPath;
-            ModsCount = 0;
+            ModsCount = "-";
         }
 
 

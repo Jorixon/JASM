@@ -16,6 +16,7 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
     private readonly ImageHandlerService _imageHandlerService;
 
     [ObservableProperty] private ICharacter? _selectedCharacter;
+    [ObservableProperty] private string _searchBoxText;
 
     private List<ICharacter> _characters = new();
 
@@ -75,6 +76,7 @@ public partial class CharacterManagerViewModel : ObservableRecipient, INavigatio
         ResetCharacter();
         Suggestions.Clear();
         _lastSelectedCharacter = null;
+        SearchBoxText = string.Empty;
         SetSelection?.Invoke(this, new SetSelectionArgs(true));
     }
 
