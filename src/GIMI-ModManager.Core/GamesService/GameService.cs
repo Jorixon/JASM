@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using FuzzySharp;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -186,31 +187,6 @@ public class GameService : IGameService
         }
 
         return modDirectories;
-    }
-
-    [Obsolete]
-    public async Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(newDisplayName, nameof(newDisplayName));
-        if (character.IsCustomModObject)
-            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
-
-        await _gameSettingsManager.SetDisplayNameOverride(character.InternalName, newDisplayName).ConfigureAwait(false);
-        character.DisplayName = newDisplayName;
-    }
-
-    [Obsolete]
-    public async Task SetCharacterImageAsync(ICharacter character, Uri newImageUri)
-    {
-        ArgumentNullException.ThrowIfNull(newImageUri, nameof(newImageUri));
-        if (character.IsCustomModObject)
-            throw new InvalidOperationException($"Use {nameof(EditCustomCharacterAsync)} to modify a custom character");
-
-        if (!File.Exists(newImageUri.LocalPath))
-            throw new ArgumentException($"Image file does not exist at {newImageUri.LocalPath}", nameof(newImageUri));
-
-        await _gameSettingsManager.SetImageOverride(character.InternalName, newImageUri).ConfigureAwait(false);
-        character.ImageUri = newImageUri;
     }
 
     public async Task SetCharacterOverrideAsync(ICharacter character, OverrideCharacterRequest request)
@@ -404,16 +380,11 @@ public class GameService : IGameService
         {
             try
             {
-                var destinationImagePath =
-                    Path.Combine(_gameSettingsManager.CustomCharacterImageFolder.FullName, character.InternalName + sourceImage.Extension);
-                await using (var sourceImageStream = File.OpenRead(sourceImage.FullName))
-                {
-                    await using var destinationImageStream = File.Create(destinationImagePath);
-                    await sourceImageStream.CopyToAsync(destinationImageStream).ConfigureAwait(false);
-                }
+                var destinationImagePath = _gameSettingsManager.CreateCustomCharacterImagePath(character.InternalName, sourceImage.Extension);
+                sourceImage.CopyTo(destinationImagePath.LocalPath, true);
 
-                if (File.Exists(destinationImagePath))
-                    character.ImageUri = new Uri(destinationImagePath);
+                if (File.Exists(destinationImagePath.LocalPath))
+                    character.ImageUri = destinationImagePath;
             }
             catch (Exception e)
             {
@@ -926,6 +897,16 @@ public class GameService : IGameService
 
 
             _characters.Add(character);
+        }
+
+        try
+        {
+            await _gameSettingsManager.CleanupUnusedImagesAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            Debugger.Break();
+            _logger.Error(e, "Failed to cleanup unused images");
         }
     }
 

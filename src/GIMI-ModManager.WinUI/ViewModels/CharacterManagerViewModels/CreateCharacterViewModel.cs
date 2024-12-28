@@ -106,7 +106,7 @@ public partial class CreateCharacterViewModel : ObservableObject
             InternalName = internalName,
             DisplayName = displayName.IsNullOrEmpty() ? internalName : displayName,
             ModFilesName = modFilesName,
-            Image = Form.Image.Value,
+            Image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri ? null : Form.Image.Value,
             Rarity = Form.Rarity.Value,
             Element = Form.Element.Value,
             Class = null,
@@ -169,7 +169,7 @@ public partial class CreateCharacterViewModel : ObservableObject
     [RelayCommand]
     private async Task SelectImageAsync()
     {
-        var image = await _imageHandlerService.PickImageAsync();
+        var image = await _imageHandlerService.PickImageAsync(copyToTmpFolder: false);
         if (image is not null && Uri.TryCreate(image.Path, UriKind.Absolute, out var imagePath))
             Form.Image.Value = imagePath;
     }

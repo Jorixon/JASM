@@ -263,7 +263,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
             await _skinManagerService.DisableModListAsync(_character, deleteFolder).ConfigureAwait(false);
         });
 
-        _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, clearNavigation: true);
+        _navigationService.NavigateTo(typeof(CharacterManagerViewModel).FullName!, new object(), clearNavigation: true);
         _notificationManager.ShowNotification("Custom Character Deleted", $"Custom Character '{_character.DisplayName}' was deleted successfully", null);
     }
 

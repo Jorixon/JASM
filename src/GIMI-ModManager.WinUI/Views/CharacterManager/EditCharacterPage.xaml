@@ -229,6 +229,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock FontSize="16" Text="Character Search Keys" />
                     <TextBox
@@ -241,6 +242,22 @@
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.AddKeyCommand}"
                         Content="Add Search Key" />
+
+                    <Button
+                        Grid.Column="3"
+                        VerticalAlignment="Bottom"
+                        Content="?">
+                        <Button.Flyout>
+                            <Flyout>
+                                <Grid MaxWidth="200">
+                                    <TextBlock
+                                        IsTextSelectionEnabled="True"
+                                        TextWrapping="WrapWholeWords"
+                                        Text="JASM uses keys to help improve search functionality. Some characters may have multiple names, so you can add additional name or search terms as Keys." />
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                 </Grid>
 
                 <StackPanel Grid.Row="1">
