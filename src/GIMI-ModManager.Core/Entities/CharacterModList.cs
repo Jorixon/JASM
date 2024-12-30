@@ -386,7 +386,7 @@ public sealed class CharacterModList : ICharacterModList
     public void Dispose()
     {
         _watcher?.Dispose();
-        _selfWatcher.Dispose();
+        _selfWatcher?.Dispose();
         _watcher = null;
     }
 

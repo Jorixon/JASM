@@ -8,10 +8,11 @@ public class Npc : INpc
     public string DisplayName { get; set; }
     public InternalName InternalName { get; init; }
     public Uri? ImageUri { get; set; }
-    public string ModFilesName { get; internal set; } = string.Empty;
-    public bool IsMultiMod { get; internal set; }
+    public string ModFilesName { get; set; } = string.Empty;
+    public bool IsMultiMod { get; set; }
     public DateTime? ReleaseDate { get; set; } = DateTime.MinValue;
     public ICategory ModCategory { get; internal init; } = Category.CreateForNpc();
+    public bool IsCustomModObject { get; init; }
     public INpc DefaultNPC { get; internal init; } = null!;
     public ICollection<IRegion> Regions { get; internal set; } = Array.Empty<IRegion>();
 

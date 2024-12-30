@@ -21,6 +21,7 @@
                 Height="40"
                 Command="{x:Bind CopyButtonCommand, Mode=OneWay}"
                 Icon="Copy"
+                Visibility="{x:Bind CopyButtonVisibility, Mode=OneWay}"
                 Text="Copy Image" />
             <MenuFlyoutSeparator />
             <MenuFlyoutSeparator />

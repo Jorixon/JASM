@@ -66,6 +66,8 @@ public partial class ModGridVM(
 
     [ObservableProperty] private bool _isModFolderNameColumnVisible;
 
+    [ObservableProperty] private bool _isMultipleModsActive;
+
     public bool IsInitialized { get; private set; }
 
     private List<CharacterSkinEntry> _modsBackend = [];
@@ -249,7 +251,11 @@ public partial class ModGridVM(
             _gridModsBackend.Add(modVm);
         }
 
-        _dispatcherQueue.TryEnqueue(() => OnModsReloaded?.Invoke(this, EventArgs.Empty));
+        _dispatcherQueue.TryEnqueue(() =>
+        {
+            IsMultipleModsActive = _modsBackend.Count(m => m.IsEnabled) > 1;
+            OnModsReloaded?.Invoke(this, EventArgs.Empty);
+        });
     }
 
     private async Task<ModRowVM> CreateModRowVM(CharacterSkinEntry characterSkinEntry,
@@ -394,6 +400,7 @@ public partial class ModGridVM(
             _notificationService.ShowNotification("An error occured toggling mod", e.Message, TimeSpan.FromSeconds(5));
         }
 
+        IsMultipleModsActive = _modsBackend.Count(m => m.IsEnabled) > 1;
         Messenger.Send(new ModChangedMessage(this, modEntryToToggle, null));
     }
 

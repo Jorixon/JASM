@@ -63,7 +63,7 @@ public interface ISkinManagerService : IDisposable
     public ISkinMod? GetModById(Guid id);
     public CharacterSkinEntry? GetModEntryById(Guid id);
 
-    public Task EnableModListAsync(ICharacter moddableObject);
+    public Task EnableModListAsync(IModdableObject moddableObject);
 
     public Task DisableModListAsync(IModdableObject moddableObject, bool deleteFolder = false);
 

@@ -14,9 +14,10 @@ public class BaseModdableObject : IModdableObject
     public InternalName InternalName { get; init; }
 
     public Uri? ImageUri { get; set; }
-    public string ModFilesName { get; private init; } = string.Empty;
-    public bool IsMultiMod { get; private init; }
+    public string ModFilesName { get; set; } = string.Empty;
+    public bool IsMultiMod { get; set; }
     public ICategory ModCategory { get; }
+    public bool IsCustomModObject { get; init; }
 
     private BaseModdableObject(InternalName internalName, string displayName, ICategory modCategory)
     {
@@ -36,7 +37,7 @@ public class BaseModdableObject : IModdableObject
     }
 
 
-    internal static BaseModdableObject FromJson(JsonBaseModdableObject json, ICategory category, string imageFolder)
+    internal static BaseModdableObject FromJson(JsonBaseModdableObject json, ICategory category, string imageFolder, bool isCustomModObject = false)
     {
         var internalNameString = json.InternalName ??
                                  throw new Character.InvalidJsonConfigException(
@@ -52,7 +53,8 @@ public class BaseModdableObject : IModdableObject
         {
             ImageUri = MapperHelpers.GetImageUri(internalName, imageFolder, category, jsonImageFileName: json.Image),
             ModFilesName = json.ModFilesName ?? string.Empty,
-            IsMultiMod = json.IsMultiMod ?? false
+            IsMultiMod = json.IsMultiMod ?? false,
+            IsCustomModObject = isCustomModObject
         };
     }
 
