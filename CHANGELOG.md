@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.7](https://github.com/Jorixon/JASM/compare/v2.18.6...v2.18.7) (2024-12-30)
+
+
+### Miscellaneous
+
+* **Honkai:** Added character Tribbie ([#317](https://github.com/Jorixon/JASM/issues/317)) ([66acb47](https://github.com/Jorixon/JASM/commit/66acb4741f53396002606f2cd569cc1672d9a54c))
+
 ## [2.18.6](https://github.com/Jorixon/JASM/compare/v2.18.5...v2.18.6) (2024-12-21)
 
 
