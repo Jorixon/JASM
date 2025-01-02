@@ -24,7 +24,7 @@
     "Image": "jianxin.png",
     "Rarity": 5,
     "Element": "Aero",
-    "Class": "Gauntlet",
+    "Class": "Gauntlets",
     "Region": [
       "Huanglong"
     ],
@@ -58,7 +58,7 @@
     "Image": "lingyang.png",
     "Rarity": 5,
     "Element": "Glacio",
-    "Class": "Gauntlet",
+    "Class": "Gauntlets",
     "Region": [
       "Huanglong"
     ],
@@ -177,7 +177,7 @@
     "Image": "yuanwu.png",
     "Rarity": 4,
     "Element": "Electro",
-    "Class": "Gauntlet",
+    "Class": "Gauntlets",
     "Region": [
       "Huanglong"
     ],
@@ -347,7 +347,7 @@
     "Image": "Xiangliyao.png",
     "Rarity": 5,
     "Element": "Electro",
-    "Class": "Gauntlet",
+    "Class": "Gauntlets",
     "Region": [
       "Huanglong"
     ],
@@ -381,7 +381,7 @@
     "Image": "Youhu.png",
     "Rarity": 4,
     "Element": "Glacio",
-    "Class": "Gauntlet",
+    "Class": "Gauntlets",
     "Region": [
       "Huanglong"
     ],
@@ -423,5 +423,90 @@
     "InGameSkins": [],
     "InternalName": "Lumi",
     "DisplayName": "Lumi"
+  },
+  {
+    "Keys": [
+      "Carlotta"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Carlotta.png",
+    "Rarity": 5,
+    "Element": "Glacio",
+    "Class": "Pistols",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Carlotta",
+    "InGameSkins": [],
+    "InternalName": "Carlotta",
+    "DisplayName": "Carlotta"
+  },
+  {
+    "Keys": [
+      "Roccia"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Roccia.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Gauntlets",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Roccia",
+    "InGameSkins": [],
+    "InternalName": "Roccia",
+    "DisplayName": "Roccia"
+  },
+  {
+    "Keys": [
+      "Brant"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Brant.png",
+    "Rarity": 5,
+    "Element": "Fusion",
+    "Class": "Sword",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Brant",
+    "InGameSkins": [],
+    "InternalName": "Brant",
+    "DisplayName": "Brant"
+  },
+  {
+    "Keys": [
+      "Phoebe"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Phoebe.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Unknown",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Phoebe",
+    "InGameSkins": [],
+    "InternalName": "Phoebe",
+    "DisplayName": "Phoebe"
+  },
+  {
+    "Keys": [
+      "Zani"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Zani.png",
+    "Rarity": 5,
+    "Element": "Unknown",
+    "Class": "Unknown",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Zani",
+    "InGameSkins": [],
+    "InternalName": "Zani",
+    "DisplayName": "Zani"
   }
 ]
