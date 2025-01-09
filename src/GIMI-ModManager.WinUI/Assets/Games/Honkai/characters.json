@@ -1060,5 +1060,22 @@
     "InGameSkins": [],
     "InternalName": "Tribbie",
     "DisplayName": "Tribbie"
+  },
+  {
+    "Keys": [
+      "Mydei"
+    ],
+    "ReleaseDate": "2025-01-15T00:00:00",
+    "Image": "mydei.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Destruction",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Mydei",
+    "InGameSkins": [],
+    "InternalName": "Mydei",
+    "DisplayName": "Mydei"
   }
 ]
