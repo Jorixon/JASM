@@ -222,7 +222,13 @@ public class GameService : IGameService
         if (request.Image.IsSet)
         {
             var image = await _gameSettingsManager.SetCharacterImageOverrideAsync(character.InternalName, request.Image).ConfigureAwait(false);
-            character.ImageUri = image;
+            if (image != null)
+                character.ImageUri = image;
+            else
+            {
+                if (File.Exists(character.DefaultCharacter.ImageUri?.LocalPath))
+                    character.ImageUri = character.DefaultCharacter.ImageUri;
+            }
         }
     }
 

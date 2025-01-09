@@ -93,8 +93,12 @@
                                 Width="300"
                                 Height="200"
                                 ButtonHorizontalAlignment="Left"
+                                ClearButtonCommand="{x:Bind ViewModel.ClearImageCommand}"
+                                CopyButtonVisibility="Collapsed"
                                 EditButtonCommand="{x:Bind ViewModel.PickImageCommand}"
-                                ImageUri="{x:Bind ViewModel.Form.Image.Value, Mode=TwoWay}" />
+                                ImageUri="{x:Bind ViewModel.Form.Image.Value, Mode=TwoWay}"
+                                IsContextMenuEnabled="True"
+                                PasteButtonCommand="{x:Bind ViewModel.PasteImageCommand}" />
                         </local:InputWrapper.Input>
                     </local:InputWrapper>
 

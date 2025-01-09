@@ -140,6 +140,9 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
         NotifyAllCommands();
     }
 
+
+    #region ImageCommands
+
     [RelayCommand]
     private async Task PickImage()
     {
@@ -150,6 +153,37 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
         Form.Image.Value = new Uri(image.Path);
     }
+
+    [RelayCommand]
+    private async Task PasteImageAsync()
+    {
+        try
+        {
+            var image = await _imageHandlerService.GetImageFromClipboardAsync();
+            if (image is not null)
+                Form.Image.Value = image;
+            else
+                _notificationManager.ShowNotification("Failed to paste image", "No image found in clipboard", null);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to paste image");
+            _notificationManager.ShowNotification("Failed to paste image", ex.Message, null);
+        }
+    }
+
+    [RelayCommand]
+    private void ClearImage() => Form.Image.Value = _character.DefaultCharacter.ImageUri ?? ImageHandlerService.StaticPlaceholderImageUri;
+
+    [RelayCommand]
+    private async Task SelectImageAsync()
+    {
+        var image = await _imageHandlerService.PickImageAsync(copyToTmpFolder: false);
+        if (image is not null && Uri.TryCreate(image.Path, UriKind.Absolute, out var imagePath))
+            Form.Image.Value = imagePath;
+    }
+
+    #endregion
 
     private bool CanDisableCharacter() => !_character.IsCustomModObject && CharacterStatus.IsEnabled && !AnyChanges();
 
@@ -394,7 +428,10 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
                 if (Form.Image.IsDirty)
                 {
                     Debug.Assert(Form.Image.IsValid);
-                    var image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri ? null : Form.Image.Value;
+                    var image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri
+                                || Form.Image.Value == _character.DefaultCharacter.ImageUri
+                        ? null
+                        : Form.Image.Value;
                     overrideRequest.Image = NewValue<Uri?>.Set(image);
                 }
 
