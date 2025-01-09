@@ -189,6 +189,7 @@ public class GameService : IGameService
         return modDirectories;
     }
 
+    // TODO: Not happy with this, should consider reworking custom characters and overrides
     public async Task SetCharacterOverrideAsync(ICharacter character, OverrideCharacterRequest request)
     {
         if (character.IsCustomModObject)
@@ -322,6 +323,7 @@ public class GameService : IGameService
         throw new ArgumentException($"Type {typeof(T)} is not supported");
     }
 
+    // TODO: Not happy with this, should consider reworking custom characters and overrides
     public async Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest)
     {
         if (characterRequest.InternalName?.Id == null || characterRequest.InternalName.Id.IsNullOrEmpty())
@@ -415,6 +417,7 @@ public class GameService : IGameService
         return character;
     }
 
+    // TODO: Not happy with this, should consider reworking custom characters and overrides
     public async Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest)
     {
         var character = GetAllModdableObjectsAsCategory<ICharacter>(GetOnly.Both)

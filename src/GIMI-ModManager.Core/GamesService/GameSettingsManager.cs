@@ -256,6 +256,7 @@ internal class GameSettingsManager
         return GetCharacterOverrideImagePath(id);
     }
 
+    // TODO: Not happy with this, should consider reworking custom characters and overrides
     internal async Task<Uri?> SetCharacterImageOverrideAsync(InternalName id, Uri? image)
     {
         var settings = await ReadSettingsAsync().ConfigureAwait(false);
@@ -386,6 +387,7 @@ internal class GameSettingsManager
         await SaveSettingsAsync().ConfigureAwait(false);
     }
 
+    // TODO: Not happy with this, should consider reworking custom characters and overrides
     internal async Task SetCustomCharacterImageAsync(ICharacter customCharacter, Uri? newImage)
     {
         await ReadSettingsAsync().ConfigureAwait(false);

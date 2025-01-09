@@ -39,7 +39,8 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     [ObservableProperty] private string _modsCount;
     [ObservableProperty] private string _keyToAddInput = string.Empty;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotCustomCharacter))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotCustomCharacter))]
     private bool _isCustomCharacter;
 
     public bool IsNotCustomCharacter => !IsCustomCharacter;

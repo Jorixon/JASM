@@ -49,7 +49,7 @@ public static class Validators
 
         validators.Add(context => !context.Value.Trim().IsNullOrEmpty() &&
                                   allModdableObjects.FirstOrDefault(m => m.ModFilesName.Equals(context.Value.Trim(), StringComparison.OrdinalIgnoreCase)) is
-                                      { } existingModdableObject
+                                  { } existingModdableObject
             ? new ValidationResult { Message = $"Mod files name already in use by {existingModdableObject.DisplayName}" }
             : null);
     }
@@ -57,7 +57,7 @@ public static class Validators
     public static void AddDisplayNameValidators(this FieldValidators<string> validators, ICollection<IModdableObject> allModdableObjects)
     {
         validators.Add(context => allModdableObjects.FirstOrDefault(m => m.DisplayName.Equals(context.Value.Trim(), StringComparison.OrdinalIgnoreCase)) is
-            { } existingModdableObject
+        { } existingModdableObject
             ? new ValidationResult
             {
                 Message = $"Another mod object ({existingModdableObject.InternalName}) already uses this display name, this may cause oddities with search",

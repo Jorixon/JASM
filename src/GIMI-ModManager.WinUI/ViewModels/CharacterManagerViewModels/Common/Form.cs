@@ -4,7 +4,8 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels;
 
 public abstract partial class Form : ObservableObject
 {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsValid))]
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsValid))]
     private bool _isInitialized;
 
     public bool IsValid => IsInitialized && Fields.All(f => f.IsValid);
