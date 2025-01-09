@@ -241,7 +241,7 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             IsClosable="False"
-                            IsOpen="{x:Bind ViewModel.ModGridVM.IsMultipleModsActive, Mode=OneWay}"
+                            IsOpen="{x:Bind ViewModel.ModGridVM.ShowMultipleModsActiveWarning, Mode=OneWay}"
                             Message="Multiple Mods active"
                             Severity="Warning"
                             Visibility="Visible" />

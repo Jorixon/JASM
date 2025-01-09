@@ -470,6 +470,7 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
 
     private void ResetState()
     {
+        Mods.Clear();
         OnNavigatedTo(_character.InternalName.Id);
         NotifyAllCommands();
     }
