@@ -12,17 +12,20 @@ namespace GIMI_ModManager.Core.GamesService;
 internal class GameSettingsManager
 {
     private readonly ILogger _logger;
-    internal string SettingsFile { get; }
+    internal string SettingsFilePath { get; }
+    private readonly DirectoryInfo _settingsDirectory;
     private readonly DirectoryInfo _customImageFolder;
     internal readonly DirectoryInfo CustomCharacterImageFolder;
     internal readonly DirectoryInfo CharacterOverrideImageFlder;
 
+    private const string GameServiceFileName = "GameService";
     private GameServiceRoot? _settings;
 
     internal GameSettingsManager(ILogger logger, DirectoryInfo settingsDirectory)
     {
+        _settingsDirectory = settingsDirectory;
         _logger = logger.ForContext<GameSettingsManager>();
-        SettingsFile = Path.Combine(settingsDirectory.FullName, "GameService.json");
+        SettingsFilePath = Path.Combine(settingsDirectory.FullName, GameServiceFileName + ".json");
         _customImageFolder = new DirectoryInfo(Path.Combine(settingsDirectory.FullName, "CustomImages"));
         _customImageFolder.Create();
 
@@ -106,7 +109,7 @@ internal class GameSettingsManager
         if (useCache && _settings != null)
             return _settings;
 
-        if (!File.Exists(SettingsFile))
+        if (!File.Exists(SettingsFilePath))
         {
             _settings = new GameServiceRoot();
             await SaveSettingsAsync().ConfigureAwait(false);
@@ -116,7 +119,7 @@ internal class GameSettingsManager
         try
         {
             var rootSettings =
-                JsonConvert.DeserializeObject<GameServiceRootUntyped>(await File.ReadAllTextAsync(SettingsFile)
+                JsonConvert.DeserializeObject<GameServiceRootUntyped>(await File.ReadAllTextAsync(SettingsFilePath)
                     .ConfigureAwait(false)) ??
                 new GameServiceRootUntyped();
 
@@ -162,8 +165,26 @@ internal class GameSettingsManager
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Failed to read settings file");
+            var invalidFilePath = SettingsFilePath;
+            var newInvalidFilePath = Path.Combine(_settingsDirectory.FullName, GameServiceFileName + ".json.invalid");
+            _logger.Error(e, "Failed to read settings file, renaming invalid file {InvalidFilePath} to {NewInvalidFilePath}", invalidFilePath,
+                newInvalidFilePath);
             _settings = new GameServiceRoot();
+
+            if (File.Exists(invalidFilePath))
+            {
+                try
+                {
+                    if (File.Exists(newInvalidFilePath))
+                        File.Delete(newInvalidFilePath);
+                    File.Move(invalidFilePath, newInvalidFilePath);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Error(exception, "Failed to rename invalid settings file {InvalidFilePath} to {NewInvalidFilePath}", invalidFilePath,
+                        newInvalidFilePath);
+                }
+            }
         }
 
 
@@ -213,7 +234,7 @@ internal class GameSettingsManager
         if (_settings is null)
             return;
 
-        await File.WriteAllTextAsync(SettingsFile, JsonConvert.SerializeObject(_settings.ToJson(), Formatting.Indented)).ConfigureAwait(false);
+        await File.WriteAllTextAsync(SettingsFilePath, JsonConvert.SerializeObject(_settings.ToJson(), Formatting.Indented)).ConfigureAwait(false);
     }
 
     internal async Task SetCharacterOverrideAsync(InternalName id, Action<JsonCharacterOverride> setterAction)
@@ -369,14 +390,6 @@ internal class GameSettingsManager
     {
         await ReadSettingsAsync().ConfigureAwait(false);
 
-#if RELEASE
-        // TODO: REDO what is actually stored in the settings file
-        // Not really any point to just saving the internal name with the extension and then only use the extension...
-
-
-        dwadwadawd
-#endif
-
         if (!_settings.CustomCharacters.TryGetValue(customCharacter.InternalName, out var jsonCustomCharacter))
             throw new InvalidOperationException("Character to edit not found. Try restarting JASM");
 
@@ -415,9 +428,8 @@ internal class GameSettingsManager
         var copiedFile = newImageFile.CopyTo(copiedImagePath.LocalPath, true);
 
         jsonCustomCharacter.Image = copiedFile.FullName;
-        customCharacter.ImageUri = copiedImagePath;
-
         await SaveSettingsAsync().ConfigureAwait(false);
+        customCharacter.ImageUri = copiedImagePath;
     }
 
     internal async Task DeleteCustomCharacterAsync(InternalName internalName)
