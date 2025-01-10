@@ -573,26 +573,26 @@ public sealed class SkinManagerService : ISkinManagerService
         switch (setModStatus)
         {
             case SetModStatus.EnableAllMods:
+            {
+                foreach (var mod in mods)
                 {
-                    foreach (var mod in mods)
-                    {
-                        var enabledName = mod.Name;
-                        enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
-                        enabledName = enabledName.Replace("DISABLED", "");
-                        if (enabledName != mod.Name)
-                            mod.Rename(enabledName);
-                    }
-
-                    break;
+                    var enabledName = mod.Name;
+                    enabledName = enabledName.Replace(CharacterModList.DISABLED_PREFIX, "");
+                    enabledName = enabledName.Replace("DISABLED", "");
+                    if (enabledName != mod.Name)
+                        mod.Rename(enabledName);
                 }
+
+                break;
+            }
             case SetModStatus.DisableAllMods:
-                {
-                    foreach (var mod in mods)
-                        if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
-                            mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
+            {
+                foreach (var mod in mods)
+                    if (!mod.Name.StartsWith("DISABLED") || !mod.Name.StartsWith(CharacterModList.DISABLED_PREFIX))
+                        mod.Rename(CharacterModList.DISABLED_PREFIX + mod.Name);
 
-                    break;
-                }
+                break;
+            }
         }
     }
 
@@ -617,7 +617,8 @@ public sealed class SkinManagerService : ISkinManagerService
     public ICharacterModList GetCharacterModList(IModdableObject character) => GetCharacterModList(character.InternalName);
 
 
-    public ICharacterModList? GetCharacterModListOrDefault(string internalName) => _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
+    public ICharacterModList? GetCharacterModListOrDefault(string internalName) =>
+        _characterModLists.FirstOrDefault(x => x.Character.InternalNameEquals(internalName));
 
     public async Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
@@ -1055,6 +1056,12 @@ public sealed class SkinManagerService : ISkinManagerService
     public void Dispose()
     {
         _userIniWatcher?.Dispose();
+        var allModLists = _characterModLists.ToArray();
+        foreach (var modList in allModLists)
+        {
+            _characterModLists.Remove(modList);
+            modList.Dispose();
+        }
     }
 
 

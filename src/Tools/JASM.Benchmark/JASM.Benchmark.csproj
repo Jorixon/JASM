@@ -15,4 +15,8 @@
     <ProjectReference Include="..\..\GIMI-ModManager.Core\GIMI-ModManager.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Testing\" />
+  </ItemGroup>
+
 </Project>
