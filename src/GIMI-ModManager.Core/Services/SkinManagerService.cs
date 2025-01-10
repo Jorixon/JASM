@@ -1,4 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿#if DEBUG
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+#endif
+using System.Collections.Concurrent;
 using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
