@@ -16,7 +16,6 @@ public interface ISkinManagerService : IDisposable
     public string ThreeMigotoRootfolder { get; }
     public IReadOnlyCollection<ICharacterModList> CharacterModLists { get; }
     bool IsInitialized { get; }
-    public Task ScanForModsAsync();
     public DirectoryInfo GetCategoryFolderPath(ICategory category);
     public ICharacterModList GetCharacterModList(string internalName);
     public ICharacterModList GetCharacterModList(IModdableObject character);

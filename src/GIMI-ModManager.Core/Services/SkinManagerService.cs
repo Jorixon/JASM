@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Contracts.Services;
@@ -77,27 +76,41 @@ public sealed class SkinManagerService : ISkinManagerService
         _activeModsFolder.Refresh();
 
         var characters = _gameService.GetAllModdableObjects();
-        foreach (var character in characters)
-        {
-            var characterModFolder = new DirectoryInfo(GetCharacterModFolderPath(character));
 
-            var characterModList = new CharacterModList(character, characterModFolder.FullName, logger: _logger);
+        var modsFound = new ConcurrentDictionary<Guid, ISkinMod>();
+
+
+        await Parallel.ForEachAsync(characters, async (modObject, _) =>
+        {
+            var modObjectFolder = new DirectoryInfo(GetCharacterModFolderPath(modObject));
+
+            var characterModList = new CharacterModList(modObject, modObjectFolder.FullName, logger: _logger);
             AddNewModList(characterModList);
 
-            if (!characterModFolder.Exists)
+            if (!modObjectFolder.Exists)
             {
-                _logger.Verbose("Character mod folder for '{Character}' does not exist", character.DisplayName);
-                continue;
+                _logger.Verbose("ModdableObject folder for '{Character}' does not exist", modObject.DisplayName);
+                return;
             }
 
-            foreach (var modFolder in characterModFolder.EnumerateDirectories())
+            foreach (var modFolder in modObjectFolder.EnumerateDirectories())
             {
                 try
                 {
                     var mod = await CreateModAsync(modFolder).ConfigureAwait(false);
 
-                    if (GetModById(mod.Id) is not null)
+                    if (!modsFound.TryAdd(mod.Id, mod))
+                    {
                         mod = await SkinMod.CreateModAsync(modFolder.FullName, true).ConfigureAwait(false);
+
+
+                        // If this fails, the mod will be skipped, very unlikely that a duplicate ID will be generated
+                        if (!modsFound.TryAdd(mod.Id, mod))
+                        {
+                            _logger.Error("Failed to generate new ID for mod '{ModName}', JASM will not track this mod", mod.FullPath);
+                            continue;
+                        }
+                    }
 
 
                     characterModList.TrackMod(mod);
@@ -107,7 +120,7 @@ public sealed class SkinManagerService : ISkinManagerService
                     _logger.Error(e, "Failed to initialize mod '{ModFolder}'", modFolder.FullName);
                 }
             }
-        }
+        }).ConfigureAwait(false);
     }
 
     private async Task<ISkinMod> CreateModAsync(DirectoryInfo modFolder)
@@ -309,9 +322,9 @@ public sealed class SkinManagerService : ISkinManagerService
 
             try
             {
-                var skinSettings = await mod.Settings.ReadSettingsAsync();
+                var skinSettings = await mod.Settings.ReadSettingsAsync().ConfigureAwait(false);
                 skinSettings.CharacterSkinOverride = null;
-                await mod.Settings.SaveSettingsAsync(skinSettings);
+                await mod.Settings.SaveSettingsAsync(skinSettings).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -609,6 +622,12 @@ public sealed class SkinManagerService : ISkinManagerService
     public async Task InitializeAsync(string activeModsFolderPath, string? unloadedModsFolderPath = null,
         string? threeMigotoRootfolder = null)
     {
+        if (IsInitialized)
+        {
+            _logger.Error("ModManagerService is already initialized");
+            return;
+        }
+
         _logger.Debug(
             "Initializing ModManagerService, activeModsFolderPath: {ActiveModsFolderPath}, unloadedModsFolderPath: {UnloadedModsFolderPath}",
             activeModsFolderPath, unloadedModsFolderPath);

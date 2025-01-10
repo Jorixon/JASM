@@ -22,7 +22,7 @@ public class GameBananaService(
         if (mod is null)
             throw new InvalidOperationException($"Mod with id {modId} not found");
 
-        var modSettings = await mod.Settings.ReadSettingsAsync(cancellationToken: cancellationToken)
+        var modSettings = await mod.Settings.ReadSettingsAsync(useCache: true, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
         if (modSettings.ModUrl is null)
             throw new InvalidOperationException("Mod url is null");
@@ -55,7 +55,7 @@ public class GameBananaService(
             throw new InvalidOperationException($"Mod with id {modId} not found");
 
 
-        var modSettings = await mod.Settings.ReadSettingsAsync(cancellationToken: cancellationToken)
+        var modSettings = await mod.Settings.ReadSettingsAsync(useCache: true, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (modSettings.ModUrl is null)

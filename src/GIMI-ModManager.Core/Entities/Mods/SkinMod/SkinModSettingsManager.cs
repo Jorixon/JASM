@@ -122,17 +122,38 @@ public class SkinModSettingsManager
     public async Task<ModSettings> ReadSettingsAsync(bool useCache = false,
         CancellationToken cancellationToken = default)
     {
-        if (!File.Exists(_settingsFilePath))
-            throw new ModSettingsNotFoundException($"Settings file not found. Path: {_settingsFilePath}");
-
         if (useCache && _settings is not null)
             return _settings;
 
-        var json = await File.ReadAllTextAsync(_settingsFilePath, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var stream = File.OpenRead(_settingsFilePath);
+            await using (stream.ConfigureAwait(false))
+            {
+                _settings = await InternalReadSettingsAsync(_skinMod, stream, cancellationToken).ConfigureAwait(false);
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new ModSettingsNotFoundException($"Mod Settings file not found. Path: {_settingsFilePath}", e);
+        }
+        catch (DirectoryNotFoundException e)
+        {
+            throw new ModSettingsNotFoundException($"Mod Settings file not found. Path: {_settingsFilePath}", e);
+        }
 
-        var modSettings = InternalReadSettings(_skinMod, json);
-        cancellationToken.ThrowIfCancellationRequested();
-        _settings = modSettings;
+        return _settings;
+    }
+
+    private static async Task<ModSettings> InternalReadSettingsAsync(ISkinMod? skinMod, Stream json, CancellationToken cancellationToken = default)
+    {
+        var settings = await JsonSerializer.DeserializeAsync<JsonModSettings>(json, _serializerOptions, cancellationToken).ConfigureAwait(false);
+
+        if (settings is null)
+            throw new JsonSerializationException("Failed to deserialize settings file. Return value is null");
+
+        var modSettings = ModSettings.FromJsonSkinSettings(skinMod, settings);
+
         return modSettings;
     }
 
