@@ -1,5 +1,6 @@
 ﻿using GIMI_ModManager.Core.GamesService.Interfaces;
 using GIMI_ModManager.Core.GamesService.Models;
+using GIMI_ModManager.Core.GamesService.Requests;
 
 namespace GIMI_ModManager.Core.GamesService;
 
@@ -9,6 +10,8 @@ public interface IGameService
     public string GameName { get; }
     public string GameShortName { get; }
     public string GameIcon { get; }
+
+    public string GameServiceSettingsFilePath { get; }
     public Uri GameBananaUrl { get; }
 
     public event EventHandler? Initialized;
@@ -19,8 +22,7 @@ public interface IGameService
 
     public Task InitializeAsync(InitializationOptions options);
 
-    public Task SetCharacterDisplayNameAsync(ICharacter character, string newDisplayName);
-    public Task SetCharacterImageAsync(ICharacter character, Uri newImageUri);
+    public Task SetCharacterOverrideAsync(ICharacter character, OverrideCharacterRequest request);
 
     public Task DisableCharacterAsync(ICharacter character);
 
@@ -28,10 +30,15 @@ public interface IGameService
     public Task ResetOverrideForCharacterAsync(ICharacter character);
 
 
-    public Task<ICharacter> CreateCharacterAsync(string internalName, string displayName, int rarity,
-        Uri? imageUri = null, IGameClass? gameClass = null, IGameElement? gameElement = null,
-        ICollection<IRegion>? regions = null, ICollection<ICharacterSkin>? additionalSkins = null,
-        DateTime? releaseDate = null);
+    public Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest);
+
+    public Task<(string json, ICharacter character)> CreateJsonCharacterExportAsync(CreateCharacterRequest characterRequest);
+
+
+    public Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest);
+
+    public Task<ICharacter> DeleteCustomCharacterAsync(InternalName internalName);
+
 
     public ICharacter? QueryCharacter(string keywords,
         IEnumerable<ICharacter>? restrictToCharacters = null, int minScore = 100);
@@ -92,13 +99,13 @@ public enum GetOnly
 
 // Genshin => weapon
 // Honkai => Path
-public interface IGameClass : IImageSupport, INameable
+public interface IGameClass : IImageSupport, INameable, IEquatable<IGameClass>
 {
 }
 
 // Genshin => Element
 // Honkai => Element
-public interface IGameElement : IImageSupport, INameable
+public interface IGameElement : IImageSupport, INameable, IEquatable<IGameElement>
 {
 }
 

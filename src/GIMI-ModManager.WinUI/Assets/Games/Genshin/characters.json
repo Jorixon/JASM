@@ -4,7 +4,7 @@
       "albedo"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "Character_Albedo_Thumb.png",
+    "Image": "Albedo.png",
     "Rarity": 5,
     "Element": "Geo",
     "Class": "Sword",
@@ -21,7 +21,7 @@
       "alhaitham"
     ],
     "ReleaseDate": "2023-01-18T00:00:00",
-    "Image": "Character_Alhaitham_Thumb.png",
+    "Image": "Alhaitham.png",
     "Rarity": 5,
     "Element": "Dendro",
     "Class": "Sword",
@@ -38,7 +38,7 @@
       "aloy"
     ],
     "ReleaseDate": "2021-09-01T00:00:00",
-    "Image": "Character_Aloy_Thumb.png",
+    "Image": "Aloy.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Bow",
@@ -55,7 +55,7 @@
       "amber"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Amber_Thumb.png",
+    "Image": "Amber.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Bow",
@@ -66,7 +66,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "AmberCN",
-        "Image": "Character_Skin_AmberCN_Thumb.png",
+        "Image": "AmberCN.png",
         "InternalName": "AmberCN",
         "DisplayName": "AmberCN"
       }
@@ -80,7 +80,7 @@
       "itto"
     ],
     "ReleaseDate": "2021-11-24T00:00:00",
-    "Image": "Character_Arataki_Itto_Thumb.png",
+    "Image": "Arataki_Itto.png",
     "Rarity": 5,
     "Element": "Geo",
     "Class": "Claymore",
@@ -97,7 +97,7 @@
       "baizhu"
     ],
     "ReleaseDate": "2023-04-12T00:00:00",
-    "Image": "Character_Baizhu_Thumb.png",
+    "Image": "Baizhu.png",
     "Rarity": 5,
     "Element": "Dendro",
     "Class": "Catalyst",
@@ -114,7 +114,7 @@
       "barbara"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Barbara_Thumb.png",
+    "Image": "Barbara.png",
     "Rarity": 4,
     "Element": "Hydro",
     "Class": "Catalyst",
@@ -125,7 +125,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "BarbaraSummertime",
-        "Image": "Character_Skin_BarbaraSummertime_Thumb.png",
+        "Image": "BarbaraSummertime.png",
         "InternalName": "Barbara Summertime Sparkle",
         "DisplayName": "Summertime Sparkle"
       }
@@ -138,7 +138,7 @@
       "beidou"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Beidou_Thumb.png",
+    "Image": "Beidou.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Claymore",
@@ -155,7 +155,7 @@
       "bennett"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Bennett_Thumb.png",
+    "Image": "Bennett.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Sword",
@@ -172,7 +172,7 @@
       "candace"
     ],
     "ReleaseDate": "2022-09-28T00:00:00",
-    "Image": "Character_Candace_Thumb.png",
+    "Image": "Candace.png",
     "Rarity": 4,
     "Element": "Hydro",
     "Class": "Polearm",
@@ -189,7 +189,7 @@
       "charlotte"
     ],
     "ReleaseDate": "2023-11-08T00:00:00",
-    "Image": "Character_Charlotte_Thumb.png",
+    "Image": "Charlotte.png",
     "Rarity": 0,
     "Element": "Cryo",
     "Class": "",
@@ -206,7 +206,7 @@
       "chongyun"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Chongyun_Thumb.png",
+    "Image": "Chongyun.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Claymore",
@@ -223,7 +223,7 @@
       "collei"
     ],
     "ReleaseDate": "2022-08-24T00:00:00",
-    "Image": "Character_Collei_Thumb.png",
+    "Image": "Collei.png",
     "Rarity": 4,
     "Element": "Dendro",
     "Class": "Bow",
@@ -240,7 +240,7 @@
       "cyno"
     ],
     "ReleaseDate": "2022-09-28T00:00:00",
-    "Image": "Character_Cyno_Thumb.png",
+    "Image": "Cyno.png",
     "Rarity": 5,
     "Element": "Electro",
     "Class": "Polearm",
@@ -257,7 +257,7 @@
       "dehya"
     ],
     "ReleaseDate": "2023-03-01T00:00:00",
-    "Image": "Character_Dehya_Thumb.png",
+    "Image": "Dehya.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Claymore",
@@ -274,7 +274,7 @@
       "diluc"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Diluc_Thumb.png",
+    "Image": "Diluc.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Claymore",
@@ -285,7 +285,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "DilucFlamme",
-        "Image": "Character_Skin_DilucFlamme_Thumb.png",
+        "Image": "DilucFlamme.png",
         "InternalName": "Diluc Red Dead of Night",
         "DisplayName": "Red Dead of Night"
       }
@@ -298,7 +298,7 @@
       "diona"
     ],
     "ReleaseDate": "2020-11-11T00:00:00",
-    "Image": "Character_Diona_Thumb.png",
+    "Image": "Diona.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Bow",
@@ -315,7 +315,7 @@
       "dori"
     ],
     "ReleaseDate": "2022-08-24T00:00:00",
-    "Image": "Character_Dori_Thumb.png",
+    "Image": "Dori.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Claymore",
@@ -332,7 +332,7 @@
       "eula"
     ],
     "ReleaseDate": "2021-01-28T00:00:00",
-    "Image": "Character_Eula_Thumb.png",
+    "Image": "Eula.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Claymore",
@@ -349,7 +349,7 @@
       "faruzan"
     ],
     "ReleaseDate": "2022-12-07T00:00:00",
-    "Image": "Character_Faruzan_Thumb.png",
+    "Image": "Faruzan.png",
     "Rarity": 4,
     "Element": "Anemo",
     "Class": "Bow",
@@ -366,7 +366,7 @@
       "fischl"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Fischl_Thumb.png",
+    "Image": "Fischl.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Bow",
@@ -377,7 +377,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "FischlHighness",
-        "Image": "Character_Skin_FischlHighness_Thumb.png",
+        "Image": "FischlHighness.png",
         "InternalName": "Fischl Ein Immernachtstraum",
         "DisplayName": "Ein Immernachtstraum"
       }
@@ -390,7 +390,7 @@
       "freminet"
     ],
     "ReleaseDate": "2023-09-05T00:00:00",
-    "Image": "Character_Freminet_Thumb.png",
+    "Image": "Freminet.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Claymore",
@@ -408,7 +408,7 @@
       "focalors"
     ],
     "ReleaseDate": "2023-11-08T00:00:00",
-    "Image": "Character_Furina_Thumb.png",
+    "Image": "Furina.png",
     "Rarity": 0,
     "Element": "Hydro",
     "Class": "",
@@ -425,7 +425,7 @@
       "ganyu"
     ],
     "ReleaseDate": "2020-12-23T00:00:00",
-    "Image": "Character_Ganyu_Thumb.png",
+    "Image": "Ganyu.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Bow",
@@ -436,7 +436,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "GanyuTwilight",
-        "Image": "Character_Skin_GanyuTwilight_Thumb.png",
+        "Image": "GanyuTwilight.png",
         "InternalName": "GanyuTwilight",
         "DisplayName": "Twilight Blossom"
       }
@@ -449,7 +449,7 @@
       "gorou"
     ],
     "ReleaseDate": "2021-11-24T00:00:00",
-    "Image": "Character_Gorou_Thumb.png",
+    "Image": "Gorou.png",
     "Rarity": 4,
     "Element": "Geo",
     "Class": "Bow",
@@ -467,7 +467,7 @@
       "tao"
     ],
     "ReleaseDate": "2021-02-03T00:00:00",
-    "Image": "Character_Hu_Tao_Thumb.png",
+    "Image": "Hu_Tao.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Polearm",
@@ -484,7 +484,7 @@
       "jean"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Jean_Thumb.png",
+    "Image": "Jean.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -495,13 +495,13 @@
     "InGameSkins": [
       {
         "ModFilesName": "JeanCN",
-        "Image": "Character_Skin_JeanCN_Thumb.png",
+        "Image": "JeanCN.png",
         "InternalName": "JeanCN",
         "DisplayName": "JeanCN"
       },
       {
         "ModFilesName": "JeanSea",
-        "Image": "Character_Skin_JeanSea_Thumb.png",
+        "Image": "JeanSea.png",
         "InternalName": "Jean Sea Breeze Dandelion",
         "DisplayName": "Sea Breeze Dandelion"
       }
@@ -515,7 +515,7 @@
       "kazuha"
     ],
     "ReleaseDate": "2021-06-09T00:00:00",
-    "Image": "Character_Kaedehara_Kazuha_Thumb.png",
+    "Image": "Kaedehara_Kazuha.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -532,7 +532,7 @@
       "kaeya"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Kaeya_Thumb.png",
+    "Image": "Kaeya.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Sword",
@@ -544,7 +544,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KaeyaSailwind",
-        "Image": "Character_Skin_KaeyaSailwind_Thumb.png",
+        "Image": "KaeyaSailwind.png",
         "InternalName": "Kaeya Sailwind Shadow",
         "DisplayName": "Sailwind Shadow"
       }
@@ -558,7 +558,7 @@
       "ayaka"
     ],
     "ReleaseDate": "2021-07-21T00:00:00",
-    "Image": "Character_Kamisato_Ayaka_Thumb.png",
+    "Image": "Kamisato_Ayaka.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Sword",
@@ -569,7 +569,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "AyakaSpringbloom",
-        "Image": "Character_Skin_AyakaSpringbloom_Thumb.png",
+        "Image": "AyakaSpringbloom.png",
         "InternalName": "Ayaka Springbloom Missive",
         "DisplayName": "Springbloom Missive"
       }
@@ -583,7 +583,7 @@
       "ayato"
     ],
     "ReleaseDate": "2022-03-30T00:00:00",
-    "Image": "Character_Kamisato_Ayato_Thumb.png",
+    "Image": "Kamisato_Ayato.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Sword",
@@ -600,7 +600,7 @@
       "kaveh"
     ],
     "ReleaseDate": "2023-04-12T00:00:00",
-    "Image": "Character_Kaveh_Thumb.png",
+    "Image": "Kaveh.png",
     "Rarity": 4,
     "Element": "Dendro",
     "Class": "Claymore",
@@ -617,7 +617,7 @@
       "keqing"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Keqing_Thumb.png",
+    "Image": "Keqing.png",
     "Rarity": 5,
     "Element": "Electro",
     "Class": "Sword",
@@ -628,7 +628,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KeqingOpulent",
-        "Image": "Character_Skin_KeqingOpulent_Thumb.png",
+        "Image": "KeqingOpulent.png",
         "InternalName": "Keqing Opulent Splendor",
         "DisplayName": "Opulent Splendor"
       }
@@ -641,7 +641,7 @@
       "kirara"
     ],
     "ReleaseDate": "2023-06-24T00:00:00",
-    "Image": "Character_Kirara_Thumb.png",
+    "Image": "Kirara.png",
     "Rarity": 4,
     "Element": "Dendro",
     "Class": "Sword",
@@ -650,13 +650,13 @@
     ],
     "ModFilesName": "Kirara",
     "InGameSkins": [
-		{
-			"ModFilesName": "KiraraPhantom",
-			"Image": "Character_Skin_KiraraPhantom_Thumb.webp",
-			"InternalName": "Kirara Phantom in Boots",
-			"DisplayName": "Phantom in Boots"
-		  }
-	],
+      {
+        "ModFilesName": "KiraraPhantom",
+        "Image": "KiraraPhantom.webp",
+        "InternalName": "Kirara Phantom in Boots",
+        "DisplayName": "Phantom in Boots"
+      }
+    ],
     "InternalName": "Kirara",
     "DisplayName": "Kirara"
   },
@@ -665,7 +665,7 @@
       "klee"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Klee_Thumb.png",
+    "Image": "Klee.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Catalyst",
@@ -676,7 +676,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KleeBlossoming",
-        "Image": "Character_Skin_KleeBlossoming_Thumb.png",
+        "Image": "KleeBlossoming.png",
         "InternalName": "Klee Blossoming Starlight",
         "DisplayName": "Blossoming Starlight"
       }
@@ -690,7 +690,7 @@
       "sara"
     ],
     "ReleaseDate": "2021-09-01T00:00:00",
-    "Image": "Character_Kujou_Sara_Thumb.png",
+    "Image": "Kujou_Sara.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Bow",
@@ -708,7 +708,7 @@
       "shinobu"
     ],
     "ReleaseDate": "2022-03-31T00:00:00",
-    "Image": "Character_Kuki_Shinobu_Thumb.png",
+    "Image": "Kuki_Shinobu.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Sword",
@@ -725,7 +725,7 @@
       "layla"
     ],
     "ReleaseDate": "2022-11-02T00:00:00",
-    "Image": "Character_Layla_Thumb.png",
+    "Image": "Layla.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Sword",
@@ -742,7 +742,7 @@
       "lisa"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Lisa_Thumb.png",
+    "Image": "Lisa.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Catalyst",
@@ -753,7 +753,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "LisaSobriquet",
-        "Image": "Character_Skin_LisaSobriquet_Thumb.png",
+        "Image": "LisaSobriquet.png",
         "InternalName": "Lisa A Sobriquet Under Shade",
         "DisplayName": "A Sobriquet Under Shade"
       }
@@ -766,7 +766,7 @@
       "lynette"
     ],
     "ReleaseDate": "2023-08-16T00:00:00",
-    "Image": "Character_Lynette_Thumb.png",
+    "Image": "Lynette.png",
     "Rarity": 4,
     "Element": "Anemo",
     "Class": "Sword",
@@ -783,7 +783,7 @@
       "lyney"
     ],
     "ReleaseDate": "2023-08-16T00:00:00",
-    "Image": "Character_Lyney_Thumb.png",
+    "Image": "Lyney.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Bow",
@@ -800,7 +800,7 @@
       "mika"
     ],
     "ReleaseDate": "2023-03-01T00:00:00",
-    "Image": "Character_Mika_Thumb.png",
+    "Image": "Mika.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Polearm",
@@ -817,7 +817,7 @@
       "mona"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Mona_Thumb.png",
+    "Image": "Mona.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Catalyst",
@@ -828,7 +828,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "MonaCN",
-        "Image": "Character_Skin_MonaCN_Thumb.png",
+        "Image": "MonaCN.png",
         "InternalName": "MonaCN",
         "DisplayName": "MonaCN"
       }
@@ -842,7 +842,7 @@
       "buer"
     ],
     "ReleaseDate": "2022-11-02T00:00:00",
-    "Image": "Character_Nahida_Thumb.png",
+    "Image": "Nahida.png",
     "Rarity": 5,
     "Element": "Dendro",
     "Class": "Catalyst",
@@ -859,7 +859,7 @@
       "navia"
     ],
     "ReleaseDate": "2023-12-20T00:00:00",
-    "Image": "Character_Navia_Thumb.png",
+    "Image": "Navia.png",
     "Rarity": 0,
     "Element": "Geo",
     "Class": "",
@@ -876,7 +876,7 @@
       "neuvillette"
     ],
     "ReleaseDate": "2023-09-27T00:00:00",
-    "Image": "Character_Neuvillette_Thumb.png",
+    "Image": "Neuvillette.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Catalyst",
@@ -893,7 +893,7 @@
       "nilou"
     ],
     "ReleaseDate": "2022-09-28T00:00:00",
-    "Image": "Character_Nilou_Thumb.png",
+    "Image": "Nilou.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Sword",
@@ -902,13 +902,13 @@
     ],
     "ModFilesName": "Nilou",
     "InGameSkins": [
-		{
-			"ModFilesName": "NilouBreeze",
-			"Image": "Character_Skin_NilouBreeze_Thumb.webp",
-			"InternalName": "Nilou Breeze of Sabaa",
-			"DisplayName": "Breeze of Sabaa"
-		  }
-	],
+      {
+        "ModFilesName": "NilouBreeze",
+        "Image": "NilouBreeze.webp",
+        "InternalName": "Nilou Breeze of Sabaa",
+        "DisplayName": "Breeze of Sabaa"
+      }
+    ],
     "InternalName": "Nilou",
     "DisplayName": "Nilou"
   },
@@ -917,7 +917,7 @@
       "ningguang"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Ningguang_Thumb.png",
+    "Image": "Ningguang.png",
     "Rarity": 4,
     "Element": "Geo",
     "Class": "Catalyst",
@@ -928,7 +928,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "NingguangOrchid",
-        "Image": "Character_Skin_NingguangOrchid_Thumb.png",
+        "Image": "NingguangOrchid.png",
         "InternalName": "Ningguang Orchid's Evening Gown",
         "DisplayName": "Orchid's Evening Gown"
       }
@@ -941,7 +941,7 @@
       "noelle"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Noelle_Thumb.png",
+    "Image": "Noelle.png",
     "Rarity": 4,
     "Element": "Geo",
     "Class": "Claymore",
@@ -960,7 +960,7 @@
       "food"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Paimon_Thumb.png",
+    "Image": "Paimon.png",
     "Rarity": 0,
     "Element": "None",
     "Class": "",
@@ -975,7 +975,7 @@
       "qiqi"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Qiqi_Thumb.png",
+    "Image": "Qiqi.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Sword",
@@ -993,7 +993,7 @@
       "shogun"
     ],
     "ReleaseDate": "2021-09-01T00:00:00",
-    "Image": "Character_Raiden_Shogun_Thumb.png",
+    "Image": "Raiden_Shogun.png",
     "Rarity": 5,
     "Element": "Electro",
     "Class": "Polearm",
@@ -1010,7 +1010,7 @@
       "razor"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Razor_Thumb.png",
+    "Image": "Razor.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Claymore",
@@ -1027,7 +1027,7 @@
       "rosaria"
     ],
     "ReleaseDate": "2021-03-17T00:00:00",
-    "Image": "Character_Rosaria_Thumb.png",
+    "Image": "Rosaria.png",
     "Rarity": 4,
     "Element": "Cryo",
     "Class": "Polearm",
@@ -1038,7 +1038,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "RosariaCN",
-        "Image": "Character_Skin_RosariaCN_Thumb.png",
+        "Image": "RosariaCN.png",
         "InternalName": "RosariaCN",
         "DisplayName": "RosariaCN"
       }
@@ -1052,7 +1052,7 @@
       "kokomi"
     ],
     "ReleaseDate": "2021-09-01T00:00:00",
-    "Image": "Character_Sangonomiya_Kokomi_Thumb.png",
+    "Image": "Sangonomiya_Kokomi.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Catalyst",
@@ -1069,7 +1069,7 @@
       "sayu"
     ],
     "ReleaseDate": "2021-07-21T00:00:00",
-    "Image": "Character_Sayu_Thumb.png",
+    "Image": "Sayu.png",
     "Rarity": 4,
     "Element": "Anemo",
     "Class": "Claymore",
@@ -1086,7 +1086,7 @@
       "shenhe"
     ],
     "ReleaseDate": "2022-01-05T00:00:00",
-    "Image": "Character_Shenhe_Thumb.png",
+    "Image": "Shenhe.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Polearm",
@@ -1097,7 +1097,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "ShenheFrostflower",
-        "Image": "Character_Skin_ShenheFrostflower_Thumb.png",
+        "Image": "ShenheFrostflower.png",
         "InternalName": "ShenheFrostflower",
         "DisplayName": "Frostflower Dew"
       }
@@ -1111,7 +1111,7 @@
       "heizou"
     ],
     "ReleaseDate": "2022-07-13T00:00:00",
-    "Image": "Character_Shikanoin_Heizou_Thumb.png",
+    "Image": "Shikanoin_Heizou.png",
     "Rarity": 4,
     "Element": "Anemo",
     "Class": "Catalyst",
@@ -1128,7 +1128,7 @@
       "sucrose"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Sucrose_Thumb.png",
+    "Image": "Sucrose.png",
     "Rarity": 4,
     "Element": "Anemo",
     "Class": "Catalyst",
@@ -1146,7 +1146,7 @@
       "childe"
     ],
     "ReleaseDate": "2020-11-11T00:00:00",
-    "Image": "Character_Tartaglia_Thumb.png",
+    "Image": "Tartaglia.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Bow",
@@ -1163,7 +1163,7 @@
       "thoma"
     ],
     "ReleaseDate": "2021-10-13T00:00:00",
-    "Image": "Character_Thoma_Thumb.png",
+    "Image": "Thoma.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Polearm",
@@ -1180,7 +1180,7 @@
       "tighnari"
     ],
     "ReleaseDate": "2022-08-24T00:00:00",
-    "Image": "Character_Tighnari_Thumb.png",
+    "Image": "Tighnari.png",
     "Rarity": 5,
     "Element": "Dendro",
     "Class": "Bow",
@@ -1198,7 +1198,7 @@
       "lumine"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Traveler_(Female)_Thumb.png",
+    "Image": "Traveler_(Female).png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -1216,7 +1216,7 @@
       "aether"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Traveler_(Male)_Thumb.png",
+    "Image": "Traveler_(Male).png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Sword",
@@ -1233,7 +1233,7 @@
       "venti"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Venti_Thumb.png",
+    "Image": "Venti.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Bow",
@@ -1250,7 +1250,7 @@
       "wanderer"
     ],
     "ReleaseDate": "2022-12-07T00:00:00",
-    "Image": "Character_Wanderer_Thumb.png",
+    "Image": "Wanderer.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Catalyst",
@@ -1269,7 +1269,7 @@
       "xiangling"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Xiangling_Thumb.png",
+    "Image": "Xiangling.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Polearm",
@@ -1286,7 +1286,7 @@
       "xiao"
     ],
     "ReleaseDate": "2021-02-03T00:00:00",
-    "Image": "Character_Xiao_Thumb.png",
+    "Image": "Xiao.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Polearm",
@@ -1303,7 +1303,7 @@
       "xingqiu"
     ],
     "ReleaseDate": "2020-09-28T00:00:00",
-    "Image": "Character_Xingqiu_Thumb.png",
+    "Image": "Xingqiu.png",
     "Rarity": 4,
     "Element": "Hydro",
     "Class": "Sword",
@@ -1314,7 +1314,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "XingqiuBamboo",
-        "Image": "Character_Skin_XingqiuBambooRain_Thumb.png",
+        "Image": "XingqiuBambooRain.png",
         "InternalName": "Xingqiu Bamboo Rain",
         "DisplayName": "Bamboo Rain"
       }
@@ -1327,7 +1327,7 @@
       "xinyan"
     ],
     "ReleaseDate": "2020-11-11T00:00:00",
-    "Image": "Character_Xinyan_Thumb.png",
+    "Image": "Xinyan.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Claymore",
@@ -1345,7 +1345,7 @@
       "miko"
     ],
     "ReleaseDate": "2022-02-16T00:00:00",
-    "Image": "Character_Yae_Miko_Thumb.png",
+    "Image": "Yae_Miko.png",
     "Rarity": 5,
     "Element": "Electro",
     "Class": "Catalyst",
@@ -1362,7 +1362,7 @@
       "yanfei"
     ],
     "ReleaseDate": "2021-04-28T00:00:00",
-    "Image": "Character_Yanfei_Thumb.png",
+    "Image": "Yanfei.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Catalyst",
@@ -1379,7 +1379,7 @@
       "yaoyao"
     ],
     "ReleaseDate": "2023-01-18T00:00:00",
-    "Image": "Character_Yaoyao_Thumb.png",
+    "Image": "Yaoyao.png",
     "Rarity": 4,
     "Element": "Dendro",
     "Class": "Polearm",
@@ -1396,7 +1396,7 @@
       "yelan"
     ],
     "ReleaseDate": "2022-03-31T00:00:00",
-    "Image": "Character_Yelan_Thumb.png",
+    "Image": "Yelan.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Bow",
@@ -1413,7 +1413,7 @@
       "yoimiya"
     ],
     "ReleaseDate": "2021-07-21T00:00:00",
-    "Image": "Character_Yoimiya_Thumb.png",
+    "Image": "Yoimiya.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Bow",
@@ -1431,7 +1431,7 @@
       "jin"
     ],
     "ReleaseDate": "2022-01-05T00:00:00",
-    "Image": "Character_Yun_Jin_Thumb.png",
+    "Image": "Yun_Jin.png",
     "Rarity": 4,
     "Element": "Geo",
     "Class": "Polearm",
@@ -1448,7 +1448,7 @@
       "zhongli"
     ],
     "ReleaseDate": "2020-11-11T00:00:00",
-    "Image": "Character_Zhongli_Thumb.png",
+    "Image": "Zhongli.png",
     "Rarity": 5,
     "Element": "Geo",
     "Class": "Polearm",
@@ -1465,7 +1465,7 @@
       "wriothesley"
     ],
     "ReleaseDate": "2023-10-17T00:00:00",
-    "Image": "Character_Wriothesley_Thumb.png",
+    "Image": "Wriothesley.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Catalyst",
@@ -1482,7 +1482,7 @@
       "chevreuse"
     ],
     "ReleaseDate": "2024-01-09T00:00:00",
-    "Image": "Character_Chevreuse_Thumb.png",
+    "Image": "Chevreuse.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Polearm",
@@ -1499,7 +1499,7 @@
       "xianyun"
     ],
     "ReleaseDate": "2024-01-31T00:00:00",
-    "Image": "Character_Xianyun_Thumb.png",
+    "Image": "Xianyun.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Catalyst",
@@ -1516,7 +1516,7 @@
       "gaming"
     ],
     "ReleaseDate": "2024-01-31T00:00:00",
-    "Image": "Character_Gaming_Thumb.png",
+    "Image": "Gaming.png",
     "Rarity": 4,
     "Element": "Pyro",
     "Class": "Claymore",
@@ -1533,7 +1533,7 @@
       "chiori"
     ],
     "ReleaseDate": "2024-03-13T00:00:00",
-    "Image": "Character_Chiori_Thumb.png",
+    "Image": "Chiori.png",
     "Rarity": 5,
     "Element": "Geo",
     "Class": "Sword",
@@ -1550,7 +1550,7 @@
       "arlecchino"
     ],
     "ReleaseDate": "2024-04-24T00:00:00",
-    "Image": "Character_Arlecchino_Thumb.png",
+    "Image": "Arlecchino.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Polearm",
@@ -1567,7 +1567,7 @@
       "Clorinde"
     ],
     "ReleaseDate": "2024-06-05T00:00:00",
-    "Image": "Character_Clorinde_Thumb.png",
+    "Image": "Clorinde.png",
     "Rarity": 5,
     "Element": "Electro",
     "Class": "Sword",
@@ -1584,7 +1584,7 @@
       "Sigewinne"
     ],
     "ReleaseDate": "2024-06-05T00:00:00",
-    "Image": "Character_Sigewinne_Thumb.webp",
+    "Image": "Sigewinne.webp",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Bow",
@@ -1601,7 +1601,7 @@
       "Sethos"
     ],
     "ReleaseDate": "2024-06-05T00:00:00",
-    "Image": "Character_Sethos_Thumb.png",
+    "Image": "Sethos.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Bow",
@@ -1618,7 +1618,7 @@
       "Emilie"
     ],
     "ReleaseDate": "2024-08-06T00:00:00",
-    "Image": "Character_Emilie_Thumb.png",
+    "Image": "Emilie.png",
     "Rarity": 5,
     "Element": "Dendro",
     "Class": "Polearm",
@@ -1635,7 +1635,7 @@
       "Mualani"
     ],
     "ReleaseDate": "2024-08-28T00:00:00",
-    "Image": "Character_Mualani_Thumb.png",
+    "Image": "Mualani.png",
     "Rarity": 5,
     "Element": "Hydro",
     "Class": "Catalyst",
@@ -1652,7 +1652,7 @@
       "Kinich"
     ],
     "ReleaseDate": "2024-09-18T00:00:00",
-    "Image": "Character_Kinich_Thumb.png",
+    "Image": "Kinich.png",
     "Rarity": 5,
     "Element": "Dendro",
     "Class": "Claymore",
@@ -1669,7 +1669,7 @@
       "Kachina"
     ],
     "ReleaseDate": "2024-08-06T00:00:00",
-    "Image": "Character_Kachina_Thumb.png",
+    "Image": "Kachina.png",
     "Rarity": 4,
     "Element": "Geo",
     "Class": "Polearm",
@@ -1686,7 +1686,7 @@
       "Xilonen"
     ],
     "ReleaseDate": "2024-10-09T00:00:00",
-    "Image": "Character_Xilonen_Thumb.png",
+    "Image": "Xilonen.png",
     "Rarity": 5,
     "Element": "Geo",
     "Class": "Sword",
@@ -1703,7 +1703,7 @@
       "Chasca"
     ],
     "ReleaseDate": "2024-11-20T00:00:00",
-    "Image": "Character_Chasca_Thumb.png",
+    "Image": "Chasca.png",
     "Rarity": 5,
     "Element": "Anemo",
     "Class": "Bow",
@@ -1720,7 +1720,7 @@
       "Ororon"
     ],
     "ReleaseDate": "2024-11-20T00:00:00",
-    "Image": "Character_Ororon_Thumb.png",
+    "Image": "Ororon.png",
     "Rarity": 4,
     "Element": "Electro",
     "Class": "Bow",
@@ -1737,7 +1737,7 @@
       "Citlali"
     ],
     "ReleaseDate": "2024-11-20T00:00:00",
-    "Image": "Character_Citlali_Thumb.png",
+    "Image": "Citlali.png",
     "Rarity": 5,
     "Element": "Cryo",
     "Class": "Catalyst",
@@ -1754,7 +1754,7 @@
       "Mavuika"
     ],
     "ReleaseDate": "2024-11-20T00:00:00",
-    "Image": "Character_Mavuika_Thumb.png",
+    "Image": "Mavuika.png",
     "Rarity": 5,
     "Element": "Pyro",
     "Class": "Claymore",
@@ -1772,7 +1772,7 @@
       "Yan"
     ],
     "ReleaseDate": "2024-11-20T00:00:00",
-    "Image": "Character_Lan_Yan_Thumb.png",
+    "Image": "Lan_Yan.png",
     "Rarity": 4,
     "Element": "Anemo",
     "Class": "Catalyst",

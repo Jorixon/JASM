@@ -113,7 +113,7 @@ public class SkinMod : Mod, ISkinMod
 
     public async Task<string?> GetModIniPathAsync()
     {
-        var settings = await Settings.ReadSettingsAsync().ConfigureAwait(false);
+        var settings = await Settings.ReadSettingsAsync(useCache: true).ConfigureAwait(false);
 
         var modIniPath = settings.MergedIniPath?.LocalPath;
 

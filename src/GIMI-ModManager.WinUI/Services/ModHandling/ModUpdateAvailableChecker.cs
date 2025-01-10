@@ -343,7 +343,7 @@ public sealed class ModUpdateAvailableChecker
             var characterSkinEntry = queuedMods.Dequeue();
 
             var modSettings = await characterSkinEntry.Mod.Settings
-                .ReadSettingsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                .ReadSettingsAsync(useCache: true, cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (modSettings.ModUrl is null)
                 continue;

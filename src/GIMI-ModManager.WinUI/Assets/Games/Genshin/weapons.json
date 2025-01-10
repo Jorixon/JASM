@@ -13,7 +13,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Catch.png",
+    "Image": "The_Catch.png",
     "InternalName": "The Catch",
     "DisplayName": "The Catch"
   },
@@ -22,7 +22,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_A_Thousand_Floating_Dreams.png",
+    "Image": "A_Thousand_Floating_Dreams.png",
     "InternalName": "A Thousand Floating Dreams",
     "DisplayName": "A Thousand Floating Dreams"
   },
@@ -31,7 +31,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Akuoumaru.png",
+    "Image": "Akuoumaru.png",
     "InternalName": "Akuoumaru",
     "DisplayName": "Akuoumaru"
   },
@@ -40,7 +40,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Alley_Hunter.png",
+    "Image": "Alley_Hunter.png",
     "InternalName": "Alley Hunter",
     "DisplayName": "Alley Hunter"
   },
@@ -49,7 +49,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Amenoma_Kageuchi.png",
+    "Image": "Amenoma_Kageuchi.png",
     "InternalName": "Amenoma Kageuchi",
     "DisplayName": "Amenoma Kageuchi"
   },
@@ -58,25 +58,25 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Amos\u0027_Bow.png",
-    "InternalName": "Amos\u0027 Bow",
-    "DisplayName": "Amos\u0027 Bow"
+    "Image": "Amos'_Bow.png",
+    "InternalName": "Amos' Bow",
+    "DisplayName": "Amos' Bow"
   },
   {
     "Rarity": 1,
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Apprentice\u0027s_Notes.png",
-    "InternalName": "Apprentice\u0027s Notes",
-    "DisplayName": "Apprentice\u0027s Notes"
+    "Image": "Apprentice's_Notes.png",
+    "InternalName": "Apprentice's Notes",
+    "DisplayName": "Apprentice's Notes"
   },
   {
     "Rarity": 5,
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Aqua_Simulacra.png",
+    "Image": "Aqua_Simulacra.png",
     "InternalName": "Aqua Simulacra",
     "DisplayName": "Aqua Simulacra"
   },
@@ -85,7 +85,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Aquila_Favonia.png",
+    "Image": "Aquila_Favonia.png",
     "InternalName": "Aquila Favonia",
     "DisplayName": "Aquila Favonia"
   },
@@ -94,7 +94,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Ballad_of_the_Boundless_Blue.png",
+    "Image": "Ballad_of_the_Boundless_Blue.png",
     "InternalName": "Ballad of the Boundless Blue",
     "DisplayName": "Ballad of the Boundless Blue"
   },
@@ -103,7 +103,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Ballad_of_the_Fjords.png",
+    "Image": "Ballad_of_the_Fjords.png",
     "InternalName": "Ballad of the Fjords",
     "DisplayName": "Ballad of the Fjords"
   },
@@ -112,7 +112,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Beacon_of_the_Reed_Sea.png",
+    "Image": "Beacon_of_the_Reed_Sea.png",
     "InternalName": "Beacon of the Reed Sea",
     "DisplayName": "Beacon of the Reed Sea"
   },
@@ -121,16 +121,16 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Beginner\u0027s_Protector.png",
-    "InternalName": "Beginner\u0027s Protector",
-    "DisplayName": "Beginner\u0027s Protector"
+    "Image": "Beginner's_Protector.png",
+    "InternalName": "Beginner's Protector",
+    "DisplayName": "Beginner's Protector"
   },
   {
     "Rarity": 3,
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Black_Tassel.png",
+    "Image": "Black_Tassel.png",
     "InternalName": "Black Tassel",
     "DisplayName": "Black Tassel"
   },
@@ -139,7 +139,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Blackcliff_Agate.png",
+    "Image": "Blackcliff_Agate.png",
     "InternalName": "Blackcliff Agate",
     "DisplayName": "Blackcliff Agate"
   },
@@ -148,7 +148,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Blackcliff_Longsword.png",
+    "Image": "Blackcliff_Longsword.png",
     "InternalName": "Blackcliff Longsword",
     "DisplayName": "Blackcliff Longsword"
   },
@@ -157,7 +157,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Blackcliff_Pole.png",
+    "Image": "Blackcliff_Pole.png",
     "InternalName": "Blackcliff Pole",
     "DisplayName": "Blackcliff Pole"
   },
@@ -166,7 +166,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Blackcliff_Slasher.png",
+    "Image": "Blackcliff_Slasher.png",
     "InternalName": "Blackcliff Slasher",
     "DisplayName": "Blackcliff Slasher"
   },
@@ -175,7 +175,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Blackcliff_Warbow.png",
+    "Image": "Blackcliff_Warbow.png",
     "InternalName": "Blackcliff Warbow",
     "DisplayName": "Blackcliff Warbow"
   },
@@ -184,7 +184,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Bloodtainted_Greatsword.png",
+    "Image": "Bloodtainted_Greatsword.png",
     "InternalName": "Bloodtainted Greatsword",
     "DisplayName": "Bloodtainted Greatsword"
   },
@@ -193,7 +193,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Calamity_Queller.png",
+    "Image": "Calamity_Queller.png",
     "InternalName": "Calamity Queller",
     "DisplayName": "Calamity Queller"
   },
@@ -202,7 +202,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Cashflow_Supervision.png",
+    "Image": "Cashflow_Supervision.png",
     "InternalName": "Cashflow Supervision",
     "DisplayName": "Cashflow Supervision"
   },
@@ -211,7 +211,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Cinnabar_Spindle.png",
+    "Image": "Cinnabar_Spindle.png",
     "InternalName": "Cinnabar Spindle",
     "DisplayName": "Cinnabar Spindle"
   },
@@ -220,7 +220,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Compound_Bow.png",
+    "Image": "Compound_Bow.png",
     "InternalName": "Compound Bow",
     "DisplayName": "Compound Bow"
   },
@@ -229,7 +229,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Cool_Steel.png",
+    "Image": "Cool_Steel.png",
     "InternalName": "Cool Steel",
     "DisplayName": "Cool Steel"
   },
@@ -238,7 +238,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Crescent_Pike.png",
+    "Image": "Crescent_Pike.png",
     "InternalName": "Crescent Pike",
     "DisplayName": "Crescent Pike"
   },
@@ -247,7 +247,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Dark_Iron_Sword.png",
+    "Image": "Dark_Iron_Sword.png",
     "InternalName": "Dark Iron Sword",
     "DisplayName": "Dark Iron Sword"
   },
@@ -256,7 +256,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Deathmatch.png",
+    "Image": "Deathmatch.png",
     "InternalName": "Deathmatch",
     "DisplayName": "Deathmatch"
   },
@@ -265,7 +265,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Debate_Club.png",
+    "Image": "Debate_Club.png",
     "InternalName": "Debate Club",
     "DisplayName": "Debate Club"
   },
@@ -274,7 +274,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Dodoco_Tales.png",
+    "Image": "Dodoco_Tales.png",
     "InternalName": "Dodoco Tales",
     "DisplayName": "Dodoco Tales"
   },
@@ -283,16 +283,16 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Dragon\u0027s_Bane.png",
-    "InternalName": "Dragon\u0027s Bane",
-    "DisplayName": "Dragon\u0027s Bane"
+    "Image": "Dragon's_Bane.png",
+    "InternalName": "Dragon's Bane",
+    "DisplayName": "Dragon's Bane"
   },
   {
     "Rarity": 4,
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Dragonspine_Spear.png",
+    "Image": "Dragonspine_Spear.png",
     "InternalName": "Dragonspine Spear",
     "DisplayName": "Dragonspine Spear"
   },
@@ -301,7 +301,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Dull_Blade.png",
+    "Image": "Dull_Blade.png",
     "InternalName": "Dull Blade",
     "DisplayName": "Dull Blade"
   },
@@ -310,7 +310,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Elegy_for_the_End.png",
+    "Image": "Elegy_for_the_End.png",
     "InternalName": "Elegy for the End",
     "DisplayName": "Elegy for the End"
   },
@@ -319,7 +319,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Emerald_Orb.png",
+    "Image": "Emerald_Orb.png",
     "InternalName": "Emerald Orb",
     "DisplayName": "Emerald Orb"
   },
@@ -328,7 +328,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_End_of_the_Line.png",
+    "Image": "End_of_the_Line.png",
     "InternalName": "End of the Line",
     "DisplayName": "End of the Line"
   },
@@ -337,7 +337,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Engulfing_Lightning.png",
+    "Image": "Engulfing_Lightning.png",
     "InternalName": "Engulfing Lightning",
     "DisplayName": "Engulfing Lightning"
   },
@@ -346,7 +346,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Everlasting_Moonglow.png",
+    "Image": "Everlasting_Moonglow.png",
     "InternalName": "Everlasting Moonglow",
     "DisplayName": "Everlasting Moonglow"
   },
@@ -355,7 +355,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Eye_of_Perception.png",
+    "Image": "Eye_of_Perception.png",
     "InternalName": "Eye of Perception",
     "DisplayName": "Eye of Perception"
   },
@@ -364,7 +364,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Fading_Twilight.png",
+    "Image": "Fading_Twilight.png",
     "InternalName": "Fading Twilight",
     "DisplayName": "Fading Twilight"
   },
@@ -373,7 +373,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Favonius_Codex.png",
+    "Image": "Favonius_Codex.png",
     "InternalName": "Favonius Codex",
     "DisplayName": "Favonius Codex"
   },
@@ -382,7 +382,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Favonius_Greatsword.png",
+    "Image": "Favonius_Greatsword.png",
     "InternalName": "Favonius Greatsword",
     "DisplayName": "Favonius Greatsword"
   },
@@ -391,7 +391,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Favonius_Lance.png",
+    "Image": "Favonius_Lance.png",
     "InternalName": "Favonius Lance",
     "DisplayName": "Favonius Lance"
   },
@@ -400,7 +400,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Favonius_Sword.png",
+    "Image": "Favonius_Sword.png",
     "InternalName": "Favonius Sword",
     "DisplayName": "Favonius Sword"
   },
@@ -409,7 +409,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Favonius_Warbow.png",
+    "Image": "Favonius_Warbow.png",
     "InternalName": "Favonius Warbow",
     "DisplayName": "Favonius Warbow"
   },
@@ -418,7 +418,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Ferrous_Shadow.png",
+    "Image": "Ferrous_Shadow.png",
     "InternalName": "Ferrous Shadow",
     "DisplayName": "Ferrous Shadow"
   },
@@ -427,7 +427,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Festering_Desire.png",
+    "Image": "Festering_Desire.png",
     "InternalName": "Festering Desire",
     "DisplayName": "Festering Desire"
   },
@@ -436,7 +436,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Fillet_Blade.png",
+    "Image": "Fillet_Blade.png",
     "InternalName": "Fillet Blade",
     "DisplayName": "Fillet Blade"
   },
@@ -445,7 +445,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Finale_of_the_Deep.png",
+    "Image": "Finale_of_the_Deep.png",
     "InternalName": "Finale of the Deep",
     "DisplayName": "Finale of the Deep"
   },
@@ -454,7 +454,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Fleuve_Cendre_Ferryman.png",
+    "Image": "Fleuve_Cendre_Ferryman.png",
     "InternalName": "Fleuve Cendre Ferryman",
     "DisplayName": "Fleuve Cendre Ferryman"
   },
@@ -463,7 +463,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Flowing_Purity.png",
+    "Image": "Flowing_Purity.png",
     "InternalName": "Flowing Purity",
     "DisplayName": "Flowing Purity"
   },
@@ -472,7 +472,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Forest_Regalia.png",
+    "Image": "Forest_Regalia.png",
     "InternalName": "Forest Regalia",
     "DisplayName": "Forest Regalia"
   },
@@ -481,7 +481,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Freedom-Sworn.png",
+    "Image": "Freedom-Sworn.png",
     "InternalName": "Freedom-Sworn",
     "DisplayName": "Freedom-Sworn"
   },
@@ -490,7 +490,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Frostbearer.png",
+    "Image": "Frostbearer.png",
     "InternalName": "Frostbearer",
     "DisplayName": "Frostbearer"
   },
@@ -499,7 +499,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Fruit_of_Fulfillment.png",
+    "Image": "Fruit_of_Fulfillment.png",
     "InternalName": "Fruit of Fulfillment",
     "DisplayName": "Fruit of Fulfillment"
   },
@@ -508,7 +508,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Hakushin_Ring.png",
+    "Image": "Hakushin_Ring.png",
     "InternalName": "Hakushin Ring",
     "DisplayName": "Hakushin Ring"
   },
@@ -517,7 +517,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Halberd.png",
+    "Image": "Halberd.png",
     "InternalName": "Halberd",
     "DisplayName": "Halberd"
   },
@@ -526,7 +526,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Hamayumi.png",
+    "Image": "Hamayumi.png",
     "InternalName": "Hamayumi",
     "DisplayName": "Hamayumi"
   },
@@ -535,7 +535,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Haran_Geppaku_Futsu.png",
+    "Image": "Haran_Geppaku_Futsu.png",
     "InternalName": "Haran Geppaku Futsu",
     "DisplayName": "Haran Geppaku Futsu"
   },
@@ -544,7 +544,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Harbinger_of_Dawn.png",
+    "Image": "Harbinger_of_Dawn.png",
     "InternalName": "Harbinger of Dawn",
     "DisplayName": "Harbinger of Dawn"
   },
@@ -553,25 +553,25 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Hunter\u0027s_Bow.png",
-    "InternalName": "Hunter\u0027s Bow",
-    "DisplayName": "Hunter\u0027s Bow"
+    "Image": "Hunter's_Bow.png",
+    "InternalName": "Hunter's Bow",
+    "DisplayName": "Hunter's Bow"
   },
   {
     "Rarity": 5,
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Hunter\u0027s_Path.png",
-    "InternalName": "Hunter\u0027s Path",
-    "DisplayName": "Hunter\u0027s Path"
+    "Image": "Hunter's_Path.png",
+    "InternalName": "Hunter's Path",
+    "DisplayName": "Hunter's Path"
   },
   {
     "Rarity": 2,
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Iron_Point.png",
+    "Image": "Iron_Point.png",
     "InternalName": "Iron Point",
     "DisplayName": "Iron Point"
   },
@@ -580,7 +580,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Iron_Sting.png",
+    "Image": "Iron_Sting.png",
     "InternalName": "Iron Sting",
     "DisplayName": "Iron Sting"
   },
@@ -589,16 +589,16 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Jadefall\u0027s_Splendor.png",
-    "InternalName": "Jadefall\u0027s Splendor",
-    "DisplayName": "Jadefall\u0027s Splendor"
+    "Image": "Jadefall's_Splendor.png",
+    "InternalName": "Jadefall's Splendor",
+    "DisplayName": "Jadefall's Splendor"
   },
   {
     "Rarity": 4,
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Kagotsurube_Isshin.png",
+    "Image": "Kagotsurube_Isshin.png",
     "InternalName": "Kagotsurube Isshin",
     "DisplayName": "Kagotsurube Isshin"
   },
@@ -607,7 +607,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Katsuragikiri_Nagamasa.png",
+    "Image": "Katsuragikiri_Nagamasa.png",
     "InternalName": "Katsuragikiri Nagamasa",
     "DisplayName": "Katsuragikiri Nagamasa"
   },
@@ -616,16 +616,16 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Kagura\u0027s_Verity.png",
-    "InternalName": "Kagura\u0027s Verity",
-    "DisplayName": "Kagura\u0027s Verity"
+    "Image": "Kagura's_Verity.png",
+    "InternalName": "Kagura's Verity",
+    "DisplayName": "Kagura's Verity"
   },
   {
     "Rarity": 5,
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Key_of_Khaj-Nisut.png",
+    "Image": "Key_of_Khaj-Nisut.png",
     "InternalName": "Key of Khaj-Nisut",
     "DisplayName": "Key of Khaj-Nisut"
   },
@@ -634,16 +634,16 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_King\u0027s_Squire.png",
-    "InternalName": "King\u0027s Squire",
-    "DisplayName": "King\u0027s Squire"
+    "Image": "King's_Squire.png",
+    "InternalName": "King's Squire",
+    "DisplayName": "King's Squire"
   },
   {
     "Rarity": 4,
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Kitain_Cross_Spear.png",
+    "Image": "Kitain_Cross_Spear.png",
     "InternalName": "Kitain Cross Spear",
     "DisplayName": "Kitain Cross Spear"
   },
@@ -652,7 +652,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Light_of_Foliar_Incision.png",
+    "Image": "Light_of_Foliar_Incision.png",
     "InternalName": "Light of Foliar Incision",
     "DisplayName": "Light of Foliar Incision"
   },
@@ -661,16 +661,16 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Lion\u0027s_Roar.png",
-    "InternalName": "Lion\u0027s Roar",
-    "DisplayName": "Lion\u0027s Roar"
+    "Image": "Lion's_Roar.png",
+    "InternalName": "Lion's Roar",
+    "DisplayName": "Lion's Roar"
   },
   {
     "Rarity": 4,
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Lithic_Blade.png",
+    "Image": "Lithic_Blade.png",
     "InternalName": "Lithic Blade",
     "DisplayName": "Lithic Blade"
   },
@@ -679,7 +679,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Lithic_Spear.png",
+    "Image": "Lithic_Spear.png",
     "InternalName": "Lithic Spear",
     "DisplayName": "Lithic Spear"
   },
@@ -688,7 +688,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Lost_Prayer_to_the_Sacred_Winds.png",
+    "Image": "Lost_Prayer_to_the_Sacred_Winds.png",
     "InternalName": "Lost Prayer to the Sacred Winds",
     "DisplayName": "Lost Prayer to the Sacred Winds"
   },
@@ -697,7 +697,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Luxurious_Sea-Lord.png",
+    "Image": "Luxurious_Sea-Lord.png",
     "InternalName": "Luxurious Sea-Lord",
     "DisplayName": "Luxurious Sea-Lord"
   },
@@ -706,7 +706,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Magic_Guide.png",
+    "Image": "Magic_Guide.png",
     "InternalName": "Magic Guide",
     "DisplayName": "Magic Guide"
   },
@@ -715,7 +715,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Mailed_Flower.png",
+    "Image": "Mailed_Flower.png",
     "InternalName": "Mailed Flower",
     "DisplayName": "Mailed Flower"
   },
@@ -724,7 +724,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Makhaira_Aquamarine.png",
+    "Image": "Makhaira_Aquamarine.png",
     "InternalName": "Makhaira Aquamarine",
     "DisplayName": "Makhaira Aquamarine"
   },
@@ -733,7 +733,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Mappa_Mare.png",
+    "Image": "Mappa_Mare.png",
     "InternalName": "Mappa Mare",
     "DisplayName": "Mappa Mare"
   },
@@ -742,7 +742,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Memory_of_Dust.png",
+    "Image": "Memory_of_Dust.png",
     "InternalName": "Memory of Dust",
     "DisplayName": "Memory of Dust"
   },
@@ -751,7 +751,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Messenger.png",
+    "Image": "Messenger.png",
     "InternalName": "Messenger",
     "DisplayName": "Messenger"
   },
@@ -760,7 +760,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Missive_Windspear.png",
+    "Image": "Missive_Windspear.png",
     "InternalName": "Missive Windspear",
     "DisplayName": "Missive Windspear"
   },
@@ -769,7 +769,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Mistsplitter_Reforged.png",
+    "Image": "Mistsplitter_Reforged.png",
     "InternalName": "Mistsplitter Reforged",
     "DisplayName": "Mistsplitter Reforged"
   },
@@ -778,7 +778,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Mitternachts_Waltz.png",
+    "Image": "Mitternachts_Waltz.png",
     "InternalName": "Mitternachts Waltz",
     "DisplayName": "Mitternachts Waltz"
   },
@@ -787,7 +787,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Moonpiercer.png",
+    "Image": "Moonpiercer.png",
     "InternalName": "Moonpiercer",
     "DisplayName": "Moonpiercer"
   },
@@ -796,16 +796,16 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Mouun\u0027s_Moon.png",
-    "InternalName": "Mouun\u0027s Moon",
-    "DisplayName": "Mouun\u0027s Moon"
+    "Image": "Mouun's_Moon.png",
+    "InternalName": "Mouun's Moon",
+    "DisplayName": "Mouun's Moon"
   },
   {
     "Rarity": 4,
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Oathsworn_Eye.png",
+    "Image": "Oathsworn_Eye.png",
     "InternalName": "Oathsworn Eye",
     "DisplayName": "Oathsworn Eye"
   },
@@ -814,16 +814,16 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Old_Merc\u0027s_Pal.png",
-    "InternalName": "Old Merc\u0027s Pal",
-    "DisplayName": "Old Merc\u0027s Pal"
+    "Image": "Old_Merc's_Pal.png",
+    "InternalName": "Old Merc's Pal",
+    "DisplayName": "Old Merc's Pal"
   },
   {
     "Rarity": 3,
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Otherworldly_Story.png",
+    "Image": "Otherworldly_Story.png",
     "InternalName": "Otherworldly Story",
     "DisplayName": "Otherworldly Story"
   },
@@ -832,7 +832,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Pocket_Grimoire.png",
+    "Image": "Pocket_Grimoire.png",
     "InternalName": "Pocket Grimoire",
     "DisplayName": "Pocket Grimoire"
   },
@@ -841,7 +841,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Polar_Star.png",
+    "Image": "Polar_Star.png",
     "InternalName": "Polar Star",
     "DisplayName": "Polar Star"
   },
@@ -850,7 +850,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Portable_Power_Saw.png",
+    "Image": "Portable_Power_Saw.png",
     "InternalName": "Portable Power Saw",
     "DisplayName": "Portable Power Saw"
   },
@@ -859,7 +859,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Predator.png",
+    "Image": "Predator.png",
     "InternalName": "Predator",
     "DisplayName": "Predator"
   },
@@ -868,7 +868,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Primordial_Jade_Cutter.png",
+    "Image": "Primordial_Jade_Cutter.png",
     "InternalName": "Primordial Jade Cutter",
     "DisplayName": "Primordial Jade Cutter"
   },
@@ -877,7 +877,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Primordial_Jade_Winged-Spear.png",
+    "Image": "Primordial_Jade_Winged-Spear.png",
     "InternalName": "Primordial Jade Winged-Spear",
     "DisplayName": "Primordial Jade Winged-Spear"
   },
@@ -886,16 +886,16 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Prospector\u0027s_Drill.png",
-    "InternalName": "Prospector\u0027s Drill",
-    "DisplayName": "Prospector\u0027s Drill"
+    "Image": "Prospector's_Drill.png",
+    "InternalName": "Prospector's Drill",
+    "DisplayName": "Prospector's Drill"
   },
   {
     "Rarity": 4,
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Prototype_Amber.png",
+    "Image": "Prototype_Amber.png",
     "InternalName": "Prototype Amber",
     "DisplayName": "Prototype Amber"
   },
@@ -904,7 +904,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Prototype_Archaic.png",
+    "Image": "Prototype_Archaic.png",
     "InternalName": "Prototype Archaic",
     "DisplayName": "Prototype Archaic"
   },
@@ -913,7 +913,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Prototype_Crescent.png",
+    "Image": "Prototype_Crescent.png",
     "InternalName": "Prototype Crescent",
     "DisplayName": "Prototype Crescent"
   },
@@ -922,7 +922,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Prototype_Rancour.png",
+    "Image": "Prototype_Rancour.png",
     "InternalName": "Prototype Rancour",
     "DisplayName": "Prototype Rancour"
   },
@@ -931,7 +931,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Prototype_Starglitter.png",
+    "Image": "Prototype_Starglitter.png",
     "InternalName": "Prototype Starglitter",
     "DisplayName": "Prototype Starglitter"
   },
@@ -940,7 +940,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Rainslasher.png",
+    "Image": "Rainslasher.png",
     "InternalName": "Rainslasher",
     "DisplayName": "Rainslasher"
   },
@@ -949,7 +949,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Range_Gauge.png",
+    "Image": "Range_Gauge.png",
     "InternalName": "Range Gauge",
     "DisplayName": "Range Gauge"
   },
@@ -958,7 +958,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Raven_Bow.png",
+    "Image": "Raven_Bow.png",
     "InternalName": "Raven Bow",
     "DisplayName": "Raven Bow"
   },
@@ -967,7 +967,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Recurve_Bow.png",
+    "Image": "Recurve_Bow.png",
     "InternalName": "Recurve Bow",
     "DisplayName": "Recurve Bow"
   },
@@ -976,7 +976,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Redhorn_Stonethresher.png",
+    "Image": "Redhorn_Stonethresher.png",
     "InternalName": "Redhorn Stonethresher",
     "DisplayName": "Redhorn Stonethresher"
   },
@@ -985,7 +985,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Rightful_Reward.png",
+    "Image": "Rightful_Reward.png",
     "InternalName": "Rightful Reward",
     "DisplayName": "Rightful Reward"
   },
@@ -994,7 +994,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Royal_Bow.png",
+    "Image": "Royal_Bow.png",
     "InternalName": "Royal Bow",
     "DisplayName": "Royal Bow"
   },
@@ -1003,7 +1003,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Royal_Greatsword.png",
+    "Image": "Royal_Greatsword.png",
     "InternalName": "Royal Greatsword",
     "DisplayName": "Royal Greatsword"
   },
@@ -1012,7 +1012,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Royal_Grimoire.png",
+    "Image": "Royal_Grimoire.png",
     "InternalName": "Royal Grimoire",
     "DisplayName": "Royal Grimoire"
   },
@@ -1021,7 +1021,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Royal_Longsword.png",
+    "Image": "Royal_Longsword.png",
     "InternalName": "Royal Longsword",
     "DisplayName": "Royal Longsword"
   },
@@ -1030,7 +1030,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Royal_Spear.png",
+    "Image": "Royal_Spear.png",
     "InternalName": "Royal Spear",
     "DisplayName": "Royal Spear"
   },
@@ -1039,7 +1039,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Rust.png",
+    "Image": "Rust.png",
     "InternalName": "Rust",
     "DisplayName": "Rust"
   },
@@ -1048,7 +1048,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sacrificial_Bow.png",
+    "Image": "Sacrificial_Bow.png",
     "InternalName": "Sacrificial Bow",
     "DisplayName": "Sacrificial Bow"
   },
@@ -1057,7 +1057,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sacrificial_Fragments.png",
+    "Image": "Sacrificial_Fragments.png",
     "InternalName": "Sacrificial Fragments",
     "DisplayName": "Sacrificial Fragments"
   },
@@ -1066,7 +1066,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sacrificial_Greatsword.png",
+    "Image": "Sacrificial_Greatsword.png",
     "InternalName": "Sacrificial Greatsword",
     "DisplayName": "Sacrificial Greatsword"
   },
@@ -1075,7 +1075,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sacrificial_Jade.png",
+    "Image": "Sacrificial_Jade.png",
     "InternalName": "Sacrificial Jade",
     "DisplayName": "Sacrificial Jade"
   },
@@ -1084,7 +1084,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sacrificial_Sword.png",
+    "Image": "Sacrificial_Sword.png",
     "InternalName": "Sacrificial Sword",
     "DisplayName": "Sacrificial Sword"
   },
@@ -1093,7 +1093,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sapwood_Blade.png",
+    "Image": "Sapwood_Blade.png",
     "InternalName": "Sapwood Blade",
     "DisplayName": "Sapwood Blade"
   },
@@ -1102,7 +1102,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Scion_of_the_Blazing_Sun.png",
+    "Image": "Scion_of_the_Blazing_Sun.png",
     "InternalName": "Scion of the Blazing Sun",
     "DisplayName": "Scion of the Blazing Sun"
   },
@@ -1111,16 +1111,16 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Seasoned_Hunter\u0027s_Bow.png",
-    "InternalName": "Seasoned Hunter\u0027s Bow",
-    "DisplayName": "Seasoned Hunter\u0027s Bow"
+    "Image": "Seasoned_Hunter's_Bow.png",
+    "InternalName": "Seasoned Hunter's Bow",
+    "DisplayName": "Seasoned Hunter's Bow"
   },
   {
     "Rarity": 4,
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Serpent_Spine.png",
+    "Image": "Serpent_Spine.png",
     "InternalName": "Serpent Spine",
     "DisplayName": "Serpent Spine"
   },
@@ -1129,16 +1129,16 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sharpshooter\u0027s_Oath.png",
-    "InternalName": "Sharpshooter\u0027s Oath",
-    "DisplayName": "Sharpshooter\u0027s Oath"
+    "Image": "Sharpshooter's_Oath.png",
+    "InternalName": "Sharpshooter's Oath",
+    "DisplayName": "Sharpshooter's Oath"
   },
   {
     "Rarity": 2,
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Silver_Sword.png",
+    "Image": "Silver_Sword.png",
     "InternalName": "Silver Sword",
     "DisplayName": "Silver Sword"
   },
@@ -1147,7 +1147,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyrider_Greatsword.png",
+    "Image": "Skyrider_Greatsword.png",
     "InternalName": "Skyrider Greatsword",
     "DisplayName": "Skyrider Greatsword"
   },
@@ -1156,7 +1156,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyrider_Sword.png",
+    "Image": "Skyrider_Sword.png",
     "InternalName": "Skyrider Sword",
     "DisplayName": "Skyrider Sword"
   },
@@ -1165,7 +1165,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyward_Atlas.png",
+    "Image": "Skyward_Atlas.png",
     "InternalName": "Skyward Atlas",
     "DisplayName": "Skyward Atlas"
   },
@@ -1174,7 +1174,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyward_Blade.png",
+    "Image": "Skyward_Blade.png",
     "InternalName": "Skyward Blade",
     "DisplayName": "Skyward Blade"
   },
@@ -1183,7 +1183,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyward_Harp.png",
+    "Image": "Skyward_Harp.png",
     "InternalName": "Skyward Harp",
     "DisplayName": "Skyward Harp"
   },
@@ -1192,7 +1192,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyward_Pride.png",
+    "Image": "Skyward_Pride.png",
     "InternalName": "Skyward Pride",
     "DisplayName": "Skyward Pride"
   },
@@ -1201,7 +1201,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Skyward_Spine.png",
+    "Image": "Skyward_Spine.png",
     "InternalName": "Skyward Spine",
     "DisplayName": "Skyward Spine"
   },
@@ -1210,7 +1210,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Slingshot.png",
+    "Image": "Slingshot.png",
     "InternalName": "Slingshot",
     "DisplayName": "Slingshot"
   },
@@ -1219,7 +1219,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Snow-Tombed_Starsilver.png",
+    "Image": "Snow-Tombed_Starsilver.png",
     "InternalName": "Snow-Tombed Starsilver",
     "DisplayName": "Snow-Tombed Starsilver"
   },
@@ -1228,7 +1228,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Solar_Pearl.png",
+    "Image": "Solar_Pearl.png",
     "InternalName": "Solar Pearl",
     "DisplayName": "Solar Pearl"
   },
@@ -1237,7 +1237,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Song_of_Broken_Pines.png",
+    "Image": "Song_of_Broken_Pines.png",
     "InternalName": "Song of Broken Pines",
     "DisplayName": "Song of Broken Pines"
   },
@@ -1246,7 +1246,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Song_of_Stillness.png",
+    "Image": "Song_of_Stillness.png",
     "InternalName": "Song of Stillness",
     "DisplayName": "Song of Stillness"
   },
@@ -1255,7 +1255,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Splendor_of_Tranquil_Waters.png",
+    "Image": "Splendor_of_Tranquil_Waters.png",
     "InternalName": "Splendor of Tranquil Waters",
     "DisplayName": "Splendor of Tranquil Waters"
   },
@@ -1264,7 +1264,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Staff_of_Homa.png",
+    "Image": "Staff_of_Homa.png",
     "InternalName": "Staff of Homa",
     "DisplayName": "Staff of Homa"
   },
@@ -1273,7 +1273,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Staff_of_the_Scarlet_Sands.png",
+    "Image": "Staff_of_the_Scarlet_Sands.png",
     "InternalName": "Staff of the Scarlet Sands",
     "DisplayName": "Staff of the Scarlet Sands"
   },
@@ -1282,7 +1282,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Summit_Shaper.png",
+    "Image": "Summit_Shaper.png",
     "InternalName": "Summit Shaper",
     "DisplayName": "Summit Shaper"
   },
@@ -1291,7 +1291,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sword_of_Descension.png",
+    "Image": "Sword_of_Descension.png",
     "InternalName": "Sword of Descension",
     "DisplayName": "Sword of Descension"
   },
@@ -1300,7 +1300,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Sword_of_Narzissenkreuz.png",
+    "Image": "Sword_of_Narzissenkreuz.png",
     "InternalName": "Sword of Narzissenkreuz",
     "DisplayName": "Sword of Narzissenkreuz"
   },
@@ -1309,7 +1309,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Talking_Stick.png",
+    "Image": "Talking_Stick.png",
     "InternalName": "Talking Stick",
     "DisplayName": "Talking Stick"
   },
@@ -1318,7 +1318,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Alley_Flash.png",
+    "Image": "The_Alley_Flash.png",
     "InternalName": "The Alley Flash",
     "DisplayName": "The Alley Flash"
   },
@@ -1327,7 +1327,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Bell.png",
+    "Image": "The_Bell.png",
     "InternalName": "The Bell",
     "DisplayName": "The Bell"
   },
@@ -1336,7 +1336,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Black_Sword.png",
+    "Image": "The_Black_Sword.png",
     "InternalName": "The Black Sword",
     "DisplayName": "The Black Sword"
   },
@@ -1345,16 +1345,16 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Dockhand\u0027s_Assistant.png",
-    "InternalName": "The Dockhand\u0027s Assistant",
-    "DisplayName": "The Dockhand\u0027s Assistant"
+    "Image": "The_Dockhand's_Assistant.png",
+    "InternalName": "The Dockhand's Assistant",
+    "DisplayName": "The Dockhand's Assistant"
   },
   {
     "Rarity": 5,
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_First_Great_Magic.png",
+    "Image": "The_First_Great_Magic.png",
     "InternalName": "The First Great Magic",
     "DisplayName": "The First Great Magic"
   },
@@ -1363,7 +1363,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Flute.png",
+    "Image": "The_Flute.png",
     "InternalName": "The Flute",
     "DisplayName": "The Flute"
   },
@@ -1372,7 +1372,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Stringless.png",
+    "Image": "The_Stringless.png",
     "InternalName": "The Stringless",
     "DisplayName": "The Stringless"
   },
@@ -1381,7 +1381,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Unforged.png",
+    "Image": "The_Unforged.png",
     "InternalName": "The Unforged",
     "DisplayName": "The Unforged"
   },
@@ -1390,7 +1390,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Viridescent_Hunt.png",
+    "Image": "The_Viridescent_Hunt.png",
     "InternalName": "The Viridescent Hunt",
     "DisplayName": "The Viridescent Hunt"
   },
@@ -1399,7 +1399,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_The_Widsith.png",
+    "Image": "The_Widsith.png",
     "InternalName": "The Widsith",
     "DisplayName": "The Widsith"
   },
@@ -1408,7 +1408,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Thrilling_Tales_of_Dragon_Slayers.png",
+    "Image": "Thrilling_Tales_of_Dragon_Slayers.png",
     "InternalName": "Thrilling Tales of Dragon Slayers",
     "DisplayName": "Thrilling Tales of Dragon Slayers"
   },
@@ -1417,7 +1417,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Thundering_Pulse.png",
+    "Image": "Thundering_Pulse.png",
     "InternalName": "Thundering Pulse",
     "DisplayName": "Thundering Pulse"
   },
@@ -1426,7 +1426,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Tidal_Shadow.png",
+    "Image": "Tidal_Shadow.png",
     "InternalName": "Tidal Shadow",
     "DisplayName": "Tidal Shadow"
   },
@@ -1435,7 +1435,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Tome_of_the_Eternal_Flow.png",
+    "Image": "Tome_of_the_Eternal_Flow.png",
     "InternalName": "Tome of the Eternal Flow",
     "DisplayName": "Tome of the Eternal Flow"
   },
@@ -1444,7 +1444,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Toukabou_Shigure.png",
+    "Image": "Toukabou_Shigure.png",
     "InternalName": "Toukabou Shigure",
     "DisplayName": "Toukabou Shigure"
   },
@@ -1453,25 +1453,25 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Traveler\u0027s_Handy_Sword.png",
-    "InternalName": "Traveler\u0027s Handy Sword",
-    "DisplayName": "Traveler\u0027s Handy Sword"
+    "Image": "Traveler's_Handy_Sword.png",
+    "InternalName": "Traveler's Handy Sword",
+    "DisplayName": "Traveler's Handy Sword"
   },
   {
     "Rarity": 5,
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Tulaytullah\u0027s_Remembrance.png",
-    "InternalName": "Tulaytullah\u0027s Remembrance",
-    "DisplayName": "Tulaytullah\u0027s Remembrance"
+    "Image": "Tulaytullah's_Remembrance.png",
+    "InternalName": "Tulaytullah's Remembrance",
+    "DisplayName": "Tulaytullah's Remembrance"
   },
   {
     "Rarity": 3,
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Twin_Nephrite.png",
+    "Image": "Twin_Nephrite.png",
     "InternalName": "Twin Nephrite",
     "DisplayName": "Twin Nephrite"
   },
@@ -1480,7 +1480,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Vortex_Vanquisher.png",
+    "Image": "Vortex_Vanquisher.png",
     "InternalName": "Vortex Vanquisher",
     "DisplayName": "Vortex Vanquisher"
   },
@@ -1489,7 +1489,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Wandering_Evenstar.png",
+    "Image": "Wandering_Evenstar.png",
     "InternalName": "Wandering Evenstar",
     "DisplayName": "Wandering Evenstar"
   },
@@ -1498,7 +1498,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Waster_Greatsword.png",
+    "Image": "Waster_Greatsword.png",
     "InternalName": "Waster Greatsword",
     "DisplayName": "Waster Greatsword"
   },
@@ -1507,16 +1507,16 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Wavebreaker\u0027s_Fin.png",
-    "InternalName": "Wavebreaker\u0027s Fin",
-    "DisplayName": "Wavebreaker\u0027s Fin"
+    "Image": "Wavebreaker's_Fin.png",
+    "InternalName": "Wavebreaker's Fin",
+    "DisplayName": "Wavebreaker's Fin"
   },
   {
     "Rarity": 3,
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_White_Iron_Greatsword.png",
+    "Image": "White_Iron_Greatsword.png",
     "InternalName": "White Iron Greatsword",
     "DisplayName": "White Iron Greatsword"
   },
@@ -1525,7 +1525,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_White_Tassel.png",
+    "Image": "White_Tassel.png",
     "InternalName": "White Tassel",
     "DisplayName": "White Tassel"
   },
@@ -1534,7 +1534,7 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Whiteblind.png",
+    "Image": "Whiteblind.png",
     "InternalName": "Whiteblind",
     "DisplayName": "Whiteblind"
   },
@@ -1543,7 +1543,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Windblume_Ode.png",
+    "Image": "Windblume_Ode.png",
     "InternalName": "Windblume Ode",
     "DisplayName": "Windblume Ode"
   },
@@ -1552,7 +1552,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Wine_and_Song.png",
+    "Image": "Wine_and_Song.png",
     "InternalName": "Wine and Song",
     "DisplayName": "Wine and Song"
   },
@@ -1561,16 +1561,16 @@
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Wolf\u0027s_Gravestone.png",
-    "InternalName": "Wolf\u0027s Gravestone",
-    "DisplayName": "Wolf\u0027s Gravestone"
+    "Image": "Wolf's_Gravestone.png",
+    "InternalName": "Wolf's Gravestone",
+    "DisplayName": "Wolf's Gravestone"
   },
   {
     "Rarity": 4,
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Wolf-Fang.png",
+    "Image": "Wolf-Fang.png",
     "InternalName": "Wolf-Fang",
     "DisplayName": "Wolf-Fang"
   },
@@ -1579,16 +1579,16 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Xiphos\u0027_Moonlight.png",
-    "InternalName": "Xiphos\u0027 Moonlight",
-    "DisplayName": "Xiphos\u0027 Moonlight"
+    "Image": "Xiphos'_Moonlight.png",
+    "InternalName": "Xiphos' Moonlight",
+    "DisplayName": "Xiphos' Moonlight"
   },
   {
     "Rarity": 5,
     "Type": "Claymore",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Verdict.webp",
+    "Image": "Verdict.webp",
     "InternalName": "Verdict",
     "DisplayName": "Verdict"
   },
@@ -1597,7 +1597,7 @@
     "Type": "Polearm",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_CrimsonMoon.webp",
+    "Image": "CrimsonMoon.webp",
     "InternalName": "Crimson Moon's Semblance",
     "DisplayName": "Crimson Moon's Semblance"
   },
@@ -1606,7 +1606,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Absolution.webp",
+    "Image": "Absolution.webp",
     "InternalName": "Absolution",
     "DisplayName": "Absolution"
   },
@@ -1615,7 +1615,7 @@
     "Type": "Bow",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Silvershower_Heartstrings.webp",
+    "Image": "Silvershower_Heartstrings.webp",
     "InternalName": "Silvershower Heartstrings",
     "DisplayName": "Silvershower Heartstrings"
   },
@@ -1624,7 +1624,7 @@
     "Type": "Sword",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Uraku_Misugiri.webp",
+    "Image": "Uraku_Misugiri.webp",
     "InternalName": "Uraku Misugiri",
     "DisplayName": "Uraku Misugiri"
   },
@@ -1633,7 +1633,7 @@
     "Type": "Catalyst",
     "ModFilesName": "",
     "IsMultiMod": false,
-    "Image": "Weapon_Cranes_Echoing_Call.webp",
+    "Image": "Cranes_Echoing_Call.webp",
     "InternalName": "Crane's Echoing Call",
     "DisplayName": "Crane's Echoing Call"
   }

@@ -12,10 +12,11 @@ public class Character : ICharacter, IEquatable<Character>
     private Uri? _imageUri;
     public ICategory ModCategory { get; } = Category.CreateForCharacter();
     public InternalName InternalName { get; init; } = null!;
-    public string ModFilesName { get; internal set; } = string.Empty;
-    public bool IsMultiMod { get; init; }
+    public string ModFilesName { get; set; } = string.Empty;
+    public bool IsMultiMod { get; set; }
     public string DisplayName { get; set; } = null!;
     public int Rarity { get; internal set; }
+    public bool IsCustomModObject { get; private init; }
 
     public Uri? ImageUri
     {
@@ -41,7 +42,7 @@ public class Character : ICharacter, IEquatable<Character>
         return $"{DisplayName} ({InternalName})";
     }
 
-    internal static CharacterBuilder FromJson(JsonCharacter jsonCharacter)
+    internal static CharacterBuilder FromJson(JsonCharacter jsonCharacter, bool isCustomObject = false)
     {
         var internalName = jsonCharacter.InternalName ??
                            throw new InvalidJsonConfigException("InternalName can never be missing or null");
@@ -53,9 +54,10 @@ public class Character : ICharacter, IEquatable<Character>
             DisplayName = jsonCharacter.DisplayName ?? internalName,
             IsMultiMod = jsonCharacter.IsMultiMod ?? false,
             Keys = jsonCharacter.Keys ?? Array.Empty<string>(),
-            Rarity = jsonCharacter.Rarity is >= 0 and <= 5 ? jsonCharacter.Rarity.Value : -1,
+            Rarity = jsonCharacter.Rarity is >= 0 and <= 10 ? jsonCharacter.Rarity.Value : -1,
             ReleaseDate = DateTime.TryParse(jsonCharacter.ReleaseDate, out var date) ? date : DateTime.MaxValue,
-            Skins = new List<ICharacterSkin>()
+            Skins = new List<ICharacterSkin>(),
+            IsCustomModObject = isCustomObject
         };
 
         // Add default skin
@@ -72,6 +74,50 @@ public class Character : ICharacter, IEquatable<Character>
         }
 
         return new CharacterBuilder(character, jsonCharacter);
+    }
+
+
+    //internal static CharacterBuilder FromCustomCharacter(InternalCreateCharacterRequest createCharacterRequest)
+    //{
+    //    if (string.IsNullOrWhiteSpace(createCharacterRequest.InternalName))
+    //        throw new InvalidModdableObjectException("InternalName cannot be null or empty");
+
+    //    var character = new Character
+    //    {
+    //        InternalName = createCharacterRequest.InternalName,
+    //        ModFilesName = createCharacterRequest.ModFilesName ?? string.Empty,
+    //        DisplayName = createCharacterRequest.DisplayName ?? createCharacterRequest.InternalName,
+    //        IsMultiMod = createCharacterRequest.IsMultiMod,
+    //        Keys = createCharacterRequest.Keys?.ToArray() ?? [],
+    //        Rarity = createCharacterRequest.Rarity is >= 0 and <= 5 ? createCharacterRequest.Rarity : -1,
+    //        ReleaseDate = createCharacterRequest.ReleaseDate ?? DateTime.MaxValue,
+    //        Skins = new List<ICharacterSkin>()
+    //    };
+
+    //    // Add default skin
+    //    character.Skins.Add(CreateDefaultSkin(character));
+
+    //    return new CharacterBuilder(character, createCharacterRequest);
+    //}
+
+    internal static CharacterBuilder FromJson(string internalName, JsonCustomCharacter jsonCustomCharacter)
+    {
+        var jsonCharacter = new JsonCharacter()
+        {
+            InternalName = internalName,
+            DisplayName = jsonCustomCharacter.DisplayName,
+            Keys = jsonCustomCharacter.Keys,
+            Image = jsonCustomCharacter.Image,
+            Rarity = jsonCustomCharacter.Rarity,
+            Element = jsonCustomCharacter.Element,
+            Class = jsonCustomCharacter.Class,
+            Region = jsonCustomCharacter.Region,
+            ReleaseDate = jsonCustomCharacter.ReleaseDate,
+            ModFilesName = jsonCustomCharacter.ModFilesName,
+            IsMultiMod = jsonCustomCharacter.IsMultiMod
+        };
+
+        return FromJson(jsonCharacter, isCustomObject: true);
     }
 
 
@@ -118,14 +164,15 @@ public class Character : ICharacter, IEquatable<Character>
             ModFilesName = ModFilesName,
             DisplayName = DisplayName,
             IsMultiMod = IsMultiMod,
-            Keys = Keys,
+            Keys = Keys.ToArray(),
             Rarity = Rarity,
             ReleaseDate = ReleaseDate,
             Skins = Skins.Select(skin => skin.Clone()).ToArray(),
             Class = Class,
             Element = Element,
-            Regions = Regions,
-            ImageUri = ImageUri
+            Regions = Regions.ToArray(),
+            ImageUri = ImageUri,
+            IsCustomModObject = IsCustomModObject
         };
     }
 
@@ -213,7 +260,11 @@ public class Character : ICharacter, IEquatable<Character>
 internal sealed class CharacterBuilder
 {
     private readonly Character _character;
-    private readonly JsonCharacter _jsonCharacter;
+    private readonly string[]? _regions;
+    private readonly string? _class;
+    private readonly string? _element;
+    private readonly string? _image;
+    private readonly JsonCharacterSkin[]? _jsonCharacterSkins;
 
     private bool _regionSet;
     private bool _classSet;
@@ -222,7 +273,11 @@ internal sealed class CharacterBuilder
     public CharacterBuilder(Character character, JsonCharacter jsonCharacter)
     {
         _character = character;
-        _jsonCharacter = jsonCharacter;
+        _regions = jsonCharacter.Region;
+        _class = jsonCharacter.Class;
+        _element = jsonCharacter.Element;
+        _image = jsonCharacter.Image;
+        _jsonCharacterSkins = jsonCharacter.InGameSkins;
     }
 
     public CharacterBuilder SetRegion(IReadOnlyCollection<IRegion> regions)
@@ -232,7 +287,7 @@ internal sealed class CharacterBuilder
 
         var connectedRegions = new List<IRegion>();
 
-        foreach (var internalRegionName in _jsonCharacter.Region ?? Array.Empty<string>())
+        foreach (var internalRegionName in _regions ?? Array.Empty<string>())
         {
             if (string.IsNullOrWhiteSpace(internalRegionName))
                 throw new InvalidOperationException("Region cannot be null or empty");
@@ -263,7 +318,7 @@ internal sealed class CharacterBuilder
             throw new InvalidOperationException("Class already set");
 
         _character.Class = gameClasses.FirstOrDefault(gameClass =>
-                               gameClass.InternalName.Equals(_jsonCharacter.Class))
+                               gameClass.InternalNameEquals(_class))
                            ?? Class.NoneClass();
 
         _classSet = true;
@@ -276,7 +331,7 @@ internal sealed class CharacterBuilder
             throw new InvalidOperationException("Element already set");
 
         _character.Element = elements.FirstOrDefault(element =>
-                                 element.InternalName.Equals(_jsonCharacter.Element))
+                                 element.InternalNameEquals(_element))
                              ?? Element.NoneElement();
 
 
@@ -298,7 +353,7 @@ internal sealed class CharacterBuilder
         return null;
     }
 
-    public Character CreateCharacter(string imageFolder, string characterSkinImageFolder)
+    public Character CreateCharacter(string? imageFolder = null, string? characterSkinImageFolder = null)
     {
         if (!_regionSet)
             throw new InvalidOperationException("Region not set");
@@ -309,22 +364,22 @@ internal sealed class CharacterBuilder
         if (!_elementSet)
             throw new InvalidOperationException("Element not set");
 
-        if (_jsonCharacter.Image.IsNullOrEmpty()) return _character;
+        if (!_image.IsNullOrEmpty() && !imageFolder.IsNullOrEmpty())
+        {
+            // Set images
+            _character.ImageUri = GetImage(imageFolder, _image);
 
+            _character.Skins.First().ImageUri = _character.ImageUri;
+        }
 
-        // Set images
-        _character.ImageUri = GetImage(imageFolder, _jsonCharacter.Image);
-
-        _character.Skins.First().ImageUri = _character.ImageUri;
 
         foreach (var characterSkin in _character.Skins)
         {
-            var jsonCharacterSkin = _jsonCharacter?.InGameSkins
-                ?.FirstOrDefault(skin => skin.InternalName is not null &&
-                                         skin.InternalName.Equals(characterSkin.InternalName,
-                                             StringComparison.OrdinalIgnoreCase));
+            var jsonCharacterSkin = _jsonCharacterSkins?.FirstOrDefault(skin => skin.InternalName is not null &&
+                                                                                skin.InternalName.Equals(characterSkin.InternalName,
+                                                                                    StringComparison.OrdinalIgnoreCase));
 
-            if (jsonCharacterSkin is null)
+            if (jsonCharacterSkin is null || characterSkinImageFolder.IsNullOrEmpty())
                 continue;
 
             characterSkin.ImageUri = GetImage(characterSkinImageFolder, jsonCharacterSkin.Image);

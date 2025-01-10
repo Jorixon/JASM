@@ -4,7 +4,6 @@ namespace GIMI_ModManager.Core.GamesService.JsonModels;
 
 internal class JsonCharacter : JsonBaseNameable
 {
-    public int Id { get; set; } = -1;
     public string[]? Keys { get; set; }
     public string? ReleaseDate { get; set; }
     public string? Image { get; set; }

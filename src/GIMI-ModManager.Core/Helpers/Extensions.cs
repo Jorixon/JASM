@@ -52,4 +52,22 @@ public static class Extensions
 
         return list;
     }
+
+    public static T GetOrAdd<T>(this Dictionary<string, T> dictionary, string key, Func<T> createFunc)
+    {
+        if (dictionary.TryGetValue(key, out var value))
+            return value;
+        value = createFunc();
+        dictionary.Add(key, value);
+        return value;
+    }
+
+    public static T GetOrAdd<T>(this Dictionary<string, T> dictionary, string key) where T : new()
+    {
+        if (dictionary.TryGetValue(key, out var value))
+            return value;
+        value = new T();
+        dictionary.Add(key, value);
+        return value;
+    }
 }

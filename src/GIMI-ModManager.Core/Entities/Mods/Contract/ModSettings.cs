@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using GIMI_ModManager.Core.Contracts.Entities;
+﻿using GIMI_ModManager.Core.Contracts.Entities;
 using GIMI_ModManager.Core.Entities.Mods.FileModels;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
+using GIMI_ModManager.Core.Helpers;
 
 namespace GIMI_ModManager.Core.Entities.Mods.Contract;
 
@@ -153,30 +153,5 @@ public record ModSettings
     internal void SetPreferences(Dictionary<string, string>? preferences)
     {
         _preferences = preferences;
-    }
-}
-
-public readonly struct NewValue<T>
-{
-    private NewValue(T valueToSet)
-    {
-        ValueToSet = valueToSet;
-    }
-
-    public T ValueToSet { get; }
-
-    public static implicit operator T(NewValue<T> newValue) => newValue.ValueToSet;
-
-    public static NewValue<T> Set(T value) => new(value);
-}
-
-public static class NewValueExtensions
-{
-    public static NewValue<string?>? EmptyStringToNull([NotNullIfNotNull(nameof(newValue))] this NewValue<string?>? newValue)
-    {
-        if (newValue is null)
-            return null;
-
-        return string.IsNullOrWhiteSpace(newValue.Value) ? NewValue<string?>.Set(null) : newValue;
     }
 }

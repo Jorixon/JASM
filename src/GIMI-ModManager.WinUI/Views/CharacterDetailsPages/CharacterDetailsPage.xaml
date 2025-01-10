@@ -161,71 +161,94 @@
 
                 <Grid x:Name="ToolBarArea" Margin="0,0,0,8">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
-                        <MenuBar IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}">
-                            <MenuBarItem Title="Mods">
-                                <MenuBarItem.Items>
-                                    <MenuFlyoutItem
-                                        Command="{x:Bind ViewModel.AddModFolderCommand}"
-                                        ToolTipService.ToolTip="Add a mod folder"
-                                        Text="Add Mod..." />
 
-                                    <MenuFlyoutItem
-                                        Command="{x:Bind ViewModel.AddModArchiveCommand}"
-                                        ToolTipService.ToolTip="Add a mod inside a compressed archive"
-                                        Text="Add Archive...">
-                                        <MenuFlyoutItem.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="O" Modifiers="Control" />
-                                        </MenuFlyoutItem.KeyboardAccelerators>
-                                    </MenuFlyoutItem>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
+                        <StackPanel Orientation="Horizontal">
+                            <MenuBar IsEnabled="{x:Bind ViewModel.IsNotHardBusy, Mode=OneWay}">
+                                <MenuBarItem Title="Mods">
+                                    <MenuBarItem.Items>
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.AddModFolderCommand}"
+                                            ToolTipService.ToolTip="Add a mod folder"
+                                            Text="Add Mod..." />
+
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.AddModArchiveCommand}"
+                                            ToolTipService.ToolTip="Add a mod inside a compressed archive"
+                                            Text="Add Archive...">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshAllModsCommand}" Text="Refresh Mods">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F5" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                    </MenuBarItem.Items>
+                                </MenuBarItem>
+
+                                <MenuBarItem Title="Folders">
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGIMIRootFolderCommand}" Text="Open 3Dmigoto Root folder..." />
                                     <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshAllModsCommand}" Text="Refresh Mods">
-                                        <MenuFlyoutItem.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="F5" />
-                                        </MenuFlyoutItem.KeyboardAccelerators>
-                                    </MenuFlyoutItem>
-                                </MenuBarItem.Items>
-                            </MenuBarItem>
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.OpenCharacterFolderCommand}" Text="Open Character's Mod folder..." />
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem
+                                        Command="{x:Bind ViewModel.OpenModFolderCommand}"
+                                        IsEnabled="{x:Bind ViewModel.ModGridVM.IsSingleModSelected, Mode=OneWay}"
+                                        Text="Open Selected Mod folder..." />
+                                </MenuBarItem>
 
-                            <MenuBarItem Title="Folders">
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenGIMIRootFolderCommand}" Text="Open 3Dmigoto Root folder..." />
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.OpenCharacterFolderCommand}" Text="Open Character's Mod folder..." />
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem
-                                    Command="{x:Bind ViewModel.OpenModFolderCommand}"
-                                    IsEnabled="{x:Bind ViewModel.ModGridVM.IsSingleModSelected, Mode=OneWay}"
-                                    Text="Open Selected Mod folder..." />
-                            </MenuBarItem>
+                                <MenuBarItem Title="View">
+                                    <ToggleMenuFlyoutItem
+                                        Command="{x:Bind ViewModel.ToggleSingleSelectCommand}"
+                                        IsChecked="{x:Bind ViewModel.IsSingleSelectEnabled, Mode=OneWay}"
+                                        ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time."
+                                        Text="Single Select" />
+                                    <ToggleMenuFlyoutItem
+                                        Command="{x:Bind ViewModel.ToggleHideModFolderColumnCommand}"
+                                        IsChecked="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay}"
+                                        Text="Show 'Mod Folder Names' column" />
+                                </MenuBarItem>
 
-                            <MenuBarItem Title="View">
-                                <ToggleMenuFlyoutItem
-                                    Command="{x:Bind ViewModel.ToggleSingleSelectCommand}"
-                                    IsChecked="{x:Bind ViewModel.IsSingleSelectEnabled, Mode=OneWay}"
-                                    ToolTipService.ToolTip="Selecting this will only allow one mod to be enabled at a time."
-                                    Text="Single Select" />
-                                <ToggleMenuFlyoutItem
-                                    Command="{x:Bind ViewModel.ToggleHideModFolderColumnCommand}"
-                                    IsChecked="{x:Bind ViewModel.IsModFolderNameColumnVisible, Mode=OneWay}"
-                                    Text="Show 'Mod Folder Names' column" />
-                            </MenuBarItem>
+                                <MenuBarItem
+                                    Title="Mod Preferences"
+                                    IsEnabled="{x:Bind ViewModel.IsSingleModSelected, Mode=OneWay}"
+                                    Visibility="Collapsed">
+                                    <ToggleMenuFlyoutItem ToolTipService.ToolTip="Reads 3Dmigoto mod preferences (d3dx_user.ini) for the selected mod and stores the settings in the Mod's .JASM_Config.json file" Text="Save preferences for selected mod" />
+                                    <MenuFlyoutSeparator />
+                                    <ToggleMenuFlyoutItem ToolTipService.ToolTip="Reads the currently selected mod's preferences from .JASM_Config.json and writes them to d3dx_user.ini for 3Dmigoto to read" Text="Read preferences for selected mod" />
+                                </MenuBarItem>
+                            </MenuBar>
 
-                            <MenuBarItem
-                                Title="Mod Preferences"
-                                IsEnabled="{x:Bind ViewModel.IsSingleModSelected, Mode=OneWay}"
-                                Visibility="Collapsed">
-                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="Reads 3Dmigoto mod preferences (d3dx_user.ini) for the selected mod and stores the settings in the Mod's .JASM_Config.json file" Text="Save preferences for selected mod" />
-                                <MenuFlyoutSeparator />
-                                <ToggleMenuFlyoutItem ToolTipService.ToolTip="Reads the currently selected mod's preferences from .JASM_Config.json and writes them to d3dx_user.ini for 3Dmigoto to read" Text="Read preferences for selected mod" />
-                            </MenuBarItem>
-                        </MenuBar>
+                        </StackPanel>
 
-                    </StackPanel>
+
+                        <InfoBar
+                            Grid.Column="1"
+                            Height="50"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            IsClosable="False"
+                            IsOpen="{x:Bind ViewModel.ModGridVM.ShowMultipleModsActiveWarning, Mode=OneWay}"
+                            Message="Multiple Mods active"
+                            Severity="Warning"
+                            Visibility="Visible" />
+
+                    </Grid>
+
+
 
                     <StackPanel
                         Grid.Column="1"

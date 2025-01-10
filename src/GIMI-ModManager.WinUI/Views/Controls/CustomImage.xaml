@@ -21,6 +21,7 @@
                 Height="40"
                 Command="{x:Bind CopyButtonCommand, Mode=OneWay}"
                 Icon="Copy"
+                Visibility="{x:Bind CopyButtonVisibility, Mode=OneWay}"
                 Text="Copy Image" />
             <MenuFlyoutSeparator />
             <MenuFlyoutSeparator />
@@ -40,7 +41,10 @@
             Width="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}"
             Height="{Binding ElementName=CustomImageRoot, Path=Height, Mode=OneWay}">
             <Image.Source>
-                <BitmapImage DecodePixelWidth="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}" UriSource="{x:Bind ImageUri, Mode=OneWay}" />
+                <BitmapImage
+                    CreateOptions="IgnoreImageCache"
+                    DecodePixelWidth="{Binding ElementName=CustomImageRoot, Path=Width, Mode=OneWay}"
+                    UriSource="{x:Bind ImageUri, Mode=OneWay}" />
             </Image.Source>
         </Image>
         <Button
