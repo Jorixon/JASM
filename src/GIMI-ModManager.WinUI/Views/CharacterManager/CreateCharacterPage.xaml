@@ -244,8 +244,9 @@
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="40">
-                    <Button Command="{x:Bind ViewModel.OpenCustomCharacterJsonFileCommand}">Open Character json file</Button>
-                    <Button Command="{x:Bind ViewModel.SaveCharacterCommand}">Create Character</Button>
+                    <Button Command="{x:Bind ViewModel.ExportCharacterCommand}">Export character json</Button>
+                    <Button Command="{x:Bind ViewModel.OpenCustomCharacterJsonFileCommand}">Open custom Character json file</Button>
+                    <Button Background="{ThemeResource AccentFillColorDefaultBrush}" Command="{x:Bind ViewModel.SaveCharacterCommand}">Create Character</Button>
                 </StackPanel>
             </Grid>
 

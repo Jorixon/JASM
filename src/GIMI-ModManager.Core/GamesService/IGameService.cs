@@ -32,6 +32,9 @@ public interface IGameService
 
     public Task<ICharacter> CreateCharacterAsync(CreateCharacterRequest characterRequest);
 
+    public Task<(string json, ICharacter character)> CreateJsonCharacterExportAsync(CreateCharacterRequest characterRequest);
+
+
     public Task<ICharacter> EditCustomCharacterAsync(InternalName internalName, EditCustomCharacterRequest characterRequest);
 
     public Task<ICharacter> DeleteCustomCharacterAsync(InternalName internalName);

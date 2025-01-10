@@ -9,8 +9,11 @@ using GIMI_ModManager.Core.GamesService.JsonModels;
 using GIMI_ModManager.Core.GamesService.Models;
 using GIMI_ModManager.Core.GamesService.Requests;
 using GIMI_ModManager.Core.Helpers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Serilog;
 using JsonElement = GIMI_ModManager.Core.GamesService.JsonModels.JsonElement;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GIMI_ModManager.Core.GamesService;
 
@@ -415,6 +418,91 @@ public class GameService : IGameService
         _characters.Add(character);
 
         return character;
+    }
+
+    private readonly JsonSerializerSettings _jsonCharacterExportSettings = new()
+    {
+        Formatting = Formatting.Indented,
+        TypeNameHandling = TypeNameHandling.Auto,
+        NullValueHandling = NullValueHandling.Ignore,
+        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+        Converters = new List<JsonConverter> { new StringEnumConverter() }
+    };
+
+    public async Task<(string json, ICharacter character)> CreateJsonCharacterExportAsync(CreateCharacterRequest characterRequest)
+    {
+        var internalCreateRequest = new JsonCustomCharacter()
+        {
+            DisplayName = characterRequest.DisplayName,
+            Keys = characterRequest.Keys?.ToArray(),
+            Class = characterRequest.Class,
+            Element = characterRequest.Element,
+            Image = characterRequest.Image?.LocalPath,
+            IsMultiMod = characterRequest.IsMultiMod,
+            Region = characterRequest.Region?.ToArray(),
+            ModFilesName = characterRequest.ModFilesName,
+            Rarity = characterRequest.Rarity,
+            ReleaseDate = characterRequest.ReleaseDate?.ToString("O")
+        };
+
+        if (characterRequest.Image is not null)
+        {
+            if (!characterRequest.Image.IsFile || !File.Exists(characterRequest.Image.LocalPath))
+                throw new InvalidModdableObjectException("Image must be a valid existing filesystem file");
+
+            var imageExtension = Path.GetExtension(characterRequest.Image.LocalPath);
+
+            if (imageExtension.IsNullOrEmpty())
+                throw new InvalidModdableObjectException("Image must have an extension");
+
+            if (Constants.SupportedImageExtensions.All(x => x != imageExtension))
+                throw new InvalidModdableObjectException("Image must have a supported extension. Supported extensions are: " +
+                                                         string.Join(", ", Constants.SupportedImageExtensions));
+        }
+
+
+        Character character;
+        try
+        {
+            character = Character
+                .FromJson(characterRequest.InternalName, internalCreateRequest)
+                .SetRegion(Regions.AllRegions)
+                .SetElement(Elements.AllElements)
+                .SetClass(Classes.AllClasses)
+                .CreateCharacter();
+        }
+        catch (Exception e)
+        {
+            throw new InvalidModdableObjectException($"Failed to create character: {e.Message}", e);
+        }
+
+        var isValidImage = characterRequest.Image is not null && characterRequest.Image.IsFile && File.Exists(characterRequest.Image.LocalPath);
+
+
+        var jsonCharacter = new JsonCharacter()
+        {
+            InternalName = character.InternalName.Id,
+            DisplayName = character.DisplayName.IsNullOrEmpty() ? null : character.DisplayName,
+            Keys = character.Keys.Count == 0 ? null : character.Keys.ToArray(),
+            Class = Class.NoneClass().Equals(character.Class) ? null : character.Class.InternalName.Id,
+            Element = Element.NoneElement().Equals(character.Element) ? null : character.Element.InternalName.Id,
+            Region = character.Regions.Count == 0 ? null : character.Regions.Select(x => x.InternalName.Id).ToArray(),
+            Image = isValidImage
+                ? character.InternalName + Path.GetExtension(characterRequest.Image!.LocalPath)
+                : null,
+            IsMultiMod = character.IsMultiMod ? true : null,
+            ModFilesName = character.ModFilesName.IsNullOrEmpty() ? null : character.ModFilesName,
+            Rarity = character.Rarity,
+            ReleaseDate = character.ReleaseDate?.ToString("O").Split('.').ElementAtOrDefault(0),
+            InGameSkins = null
+        };
+
+        if (isValidImage)
+            character.ImageUri = character.ImageUri = characterRequest.Image;
+
+        var json = JsonConvert.SerializeObject(jsonCharacter, _jsonCharacterExportSettings);
+
+        return (json, character);
     }
 
     // TODO: Not happy with this, should consider reworking custom characters and overrides

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,6 +13,8 @@ using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Serilog;
 using static GIMI_ModManager.WinUI.Helpers.Extensions;
 
@@ -65,7 +68,10 @@ public partial class CreateCharacterViewModel : ObservableObject
         Form.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName is nameof(CreateCharacterForm.IsValid) or nameof(CreateCharacterForm.AnyFieldDirty))
+            {
                 SaveCharacterCommand.NotifyCanExecuteChanged();
+                ExportCharacterCommand.NotifyCanExecuteChanged();
+            }
         };
     }
 
@@ -94,26 +100,7 @@ public partial class CreateCharacterViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSaveCharacter))]
     private async Task SaveCharacterAsync()
     {
-        var internalName = new InternalName(Form.InternalName.Value);
-        var displayName = Form.DisplayName.Value.Trim();
-        var modFilesName = Form.ModFilesName.Value.Trim().ToLowerInvariant();
-        var keys = Form.Keys.Items.Select(k => k.Trim().ToLowerInvariant()).ToArray();
-        var releaseDate = Form.ReleaseDate.Value.Date;
-        var isMultiMod = Form.IsMultiMod.Value;
-
-        var createCharacterRequest = new CreateCharacterRequest()
-        {
-            InternalName = internalName,
-            DisplayName = displayName.IsNullOrEmpty() ? internalName : displayName,
-            ModFilesName = modFilesName,
-            Image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri ? null : Form.Image.Value,
-            Rarity = Form.Rarity.Value,
-            Element = Form.Element.Value,
-            Class = null,
-            Keys = keys,
-            ReleaseDate = releaseDate,
-            IsMultiMod = isMultiMod
-        };
+        var createCharacterRequest = NewCharacterRequest();
 
         ICharacter character;
         try
@@ -200,6 +187,123 @@ public partial class CreateCharacterViewModel : ObservableObject
 
     #endregion
 
+    private bool CanExportCharacter() => Form is { IsValid: true, AnyFieldDirty: true };
+
+    [RelayCommand(CanExecute = nameof(CanExportCharacter))]
+    private async Task ExportCharacterAsync()
+    {
+        if (!CanExportCharacter())
+            return;
+        var createCharacterRequest = NewCharacterRequest();
+
+        var json = "";
+        ICharacter character;
+        try
+        {
+            var exportResult = await Task.Run(() => _gameService.CreateJsonCharacterExportAsync(createCharacterRequest));
+            json = exportResult.json;
+            character = exportResult.character;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Failed to create json export");
+            _notificationManager.ShowNotification("Failed to create json export", e.Message, null);
+            return;
+        }
+
+
+        var content = new ScrollViewer()
+        {
+            Content = new TextBlock()
+            {
+                Text = json,
+                IsTextSelectionEnabled = true,
+                Margin = new Thickness(4)
+            }
+        };
+
+
+        var dialogHeight = App.MainWindow.Height * 0.5;
+        var dialogWidth = App.MainWindow.Width * 0.7;
+        var contentWrapper = new StackPanel()
+        {
+            MinHeight = dialogHeight,
+            MinWidth = dialogWidth,
+            Children =
+            {
+                content
+            }
+        };
+
+
+        var characterModelDialog = new ContentDialog
+        {
+            Title = "Character Model Json Export",
+            Content = contentWrapper,
+            PrimaryButtonText = "Copy to clipboard and Close",
+            CloseButtonText = "Close",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = App.MainWindow.Content.XamlRoot,
+            Resources =
+            {
+                ["ContentDialogMaxWidth"] = 8000,
+                ["ContentDialogMaxHeight"] = 4000
+            }
+        };
+
+        var result = await characterModelDialog.ShowAsync();
+
+        if (result != ContentDialogResult.Primary)
+            return;
+
+        DataPackage package = new();
+        package.SetText(json);
+        Clipboard.SetContent(package);
+
+        _notificationManager.ShowNotification("Character json copied to clipboard", "", null);
+
+        if (createCharacterRequest.Image is null || !File.Exists(createCharacterRequest.Image.LocalPath))
+            return;
+
+        await Task.Run(async () =>
+        {
+            var imageFolder = App.GetUniqueTmpFolder();
+
+            var imageFilePath = createCharacterRequest.Image.LocalPath;
+
+            var tmpImageFilePath = Path.Combine(imageFolder.FullName, character.InternalName + Path.GetExtension(imageFilePath));
+
+            File.Copy(imageFilePath, tmpImageFilePath, true);
+
+            await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(imageFolder.FullName));
+        }).ConfigureAwait(false);
+    }
+
+    private CreateCharacterRequest NewCharacterRequest()
+    {
+        var internalName = new InternalName(Form.InternalName.Value);
+        var displayName = Form.DisplayName.Value.Trim();
+        var modFilesName = Form.ModFilesName.Value.Trim().ToLowerInvariant();
+        var keys = Form.Keys.Items.Select(k => k.Trim().ToLowerInvariant()).ToArray();
+        var releaseDate = Form.ReleaseDate.Value.Date;
+        var isMultiMod = Form.IsMultiMod.Value;
+
+        var createCharacterRequest = new CreateCharacterRequest()
+        {
+            InternalName = internalName,
+            DisplayName = displayName.IsNullOrEmpty() ? Form.InternalName.Value.Trim() : displayName,
+            ModFilesName = modFilesName,
+            Image = Form.Image.Value == ImageHandlerService.StaticPlaceholderImageUri ? null : Form.Image.Value,
+            Rarity = Form.Rarity.Value,
+            Element = Form.Element.Value,
+            Class = null,
+            Keys = keys,
+            ReleaseDate = releaseDate,
+            IsMultiMod = isMultiMod
+        };
+
+        return createCharacterRequest;
+    }
 
     public class ElementItemVM(string internalName, string displayText)
     {
