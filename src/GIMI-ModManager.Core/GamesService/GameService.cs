@@ -1058,7 +1058,7 @@ public class GameService : IGameService
             Rarity = -1,
             Regions = new List<IRegion>(),
             Keys = new[] { "others", "unknown" },
-            ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters", "Character_Others.png")),
+            ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters", "Others.png")),
             Element = Elements.AllElements.First(),
             Class = Classes.AllClasses.First(),
             IsMultiMod = true
@@ -1081,7 +1081,7 @@ public class GameService : IGameService
             Regions = new List<IRegion>(),
             Keys = new[] { "gliders", "glider", "wings" },
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
-                "Character_Gliders_Thumb.webp")),
+                "Gliders.webp")),
             Element = Elements.AllElements.First(),
             Class = Classes.AllClasses.First(),
             IsMultiMod = true
@@ -1104,7 +1104,7 @@ public class GameService : IGameService
             Regions = new List<IRegion>(),
             Keys = new[] { "weapon", "claymore", "sword", "polearm", "catalyst", "bow" },
             ImageUri = new Uri(Path.Combine(_assetsDirectory.FullName, "Images", "Characters",
-                "Character_Weapons_Thumb.webp")),
+                "Weapons.webp")),
             Element = Elements.AllElements.First(),
             Class = Classes.AllClasses.First(),
             IsMultiMod = true
