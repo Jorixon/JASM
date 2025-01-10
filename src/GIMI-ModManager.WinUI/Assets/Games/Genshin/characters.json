@@ -66,7 +66,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "AmberCN",
-        "Image": "Skin_AmberCN.png",
+        "Image": "AmberCN.png",
         "InternalName": "AmberCN",
         "DisplayName": "AmberCN"
       }
@@ -125,7 +125,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "BarbaraSummertime",
-        "Image": "Skin_BarbaraSummertime.png",
+        "Image": "BarbaraSummertime.png",
         "InternalName": "Barbara Summertime Sparkle",
         "DisplayName": "Summertime Sparkle"
       }
@@ -285,7 +285,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "DilucFlamme",
-        "Image": "Skin_DilucFlamme.png",
+        "Image": "DilucFlamme.png",
         "InternalName": "Diluc Red Dead of Night",
         "DisplayName": "Red Dead of Night"
       }
@@ -377,7 +377,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "FischlHighness",
-        "Image": "Skin_FischlHighness.png",
+        "Image": "FischlHighness.png",
         "InternalName": "Fischl Ein Immernachtstraum",
         "DisplayName": "Ein Immernachtstraum"
       }
@@ -436,7 +436,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "GanyuTwilight",
-        "Image": "Skin_GanyuTwilight.png",
+        "Image": "GanyuTwilight.png",
         "InternalName": "GanyuTwilight",
         "DisplayName": "Twilight Blossom"
       }
@@ -495,13 +495,13 @@
     "InGameSkins": [
       {
         "ModFilesName": "JeanCN",
-        "Image": "Skin_JeanCN.png",
+        "Image": "JeanCN.png",
         "InternalName": "JeanCN",
         "DisplayName": "JeanCN"
       },
       {
         "ModFilesName": "JeanSea",
-        "Image": "Skin_JeanSea.png",
+        "Image": "JeanSea.png",
         "InternalName": "Jean Sea Breeze Dandelion",
         "DisplayName": "Sea Breeze Dandelion"
       }
@@ -544,7 +544,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KaeyaSailwind",
-        "Image": "Skin_KaeyaSailwind.png",
+        "Image": "KaeyaSailwind.png",
         "InternalName": "Kaeya Sailwind Shadow",
         "DisplayName": "Sailwind Shadow"
       }
@@ -569,7 +569,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "AyakaSpringbloom",
-        "Image": "Skin_AyakaSpringbloom.png",
+        "Image": "AyakaSpringbloom.png",
         "InternalName": "Ayaka Springbloom Missive",
         "DisplayName": "Springbloom Missive"
       }
@@ -628,7 +628,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KeqingOpulent",
-        "Image": "Skin_KeqingOpulent.png",
+        "Image": "KeqingOpulent.png",
         "InternalName": "Keqing Opulent Splendor",
         "DisplayName": "Opulent Splendor"
       }
@@ -652,7 +652,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KiraraPhantom",
-        "Image": "Skin_KiraraPhantom.webp",
+        "Image": "KiraraPhantom.webp",
         "InternalName": "Kirara Phantom in Boots",
         "DisplayName": "Phantom in Boots"
       }
@@ -676,7 +676,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "KleeBlossoming",
-        "Image": "Skin_KleeBlossoming.png",
+        "Image": "KleeBlossoming.png",
         "InternalName": "Klee Blossoming Starlight",
         "DisplayName": "Blossoming Starlight"
       }
@@ -753,7 +753,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "LisaSobriquet",
-        "Image": "Skin_LisaSobriquet.png",
+        "Image": "LisaSobriquet.png",
         "InternalName": "Lisa A Sobriquet Under Shade",
         "DisplayName": "A Sobriquet Under Shade"
       }
@@ -828,7 +828,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "MonaCN",
-        "Image": "Skin_MonaCN.png",
+        "Image": "MonaCN.png",
         "InternalName": "MonaCN",
         "DisplayName": "MonaCN"
       }
@@ -904,7 +904,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "NilouBreeze",
-        "Image": "Skin_NilouBreeze.webp",
+        "Image": "NilouBreeze.webp",
         "InternalName": "Nilou Breeze of Sabaa",
         "DisplayName": "Breeze of Sabaa"
       }
@@ -928,7 +928,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "NingguangOrchid",
-        "Image": "Skin_NingguangOrchid.png",
+        "Image": "NingguangOrchid.png",
         "InternalName": "Ningguang Orchid's Evening Gown",
         "DisplayName": "Orchid's Evening Gown"
       }
@@ -1038,7 +1038,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "RosariaCN",
-        "Image": "Skin_RosariaCN.png",
+        "Image": "RosariaCN.png",
         "InternalName": "RosariaCN",
         "DisplayName": "RosariaCN"
       }
@@ -1097,7 +1097,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "ShenheFrostflower",
-        "Image": "Skin_ShenheFrostflower.png",
+        "Image": "ShenheFrostflower.png",
         "InternalName": "ShenheFrostflower",
         "DisplayName": "Frostflower Dew"
       }
@@ -1314,7 +1314,7 @@
     "InGameSkins": [
       {
         "ModFilesName": "XingqiuBamboo",
-        "Image": "Skin_XingqiuBambooRain.png",
+        "Image": "XingqiuBambooRain.png",
         "InternalName": "Xingqiu Bamboo Rain",
         "DisplayName": "Bamboo Rain"
       }
