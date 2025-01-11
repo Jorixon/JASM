@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.19.0](https://github.com/Jorixon/JASM/compare/v2.18.8...v2.19.0) (2025-01-11)
+
+
+### Features
+
+* Add support for creating custom characters within JASM on the Character management page ([#315](https://github.com/Jorixon/JASM/issues/315)) ([24a9429](https://github.com/Jorixon/JASM/commit/24a9429bb478fccb5233264626f7588745f6a21b))
+
+
+### Miscellaneous
+
+* Minor performance optimizations ([24a9429](https://github.com/Jorixon/JASM/commit/24a9429bb478fccb5233264626f7588745f6a21b))
+* When selecting the .ini file for a mod in the mod pane, the mod's folder path will be copied to clipboard ([24a9429](https://github.com/Jorixon/JASM/commit/24a9429bb478fccb5233264626f7588745f6a21b))
+
+
+### Code Refactoring
+
+* Changed naming scheme of Genshin image files ([24a9429](https://github.com/Jorixon/JASM/commit/24a9429bb478fccb5233264626f7588745f6a21b))
+
 ## [2.18.8](https://github.com/Jorixon/JASM/compare/v2.18.7...v2.18.8) (2025-01-09)
 
 
