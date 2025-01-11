@@ -21,7 +21,7 @@ public partial class CreateCharacterForm : Form
 
     public ListInputField<string> Keys { get; } = new();
 
-    public InputField<string> Element { get; } = new("None");
+    public InputField<string> Element { get; } = new("none");
 
     public InputField<bool> IsMultiMod { get; } = new(false);
 
@@ -33,6 +33,10 @@ public partial class CreateCharacterForm : Form
         ModFilesName.ValidationRules.AddModFilesNameValidators(allModdableObjects);
 
         DisplayName.ValidationRules.AddDisplayNameValidators(allModdableObjects);
+
+        DisplayName.ValidationRules.Add(context => context.Value != string.Empty && context.Value.Trim().IsNullOrEmpty()
+            ? new ValidationResult { Message = "Display name cannot be empty" }
+            : null);
 
         Image.ValidationRules.AddImageValidators();
 

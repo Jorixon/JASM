@@ -100,6 +100,9 @@ public partial class CreateCharacterViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSaveCharacter))]
     private async Task SaveCharacterAsync()
     {
+        Form.ValidateAllFields();
+        if (!Form.IsValid) return;
+
         var createCharacterRequest = NewCharacterRequest();
 
         ICharacter character;
@@ -192,8 +195,10 @@ public partial class CreateCharacterViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanExportCharacter))]
     private async Task ExportCharacterAsync()
     {
-        if (!CanExportCharacter())
-            return;
+        Form.ValidateAllFields();
+        if (!Form.IsValid) return;
+
+
         var createCharacterRequest = NewCharacterRequest();
 
         var json = "";

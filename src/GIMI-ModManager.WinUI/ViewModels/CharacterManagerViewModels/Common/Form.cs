@@ -46,4 +46,15 @@ public abstract partial class Form : ObservableObject
         if (oldValidValue != IsValid)
             OnPropertyChanged(nameof(IsValid));
     }
+
+    public virtual void ValidateAllFields()
+    {
+        if (!IsInitialized) return;
+        foreach (var field in Fields)
+        {
+            field.Validate(this);
+        }
+
+        OnPropertyChanged(nameof(IsValid));
+    }
 }

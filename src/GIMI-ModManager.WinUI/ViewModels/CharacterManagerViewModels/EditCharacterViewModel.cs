@@ -355,8 +355,9 @@ public partial class EditCharacterViewModel : ObservableRecipient, INavigationAw
     private async Task SaveChangesAsync()
     {
         _logger.Debug($"Saving changes to character {_character.InternalName}");
+        Form.ValidateAllFields();
 
-        if (!AnyChanges())
+        if (!AnyChanges() || !Form.IsValid)
             return;
 
         try

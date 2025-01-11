@@ -1,4 +1,5 @@
 ﻿using GIMI_ModManager.Core.GamesService.Interfaces;
+using GIMI_ModManager.Core.Helpers;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.ViewModels.CharacterManagerViewModels.Validation;
 
@@ -20,6 +21,8 @@ public sealed partial class EditCharacterForm : Form
         InternalName.ReInitializeInput(character.InternalName);
 
         DisplayName.ValidationRules.AddDisplayNameValidators(allModdableObjects);
+        DisplayName.ValidationRules.Add(context =>
+            context.Value.Trim().IsNullOrEmpty() ? new ValidationResult { Message = "Display name cannot be empty" } : null);
         DisplayName.ReInitializeInput(character.DisplayName);
 
         Image.ValidationRules.AddImageValidators();
