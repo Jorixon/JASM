@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.WinUI;
+using GIMI_ModManager.WinUI.Helpers.Xaml;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.ViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
@@ -26,16 +28,23 @@ public sealed partial class CharactersPage : Page
         ViewModel.OnScrollToCharacter += ViewModel_OnScrollToCharacter;
     }
 
-    private void ViewModel_OnScrollToCharacter(object? sender, ScrollToCharacterArgs e)
+    private async void ViewModel_OnScrollToCharacter(object? sender, ScrollToCharacterArgs e)
     {
-        if (e.Character is null) return;
+        var character = e?.Character?.Character;
+        if (character == null!) return;
+
+        await CharactersGridView.AwaitUiElementLoaded(TimeSpan.FromMilliseconds(500));
+
 
         var item = CharactersGridView.Items.FirstOrDefault(x =>
-            ((CharacterGridItemModel)x).Character.InternalNameEquals(e.Character.Character));
-        if (item is null)
-            return;
+            ((CharacterGridItemModel)x).Character.InternalNameEquals(character));
 
-        CharactersGridView.SmoothScrollIntoViewWithItemAsync(item, ScrollItemPlacement.Center, disableAnimation: true,
+        if (item is null)
+        {
+            Debugger.Break();
+        }
+
+        await CharactersGridView.SmoothScrollIntoViewWithItemAsync(item, ScrollItemPlacement.Center, disableAnimation: true,
             scrollIfVisible: false);
     }
 
@@ -92,7 +101,6 @@ public sealed partial class CharactersPage : Page
 
     private async void CharacterThumbnail_OnDrop(object sender, DragEventArgs e)
     {
-
         if (((Grid)sender).DataContext is CharacterGridItemModel characterGridItem)
         {
             var urlFormats = new[] { "Text", "UniformResourceLocatorW", "UniformResourceLocator" };
@@ -102,7 +110,6 @@ public sealed partial class CharactersPage : Page
                 {
                     var uri = await e.DataView.GetWebLinkAsync();
                     await ViewModel.ModUrlDroppedOnCharacterAsync(characterGridItem, uri);
-
                 }
                 catch (Exception)
                 {
@@ -111,7 +118,6 @@ public sealed partial class CharactersPage : Page
             }
             else
                 await ViewModel.ModDroppedOnCharacterAsync(characterGridItem, await e.DataView.GetStorageItemsAsync());
-
         }
 
         var gridItem = ((Grid)sender);

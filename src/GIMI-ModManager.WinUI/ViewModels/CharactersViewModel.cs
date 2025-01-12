@@ -493,21 +493,26 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         if (lastPageType?.PageType == typeof(CharacterDetailsPage) ||
             lastPageType?.PageType == typeof(CharacterDetailsViewModel))
         {
-            IModdableObject? moddableObject = null;
+            InternalName? internalName = null;
 
             if (lastPageType.Parameter is CharacterGridItemModel characterGridModel)
             {
-                moddableObject = characterGridModel.Character;
+                internalName = characterGridModel.Character.InternalName;
             }
-            else if (lastPageType.Parameter is IModdableObject modObject)
+            else if (lastPageType.Parameter is INameable modObject)
             {
-                moddableObject = modObject;
+                internalName = modObject.InternalName;
+            }
+            else if (lastPageType.Parameter is string modObjectString)
+
+            {
+                internalName = new InternalName(modObjectString);
             }
 
-            if (moddableObject is null)
+            if (internalName is null)
                 return;
 
-            var characterGridItemModel = FindCharacterByInternalName(moddableObject.InternalName);
+            var characterGridItemModel = FindCharacterByInternalName(internalName);
             if (characterGridItemModel is not null)
             {
                 OnScrollToCharacter?.Invoke(this, new ScrollToCharacterArgs(characterGridItemModel));
