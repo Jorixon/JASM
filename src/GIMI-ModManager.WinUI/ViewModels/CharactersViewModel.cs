@@ -387,37 +387,19 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
         _backendCharacters = backendCharacters;
 
-        var characterTasks = new Dictionary<CharacterGridItemModel, Task<List<CharacterModItem>>>();
         foreach (var characterGridItemModel in _backendCharacters)
         {
             var modList = _skinManagerService.GetCharacterModList(characterGridItemModel.Character);
 
-            var task = Task.Run(async () =>
+            var characterModItems = new List<CharacterModItem>();
+            foreach (var skinModEntry in modList.Mods)
             {
-                var characterModItems = new List<CharacterModItem>();
+                var modSettings = await skinModEntry.Mod.Settings.TryReadSettingsAsync(true);
 
-                var modEntries = modList.Mods.ToArray();
+                characterModItems.Add(new CharacterModItem(skinModEntry.Mod.GetDisplayName(), skinModEntry.IsEnabled, modSettings?.DateAdded ?? default));
+            }
 
-                foreach (var skinModEntry in modEntries)
-                {
-                    var modSettings = await skinModEntry.Mod.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
-
-                    characterModItems.Add(new CharacterModItem(skinModEntry.Mod.GetDisplayName(), skinModEntry.IsEnabled, modSettings?.DateAdded ?? default));
-                }
-
-                return characterModItems;
-            });
-            characterTasks.Add(characterGridItemModel, task);
-        }
-
-        while (characterTasks.Any())
-        {
-            var completedTask = await Task.WhenAny(characterTasks.Values);
-            var (characterGridItemModel, _) = characterTasks.First(x => x.Value == completedTask);
-
-            characterTasks.Remove(characterGridItemModel);
-
-            characterGridItemModel.SetMods(await completedTask);
+            characterGridItemModel.SetMods(characterModItems);
         }
 
 
@@ -523,7 +505,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var charactersWithMultipleMods = _skinManagerService.CharacterModLists
             .Where(x => x.Mods.Count(mod => mod.IsEnabled) > 1);
 
-        var charactersWithMultipleActiveSkins = new List<string>();
+        var charactersWithMultipleActiveSkins = new HashSet<InternalName>();
         await Task.Run(async () =>
         {
             foreach (var modList in charactersWithMultipleMods)
@@ -580,13 +562,19 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         });
 
 
-        foreach (var characterGridItemModel in _backendCharacters.Where(x =>
-                     charactersWithMultipleActiveSkins.Contains(x.Character.InternalName)))
+        foreach (var characterGridItemModel in _backendCharacters)
         {
-            if (_gameService.IsMultiMod(characterGridItemModel.Character))
-                continue;
+            if (charactersWithMultipleActiveSkins.Contains(characterGridItemModel.Character.InternalName))
+            {
+                if (_gameService.IsMultiMod(characterGridItemModel.Character))
+                    continue;
 
-            characterGridItemModel.Warning = true;
+                characterGridItemModel.Warning = true;
+            }
+            else
+            {
+                characterGridItemModel.Warning = false;
+            }
         }
     }
 
@@ -758,7 +746,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
     public void OnRightClickContext(CharacterGridItemModel clickedCharacter)
     {
-        ClearNotificationsCommand.CanExecute(clickedCharacter);
+        ClearNotificationsCommand.NotifyCanExecuteChanged();
+        DisableCharacterModsCommand.NotifyCanExecuteChanged();
         if (clickedCharacter.IsPinned)
         {
             PinText = DefaultUnpinText;
@@ -808,16 +797,54 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    private bool canClearNotifications(CharacterGridItemModel? character)
+    private bool CanClearNotifications(CharacterGridItemModel? character)
     {
         return character?.Notification ?? false;
     }
 
-    [RelayCommand(CanExecute = nameof(canClearNotifications))]
+    [RelayCommand(CanExecute = nameof(CanClearNotifications))]
     private async Task ClearNotificationsAsync(CharacterGridItemModel character)
     {
         await _modNotificationManager.ClearModNotificationsAsync(character.Character.InternalName);
         await RefreshNotificationsAsync().ConfigureAwait(false);
+    }
+
+    private bool CanDisableCharacterMods(CharacterGridItemModel? character) =>
+        character is not null && character.Mods.Any(m => m.IsEnabled);
+
+    [RelayCommand(CanExecute = nameof(CanDisableCharacterMods))]
+    private async Task DisableCharacterMods(CharacterGridItemModel character)
+    {
+        var updatedMods = new List<CharacterModItem>();
+        try
+        {
+            await Task.Run(async () =>
+            {
+                var modList = _skinManagerService.GetCharacterModList(character.Character);
+                var mods = modList.Mods.ToArray();
+                foreach (var modEntry in mods)
+                {
+                    if (modList.IsModEnabled(modEntry.Mod))
+                    {
+                        modList.DisableMod(modEntry.Id);
+                    }
+
+                    var modSettings = await modEntry.Mod.Settings.TryReadSettingsAsync(true).ConfigureAwait(false);
+
+                    updatedMods.Add(new CharacterModItem(modEntry.Mod.GetDisplayName(), modEntry.IsEnabled, modSettings?.DateAdded ?? default));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error disabling mods for character {Character}", character.Character.InternalName);
+            NotificationManager.ShowNotification("Error disabling mods", e.Message, TimeSpan.FromSeconds(6));
+            return;
+        }
+
+        character.SetMods(updatedMods);
+        await RefreshMultipleModsWarningAsync();
+        NotificationManager.ShowNotification("Mods Disabled", $"Alls mods for {character.Character.DisplayName} have been disabled", null);
     }
 
     [RelayCommand]

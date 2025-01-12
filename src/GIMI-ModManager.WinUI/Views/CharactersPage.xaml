@@ -43,14 +43,21 @@
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
-                <MenuFlyoutItem
-                    Command="{x:Bind ViewModel.ClearNotificationsCommand}"
-                    CommandParameter="{Binding}"
-                    Text="Clear Notifications">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xE894;" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
+                <MenuFlyoutSubItem Text="Mods">
+                    <MenuFlyoutItem
+                        Command="{x:Bind ViewModel.ClearNotificationsCommand}"
+                        CommandParameter="{Binding}"
+                        Text="Clear Notifications">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE894;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem
+                        Command="{x:Bind ViewModel.DisableCharacterModsCommand}"
+                        CommandParameter="{Binding}"
+                        Text="Disable all mods" />
+                </MenuFlyoutSubItem>
             </MenuFlyout>
         </Grid.Resources>
 
