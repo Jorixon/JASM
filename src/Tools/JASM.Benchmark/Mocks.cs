@@ -1,8 +1,37 @@
 ﻿using GIMI_ModManager.Core.Contracts.Services;
+using GIMI_ModManager.Core.GamesService;
+using GIMI_ModManager.Core.Services;
 using Serilog;
 using Serilog.Events;
 
 namespace JASM.Benchmark;
+
+public static class Mocks
+{
+    public static ILogger Logger { get; } = new MockLogger();
+    public static ILanguageLocalizer Localizer { get; } = new MockLocalizer();
+
+    public static IGameService GetGameService()
+    {
+        var gameService = new GameService(Logger, Localizer);
+
+        gameService.InitializeAsync(new InitializationOptions
+        {
+            AssetsDirectory = Helpers.GetGamesFolder("Genshin").FullName,
+            LocalSettingsDirectory = Helpers.GetTmpFolder().FullName
+        }).GetAwaiter().GetResult();
+
+        return gameService;
+    }
+
+    public static ISkinManagerService GetSkinManagerService(IGameService? gameService)
+    {
+        gameService ??= GetGameService();
+        var crawlerService = new ModCrawlerService(Logger, gameService);
+
+        return new SkinManagerService(gameService, Logger, crawlerService);
+    }
+}
 
 public class MockLogger : ILogger
 {

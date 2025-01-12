@@ -4,7 +4,7 @@ using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models.Settings;
-using GIMI_ModManager.WinUI.ViewModels;
+using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 using GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -153,9 +153,7 @@ public class NavigationService : INavigationService
             return NavigateTo(typeof(CharacterGalleryViewModel).FullName!, internalName, clearNavigation: clearNavigation);
         }
 
-        var pageKey = settings is null || !settings.LegacyCharacterDetails
-            ? typeof(ViewModels.CharacterDetailsViewModels.CharacterDetailsViewModel).FullName
-            : typeof(CharacterDetailsViewModel).FullName;
+        var pageKey = typeof(CharacterDetailsViewModel).FullName;
 
         return NavigateTo(pageKey!, internalName, clearNavigation);
     }

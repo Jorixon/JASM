@@ -28,6 +28,7 @@ public sealed class ModArchiveRepository
         _logger = logger.ForContext<ModArchiveRepository>();
     }
 
+    public Uri ArchiveDirectory => new(_modArchiveDirectory.FullName);
 
     public async Task InitializeAsync(string appDataFolder, Action<SetupOptions>? setup = null)
     {

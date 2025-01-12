@@ -5,7 +5,6 @@ using GIMI_ModManager.Core.Entities.Mods.Contract;
 using GIMI_ModManager.Core.Entities.Mods.Exceptions;
 using GIMI_ModManager.Core.Entities.Mods.Helpers;
 using GIMI_ModManager.Core.Helpers;
-using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Services.Notifications;
 using OneOf;
 using OneOf.Types;
@@ -30,50 +29,6 @@ public class ModSettingsService
         _logger = logger.ForContext<ModSettingsService>();
     }
 
-
-    public async Task<OneOf<Success, ModNotFound, Error<Exception>>> LegacySaveSettingsAsync(ModModel modModel)
-    {
-        var mod = _skinManagerService.GetModById(modModel.Id);
-
-        if (mod is null)
-            return new ModNotFound(modModel.Id);
-
-        if (!mod.Settings.TryGetSettings(out var modSettings))
-            return new Error<Exception>(new ModSettingsNotFoundException(mod.FullPath));
-
-
-        var modUrl = Uri.TryCreate(modModel.ModUrl, UriKind.Absolute, out var uriResult) &&
-                     (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
-            ? uriResult
-            : null;
-
-        modSettings = modSettings.DeepCopyWithProperties(
-            customName: NewValue<string?>.Set(EmptyStringToNull(modModel.Name)),
-            author: NewValue<string?>.Set(EmptyStringToNull(modModel.Author)),
-            modUrl: NewValue<Uri?>.Set(modUrl),
-            imagePath: NewValue<Uri?>.Set(modModel.ImagePath == ModModel.PlaceholderImagePath
-                ? null
-                : modModel.ImagePath),
-            characterSkinOverride: NewValue<string?>.Set(EmptyStringToNull(modModel.CharacterSkinOverride))
-        );
-
-
-        try
-        {
-            await mod.Settings.SaveSettingsAsync(modSettings).ConfigureAwait(false);
-            return new Success();
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Failed to save settings for mod {modName}", mod.Name);
-
-            _notificationManager.ShowNotification($"Failed to save settings for mod {mod.Name}",
-                $"An Error Occurred. Reason: {e.Message}",
-                TimeSpan.FromSeconds(5));
-
-            return new Error<Exception>(e);
-        }
-    }
 
     public async Task<OneOf<Success, NotFound, ModNotFound, Error<Exception>>> SetCharacterSkinOverrideLegacy(Guid modId,
         string skinName)

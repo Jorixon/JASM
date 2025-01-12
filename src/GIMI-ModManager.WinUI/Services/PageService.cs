@@ -21,7 +21,6 @@ public class PageService : IPageService
         Configure<SettingsViewModel, SettingsPage>();
         Configure<NotificationsViewModel, NotificationsPage>();
         Configure<CharactersViewModel, CharactersPage>();
-        Configure<CharacterDetailsViewModel, CharacterDetailsPage>();
         Configure<ViewModels.CharacterDetailsViewModels.CharacterDetailsViewModel,
             Views.CharacterDetailsPages.CharacterDetailsPage>();
         Configure<DebugViewModel, DebugPage>();

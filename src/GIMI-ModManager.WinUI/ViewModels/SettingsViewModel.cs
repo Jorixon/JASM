@@ -99,6 +99,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private int _maxCacheLimit;
 
+    [ObservableProperty] private Uri _archiveCacheFolderPath;
+
     [ObservableProperty] private bool _persistWindowSize = false;
 
     [ObservableProperty] private bool _persistWindowPosition = false;
@@ -161,6 +163,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 CanIgnoreUpdate = true;
         }
 
+        ArchiveCacheFolderPath = _modArchiveRepository.ArchiveDirectory;
 
         _modManagerOptions = localSettingsService.ReadSetting<ModManagerOptions>(ModManagerOptions.Section);
         PathToGIMIFolderPicker = new PathPicker();
@@ -790,7 +793,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         var characterDetailsSettings = await _localSettingsService.ReadCharacterDetailsSettingsAsync(SettingScope.App);
 
-        LegacyCharacterDetails = characterDetailsSettings.LegacyCharacterDetails;
         PersistWindowSize = windowSettings.PersistWindowSize;
         PersistWindowPosition = windowSettings.PersistWindowPosition;
         await GenshinProcessManager.TryInitialize();
@@ -817,17 +819,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         MaxCacheLimit = maxValue;
         SetCacheString(maxValue);
-    }
-
-    [RelayCommand]
-    private async Task ToggleLegacyCharacterDetailsAsync()
-    {
-        var settings = await _localSettingsService.ReadCharacterDetailsSettingsAsync(SettingScope.App);
-
-        LegacyCharacterDetails = !LegacyCharacterDetails;
-        settings.LegacyCharacterDetails = LegacyCharacterDetails;
-
-        await _localSettingsService.SaveCharacterDetailsSettingsAsync(settings, SettingScope.App).ConfigureAwait(false);
     }
 
 
