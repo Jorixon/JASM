@@ -42,6 +42,15 @@
                         <FontIcon Glyph="&#xE777;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
+
+                <MenuFlyoutItem
+                    Command="{x:Bind ViewModel.OpenCharacterFolderCommand}"
+                    CommandParameter="{Binding}"
+                    Text="Open folder...">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Glyph="&#xE8DA;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutSubItem Text="Mods">
                     <MenuFlyoutItem

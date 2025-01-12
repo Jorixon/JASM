@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Windows.Storage;
+using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkitWrapper;
@@ -847,6 +848,37 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         character.SetMods(updatedMods);
         await RefreshMultipleModsWarningAsync();
         NotificationManager.ShowNotification("Mods Disabled", $"Alls mods for {character.Character.DisplayName} have been disabled", null);
+    }
+
+    [RelayCommand]
+    private async Task OpenCharacterFolderAsync(CharacterGridItemModel? character)
+    {
+        if (character is null)
+            return;
+        var modList = _skinManagerService.GetCharacterModList(character.Character);
+
+        var directoryToOpen = new DirectoryInfo(modList.AbsModsFolderPath);
+        if (!directoryToOpen.Exists)
+        {
+            modList.InstantiateCharacterFolder();
+            directoryToOpen.Refresh();
+
+            if (!directoryToOpen.Exists)
+            {
+                var parentDir = directoryToOpen.Parent;
+
+                if (parentDir is null)
+                {
+                    _logger.Error("Could not find parent directory of {Directory}", directoryToOpen.FullName);
+                    return;
+                }
+
+                directoryToOpen = parentDir;
+            }
+        }
+
+        await Launcher.LaunchFolderAsync(
+            await StorageFolder.GetFolderFromPathAsync(directoryToOpen.FullName));
     }
 
     [RelayCommand]
