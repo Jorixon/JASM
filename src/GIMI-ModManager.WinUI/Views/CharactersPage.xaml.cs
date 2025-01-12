@@ -148,6 +148,6 @@ public sealed partial class CharactersPage : Page
 
     private void SortingComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel.SortByCommand.Execute(e.AddedItems.OfType<SortingMethod>());
+        ViewModel.SortByCommand.Execute(e.AddedItems.OfType<CharactersViewModel.GridItemSortingMethod>());
     }
 }

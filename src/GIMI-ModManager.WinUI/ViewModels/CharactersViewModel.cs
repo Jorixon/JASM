@@ -13,6 +13,7 @@ using GIMI_ModManager.Core.Services;
 using GIMI_ModManager.Core.Services.GameBanana;
 using GIMI_ModManager.WinUI.Contracts.Services;
 using GIMI_ModManager.WinUI.Contracts.ViewModels;
+using GIMI_ModManager.WinUI.Helpers;
 using GIMI_ModManager.WinUI.Models;
 using GIMI_ModManager.WinUI.Models.Settings;
 using GIMI_ModManager.WinUI.Models.ViewModels;
@@ -67,10 +68,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly Dictionary<FilterType, GridFilter> _filters = new();
 
 
-    public ObservableCollection<SortingMethod> SortingMethods { get; } =
-        new() { };
+    public ObservableCollection<GridItemSortingMethod> SortingMethods { get; } = new();
 
-    [ObservableProperty] private SortingMethod _selectedSortingMethod;
+    [ObservableProperty] private GridItemSortingMethod _selectedSortingMethod;
     [ObservableProperty] private bool _sortByDescending;
 
     [ObservableProperty] private bool _canCheckForUpdates = false;
@@ -83,9 +83,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty] private string _modNotificationsToggleText = string.Empty;
     [ObservableProperty] private string _searchBoxPlaceHolder = string.Empty;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    [NotifyCanExecuteChangedFor(nameof(ApplyPresetCommand))]
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))] [NotifyCanExecuteChangedFor(nameof(ApplyPresetCommand))]
     private bool _isBusy;
 
     public bool IsNotBusy => !IsBusy;
@@ -434,8 +432,8 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 .Count();
 
             if (distinctReleaseDates == 1 &&
-                SortingMethods.FirstOrDefault(x => x.SortingMethodType == Sorter.ReleaseDateSortName) is
-                { } releaseDateSortingMethod)
+                SortingMethods.FirstOrDefault(x => x.SortingMethodType == GridItemSorter.ReleaseDateSortName) is
+                    { } releaseDateSortingMethod)
             {
                 SortingMethods.Remove(releaseDateSortingMethod);
             }
@@ -943,7 +941,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
 
 
     [RelayCommand]
-    private async Task SortBy(IEnumerable<SortingMethod> methodTypes)
+    private async Task SortBy(IEnumerable<GridItemSortingMethod> methodTypes)
     {
         if (_isNavigating) return;
         var sortingMethodType = methodTypes.First();
@@ -996,25 +994,25 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         var othersCharacter = _backendCharacters.FirstOrDefault(ch =>
             ch.Character.InternalName.Id.Contains("Others", StringComparison.OrdinalIgnoreCase));
 
-        var alphabetical = new SortingMethod(Sorter.Alphabetical(), othersCharacter, lastCharacters);
+        var alphabetical = new GridItemSortingMethod(GridItemSorter.Alphabetical, othersCharacter, lastCharacters);
         SortingMethods.Add(alphabetical);
 
-        var byModCount = new SortingMethod(Sorter.ModCount(), othersCharacter, lastCharacters);
+        var byModCount = new GridItemSortingMethod(GridItemSorter.ModCount, othersCharacter, lastCharacters);
         SortingMethods.Add(byModCount);
 
 
-        var byModRecentlyAdded = new SortingMethod(Sorter.ModRecentlyAdded(), othersCharacter, lastCharacters);
+        var byModRecentlyAdded = new GridItemSortingMethod(GridItemSorter.ModRecentlyAdded, othersCharacter, lastCharacters);
         SortingMethods.Add(byModRecentlyAdded);
 
         if (_category.ModCategory == ModCategory.Character)
         {
-            SortingMethods.Add(new SortingMethod(Sorter.ReleaseDate(), othersCharacter, lastCharacters));
-            SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
+            SortingMethods.Add(new GridItemSortingMethod(GridItemSorter.ReleaseDate, othersCharacter, lastCharacters));
+            SortingMethods.Add(new GridItemSortingMethod(GridItemSorter.Rarity, othersCharacter, lastCharacters));
         }
 
         if (_category.ModCategory == ModCategory.Weapons)
         {
-            SortingMethods.Add(new SortingMethod(Sorter.Rarity(), othersCharacter, lastCharacters));
+            SortingMethods.Add(new GridItemSortingMethod(GridItemSorter.Rarity, othersCharacter, lastCharacters));
         }
     }
 
@@ -1046,6 +1044,103 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                 IsBusy = args.IsBusy;
         });
     }
+
+    public sealed class GridItemSortingMethod(
+        Sorter<CharacterGridItemModel> sortingMethodType,
+        CharacterGridItemModel? firstItem = null,
+        ICollection<CharacterGridItemModel>? lastItems = null)
+        : SortingMethod<CharacterGridItemModel>(sortingMethodType, firstItem, lastItems);
+
+    public sealed class GridItemSorter : Sorter<CharacterGridItemModel>
+    {
+        private GridItemSorter(string sortingMethodType, SortFunc firstSortFunc, AdditionalSortFunc? secondSortFunc = null,
+            AdditionalSortFunc? thirdSortFunc = null) : base(sortingMethodType, firstSortFunc, secondSortFunc, thirdSortFunc)
+        {
+        }
+
+        public const string AlphabeticalSortName = "Alphabetical";
+
+        public static GridItemSorter Alphabetical { get; } =
+            new(
+                AlphabeticalSortName,
+                (characters, isDescending) =>
+                    isDescending
+                        ? characters.OrderByDescending(x => x.Character.DisplayName)
+                        : characters.OrderBy(x => x.Character.DisplayName
+                        ));
+
+
+        public const string ReleaseDateSortName = "Release Date";
+
+        public static GridItemSorter ReleaseDate { get; } =
+            new(
+                ReleaseDateSortName,
+                (characters, isDescending) =>
+                    !isDescending
+                        ? characters.OrderByDescending(x => ((ICharacter)x.Character).ReleaseDate)
+                        : characters.OrderBy(x => ((ICharacter)x.Character).ReleaseDate),
+                (characters, _) =>
+                    characters.ThenBy(x => x.Character.DisplayName
+                    ));
+
+
+        public const string RaritySortName = "Rarity";
+
+        public static GridItemSorter Rarity { get; } =
+            new(
+                RaritySortName,
+                (characters, isDescending) =>
+                    !isDescending
+                        ? characters.OrderByDescending(x => ((IRarity)x.Character).Rarity)
+                        : characters.OrderBy(x => ((IRarity)x.Character).Rarity),
+                (characters, _) =>
+                    characters.ThenBy(x => x.Character.DisplayName
+                    ));
+
+
+        public const string ModCountSortName = "Mod Count";
+
+        public static GridItemSorter ModCount { get; } =
+            new(
+                ModCountSortName,
+                (characters, isDescending) =>
+                    !isDescending
+                        ? characters.OrderByDescending(x => x.ModCount)
+                        : characters.OrderBy(x => x.ModCount),
+                (characters, _) =>
+                    characters.ThenBy(x => x.Character.DisplayName
+                    ));
+
+
+        public const string ModRecentlyAddedName = "Recently Added Mods";
+
+        public static GridItemSorter ModRecentlyAdded { get; } =
+            new(
+                ModRecentlyAddedName,
+                (characters, isDescending) =>
+                    !isDescending
+                        ? characters.OrderByDescending(x =>
+                        {
+                            var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                                .ToArray();
+                            if (validDates.Any())
+                                return validDates.Max();
+                            else
+                                return DateTime.MinValue;
+                        })
+                        : characters.OrderBy(x =>
+                        {
+                            var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
+                                .ToArray();
+                            if (validDates.Any())
+                                return validDates.Min();
+                            else
+                                return DateTime.MaxValue;
+                        }),
+                (characters, _) =>
+                    characters.ThenBy(x => x.Character.DisplayName
+                    ));
+    }
 }
 
 public sealed class GridFilter
@@ -1075,209 +1170,6 @@ public enum FilterType
     HasMods,
     HasModNotifications,
     HasEnabledMods
-}
-
-public sealed class SortingMethod
-{
-    public string SortingMethodType => _sorter.SortingMethodType;
-
-    private readonly Sorter _sorter;
-
-    private readonly CharacterGridItemModel[] _lastCharacters;
-    private readonly CharacterGridItemModel? _firstCharacter;
-
-    public SortingMethod(Sorter sortingMethodType, CharacterGridItemModel? firstCharacter = null,
-        ICollection<CharacterGridItemModel>? lastCharacters = null)
-    {
-        _sorter = sortingMethodType;
-        _lastCharacters = lastCharacters?.ToArray() ?? Array.Empty<CharacterGridItemModel>();
-        _firstCharacter = firstCharacter;
-    }
-
-    public IEnumerable<CharacterGridItemModel> Sort(IEnumerable<CharacterGridItemModel> characters, bool isDescending)
-    {
-        IEnumerable<CharacterGridItemModel> sortedCharacters = null!;
-
-        sortedCharacters = _sorter.Sort(characters, isDescending).Cast<CharacterGridItemModel>();
-
-        var returnCharactersList = sortedCharacters.ToList();
-
-        var modifiableCharacters = new List<CharacterGridItemModel>(returnCharactersList);
-
-        var index = 0;
-        foreach (var pinnedCharacter in modifiableCharacters.Where(x => x.IsPinned))
-        {
-            returnCharactersList.Remove(pinnedCharacter);
-            returnCharactersList.Insert(index, pinnedCharacter);
-            index++;
-        }
-
-        foreach (var characterGridItemModel in modifiableCharacters.Intersect(_lastCharacters))
-        {
-            if (characterGridItemModel.IsPinned) continue;
-            returnCharactersList.Remove(characterGridItemModel);
-            returnCharactersList.Add(characterGridItemModel);
-        }
-
-        if (_firstCharacter is not null)
-        {
-            returnCharactersList.Remove(_firstCharacter);
-            returnCharactersList.Insert(0, _firstCharacter);
-        }
-
-        return returnCharactersList;
-    }
-
-    public override string ToString()
-    {
-        return SortingMethodType;
-    }
-}
-
-// I originally tried to do this with type support, but it turned into quite a 'generic' mess
-// So I decided to go with a more 'hardcoded' approach and casting values when doing the comparison
-public sealed class Sorter
-{
-    public string SortingMethodType { get; }
-    private readonly SortFunc _firstSortFunc;
-
-    private readonly AdditionalSortFunc? _secondSortFunc;
-
-    private readonly AdditionalSortFunc? _thirdSortFunc;
-
-
-    private delegate IOrderedEnumerable<CharacterGridItemModel> SortFunc(IEnumerable<CharacterGridItemModel> characters,
-        bool isDescending);
-
-    private delegate IOrderedEnumerable<CharacterGridItemModel> AdditionalSortFunc(
-        IOrderedEnumerable<CharacterGridItemModel> characters,
-        bool isDescending);
-
-    private Sorter(string sortingMethodType, SortFunc firstSortFunc, AdditionalSortFunc? secondSortFunc = null,
-        AdditionalSortFunc? thirdSortFunc = null)
-    {
-        SortingMethodType = sortingMethodType;
-        _firstSortFunc = firstSortFunc;
-        _secondSortFunc = secondSortFunc;
-        _thirdSortFunc = thirdSortFunc;
-    }
-
-    public IEnumerable<CharacterGridItemModel> Sort(IEnumerable<CharacterGridItemModel> characters, bool isDescending)
-    {
-        var sorted = _firstSortFunc(characters, isDescending);
-
-        if (_secondSortFunc is not null)
-            sorted = _secondSortFunc(sorted, isDescending);
-
-        if (_thirdSortFunc is not null)
-            sorted = _thirdSortFunc(sorted, isDescending);
-
-        return sorted;
-    }
-
-
-    public const string AlphabeticalSortName = "Alphabetical";
-
-    // TODO: These can be a static property
-    public static Sorter Alphabetical()
-    {
-        return new Sorter
-        (
-            AlphabeticalSortName,
-            (characters, isDescending) =>
-                isDescending
-                    ? characters.OrderByDescending(x => (x.Character.DisplayName))
-                    : characters.OrderBy(x => (x.Character.DisplayName)
-                    ));
-    }
-
-
-    public const string ReleaseDateSortName = "Release Date";
-
-    // TODO: IDateSupport interface
-    public static Sorter ReleaseDate()
-    {
-        return new Sorter
-        (
-            ReleaseDateSortName,
-            (characters, isDescending) =>
-                !isDescending
-                    ? characters.OrderByDescending(x => ((ICharacter)x.Character).ReleaseDate)
-                    : characters.OrderBy(x => ((ICharacter)x.Character).ReleaseDate),
-            (characters, _) =>
-                characters.ThenBy(x => (x.Character.DisplayName)
-                ));
-    }
-
-    public const string RaritySortName = "Rarity";
-
-    public static Sorter Rarity()
-    {
-        return new Sorter
-        (
-            RaritySortName,
-            (characters, isDescending) =>
-                !isDescending
-                    ? characters.OrderByDescending(x => ((IRarity)x.Character).Rarity)
-                    : characters.OrderBy(x => ((IRarity)x.Character).Rarity),
-            (characters, _) =>
-                characters.ThenBy(x => (x.Character.DisplayName)
-                ));
-    }
-
-    public const string ModCountSortName = "Mod Count";
-
-    public static Sorter ModCount()
-    {
-        return new Sorter
-        (
-            ModCountSortName,
-            (characters, isDescending) =>
-                !isDescending
-                    ? characters.OrderByDescending(x => (x.ModCount))
-                    : characters.OrderBy(x => (x.ModCount)),
-            (characters, _) =>
-                characters.ThenBy(x => (x.Character.DisplayName)
-                ));
-    }
-
-
-    public const string ModRecentlyAddedName = "Recently Added Mods";
-
-    public static Sorter ModRecentlyAdded()
-    {
-        return new Sorter
-        (
-            ModRecentlyAddedName,
-            (characters, isDescending) =>
-                !isDescending
-                    ? characters.OrderByDescending(x =>
-                    {
-                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
-                            .ToArray();
-                        if (validDates.Any())
-                            return validDates.Max();
-                        else
-                            return DateTime.MinValue;
-                    })
-                    : characters.OrderBy(x =>
-                    {
-                        var validDates = x.Mods.Where(mod => mod.DateAdded != default).Select(mod => mod.DateAdded)
-                            .ToArray();
-                        if (validDates.Any())
-                            return validDates.Min();
-                        else
-                            return DateTime.MaxValue;
-                    }),
-            (characters, _) =>
-                characters.ThenBy(x => (x.Character.DisplayName)
-                ));
-    }
-
-
-    //sortedCharacters = Sort(characters, x => x.Character.Rarity, !IsDescending,
-    //sortSecondBy: x => x.Character.ReleaseDate, !IsDescending,
-    //sortThirdBy: x => x.Character.DisplayName);
 }
 
 public class ScrollToCharacterArgs : EventArgs
