@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.20.0](https://github.com/Jorixon/JASM/compare/v2.19.0...v2.20.0) (2025-01-12)
+
+
+### Features
+
+* Added two new context items to the character overview right click menu. "Disable all mods" and "Open Folder..." ([#327](https://github.com/Jorixon/JASM/issues/327)) ([ed89b08](https://github.com/Jorixon/JASM/commit/ed89b0899377d8cf5516b460fe16df5d98312834))
+
+
+### Bug Fixes
+
+* When navigating back from the character details page to the character overview, it will now correctly scroll the character into view ([#327](https://github.com/Jorixon/JASM/issues/327)) ([ed89b08](https://github.com/Jorixon/JASM/commit/ed89b0899377d8cf5516b460fe16df5d98312834))
+
+
+### Miscellaneous
+
+* Added a button to open the cached download folder that JASM uses on the settings page ([#327](https://github.com/Jorixon/JASM/issues/327)) ([ed89b08](https://github.com/Jorixon/JASM/commit/ed89b0899377d8cf5516b460fe16df5d98312834))
+* **Genshin:** Updated some existing character's images ([#327](https://github.com/Jorixon/JASM/issues/327)) ([ed89b08](https://github.com/Jorixon/JASM/commit/ed89b0899377d8cf5516b460fe16df5d98312834))
+* Removed old legacy character details page ([#327](https://github.com/Jorixon/JASM/issues/327)) ([ed89b08](https://github.com/Jorixon/JASM/commit/ed89b0899377d8cf5516b460fe16df5d98312834))
+
 ## [2.19.0](https://github.com/Jorixon/JASM/compare/v2.18.8...v2.19.0) (2025-01-11)
 
 
