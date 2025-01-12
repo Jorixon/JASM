@@ -361,7 +361,10 @@
                                 ValueChanged="LocalCacheSlider_OnValueChanged"
                                 Value="{x:Bind ViewModel.MaxCacheLimit, Mode=OneWay}" />
                             <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.MaxCacheSizeString, Mode=OneWay}" />
+                            <controls:LinkButton Link="{x:Bind ViewModel.ArchiveCacheFolderPath}" Text="Open cache folder..." />
+
                         </StackPanel>
+
                     </StackPanel>
 
 

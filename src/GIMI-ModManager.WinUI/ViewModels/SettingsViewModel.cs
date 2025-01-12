@@ -99,6 +99,8 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
     [ObservableProperty] private int _maxCacheLimit;
 
+    [ObservableProperty] private Uri _archiveCacheFolderPath;
+
     [ObservableProperty] private bool _persistWindowSize = false;
 
     [ObservableProperty] private bool _persistWindowPosition = false;
@@ -161,6 +163,7 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
                 CanIgnoreUpdate = true;
         }
 
+        ArchiveCacheFolderPath = _modArchiveRepository.ArchiveDirectory;
 
         _modManagerOptions = localSettingsService.ReadSetting<ModManagerOptions>(ModManagerOptions.Section);
         PathToGIMIFolderPicker = new PathPicker();
