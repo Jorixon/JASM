@@ -12,6 +12,7 @@ using GIMI_ModManager.WinUI.Contracts.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.AppManagement;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 using GIMI_ModManager.WinUI.Views;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;

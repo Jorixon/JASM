@@ -38,7 +38,6 @@ using Polly.Retry;
 using Serilog;
 using Serilog.Events;
 using Serilog.Templates;
-using CharacterDetailsPage = GIMI_ModManager.WinUI.Views.CharacterDetailsPage;
 using CreateCommandViewModel = GIMI_ModManager.WinUI.ViewModels.SettingsViewModels.CreateCommandViewModel;
 using GameBananaService = GIMI_ModManager.WinUI.Services.ModHandling.GameBananaService;
 using NotificationManager = GIMI_ModManager.WinUI.Services.Notifications.NotificationManager;
@@ -241,8 +240,6 @@ public partial class App : Application
                 services.AddTransient<NotificationsPage>();
                 services.AddTransient<CharactersViewModel>();
                 services.AddTransient<CharactersPage>();
-                services.AddTransient<CharacterDetailsViewModel>();
-                services.AddTransient<CharacterDetailsPage>();
                 services.AddTransient<DebugViewModel>();
                 services.AddTransient<DebugPage>();
                 services.AddTransient<CharacterManagerViewModel>();

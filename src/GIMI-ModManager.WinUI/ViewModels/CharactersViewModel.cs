@@ -19,8 +19,9 @@ using GIMI_ModManager.WinUI.Models.ViewModels;
 using GIMI_ModManager.WinUI.Services;
 using GIMI_ModManager.WinUI.Services.ModHandling;
 using GIMI_ModManager.WinUI.Services.Notifications;
+using GIMI_ModManager.WinUI.ViewModels.CharacterDetailsViewModels;
 using GIMI_ModManager.WinUI.ViewModels.SubVms;
-using GIMI_ModManager.WinUI.Views;
+using GIMI_ModManager.WinUI.Views.CharacterDetailsPages;
 using Serilog;
 
 namespace GIMI_ModManager.WinUI.ViewModels;

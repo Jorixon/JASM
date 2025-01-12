@@ -138,7 +138,6 @@
 		<None Remove="Assets\Fonts\zh-cn2.ttf" />
 		<None Remove="Assets\Games\Honkai\Images\Start_Game.png" />
 		<None Remove="Styles\FontTypes.xaml" />
-		<None Remove="Views\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharacterDetailsPages\CharacterCard.xaml" />
 		<None Remove="Views\CharacterDetailsPages\CharacterDetailsPage.xaml" />
 		<None Remove="Views\CharacterDetailsPages\ModGrid.xaml" />
@@ -230,9 +229,6 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\Controls\ModListOverview.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\CharacterDetailsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 		<Page Update="Views\CharactersPage.xaml">

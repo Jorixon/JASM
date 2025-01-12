@@ -790,7 +790,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         var characterDetailsSettings = await _localSettingsService.ReadCharacterDetailsSettingsAsync(SettingScope.App);
 
-        LegacyCharacterDetails = characterDetailsSettings.LegacyCharacterDetails;
         PersistWindowSize = windowSettings.PersistWindowSize;
         PersistWindowPosition = windowSettings.PersistWindowPosition;
         await GenshinProcessManager.TryInitialize();
@@ -817,17 +816,6 @@ public partial class SettingsViewModel : ObservableRecipient, INavigationAware
 
         MaxCacheLimit = maxValue;
         SetCacheString(maxValue);
-    }
-
-    [RelayCommand]
-    private async Task ToggleLegacyCharacterDetailsAsync()
-    {
-        var settings = await _localSettingsService.ReadCharacterDetailsSettingsAsync(SettingScope.App);
-
-        LegacyCharacterDetails = !LegacyCharacterDetails;
-        settings.LegacyCharacterDetails = LegacyCharacterDetails;
-
-        await _localSettingsService.SaveCharacterDetailsSettingsAsync(settings, SettingScope.App).ConfigureAwait(false);
     }
 
 
