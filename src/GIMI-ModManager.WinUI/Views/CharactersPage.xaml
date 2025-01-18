@@ -262,6 +262,18 @@
                                                 </DataTemplate>
                                             </ItemsRepeater.ItemTemplate>
                                         </ItemsRepeater>
+                                        
+                                        <Rectangle Height="1" Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                                        
+                                        <Button 
+                                            HorizontalAlignment="Stretch"
+                                            Command="{x:Bind ViewModel.RandomizeModsCommand}"
+                                            ToolTipService.ToolTip="Opens a dialog with more info">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <FontIcon Glyph="&#xE8B1;" />
+                                                <TextBlock Text="Randomize Mods" />
+                                            </StackPanel>
+                                        </Button>
                                     </StackPanel>
                                 </ScrollViewer>
                             </Flyout>

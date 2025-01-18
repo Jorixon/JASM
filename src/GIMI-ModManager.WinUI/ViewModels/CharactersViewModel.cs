@@ -43,6 +43,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
     private readonly ModUpdateAvailableChecker _modUpdateAvailableChecker;
     private readonly ModPresetHandlerService _modPresetHandlerService;
     private readonly BusyService _busyService;
+    private readonly ModRandomizationService _modRandomizationService;
 
     public readonly GenshinProcessManager GenshinProcessManager;
     public readonly ThreeDMigtoProcessManager ThreeDMigtoProcessManager;
@@ -100,7 +101,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         ModDragAndDropService modDragAndDropService, ModNotificationManager modNotificationManager,
         ModCrawlerService modCrawlerService, ModSettingsService modSettingsService,
         ModUpdateAvailableChecker modUpdateAvailableChecker, ModPresetHandlerService modPresetHandlerService,
-        BusyService busyService, ILanguageLocalizer localizer)
+        BusyService busyService, ILanguageLocalizer localizer, ModRandomizationService modRandomizationService)
     {
         _gameService = gameService;
         _logger = logger.ForContext<CharactersViewModel>();
@@ -119,6 +120,7 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         _modPresetHandlerService = modPresetHandlerService;
         _busyService = busyService;
         _localizer = localizer;
+        _modRandomizationService = modRandomizationService;
 
         ElevatorService.PropertyChanged += (_, args) =>
         {
@@ -1202,6 +1204,9 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
                     characters.ThenBy(x => x.Character.DisplayName
                     ));
     }
+
+    [RelayCommand]
+    private Task RandomizeMods() => _modRandomizationService.ShowRandomizeModsDialog();
 }
 
 public sealed class GridFilter
