@@ -276,6 +276,8 @@ public partial class App : Application
                 // Configuration
                 services.Configure<LocalSettingsOptions>(
                     context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+
+                services.AddSingleton<ModRandomizationService>();
             }).Build();
 
         UnhandledException += App_UnhandledException;

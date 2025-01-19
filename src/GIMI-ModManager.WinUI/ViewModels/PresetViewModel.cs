@@ -35,7 +35,8 @@ public partial class PresetViewModel(
     INavigationService navigationService,
     BusyService busyService,
     ModPresetHandlerService modPresetHandlerService,
-    ILocalSettingsService localSettingsService)
+    ILocalSettingsService localSettingsService,
+    ModRandomizationService modRandomizationService)
     : ObservableRecipient, INavigationAware
 {
     public readonly ElevatorService ElevatorService = elevatorService;
@@ -51,6 +52,7 @@ public partial class PresetViewModel(
     private readonly ILogger _logger = logger.ForContext<PresetViewModel>();
     private readonly ILocalSettingsService _localSettingsService = localSettingsService;
     private readonly ModPresetHandlerService _modPresetHandlerService = modPresetHandlerService;
+    private readonly ModRandomizationService _modRandomizationService = modRandomizationService;
     private static readonly Random Random = new();
 
 
@@ -305,181 +307,8 @@ public partial class PresetViewModel(
         ReloadPresets();
     }
 
-    [RelayCommand(CanExecute = nameof(IsNotBusy))]
-    private async Task RandomizeMods()
-    {
-        var dialog = new ContentDialog
-        {
-            Title = "Randomize Mods",
-            PrimaryButtonText = "Randomize",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary
-        };
-
-
-        var categories = _gameService.GetCategories();
-
-        var stackPanel = new StackPanel();
-
-        stackPanel.Children.Add(new TextBlock
-        {
-            Text = "Select the categories you want to randomize mods for:"
-        });
-
-        stackPanel.Children.Add(new TextBlock
-        {
-            Text =
-                "Note: This will only randomize mod folders that are meant to only have one mod active. So 'Others __' folders will not be randomized. While only one mod wil be enabled per in game character skin",
-            TextWrapping = TextWrapping.WrapWholeWords,
-            Margin = new Thickness(0, 0, 0, 10)
-        });
-
-
-        foreach (var category in categories)
-        {
-            var checkBox = new CheckBox
-            {
-                Content = category.DisplayNamePlural,
-                IsChecked = true
-            };
-
-            stackPanel.Children.Add(checkBox);
-        }
-
-        stackPanel.Children.Add(new CheckBox
-        {
-            Margin = new Thickness(0, 10, 0, 0),
-            Content = "Allow no mods as a result. This means it is possible for no mods to be enabled for a mod folder",
-            IsChecked = true
-        });
-
-
-        stackPanel.Children.Add(new TextBlock
-        {
-            Text =
-                "I suggest creating a preset (or a backup) of your mods before randomizing if you have a lot of enabled mods",
-            TextWrapping = TextWrapping.WrapWholeWords,
-            Margin = new Thickness(0, 10, 0, 0)
-        });
-
-
-        dialog.Content = stackPanel;
-
-        var result = await _windowManagerService.ShowDialogAsync(dialog);
-
-
-        if (result != ContentDialogResult.Primary)
-        {
-            return;
-        }
-
-        using var _ = StartBusy();
-
-
-        var selectedCategories = stackPanel.Children
-            .OfType<CheckBox>()
-            .SkipLast(1)
-            .Where(c => c.IsChecked == true)
-            .Select(c => categories.First(cat => cat.DisplayNamePlural.Equals(c.Content)))
-            .ToList();
-
-        var allowNoMods = stackPanel.Children
-            .OfType<CheckBox>()
-            .Last()
-            .IsChecked == true;
-
-        if (selectedCategories.Count == 0)
-        {
-            _notificationManager.ShowNotification("No categories selected", "No categories were selected to randomize.",
-                TimeSpan.FromSeconds(5));
-            return;
-        }
-
-
-        try
-        {
-            await Task.Run(async () =>
-            {
-                var modLists = _skinManagerService.CharacterModLists
-                    .Where(modList => selectedCategories.Contains(modList.Character.ModCategory))
-                    .Where(modList => !modList.Character.IsMultiMod)
-                    .ToList();
-
-                foreach (var modList in modLists)
-                {
-                    var mods = modList.Mods.ToList();
-
-                    if (mods.Count == 0)
-                        continue;
-
-                    // Need special handling for characters because they have an in game skins
-                    if (modList.Character is ICharacter { Skins.Count: > 1 } character)
-                    {
-                        var skinModMap = await _characterSkinService.GetAllModsBySkinAsync(character)
-                            .ConfigureAwait(false);
-                        if (skinModMap is null)
-                            continue;
-
-                        // Don't know what to do with undetectable mods
-                        skinModMap.UndetectableMods.ForEach(mod => modList.DisableMod(mod.Id));
-
-                        foreach (var (_, skinMods) in skinModMap.ModsBySkin)
-                        {
-                            if (skinMods.Count == 0)
-                                continue;
-
-                            foreach (var mod in skinMods.Where(mod => modList.IsModEnabled(mod)))
-                            {
-                                modList.DisableMod(mod.Id);
-                            }
-
-                            var randomModIndex = Random.Next(0, skinMods.Count + (allowNoMods ? 1 : 0));
-
-                            if (randomModIndex == skinMods.Count)
-                                continue;
-
-                            modList.EnableMod(skinMods.ElementAt(randomModIndex).Id);
-                        }
-
-
-                        continue;
-                    }
-
-
-                    foreach (var characterSkinEntry in mods.Where(characterSkinEntry => characterSkinEntry.IsEnabled))
-                    {
-                        modList.DisableMod(characterSkinEntry.Id);
-                    }
-
-
-                    var randomIndex = Random.Next(0, mods.Count + (allowNoMods ? 1 : 0));
-                    if (randomIndex == mods.Count)
-                        continue;
-
-                    modList.EnableMod(mods[randomIndex].Id);
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Failed to randomize mods");
-            _notificationManager.ShowNotification("Failed to randomize mods", e.Message, TimeSpan.FromSeconds(5));
-            return;
-        }
-
-        if (CanAutoSync())
-        {
-            await Task.Run(() => ElevatorService.RefreshGenshinMods());
-        }
-
-
-        _notificationManager.ShowNotification("Mods randomized",
-            "Mods have been randomized for the categories: " +
-            string.Join(", ",
-                selectedCategories.Select(c =>
-                    c.DisplayNamePlural)),
-            TimeSpan.FromSeconds(5));
-    }
+    [RelayCommand]
+    private Task RandomizeMods() => _modRandomizationService.ShowRandomizeModsDialog();
 
 
     [RelayCommand]
