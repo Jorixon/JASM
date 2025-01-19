@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using GIMI_ModManager.Core.Contracts.Services;
 using GIMI_ModManager.Core.Entities;
@@ -432,13 +433,13 @@ public sealed class ModPresetService(
 
     private int GetNextPresetIndex() => _presets.Count == 0 ? 0 : _presets.Max(p => p.Index) + 1;
 
-    private async Task<IList<ModPresetEntry>> GetModsAsModEntriesAsync(bool includeDisabled = false,
+    private async Task<List<ModPresetEntry>> GetModsAsModEntriesAsync(bool includeDisabled = false,
         CancellationToken cancellationToken = default)
     {
         var options = includeDisabled ? GetOptions.All : GetOptions.Enabled;
         var enabledMods = _skinManagerService.GetAllMods(options);
 
-        var modEntries = new List<ModPresetEntry>();
+        var modEntries = new ConcurrentBag<ModPresetEntry>();
 
         await Parallel.ForEachAsync(enabledMods, cancellationToken, async (characterSkinEntry, ct) =>
         {
@@ -454,7 +455,7 @@ public sealed class ModPresetService(
             modEntries.Add(modEntry);
         }).ConfigureAwait(false);
 
-        return modEntries;
+        return modEntries.ToList();
     }
 
     private string GetPresetPath(string name) => Path.Combine(_presetDirectory.FullName, $"{name}.json");
