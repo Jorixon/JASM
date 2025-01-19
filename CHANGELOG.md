@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.21.0](https://github.com/Jorixon/JASM/compare/v2.20.0...v2.21.0) (2025-01-19)
+
+
+### Features
+
+* **preset:** Support randomizing mods at characters page ([#331](https://github.com/Jorixon/JASM/issues/331)) ([7932b96](https://github.com/Jorixon/JASM/commit/7932b96e2c02038f278a768861ded13711af5dd7))
+
+
+### Bug Fixes
+
+* Occasional issue where some mods were not added when creating preset ([#333](https://github.com/Jorixon/JASM/issues/333)) ([a9edda0](https://github.com/Jorixon/JASM/commit/a9edda013703d5d9a40203d6f62f81a5bc4ffab9))
+
+
+### Miscellaneous
+
+* Updated WinAppSDK to 1.6.4 and project packages ([#333](https://github.com/Jorixon/JASM/issues/333)) ([a9edda0](https://github.com/Jorixon/JASM/commit/a9edda013703d5d9a40203d6f62f81a5bc4ffab9))
+
 ## [2.20.0](https://github.com/Jorixon/JASM/compare/v2.19.0...v2.20.0) (2025-01-12)
 
 
