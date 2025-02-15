@@ -538,5 +538,57 @@
     "InGameSkins": [],
     "InternalName": "Lighter",
     "DisplayName": "Lighter "
+  },
+  {
+    "Keys": [
+      "Pulchra",
+      "Fellini"
+    ],
+    "ReleaseDate": "2024-11-27T00:00:00",
+    "Image": "Pulchra.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Stun",
+    "Region": [
+      "Calydon"
+    ],
+    "ModFilesName": "Pulchra",
+    "InGameSkins": [],
+    "InternalName": "Pulchra",
+    "DisplayName": "Pulchra "
+  },
+  {
+    "Keys": [
+      "Silver Soldier"
+    ],
+    "ReleaseDate": "2024-11-27T00:00:00",
+    "Image": "SSAnby.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Attack",
+    "Region": [
+      "OBOL"
+    ],
+    "ModFilesName": "SSAnby",
+    "InGameSkins": [],
+    "InternalName": "Silver Soldier - Anby",
+    "DisplayName": "Silver Soldier - Anby"
+  },
+  {
+    "Keys": [
+      "Trigger"
+    ],
+    "ReleaseDate": "2024-11-27T00:00:00",
+    "Image": "Trigger.webp",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Stun",
+    "Region": [
+      "OBOL"
+    ],
+    "ModFilesName": "Trigger",
+    "InGameSkins": [],
+    "InternalName": "Trigger",
+    "DisplayName": "Trigger "
   }
 ]
