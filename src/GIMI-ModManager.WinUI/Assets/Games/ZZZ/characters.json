@@ -64,7 +64,14 @@
       "Victoria"
     ],
     "ModFilesName": "Ellen",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "EllenOnCampus",
+        "Image": "EllenOnCampus.webp",
+        "InternalName": "Ellen On Campus",
+        "DisplayName": "Ellen On Campus"
+      }
+    ],
     "InternalName": "Ellen",
     "DisplayName": "Ellen"
   },
@@ -287,7 +294,14 @@
       "CHares"
     ],
     "ModFilesName": "Nicole",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "NicoleCunningCutie",
+        "Image": "NicoleCunningCutie.webp",
+        "InternalName": "Nicole Cunning Cutie",
+        "DisplayName": "Nicole Cunning Cutie"
+      }
+    ],
     "InternalName": "Nicole",
     "DisplayName": "Nicole"
   },
@@ -480,7 +494,14 @@
       "Lyra"
     ],
     "ModFilesName": "Astra",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "AstraChandelier",
+        "Image": "AstraChandelier.webp",
+        "InternalName": "Astra Chandelier",
+        "DisplayName": "Astra Chandelier"
+      }
+  ],
     "InternalName": "Astra",
     "DisplayName": "Astra"
   },
