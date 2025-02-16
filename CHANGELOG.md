@@ -6,6 +6,8 @@
 ### Miscellaneous
 
 * **Genshin:** Added Mizuki ([#339](https://github.com/Jorixon/JASM/issues/339)) ([75926b2](https://github.com/Jorixon/JASM/commit/75926b2b3c4da211f833037c2da96bfd420b3718))
+* **Honkai:** Added March Nascent Spring skin, Mem and Garmentmaker ([#339](https://github.com/Jorixon/JASM/issues/339)) ([75926b2](https://github.com/Jorixon/JASM/commit/75926b2b3c4da211f833037c2da96bfd420b3718))
+* **ZZZ:** Added Pulchra, SS Anby and Trigger ([#339](https://github.com/Jorixon/JASM/issues/339)) ([75926b2](https://github.com/Jorixon/JASM/commit/75926b2b3c4da211f833037c2da96bfd420b3718))
 * Updated winAppSdk to 1.6.5 ([#345](https://github.com/Jorixon/JASM/issues/345)) ([efcdcec](https://github.com/Jorixon/JASM/commit/efcdceccf7f5af75c0017217ef5523bc18121a11))
 
 ## [2.21.0](https://github.com/Jorixon/JASM/compare/v2.20.0...v2.21.0) (2025-01-19)
