@@ -38,7 +38,7 @@ jobs:
 
     # Upload the app
     - name: Upload JASM Self Contained
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: JASM Self Contained
         path: ${{ github.workspace }}\\${{ env.zipFile }}
