@@ -375,6 +375,12 @@
         "Image": "Character_Skin_March7Hunt_Thumb.png",
         "InternalName": "March7Hunt",
         "DisplayName": "March7Hunt"
+      },
+      {
+        "ModFilesName": "MarchNS",
+        "Image": "Character_Skin_MarchNS_Thumb.png",
+        "InternalName": "MarchNS",
+        "DisplayName": "Nascent Spring"
       }
     ],
     "InternalName": "March7",

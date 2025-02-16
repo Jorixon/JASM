@@ -1783,5 +1783,23 @@
     "InGameSkins": [],
     "InternalName": "Lan Yan",
     "DisplayName": "Lan Yan"
+  },
+  {
+    "Keys": [
+      "Yumemizuki",
+      "Mizuki"
+    ],
+    "ReleaseDate": "2024-11-20T00:00:00",
+    "Image": "Mizuki.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Inazuma"
+    ],
+    "ModFilesName": "Mizuki",
+    "InGameSkins": [],
+    "InternalName": "Yumemizuki Mizuki",
+    "DisplayName": "Yumemizuki Mizuki"
   }
 ]

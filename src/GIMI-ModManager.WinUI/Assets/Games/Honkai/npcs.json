@@ -4,5 +4,21 @@
     "DisplayName": "Others",
     "IsMultiMod": true,
     "Image": "Npc_Others.png"
+  },
+  {
+    "Keys": [
+      "mem"
+    ],
+    "InternalName": "Mem",
+    "DisplayName": "Mem",
+    "Image": "Mem.png"
+  },
+  {
+    "Keys": [
+      "garmentmaker"
+    ],
+    "InternalName": "Garmentmaker",
+    "DisplayName": "Garmentmaker",
+    "Image": "Garmentmaker.png"
   }
 ]
