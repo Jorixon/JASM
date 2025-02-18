@@ -375,6 +375,12 @@
         "Image": "Character_Skin_March7Hunt_Thumb.png",
         "InternalName": "March7Hunt",
         "DisplayName": "March7Hunt"
+      },
+      {
+        "ModFilesName": "MarchNS",
+        "Image": "Character_Skin_MarchNS_Thumb.png",
+        "InternalName": "MarchNS",
+        "DisplayName": "Nascent Spring"
       }
     ],
     "InternalName": "March7",
@@ -1031,7 +1037,7 @@
     "Keys": [
       "Aglaea"
     ],
-    "ReleaseDate": "2025-01-15T00:00:00",
+    "ReleaseDate": "2025-02-05T00:00:00",
     "Image": "aglaea.png",
     "Rarity": 5,
     "Element": "Lightning",
@@ -1048,7 +1054,7 @@
     "Keys": [
       "Tribbie"
     ],
-    "ReleaseDate": "2025-01-15T00:00:00",
+    "ReleaseDate": "2026-01-01T00:00:00",
     "Image": "tribbie.png",
     "Rarity": 5,
     "Element": "Quantum",
@@ -1065,7 +1071,7 @@
     "Keys": [
       "Mydei"
     ],
-    "ReleaseDate": "2025-01-15T00:00:00",
+    "ReleaseDate": "2026-01-01T00:00:00",
     "Image": "mydei.png",
     "Rarity": 5,
     "Element": "Imaginary",
