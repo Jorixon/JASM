@@ -309,7 +309,7 @@
                                                         <MenuFlyoutItem
                                                             Command="{x:Bind SaveImageCommand}"
                                                             CommandParameter="{x:Bind Mode=OneWay}"
-                                                            Text="Save Image..."
+                                                            Text="Save Image"
                                                             IsEnabled="{x:Bind CanSaveImage, Mode=OneWay}">
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="&#xE74E;" />

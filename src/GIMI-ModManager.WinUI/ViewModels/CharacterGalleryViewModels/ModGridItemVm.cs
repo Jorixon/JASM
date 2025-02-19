@@ -101,7 +101,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
         public IAsyncRelayCommand PasteImageFromClipboardCommand => new AsyncRelayCommand(async () =>
         {
             var imageHandlerService = App.GetService<ImageHandlerService>();
-            
+
             var clipboardHasValidImageResult = await imageHandlerService.ClipboardContainsImageAsync();
             if (!clipboardHasValidImageResult.Result)
             {
@@ -131,7 +131,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
             var modSettingsService = App.GetService<ModSettingsService>();
             var notificationService = App.GetService<NotificationManager>();
 
-            try 
+            try
             {
                 var updateRequest = new UpdateSettingsRequest
                 {
@@ -150,7 +150,7 @@ namespace GIMI_ModManager.WinUI.ViewModels.CharacterGalleryViewModels
             {
                 notificationService.ShowNotification("Failed to save image", e.Message, null);
             }
-        }, 
+        },
         () => CanSaveImage);
     }
 }
