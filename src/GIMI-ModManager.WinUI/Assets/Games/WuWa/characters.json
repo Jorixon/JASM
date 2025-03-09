@@ -508,5 +508,22 @@
     "InGameSkins": [],
     "InternalName": "Zani",
     "DisplayName": "Zani"
+  },
+  {
+    "Keys": [
+      "Cantarella"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Cantarella.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Cantarella",
+    "InGameSkins": [],
+    "InternalName": "Cantarella",
+    "DisplayName": "Cantarella"
   }
 ]
