@@ -1112,7 +1112,23 @@ public partial class CharactersViewModel : ObservableRecipient, INavigationAware
         Sorter<CharacterGridItemModel> sortingMethodType,
         CharacterGridItemModel? firstItem = null,
         ICollection<CharacterGridItemModel>? lastItems = null)
-        : SortingMethod<CharacterGridItemModel>(sortingMethodType, firstItem, lastItems);
+        : SortingMethod<CharacterGridItemModel>(sortingMethodType, firstItem, lastItems)
+    {
+        protected override void PostSortAction(List<CharacterGridItemModel> sortedList)
+        {
+            var pinnedCharacters = sortedList.Where(x => x.IsPinned).ToArray();
+            if (pinnedCharacters.Length == 0)
+                return;
+            var pinnedStartIndex = FirstItem is not null ? 1 : 0;
+            foreach (var pinnedCharacter in pinnedCharacters)
+            {
+                if (pinnedCharacter == FirstItem) continue;
+                sortedList.Remove(pinnedCharacter);
+                sortedList.Insert(pinnedStartIndex, pinnedCharacter);
+                pinnedStartIndex++;
+            }
+        }
+    }
 
     public sealed class GridItemSorter : Sorter<CharacterGridItemModel>
     {
