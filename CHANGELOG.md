@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.22.0](https://github.com/Jorixon/JASM/compare/v2.21.1...v2.22.0) (2025-03-09)
+
+
+### Features
+
+* **gallery:** Support paste image and save at the gallery page ([#349](https://github.com/Jorixon/JASM/issues/349)) ([776275b](https://github.com/Jorixon/JASM/commit/776275bf7376e5ccb5365f8f3f7915d36f1fb04c))
+
+
+### Bug Fixes
+
+* Pinned characters not being moved to the top on character overview page ([#355](https://github.com/Jorixon/JASM/issues/355)) ([0388d59](https://github.com/Jorixon/JASM/commit/0388d5965a4069586ce2f8fb2a1c0e624089f54d))
+
+
+### Miscellaneous
+
+* **Genshin:** Added Iansan and Varesa ([#352](https://github.com/Jorixon/JASM/issues/352)) ([97a7389](https://github.com/Jorixon/JASM/commit/97a738993836888bd1fd6e0aefb6ba0590662869))
+* **Honkai:** Added Castorice and Anaxa ([#352](https://github.com/Jorixon/JASM/issues/352)) ([97a7389](https://github.com/Jorixon/JASM/commit/97a738993836888bd1fd6e0aefb6ba0590662869))
+* **WuWa:** Added Cantarella ([#352](https://github.com/Jorixon/JASM/issues/352)) ([97a7389](https://github.com/Jorixon/JASM/commit/97a738993836888bd1fd6e0aefb6ba0590662869))
+
 ## [2.21.1](https://github.com/Jorixon/JASM/compare/v2.21.0...v2.21.1) (2025-02-16)
 
 
