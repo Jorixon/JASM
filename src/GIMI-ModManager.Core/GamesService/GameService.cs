@@ -874,7 +874,7 @@ public class GameService : IGameService
                 _gameObjects.Add(new GameObject(moddableObject));
         }
         else
-            _logger.Warning("No gameObjects found in {ObjectFileName}", objectFileName);
+            _logger.Debug("No gameObjects found in {ObjectFileName}", objectFileName);
     }
 
     //private async Task InitializeGlidersAsync()
