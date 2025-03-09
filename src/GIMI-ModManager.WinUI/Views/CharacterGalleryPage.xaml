@@ -307,6 +307,15 @@
                                                 <Button.Flyout>
                                                     <MenuFlyout>
                                                         <MenuFlyoutItem
+                                                            Command="{x:Bind SaveImageCommand}"
+                                                            CommandParameter="{x:Bind Mode=OneWay}"
+                                                            Text="Save Image"
+                                                            IsEnabled="{x:Bind CanSaveImage, Mode=OneWay}">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE74E;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                        <MenuFlyoutItem
                                                             Command="{x:Bind OpenModFolderCommand}"
                                                             CommandParameter="{x:Bind Mode=OneWay}"
                                                             Text="Open Mod Folder...">
@@ -314,7 +323,6 @@
                                                                 <FontIcon Glyph="&#xE838;" />
                                                             </MenuFlyoutItem.Icon>
                                                         </MenuFlyoutItem>
-                                                        <MenuFlyoutSeparator />
                                                         <MenuFlyoutItem
                                                             Command="{x:Bind OpenModUrlCommand}"
                                                             CommandParameter="{x:Bind Mode=OneWay}"
@@ -343,11 +351,15 @@
                                             Grid.Row="1"
                                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                             CornerRadius="16">
-                                            <Image>
-                                                <Image.Source>
-                                                    <BitmapImage DecodePixelWidth="{Binding ElementName=RootPageName, Path=ViewModel.GridItemWidth, Mode=OneWay}" UriSource="{x:Bind ImagePath, Mode=OneWay}" />
-                                                </Image.Source>
-                                            </Image>
+                                            <controls1:CustomImage
+                                                HorizontalAlignment="Center"
+                                                ImageUri="{x:Bind ImagePath, Mode=OneWay}"
+                                                Width="{Binding ElementName=RootPageName, Path=ViewModel.GridItemWidth, Mode=OneWay}"
+                                                EditButtonVisibility="Collapsed"
+                                                CopyButtonVisibility="Collapsed"
+                                                IsContextMenuEnabled="True"
+                                                PasteButtonCommand="{x:Bind PasteImageFromClipboardCommand}"
+                                                ClearButtonCommand="{x:Bind ClearImageCommand}"/>
                                         </Grid>
 
                                         <Grid
