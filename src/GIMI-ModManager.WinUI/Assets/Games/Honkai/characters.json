@@ -1083,5 +1083,39 @@
     "InGameSkins": [],
     "InternalName": "Mydei",
     "DisplayName": "Mydei"
+  },
+  {
+    "Keys": [
+      "Castorice"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "castorice.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Remembrance",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Castorice",
+    "InGameSkins": [],
+    "InternalName": "Castorice",
+    "DisplayName": "Castorice"
+  },
+  {
+    "Keys": [
+      "anaxa"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "anaxa.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Erudition",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Anaxa",
+    "InGameSkins": [],
+    "InternalName": "Anaxa",
+    "DisplayName": "Anaxa"
   }
 ]

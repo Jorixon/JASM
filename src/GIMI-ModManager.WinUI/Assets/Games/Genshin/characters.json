@@ -1801,5 +1801,39 @@
     "InGameSkins": [],
     "InternalName": "Yumemizuki Mizuki",
     "DisplayName": "Yumemizuki Mizuki"
+  },
+  {
+    "Keys": [
+      "Varesa"
+    ],
+    "ReleaseDate": "2025-02-12T00:00:00",
+    "Image": "Varesa.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Catalyst",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Varesa",
+    "InGameSkins": [],
+    "InternalName": "Varesa",
+    "DisplayName": "Varesa"
+  },
+  {
+    "Keys": [
+      "Iansan"
+    ],
+    "ReleaseDate": "2025-02-12T00:00:00",
+    "Image": "Iansan.png",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Polearm",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Iansan",
+    "InGameSkins": [],
+    "InternalName": "Iansan",
+    "DisplayName": "Iansan"
   }
 ]
