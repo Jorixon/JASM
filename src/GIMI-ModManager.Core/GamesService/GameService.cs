@@ -967,8 +967,25 @@ public class GameService : IGameService
                 _logger.Warning(
                     "Internal name {InternalName} is used by another moddable object type. However, a custom character was found using it. JASM will prioritize custom character",
                     internalName);
-                otherModdableObjects.Remove(otherModConflict);
                 _duplicateInternalNames.Add(otherModConflict);
+
+                switch (otherModConflict)
+                {
+                    case INpc npc:
+                        _npcs.Remove(npc);
+                        break;
+                    case IGameObject gameObject:
+                        _gameObjects.Remove(gameObject);
+                        break;
+                    case IWeapon weapon:
+                        _weapons.Remove(weapon);
+                        break;
+#if DEBUG
+                    default:
+                        throw new InvalidOperationException(
+                            $"Unknown moddable object type {otherModConflict.GetType()} for internal name {internalName}");
+#endif
+                }
             }
 
             var existingCharacter = allCharacters.FirstOrDefault(x => x.InternalNameEquals(internalName));
@@ -976,8 +993,8 @@ public class GameService : IGameService
             // For characters category, custom characters override existing characters
             if (existingCharacter is not null)
             {
-                _characters.Remove(existingCharacter);
                 _duplicateInternalNames.Add(existingCharacter);
+                _characters.Remove(existingCharacter);
 
                 _logger.Warning(
                     "Custom character found with internal name {InternalName}. However a predefined character also exists. JASM will prioritize custom character",
