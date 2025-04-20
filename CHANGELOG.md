@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.1](https://github.com/Jorixon/JASM/compare/v2.22.0...v2.22.1) (2025-04-20)
+
+
+### Miscellaneous
+
+* Update WinAppSDK to 1.7.1 ([#370](https://github.com/Jorixon/JASM/issues/370)) ([1143fc3](https://github.com/Jorixon/JASM/commit/1143fc354212d1c58504a114bfffeea2520783eb))
+
 ## [2.22.0](https://github.com/Jorixon/JASM/compare/v2.21.1...v2.22.0) (2025-03-09)
 
 
