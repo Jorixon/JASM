@@ -4,6 +4,9 @@
 name: Build And Release JASM Self Contained
 
 on:
+  push:
+    tags:
+      - '*'
   workflow_dispatch:
   release:
     types: [published]
