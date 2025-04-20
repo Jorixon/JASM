@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.2](https://github.com/Jorixon/JASM/compare/v2.22.1...v2.22.2) (2025-04-20)
+
+
+### Bug Fixes
+
+* JASM crashing on startup if there is a custom character with same internal name as another moddableObject (npc,weapon,etc) ([254ab3a](https://github.com/Jorixon/JASM/commit/254ab3af585ff2f1828a03694e378794026b63e6))
+
 ## [2.22.1](https://github.com/Jorixon/JASM/compare/v2.22.0...v2.22.1) (2025-04-20)
 
 
