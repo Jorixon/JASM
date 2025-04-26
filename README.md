@@ -95,6 +95,15 @@ I believe this is due to some oddity with WinAppSdk not installing correctly. I 
 
 Another potential fix if JASM used to work, is to delete the JASM user settings folder. This will wipe your settings i.e. presets, folder paths etc. However, your mods will be untouched as well as the mod settings like custom display name and images. JASM settings are stored here: `%localappdata%\JASM` / `C:\Users\<username>\AppData\Local\JASM`. You can start by deleting each game settings folder to see if it helps, alternativly just delete the entire folder. Presets are stored inside the preset folder. Might be a good idea make a backup first.
 
+### XXMI compatbility
+As of right now JASM isn't fully compatible, until then make a blank file named 3dmigoto loader.exe in the folder you have have set for the MI in XXMI
+
+Or if you know what your doing, and want to be able to launch the game with XXMI through JASM, make a symlink to a shortcut. (drop menu next to start in XXMI to make the shortcut for a specific game)
+
+
+### Missing Images
+You are most likely using windows 10 and missing the [Webp Image Extension](https://apps.microsoft.com/detail/9pg2dk419drg?hl=en-US&gl=US)
+
 
 ### Command line support
 
