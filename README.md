@@ -46,6 +46,7 @@ Latest development release can be downloaded from [Actions Tab](https://github.c
 - Windows 10, version 1809 or higher ([supposedly](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/))
 - [NET Desktop Runtime](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win10-x64&apphost_version=9.0.0&gui=true)
 - [Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads)
+- [Webp Image Extension](https://apps.microsoft.com/detail/9pg2dk419drg?hl=en-US&gl=US) (Windows 10 only)
 
 If you don't have these downloaded the application will prompt you to download necessary dependencies and provide links.
  
@@ -94,6 +95,15 @@ The code has progressively gotten more spaghettified over time ;_;
 I believe this is due to some oddity with WinAppSdk not installing correctly. I do not know what causes this. A temporary (permanent?) solution is to use the self contained version of JASM that does not require WinAppSdk or .NET. See the releases page [SelfContainted_JASM_vx.x.x.7z](https://github.com/Jorixon/JASM/releases). Ref [#72](https://github.com/Jorixon/JASM/issues/72) and [#171](https://github.com/Jorixon/JASM/issues/171)
 
 Another potential fix if JASM used to work, is to delete the JASM user settings folder. This will wipe your settings i.e. presets, folder paths etc. However, your mods will be untouched as well as the mod settings like custom display name and images. JASM settings are stored here: `%localappdata%\JASM` / `C:\Users\<username>\AppData\Local\JASM`. You can start by deleting each game settings folder to see if it helps, alternativly just delete the entire folder. Presets are stored inside the preset folder. Might be a good idea make a backup first.
+
+### XXMI compatbility
+As of right now JASM isn't fully compatible, until then make a blank file named 3dmigoto loader.exe in the folder you have have set for the MI in XXMI
+
+Or if you know what your doing, and want to be able to launch the game with XXMI through JASM, make a symlink to a shortcut. (drop menu next to start in XXMI to make the shortcut for a specific game)
+
+
+### Missing Images
+You are most likely using windows 10 and missing the [Webp Image Extension](https://apps.microsoft.com/detail/9pg2dk419drg?hl=en-US&gl=US)
 
 
 ### Command line support
