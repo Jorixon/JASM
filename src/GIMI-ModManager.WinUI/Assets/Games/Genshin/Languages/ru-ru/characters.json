@@ -27,7 +27,7 @@
     "InGameSkins": [
       {
         "InternalName": "AmberCN",
-        "DisplayName": "AmberCN"
+        "DisplayName": "ЭмберCN"
       }
     ],
     "InternalName": "Amber",
@@ -113,7 +113,7 @@
     "InGameSkins": [
       {
         "InternalName": "Fischl Ein Immernachtstraum",
-        "DisplayName": "Ein Immernachtstraum"
+        "DisplayName": "Сон вечной ночи"
       }
     ],
     "InternalName": "Fischl",
@@ -202,6 +202,12 @@
     "DisplayName": "Кэ Цин"
   },
   {
+    "InGameSkins": [
+      {
+        "InternalName": "Kirara Phantom in Boots",
+        "DisplayName": "Призрак в сапогах"
+      }
+    ],
     "InternalName": "Kirara",
     "DisplayName": "Кирара"
   },
@@ -272,6 +278,12 @@
     "DisplayName": "Невиллет"
   },
   {
+    "InGameSkins": [
+      {
+        "InternalName": "Nilou Breeze of Sabaa",
+        "DisplayName": "Дыхание Сабаа"
+      }
+    ],
     "InternalName": "Nilou",
     "DisplayName": "Нилу"
   },
@@ -454,5 +466,57 @@
   {
     "InternalName": "Sethos",
     "DisplayName": "Сетос"
+  },
+  {
+    "InternalName": "Chasca",
+    "DisplayName": "Часка"
+  },
+  {
+    "InternalName": "Citlali",
+    "DisplayName": "Ситлали"
+  },
+  {
+    "InternalName": "Emilie",
+    "DisplayName": "Эмилия"
+  },
+  {
+    "InternalName": "Iansan",
+    "DisplayName": "Иансан"
+  },
+  {
+    "InternalName": "Kachina",
+    "DisplayName": "Качина"
+  },
+  {
+    "InternalName": "Kinich",
+    "DisplayName": "Кинич"
+  },
+  {
+    "InternalName": "Lan Yan",
+    "DisplayName": "Лань Янь"
+  },
+  {
+    "InternalName": "Mavuika",
+    "DisplayName": "Мавуика"
+  },
+  {
+    "InternalName": "Mualani",
+    "DisplayName": "Муалани"
+  },
+  {
+    "InternalName": "Ororon",
+    "DisplayName": "Оророн"
+  },
+  {
+    "InternalName": "Varesa",
+    "DisplayName": "Вареса"
+  },
+  {
+    "InternalName": "Xilonen",
+    "DisplayName": "Шилонен"
+  },
+  {
+    "InternalName": "Yumemizuki Mizuki",
+    "DisplayName": "Мидзуки"
   }
 ]
