@@ -89,7 +89,17 @@
   },
   {
     "InternalName": "March7",
-    "DisplayName": "Март 7"
+    "DisplayName": "Март 7",
+    "InGameSkins": [
+      {
+        "InternalName": "March7Hunt",
+        "DisplayName": "Март 7 - Охота"
+      },
+      {
+        "InternalName": "MarchNS",
+        "DisplayName": "Зарождение весны"
+      }
+    ]
   },
   {
     "InternalName": "Natasha",
