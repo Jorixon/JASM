@@ -1,0 +1,22 @@
+[
+  {
+    "InternalName": "Anomaly",
+    "DisplayName": "Аномалия"
+  },
+  {
+    "InternalName": "Attack",
+    "DisplayName": "Нападение"
+  },
+  {
+    "InternalName": "Defense",
+    "DisplayName": "Оборона"
+  },
+  {
+    "InternalName": "Stun",
+    "DisplayName": "Устрашение"
+  },
+  {
+    "InternalName": "Support",
+    "DisplayName": "Поддержка"
+  }
+]

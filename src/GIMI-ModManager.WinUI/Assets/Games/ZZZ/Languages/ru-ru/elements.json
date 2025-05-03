@@ -1,0 +1,27 @@
+[
+	{
+		"InternalName": "Fire",
+		"DisplayName": "Огонь",
+		"Image": "Fire.svg"
+	},
+	{
+		"InternalName": "Electric",
+		"DisplayName": "Электро",
+		"Image": "Electric.svg"
+	},
+	{
+		"InternalName": "Ice",
+		"DisplayName": "Лёд",
+		"Image": "Ice.svg"
+	},
+	{
+		"InternalName": "Physical",
+		"DisplayName": "Физический",
+		"Image": "Physical.svg"
+	},
+	{
+		"InternalName": "Ether",
+		"DisplayName": "Эфир",
+		"Image": "Ether.svg"
+	}
+]

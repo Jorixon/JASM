@@ -1,0 +1,22 @@
+﻿[
+  {
+    "InternalName": "Character",
+    "DisplayName": "Персонаж",
+    "DisplayNamePlural": "Персонажи"
+  },
+  {
+    "InternalName": "NPC",
+    "DisplayName": "НПС",
+    "DisplayNamePlural": "НПС"
+  },
+  {
+    "InternalName": "Object",
+    "DisplayName": "Объект",
+    "DisplayNamePlural": "Объекты"
+  },
+  {
+    "InternalName": "Weapon",
+    "DisplayName": "Оружие",
+    "DisplayNamePlural": "Оружия"
+  }
+]
