@@ -1849,5 +1849,22 @@
     "InGameSkins": [],
     "InternalName": "Iansan",
     "DisplayName": "Iansan"
+  },
+  {
+    "Keys": [
+      "Escoffier"
+    ],
+    "ReleaseDate": "2025-05-08T00:00:00",
+    "Image": "Escoffier.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Polearm",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Escoffier",
+    "InGameSkins": [],
+    "InternalName": "Escoffier",
+    "DisplayName": "Escoffier"
   }
 ]
