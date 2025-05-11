@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.3](https://github.com/Jorixon/JASM/compare/v2.22.2...v2.22.3) (2025-05-11)
+
+
+### Miscellaneous
+
+* Added Vivian, Escoffier and missing Genshin skins ([#377](https://github.com/Jorixon/JASM/issues/377)) ([8735754](https://github.com/Jorixon/JASM/commit/87357544eade0a7ef6767692cd1af313576ae0b8))
+
 ## [2.22.2](https://github.com/Jorixon/JASM/compare/v2.22.1...v2.22.2) (2025-04-20)
 
 
