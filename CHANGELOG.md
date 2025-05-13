@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.4](https://github.com/Jorixon/JASM/compare/v2.22.3...v2.22.4) (2025-05-13)
+
+
+### Miscellaneous
+
+* Updated RU locale for Genshin, ZZZ and HSR ([#378](https://github.com/Jorixon/JASM/issues/378)) ([d332d98](https://github.com/Jorixon/JASM/commit/d332d98b56e9336c269f193d886a044112aeaf45))
+
 ## [2.22.3](https://github.com/Jorixon/JASM/compare/v2.22.2...v2.22.3) (2025-05-11)
 
 
