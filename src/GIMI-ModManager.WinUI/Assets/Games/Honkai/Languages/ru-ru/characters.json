@@ -89,7 +89,17 @@
   },
   {
     "InternalName": "March7",
-    "DisplayName": "Март 7"
+    "DisplayName": "Март 7",
+    "InGameSkins": [
+      {
+        "InternalName": "March7Hunt",
+        "DisplayName": "Охота"
+      },
+      {
+        "InternalName": "MarchNS",
+        "DisplayName": "Зарождение весны"
+      }
+    ]
   },
   {
     "InternalName": "Natasha",
@@ -206,5 +216,61 @@
   {
     "InternalName": "Jade",
     "DisplayName": "Яшма"
+  },
+  {
+    "InternalName": "Aglaea",
+    "DisplayName": "Аглая"
+  },
+  {
+    "InternalName": "Anaxa",
+    "DisplayName": "Анакса"
+  },
+  {
+    "InternalName": "Castorice",
+    "DisplayName": "Кастория"
+  },
+  {
+    "InternalName": "Feixiao",
+    "DisplayName": "Фэйсяо"
+  },
+  {
+    "InternalName": "Fugue",
+    "DisplayName": "Фуга"
+  },
+  {
+    "InternalName": "Jiaoqiu",
+    "DisplayName": "Цзяоцю"
+  },
+  {
+    "InternalName": "Lingsha",
+    "DisplayName": "Линша"
+  },
+  {
+    "InternalName": "Moze",
+    "DisplayName": "Моцзэ"
+  },
+  {
+    "InternalName": "Mydei",
+    "DisplayName": "Мидей"
+  },
+  {
+    "InternalName": "Rappa",
+    "DisplayName": "Раппа"
+  },
+  {
+    "InternalName": "Sunday",
+    "DisplayName": "Воскресенье"
+  },
+  {
+    "InternalName": "The Herta",
+    "DisplayName": "Великая Герта"
+  },
+  {
+    "InternalName": "Tribbie",
+    "DisplayName": "Трибби"
+  },
+  {
+    "InternalName": "Yunli",
+    "DisplayName": "Юньли"
   }
 ]
