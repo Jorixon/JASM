@@ -669,3 +669,4 @@ Testing_ZZZ/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,csharp,rider
 /src/.idea
+/Tools
