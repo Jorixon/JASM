@@ -1117,5 +1117,90 @@
     "InGameSkins": [],
     "InternalName": "Anaxa",
     "DisplayName": "Anaxa"
+  },
+  {
+    "Keys": [
+      "Hyacine"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "hyacine.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Remembrance",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Hyacine",
+    "InGameSkins": [],
+    "InternalName": "Hyacine",
+    "DisplayName": "Hyacine"
+  },
+  {
+    "Keys": [
+      "Cipher"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "cipher.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Nihility",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Cipher",
+    "InGameSkins": [],
+    "InternalName": "Cipher",
+    "DisplayName": "Cipher"
+  },
+  {
+    "Keys": [
+      "Phainon"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "phainon.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Destruction",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Phainon",
+    "InGameSkins": [],
+    "InternalName": "Phainon",
+    "DisplayName": "Phainon"
+  },
+  {
+    "Keys": [
+      "Saber"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "saber.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Destruction",
+    "Region": [
+      "Other"
+    ],
+    "ModFilesName": "Saber",
+    "InGameSkins": [],
+    "InternalName": "Saber",
+    "DisplayName": "Saber"
+  },
+  {
+    "Keys": [
+      "Archer"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "archer.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Hunt",
+    "Region": [
+      "Other"
+    ],
+    "ModFilesName": "Archer",
+    "InGameSkins": [],
+    "InternalName": "Archer",
+    "DisplayName": "Archer"
   }
 ]

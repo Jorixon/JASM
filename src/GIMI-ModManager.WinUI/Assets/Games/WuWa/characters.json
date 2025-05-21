@@ -131,7 +131,14 @@
       "Huanglong"
     ],
     "ModFilesName": "Sanhua",
-    "InGameSkins": [],
+    "InGameSkins": [
+	    {
+        "ModFilesName": "ExorcisticAdjuration",
+        "Image": "Exorcistic_Adjuration.png",
+        "InternalName": "ExorcisticAdjuration",
+        "DisplayName": "Exorcistic Adjuration"
+      }
+	],
     "InternalName": "Sanhua",
     "DisplayName": "Sanhua"
   },
@@ -318,7 +325,14 @@
       "Huanglong"
     ],
     "ModFilesName": "Jinhsi",
-    "InGameSkins": [],
+    "InGameSkins": [
+	    {
+        "ModFilesName": "PeachBlossom",
+        "Image": "Peach_Blossom.png",
+        "InternalName": "PeachBlossom",
+        "DisplayName": "Peach Blossom"
+      }
+	],
     "InternalName": "Jinhsi",
     "DisplayName": "Jinhsi"
   },
