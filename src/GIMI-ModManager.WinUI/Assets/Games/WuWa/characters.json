@@ -132,7 +132,7 @@
     ],
     "ModFilesName": "Sanhua",
     "InGameSkins": [
-	    {
+      {
         "ModFilesName": "ExorcisticAdjuration",
         "Image": "Exorcistic_Adjuration.png",
         "InternalName": "ExorcisticAdjuration",
@@ -326,7 +326,7 @@
     ],
     "ModFilesName": "Jinhsi",
     "InGameSkins": [
-	    {
+      {
         "ModFilesName": "PeachBlossom",
         "Image": "Peach_Blossom.png",
         "InternalName": "PeachBlossom",
