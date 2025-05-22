@@ -131,7 +131,14 @@
       "Huanglong"
     ],
     "ModFilesName": "Sanhua",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "ExorcisticAdjuration",
+        "Image": "Exorcistic_Adjuration.png",
+        "InternalName": "ExorcisticAdjuration",
+        "DisplayName": "Exorcistic Adjuration"
+      }
+	],
     "InternalName": "Sanhua",
     "DisplayName": "Sanhua"
   },
@@ -318,7 +325,14 @@
       "Huanglong"
     ],
     "ModFilesName": "Jinhsi",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "PeachBlossom",
+        "Image": "Peach_Blossom.png",
+        "InternalName": "PeachBlossom",
+        "DisplayName": "Peach Blossom"
+      }
+	],
     "InternalName": "Jinhsi",
     "DisplayName": "Jinhsi"
   },
@@ -482,8 +496,8 @@
     "ReleaseDate": "2024-12-25T00:00:00",
     "Image": "Phoebe.png",
     "Rarity": 5,
-    "Element": "Aero",
-    "Class": "Unknown",
+    "Element": "Spectro",
+    "Class": "Rectifier",
     "Region": [
       "Rinascita"
     ],
@@ -499,8 +513,8 @@
     "ReleaseDate": "2024-12-25T00:00:00",
     "Image": "Zani.png",
     "Rarity": 5,
-    "Element": "Unknown",
-    "Class": "Unknown",
+    "Element": "Spectro",
+    "Class": "Gauntlets",
     "Region": [
       "Rinascita"
     ],
@@ -525,5 +539,56 @@
     "InGameSkins": [],
     "InternalName": "Cantarella",
     "DisplayName": "Cantarella"
+  },
+  {
+    "Keys": [
+      "Ciaccona"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Ciaccona.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Pistols",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Ciaccona",
+    "InGameSkins": [],
+    "InternalName": "Ciaccona",
+    "DisplayName": "Ciaccona"
+  },
+  {
+    "Keys": [
+      "Cartethyia"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Cartethyia.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Sword",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Cartethyia",
+    "InGameSkins": [],
+    "InternalName": "Cartethyia",
+    "DisplayName": "Cartethyia"
+  },
+  {
+    "Keys": [
+      "Lupa"
+    ],
+    "ReleaseDate": "2024-12-25T00:00:00",
+    "Image": "Lupa.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Broadblade",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Lupa",
+    "InGameSkins": [],
+    "InternalName": "Lupa",
+    "DisplayName": "Lupa"
   }
 ]
