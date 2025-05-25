@@ -296,8 +296,8 @@ public class LifeCycleService(
 
         if (!isFullScreen && App.MainWindow.WindowState != WindowState.Minimized)
         {
-            width = App.MainWindow.AppWindow.Size.Width;
-            height = App.MainWindow.AppWindow.Size.Height;
+            width = (int)App.MainWindow.Width;
+            height = (int)App.MainWindow.Height;
         }
 
         if (App.MainWindow.WindowState != WindowState.Minimized)
