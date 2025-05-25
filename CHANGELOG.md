@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.22.5](https://github.com/Jorixon/JASM/compare/v2.22.4...v2.22.5) (2025-05-25)
+
+
+### Bug Fixes
+
+* Window size is now saved and restored correctly when using DPI scaling ([#384](https://github.com/Jorixon/JASM/issues/384)) ([160b156](https://github.com/Jorixon/JASM/commit/160b1566a44671e103fb7f755553c4348efecf7e))
+
+
+### Miscellaneous
+
+* Added Hugo, Missing WuWa skins, Current and upcoming patch Star Rail and WuWa characters ([#383](https://github.com/Jorixon/JASM/issues/383)) ([df20a59](https://github.com/Jorixon/JASM/commit/df20a59630f0441bf6f246d72713af5ac3e03673))
+* Updated release dates for Star Rail, WuWa and ZZZ characters ([9ed4f58](https://github.com/Jorixon/JASM/commit/9ed4f587cf7670a463efac5c151e55f04bf5596a))
+
 ## [2.22.4](https://github.com/Jorixon/JASM/compare/v2.22.3...v2.22.4) (2025-05-13)
 
 
