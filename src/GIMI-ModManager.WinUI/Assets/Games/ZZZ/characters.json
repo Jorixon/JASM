@@ -627,4 +627,96 @@
     "InternalName": "Hugo",
     "DisplayName": "Hugo"
   }
+]  {
+    "Keys": [
+      "Yixuan"
+    ],
+    "ReleaseDate": "2025-06-06T00:00:00",
+    "Image": "Yixuan.png",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Rupture",
+    "Region": [
+      "Yunkui Summit"
+    ],
+    "ModFilesName": "Yixuan",
+    "InGameSkins": [
+      {
+        "ModFilesName": "YixuanTrailsofInk",
+        "Image": "YixuanTrailsofInk.png",
+        "InternalName": "YixuanTrailsofInk",
+        "DisplayName": "YixuanTrailsofInkr"
+      }
+    ],
+    "InternalName": "Yixuan",
+    "DisplayName": "Yixuan"
+  }
+],  {
+    "Keys": [
+      "Panyinhu"
+    ],
+    "ReleaseDate": "2025-06-06T00:00:00",
+    "Image": "Pan_Yinhu.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Defense",
+    "Region": [
+      "Yunkui Summit"
+    ],
+    "ModFilesName": "Pan Yinhu",
+    "InGameSkins": [],
+    "InternalName": "Panyinhu",
+    "DisplayName": "Pan Yinhu"
+  }
+],  {
+    "Keys": [
+      "Jufufu"
+    ],
+    "ReleaseDate": "2025-06-25T00:00:00",
+    "Image": "Ju_fufu.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Stun",
+    "Region": [
+      "Yunkui Summit"
+    ],
+    "ModFilesName": "Jufufu",
+    "InGameSkins": [],
+    "InternalName": "Jufufu",
+    "DisplayName": "Ju Fufu"
+  }
+],  {
+    "Keys": [
+      "UkinamiYuzuha"
+    ],
+    "ReleaseDate": "2025-07-16T00:00:00",
+    "Image": "Ukinami_Yuzuha.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Support",
+    "Region": [
+      "Spook Shack"
+    ],
+    "ModFilesName": "UkinamiYuzuha",
+    "InGameSkins": [],
+    "InternalName": "UkinamiYuzuha",
+    "DisplayName": "Ukinami Yuzuha"
+  }
+],  {
+    "Keys": [
+      "Alicethymefield"
+    ],
+    "ReleaseDate": "2025-08-06T00:00:00",
+    "Image": "Alicethymefield.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Anomaly",
+    "Region": [
+      "Spooky Shack"
+    ],
+    "ModFilesName": "Alicethymefield",
+    "InGameSkins": [],
+    "InternalName": "Alicethymefield",
+    "DisplayName": "Alice Thymefield"
+  }
 ]
