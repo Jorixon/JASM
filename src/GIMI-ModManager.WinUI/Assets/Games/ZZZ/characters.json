@@ -626,8 +626,8 @@
     "InGameSkins": [],
     "InternalName": "Hugo",
     "DisplayName": "Hugo"
-  }
-]  {
+  },
+  {
     "Keys": [
       "Yixuan"
     ],
@@ -650,13 +650,13 @@
     ],
     "InternalName": "Yixuan",
     "DisplayName": "Yixuan"
-  }
-],  {
+  },
+  {
     "Keys": [
       "Panyinhu"
     ],
     "ReleaseDate": "2025-06-06T00:00:00",
-    "Image": "Pan_Yinhu.png",
+    "Image": "PanYinhu.png",
     "Rarity": 4,
     "Element": "Physical",
     "Class": "Defense",
@@ -667,13 +667,13 @@
     "InGameSkins": [],
     "InternalName": "Panyinhu",
     "DisplayName": "Pan Yinhu"
-  }
-],  {
+  },
+  {
     "Keys": [
       "Jufufu"
     ],
     "ReleaseDate": "2025-06-25T00:00:00",
-    "Image": "Ju_fufu.png",
+    "Image": "Jufufu.png",
     "Rarity": 5,
     "Element": "Fire",
     "Class": "Stun",
@@ -684,13 +684,13 @@
     "InGameSkins": [],
     "InternalName": "Jufufu",
     "DisplayName": "Ju Fufu"
-  }
-],  {
+  },
+  {
     "Keys": [
       "UkinamiYuzuha"
     ],
     "ReleaseDate": "2025-07-16T00:00:00",
-    "Image": "Ukinami_Yuzuha.png",
+    "Image": "UkinamiYuzuha.png",
     "Rarity": 5,
     "Element": "Physical",
     "Class": "Support",
@@ -701,8 +701,8 @@
     "InGameSkins": [],
     "InternalName": "UkinamiYuzuha",
     "DisplayName": "Ukinami Yuzuha"
-  }
-],  {
+  },
+  {
     "Keys": [
       "Alicethymefield"
     ],
