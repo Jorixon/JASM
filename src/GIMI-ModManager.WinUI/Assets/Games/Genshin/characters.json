@@ -1866,5 +1866,39 @@
     "InGameSkins": [],
     "InternalName": "Escoffier",
     "DisplayName": "Escoffier"
+  },
+  {
+    "Keys": [
+      "Skirk"
+    ],
+    "ReleaseDate": "2025-06-18T00:00:00",
+    "Image": "Skirk.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Sword",
+    "Region": [
+      "Fontaine"
+    ],
+    "ModFilesName": "Skirk",
+    "InGameSkins": [],
+    "InternalName": "Skirk",
+    "DisplayName": "Skirk"
+  },
+  {
+    "Keys": [
+      "Dahlia"
+    ],
+    "ReleaseDate": "2025-06-18T00:00:00",
+    "Image": "Dahlia.png",
+    "Rarity": 4,
+    "Element": "Hydro",
+    "Class": "Sword",
+    "Region": [
+      "Mondstadt"
+    ],
+    "ModFilesName": "Dahlia",
+    "InGameSkins": [],
+    "InternalName": "Dahlia",
+    "DisplayName": "Dahlia"
   }
 ]
