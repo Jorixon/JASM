@@ -47,12 +47,6 @@
     "DisplayName": "Ruin Machines"
   },
   {
-    "Image": "Npc_Skirk.webp",
-    "ModFilesName": "Skirk",
-    "InternalName": "Skirk",
-    "DisplayName": "Skirk"
-  },
-  {
     "Image": "Npc_Sorush.webp",
     "ModFilesName": "Sorush",
     "InternalName": "Sorush",

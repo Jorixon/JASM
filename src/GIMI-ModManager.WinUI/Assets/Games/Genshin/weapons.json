@@ -1636,5 +1636,14 @@
     "Image": "Cranes_Echoing_Call.webp",
     "InternalName": "Crane's Echoing Call",
     "DisplayName": "Crane's Echoing Call"
+  },
+  {
+    "Rarity": 5,
+    "Type": "Sword",
+    "ModFilesName": "",
+    "IsMultiMod": false,
+    "Image": "AzureLight.png",
+    "InternalName": "AzureLight",
+    "DisplayName": "AzureLight"
   }
 ]
