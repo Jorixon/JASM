@@ -12,7 +12,14 @@
       "Phaethon"
     ],
     "ModFilesName": "Belle",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+      "ModFilesName": "BelleDelicateSunlight",
+        "Image": "BelleDelicateSunlight.png",
+        "InternalName": "BelleDelicateSunlight",
+        "DisplayName": "Belle Delicate Sunlight"
+      }
+    ],
     "InternalName": "Belle",
     "DisplayName": "Belle"
   },
@@ -29,7 +36,14 @@
       "Phaethon"
     ],
     "ModFilesName": "Wise",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+      "ModFilesName": "WiseSoaringCrane",
+        "Image": "WiseSoaringCrane.png",
+        "InternalName": "WiseSoaringCrane",
+        "DisplayName": "Wise Soaring Crane"
+      }
+    ],
     "InternalName": "Wise",
     "DisplayName": "Wise"
   },
@@ -663,7 +677,7 @@
     "Region": [
       "Yunkui Summit"
     ],
-    "ModFilesName": "Pan Yinhu",
+    "ModFilesName": "PanYinhu",
     "InGameSkins": [],
     "InternalName": "Panyinhu",
     "DisplayName": "Pan Yinhu"
@@ -687,7 +701,8 @@
   },
   {
     "Keys": [
-      "UkinamiYuzuha"
+      "Yuzuha",
+      "Ukinami"
     ],
     "ReleaseDate": "2025-07-16T00:00:00",
     "Image": "UkinamiYuzuha.png",
@@ -697,14 +712,15 @@
     "Region": [
       "Spook Shack"
     ],
-    "ModFilesName": "UkinamiYuzuha",
+    "ModFilesName": "Yuzuha",
     "InGameSkins": [],
-    "InternalName": "UkinamiYuzuha",
-    "DisplayName": "Ukinami Yuzuha"
+    "InternalName": "Yuzuha",
+    "DisplayName": "Yuzuha"
   },
   {
     "Keys": [
-      "Alicethymefield"
+      "Alice",
+      "Thymefield"
     ],
     "ReleaseDate": "2025-08-06T00:00:00",
     "Image": "AliceThymefield.png",
@@ -714,9 +730,9 @@
     "Region": [
       "Spooky Shack"
     ],
-    "ModFilesName": "Alicethymefield",
+    "ModFilesName": "Alice",
     "InGameSkins": [],
-    "InternalName": "Alicethymefield",
-    "DisplayName": "Alice Thymefield"
+    "InternalName": "Alice",
+    "DisplayName": "Alice"
   }
 ]
