@@ -12,7 +12,14 @@
       "Phaethon"
     ],
     "ModFilesName": "Belle",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+      "ModFilesName": "BelleDelicateSunlight",
+        "Image": "BelleDelicateSunlight.png",
+        "InternalName": "BelleDelicateSunlight",
+        "DisplayName": "Belle Delicate Sunlight"
+      }
+    ],
     "InternalName": "Belle",
     "DisplayName": "Belle"
   },
@@ -29,7 +36,14 @@
       "Phaethon"
     ],
     "ModFilesName": "Wise",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+      "ModFilesName": "WiseSoaringCrane",
+        "Image": "WiseSoaringCrane.png",
+        "InternalName": "WiseSoaringCrane",
+        "DisplayName": "Wise Soaring Crane"
+      }
+    ],
     "InternalName": "Wise",
     "DisplayName": "Wise"
   },
@@ -626,5 +640,99 @@
     "InGameSkins": [],
     "InternalName": "Hugo",
     "DisplayName": "Hugo"
+  },
+  {
+    "Keys": [
+      "Yixuan"
+    ],
+    "ReleaseDate": "2025-06-06T00:00:00",
+    "Image": "Yixuan.png",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Rupture",
+    "Region": [
+      "Yunkui Summit"
+    ],
+    "ModFilesName": "Yixuan",
+    "InGameSkins": [
+      {
+        "ModFilesName": "YixuanTrailsofInk",
+        "Image": "YixuanTrailsofInk.png",
+        "InternalName": "YixuanTrailsofInk",
+        "DisplayName": "YixuanTrailsofInkr"
+      }
+    ],
+    "InternalName": "Yixuan",
+    "DisplayName": "Yixuan"
+  },
+  {
+    "Keys": [
+      "Panyinhu"
+    ],
+    "ReleaseDate": "2025-06-06T00:00:00",
+    "Image": "PanYinhu.png",
+    "Rarity": 4,
+    "Element": "Physical",
+    "Class": "Defense",
+    "Region": [
+      "Yunkui Summit"
+    ],
+    "ModFilesName": "PanYinhu",
+    "InGameSkins": [],
+    "InternalName": "Panyinhu",
+    "DisplayName": "Pan Yinhu"
+  },
+  {
+    "Keys": [
+      "Jufufu"
+    ],
+    "ReleaseDate": "2025-06-25T00:00:00",
+    "Image": "JuFufu.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Stun",
+    "Region": [
+      "Yunkui Summit"
+    ],
+    "ModFilesName": "Jufufu",
+    "InGameSkins": [],
+    "InternalName": "Jufufu",
+    "DisplayName": "Ju Fufu"
+  },
+  {
+    "Keys": [
+      "Yuzuha",
+      "Ukinami"
+    ],
+    "ReleaseDate": "2025-07-16T00:00:00",
+    "Image": "UkinamiYuzuha.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Support",
+    "Region": [
+      "Spook Shack"
+    ],
+    "ModFilesName": "Yuzuha",
+    "InGameSkins": [],
+    "InternalName": "Yuzuha",
+    "DisplayName": "Yuzuha"
+  },
+  {
+    "Keys": [
+      "Alice",
+      "Thymefield"
+    ],
+    "ReleaseDate": "2025-08-06T00:00:00",
+    "Image": "AliceThymefield.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Anomaly",
+    "Region": [
+      "Spooky Shack"
+    ],
+    "ModFilesName": "Alice",
+    "InGameSkins": [],
+    "InternalName": "Alice",
+    "DisplayName": "Alice"
   }
 ]
