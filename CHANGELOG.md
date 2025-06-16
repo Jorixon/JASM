@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.6](https://github.com/Jorixon/JASM/compare/v2.22.5...v2.22.6) (2025-06-16)
+
+
+### Miscellaneous
+
+* Added ZZZ Characters and Genshin Characters ([#388](https://github.com/Jorixon/JASM/issues/388)) ([a2b806f](https://github.com/Jorixon/JASM/commit/a2b806fba902394e6e9cf3bb72fdb148adc198e6))
+
 ## [2.22.5](https://github.com/Jorixon/JASM/compare/v2.22.4...v2.22.5) (2025-05-25)
 
 
