@@ -14,7 +14,7 @@
     "ModFilesName": "Belle",
     "InGameSkins": [
       {
-      "ModFilesName": "BelleDelicateSunlight",
+        "ModFilesName": "BelleDelicateSunlight",
         "Image": "BelleDelicateSunlight.png",
         "InternalName": "BelleDelicateSunlight",
         "DisplayName": "Belle Delicate Sunlight"
@@ -38,7 +38,7 @@
     "ModFilesName": "Wise",
     "InGameSkins": [
       {
-      "ModFilesName": "WiseSoaringCrane",
+        "ModFilesName": "WiseSoaringCrane",
         "Image": "WiseSoaringCrane.png",
         "InternalName": "WiseSoaringCrane",
         "DisplayName": "Wise Soaring Crane"
