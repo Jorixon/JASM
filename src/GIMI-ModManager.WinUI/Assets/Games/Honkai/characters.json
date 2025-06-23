@@ -1139,7 +1139,7 @@
     "Keys": [
       "Cipher"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-06-11T00:00:00",
     "Image": "cipher.png",
     "Rarity": 5,
     "Element": "Quantum",
@@ -1202,5 +1202,39 @@
     "InGameSkins": [],
     "InternalName": "Archer",
     "DisplayName": "Archer"
+  },
+  {
+    "Keys": [
+      "Cerydra"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "cerydra.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Harmony",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Cerydra",
+    "InGameSkins": [],
+    "InternalName": "Cerydra",
+    "DisplayName": "Cerydra"
+  },
+  {
+    "Keys": [
+      "Hysilens"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "hysilens.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Nihility",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Hysilens",
+    "InGameSkins": [],
+    "InternalName": "Hysilens",
+    "DisplayName": "Hysilens"
   }
 ]
