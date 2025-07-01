@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.7](https://github.com/Jorixon/JASM/compare/v2.22.6...v2.22.7) (2025-07-01)
+
+
+### Miscellaneous
+
+* Added character skins for WuWa and added new characters for WuWa and Honkai Star Rail ([#393](https://github.com/Jorixon/JASM/issues/393)) ([cb34add](https://github.com/Jorixon/JASM/commit/cb34addbfbf021e1c8f6fd6c5401cb6a2cae8cf1))
+
 ## [2.22.6](https://github.com/Jorixon/JASM/compare/v2.22.5...v2.22.6) (2025-06-16)
 
 
