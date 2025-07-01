@@ -308,7 +308,14 @@
       "Huanglong"
     ],
     "ModFilesName": "Changli",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "LaurelNymph",
+        "Image": "Laurel_Nymph.png",
+        "InternalName": "LaurelNymph",
+        "DisplayName": "Laurel Nymph"
+      }
+	],
     "InternalName": "Changli",
     "DisplayName": "Changli"
   },
@@ -451,7 +458,14 @@
       "Rinascita"
     ],
     "ModFilesName": "Carlotta",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "SplashingSummer",
+        "Image": "Splashing_Summer.png",
+        "InternalName": "SplashingSummer",
+        "DisplayName": "Splashing Summer"
+      }
+	],
     "InternalName": "Carlotta",
     "DisplayName": "Carlotta"
   },
@@ -561,7 +575,7 @@
     "Keys": [
       "Cartethyia"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-06-12T00:00:00",
     "Image": "Cartethyia.png",
     "Rarity": 5,
     "Element": "Aero",
@@ -578,7 +592,7 @@
     "Keys": [
       "Lupa"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-07-03T00:00:00",
     "Image": "Lupa.png",
     "Rarity": 5,
     "Element": "Aero",
@@ -590,5 +604,107 @@
     "InGameSkins": [],
     "InternalName": "Lupa",
     "DisplayName": "Lupa"
+  },
+  {
+    "Keys": [
+      "Phrolova"
+    ],
+    "ReleaseDate": "2026-01-02T00:00:00",
+    "Image": "Phrolova.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "TBA"
+    ],
+    "ModFilesName": "Phrolova",
+    "InGameSkins": [],
+    "InternalName": "Phrolova",
+    "DisplayName": "Phrolova"
+  },
+  {
+    "Keys": [
+      "Augusta"
+    ],
+    "ReleaseDate": "2026-01-02T00:00:00",
+    "Image": "Augusta.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Augusta",
+    "InGameSkins": [],
+    "InternalName": "Augusta",
+    "DisplayName": "Augusta"
+  },
+  {
+    "Keys": [
+      "Chisa"
+    ],
+    "ReleaseDate": "2026-01-02T00:00:00",
+    "Image": "Chisa.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "TBA"
+    ],
+    "ModFilesName": "Chisa",
+    "InGameSkins": [],
+    "InternalName": "Chisa",
+    "DisplayName": "Chisa"
+  },
+  {
+    "Keys": [
+      "Galbrena"
+    ],
+    "ReleaseDate": "2026-01-02T00:00:00",
+    "Image": "Galbrena.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Galbrena",
+    "InGameSkins": [],
+    "InternalName": "Galbrena",
+    "DisplayName": "Galbrena"
+  },
+  {
+    "Keys": [
+      "Iuno"
+    ],
+    "ReleaseDate": "2026-01-02T00:00:00",
+    "Image": "Iuno.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Iuno",
+    "InGameSkins": [],
+    "InternalName": "Iuno",
+    "DisplayName": "Iuno"
+  },
+  {
+    "Keys": [
+      "Qiuyuan"
+    ],
+    "ReleaseDate": "2026-01-02T00:00:00",
+    "Image": "Qiuyuan.png",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Rectifier",
+    "Region": [
+      "TBA"
+    ],
+    "ModFilesName": "Qiuyuan",
+    "InGameSkins": [],
+    "InternalName": "Qiuyuan",
+    "DisplayName": "Qiuyuan"
   }
 ]
