@@ -18,6 +18,12 @@
         "Image": "BelleDelicateSunlight.png",
         "InternalName": "BelleDelicateSunlight",
         "DisplayName": "Belle Delicate Sunlight"
+      },
+      {
+        "ModFilesName": "BelleSummerSkin",
+        "Image": "BelleSummerSkies.png",
+        "InternalName": "BelleSummerSkies",
+        "DisplayName": "Belle Summer Skies"
       }
     ],
     "InternalName": "Belle",
@@ -42,6 +48,12 @@
         "Image": "WiseSoaringCrane.png",
         "InternalName": "WiseSoaringCrane",
         "DisplayName": "Wise Soaring Crane"
+      },
+      {
+        "ModFilesName": "WiseSummerSkin",
+        "Image": "WisePeacefulWaves.png",
+        "InternalName": "WisePeacefulWaves",
+        "DisplayName": "Wise Peaceful Waves"
       }
     ],
     "InternalName": "Wise",
@@ -713,7 +725,14 @@
       "Spook Shack"
     ],
     "ModFilesName": "Yuzuha",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "YuzuhaSkin",
+        "Image": "YuzuhaTanukiInBroadDaylight.png",
+        "InternalName": "YuzuhaTanukiInBroadDaylight",
+        "DisplayName": "Yuzuha Tanuki in Broad Daylight"
+      }
+    ],
     "InternalName": "Yuzuha",
     "DisplayName": "Yuzuha"
   },
@@ -731,8 +750,50 @@
       "Spooky Shack"
     ],
     "ModFilesName": "Alice",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "AliceSkin",
+        "Image": "AliceSeaOfThyme.png",
+        "InternalName": "AliceSeaOfThyme",
+        "DisplayName": "Alice Sea of Thyme"
+      }
+    ],
     "InternalName": "Alice",
     "DisplayName": "Alice"
+  },
+  {
+    "Keys": [
+      "Orphie",
+	    "Magnusson"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "OrphieMagnusson.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Attack",
+    "Region": [
+      "Obol Squad"
+    ],
+    "ModFilesName": "Orphie",
+    "InGameSkins": [],
+    "InternalName": "Orphie",
+    "DisplayName": "Orphie"
+  },
+  {
+    "Keys": [
+      "Seed"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "Seed.png",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Attack",
+    "Region": [
+      "Obol Squad"
+    ],
+    "ModFilesName": "Seed",
+    "InGameSkins": [],
+    "InternalName": "Seed",
+    "DisplayName": "Seed"
   }
 ]

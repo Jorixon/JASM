@@ -154,6 +154,23 @@
   },
   {
     "Keys": [
+      "danheng-PT"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "DHPT.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Preservation",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Dan Heng PT",
+    "InGameSkins": [],
+    "InternalName": "Dan Heng PT",
+    "DisplayName": "Dan Heng - PT"
+  },
+  {
+    "Keys": [
       "fu xuan"
     ],
     "ReleaseDate": "2023-09-20T00:00:00",
@@ -858,7 +875,14 @@
       "Penacony"
     ],
     "ModFilesName": "Firefly",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "FireflySchoolGirl",
+        "Image": "Character_Skin_Firefly_Spring_Missive.png",
+        "InternalName": "FireflySpringMissive",
+        "DisplayName": "Firefly Spring Missive"
+      }
+    ],
     "InternalName": "Firefly",
     "DisplayName": "Firefly"
   },
@@ -1156,7 +1180,7 @@
     "Keys": [
       "Phainon"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-07-02T00:00:00",
     "Image": "phainon.png",
     "Rarity": 5,
     "Element": "Physical",
@@ -1173,7 +1197,7 @@
     "Keys": [
       "Saber"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-07-11T00:00:00",
     "Image": "saber.png",
     "Rarity": 5,
     "Element": "Wind",
@@ -1190,7 +1214,7 @@
     "Keys": [
       "Archer"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-07-11T00:00:00",
     "Image": "archer.png",
     "Rarity": 5,
     "Element": "Quantum",
@@ -1207,7 +1231,7 @@
     "Keys": [
       "Cerydra"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-08-02T00:00:00",
     "Image": "cerydra.png",
     "Rarity": 5,
     "Element": "Wind",
@@ -1224,7 +1248,7 @@
     "Keys": [
       "Hysilens"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-08-16T00:00:00",
     "Image": "hysilens.png",
     "Rarity": 5,
     "Element": "Physical",
@@ -1236,5 +1260,22 @@
     "InGameSkins": [],
     "InternalName": "Hysilens",
     "DisplayName": "Hysilens"
+  },
+  {
+    "Keys": [
+      "Evernight"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "evernight.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Remembrance",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Evernight",
+    "InGameSkins": [],
+    "InternalName": "Evernight",
+    "DisplayName": "Evernight"
   }
 ]
