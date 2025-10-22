@@ -632,7 +632,14 @@
       "Mockingbird"
     ],
     "ModFilesName": "Vivian",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "VivianSkin",
+        "Image": "VivianIrisOfTheShore.webp",
+        "InternalName": "IrisOfTheShore",
+        "DisplayName": "Iris of the Shore"
+      }
+    ],
     "InternalName": "Vivian",
     "DisplayName": "Vivian"
   },
@@ -801,7 +808,7 @@
 	    "Manato",
       "Komano"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-11-05T00:00:00",
     "Image": "Manato.png",
     "Rarity": 4,
     "Element": "Fire",
@@ -810,15 +817,23 @@
       "Spook"
     ],
     "ModFilesName": "Manato",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "ManatoSkin",
+        "Image": "ManatoWhiteHeartSilhouette.webp",
+        "InternalName": "WhiteHeartSilhouette",
+        "DisplayName": "White Heart Silhouette"
+      }
+    ],
     "InternalName": "Manato",
     "DisplayName": "Manato"
   },
   {
     "Keys": [
-      "Lucia"
+      "Lucia",
+      "Elowen"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-10-15T00:00:00",
     "Image": "Lucia.png",
     "Rarity": 5,
     "Element": "Ether",
@@ -833,9 +848,10 @@
   },
   {
     "Keys": [
-      "Yidhari"
+      "Yidhari",
+      "Murphy"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-11-05T00:00:00",
     "Image": "Yidhari.png",
     "Rarity": 5,
     "Element": "Ice",
@@ -847,5 +863,39 @@
     "InGameSkins": [],
     "InternalName": "Yidhari",
     "DisplayName": "Yidhari"
+  },
+  {
+    "Keys": [
+      "Banyue"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "Banyue.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Rupture",
+    "Region": [
+      "Krampus"
+    ],
+    "ModFilesName": "Banyue",
+    "InGameSkins": [],
+    "InternalName": "Banyue",
+    "DisplayName": "Banyue"
+  },
+  {
+    "Keys": [
+      "Dialyn"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "Dialyn.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Stun",
+    "Region": [
+      "Krampus"
+    ],
+    "ModFilesName": "Dialyn",
+    "InGameSkins": [],
+    "InternalName": "Dialyn",
+    "DisplayName": "Dialyn"
   }
 ]

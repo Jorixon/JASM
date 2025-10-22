@@ -677,13 +677,13 @@
     "Keys": [
       "Galbrena"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-10-09T00:00:00",
     "Image": "Galbrena.png",
     "Rarity": 5,
     "Element": "Havoc",
     "Class": "Rectifier",
     "Region": [
-      "Rinascita"
+      "Bshores"
     ],
     "ModFilesName": "Galbrena",
     "InGameSkins": [],
@@ -694,13 +694,13 @@
     "Keys": [
       "Qiuyuan"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-10-30T00:00:00",
     "Image": "Qiuyuan.png",
     "Rarity": 5,
     "Element": "Havoc",
     "Class": "Rectifier",
     "Region": [
-      "TBA"
+      "Huanglong"
     ],
     "ModFilesName": "Qiuyuan",
     "InGameSkins": [],
