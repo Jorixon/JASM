@@ -3,16 +3,14 @@
 JASM is a skin manager for a certain game. Made using WinUI 3 with WinAppSDK. 
 I made this for fun, for myself and to learn WinUI, but it kinda took off over time.
 
-There may be some "GIMI-ModManager" references throughout the app, that is what I originally called this project. I'll change them eventually.
-
-
 Download link and images are also available over at [GameBanana](https://gamebanana.com/tools/14574)
 
-**This is still in an early stage of development. Make backups and use at your own risk ⚠️** 
+**Remeber to Make backups ⚠️** 
 
-Unhandled exceptions are written to the Logs file as well. Debug logging can be enabled in appsettings.json 
+Unhandled exceptions are written to the Logs file within the JASM app directory.
 
-
+## JASM Status
+I am no longer actively developing or maintaining JASM. This is due to lack of time and interest. I might fix critical bugs or do small updates in the future, but don't expect much.
 
 ## Features
 - Pretty UI 👀
@@ -72,13 +70,6 @@ The [H.InputSimulator](https://github.com/HavenDV/H.InputSimulator) library is u
 - I made everything in dark mode theme, so light mode does not look good.
 - App settings are stored here ```C:\Users\<username>\AppData\Local\JASM\ApplicationData```
 - Mod specific settings are stored within the mod folder themselves and are prefixed with ```.JASM_```. When exporting mods, these files can be ignored.
-
-### Contributing
-If you want to contribute to this project, feel free to do so. I am not a professional developer when it comes to WinUI and I am still actively learning. Contributing [CONTRIBUTING.md](https://github.com/Jorixon/JASM/blob/main/CONTRIBUTING.md)
-
-The code has progressively gotten more spaghettified over time ;_;
-
-**So be aware that the code is not super clean...**
 
 
 ### Building from source
