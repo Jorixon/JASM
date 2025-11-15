@@ -53,22 +53,6 @@
                 Style="{ThemeResource SubtitleTextBlockStyle}"
                 Text="{x:Bind ViewModel.ExceptionMessage, Mode=OneWay}"
                 TextWrapping="Wrap" />
-
-            <StackPanel
-                Grid.Column="2"
-                Margin="16,0"
-                Orientation="Horizontal">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="Please report this on" />
-                <controls:LinkButton
-                    HorizontalAlignment="Right"
-                    Link="{x:Bind ViewModel.JASM_GITHUB}"
-                    Text="GitHub"
-                    TextStyle="{ThemeResource BodyStrongTextBlockStyle}" />
-            </StackPanel>
-
         </Grid>
         <ScrollViewer Grid.Row="1">
 
@@ -78,18 +62,13 @@
                     Margin="0,0,0,8"
                     FontSize="18"
                     Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="An unhanded exception has occurred. The application ran into a problem that it didn't know how to handle. JASM may be in an unstable state, and it is recommended to restart JASM. If you want to help us fix this issue, please send us the following information:" />
+                    Text="An unhanded exception has occurred. The application ran into a problem that it didn't know how to handle. JASM may be in an unstable state, and it is recommended to restart JASM." />
 
                 <TextBlock
                     Margin="0,4"
                     IsTextSelectionEnabled="True"
                     Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="1. What were you doing when this happened?" />
-                <TextBlock
-                    Margin="0,4"
-                    IsTextSelectionEnabled="True"
-                    Style="{ThemeResource BodyStrongTextBlockStyle}"
-                    Text="2. Provide this stack trace with your report:" />
+                    Text="Stack trace:" />
 
                 <StackPanel
                     Padding="12"
@@ -106,14 +85,14 @@
                     <TextBlock
                         Margin="4,0"
                         Style="{ThemeResource SubtitleTextBlockStyle}"
-                        Text="An inner exception is also included. Please include this as well." />
+                        Text="An inner exception" />
                     <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind ViewModel.InnerExceptionMessage, Mode=OneWay}" />
 
                     <TextBlock
                         Margin="0,4"
                         IsTextSelectionEnabled="True"
                         Style="{ThemeResource BodyStrongTextBlockStyle}"
-                        Text="3. Also provide this inner exception stack trace with your report:" />
+                        Text="Stack trace:" />
 
                     <StackPanel
                         Padding="12"

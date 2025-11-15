@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using GIMI_ModManager.WinUI.Helpers;
 using Microsoft.UI.Xaml;
 
 namespace GIMI_ModManager.WinUI.Views;
@@ -25,9 +24,6 @@ public sealed partial class ErrorWindow : WindowEx
 
 public partial class ErrorWindowViewModel : ObservableRecipient
 {
-    public Uri JASM_GITHUB { get; } = Constants.JASM_GITHUB;
-    public Uri JASM_GAMEBANANA { get; } = Constants.JASM_GAMEBANANA;
-
     public ErrorWindowViewModel(Exception exception)
     {
         ExceptionMessage = StripUsername(exception.Message);
