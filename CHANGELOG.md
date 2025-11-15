@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.8](https://github.com/Jorixon/JASM/compare/v2.22.7...v2.22.8) (2025-11-15)
+
+
+### Miscellaneous
+
+* Added missing skins and characters for Genshin, HSR, ZZZ and WuWa ([#399](https://github.com/Jorixon/JASM/issues/399)) ([8af5af9](https://github.com/Jorixon/JASM/commit/8af5af9653752cfc95d2a15310615f59fdc9e482))
+
 ## [2.22.7](https://github.com/Jorixon/JASM/compare/v2.22.6...v2.22.7) (2025-07-01)
 
 
