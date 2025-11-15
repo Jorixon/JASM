@@ -595,7 +595,7 @@
     "ReleaseDate": "2025-07-03T00:00:00",
     "Image": "Lupa.png",
     "Rarity": 5,
-    "Element": "Aero",
+    "Element": "Fusion",
     "Class": "Broadblade",
     "Region": [
       "Rinascita"
@@ -609,13 +609,13 @@
     "Keys": [
       "Phrolova"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-07-24T00:00:00",
     "Image": "Phrolova.png",
     "Rarity": 5,
     "Element": "Havoc",
     "Class": "Rectifier",
     "Region": [
-      "TBA"
+      "Fractsidus"
     ],
     "ModFilesName": "Phrolova",
     "InGameSkins": [],
@@ -626,11 +626,11 @@
     "Keys": [
       "Augusta"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-08-28T00:00:00",
     "Image": "Augusta.png",
     "Rarity": 5,
-    "Element": "Havoc",
-    "Class": "Rectifier",
+    "Element": "Electro",
+    "Class": "Broadblade",
     "Region": [
       "Rinascita"
     ],
@@ -638,6 +638,23 @@
     "InGameSkins": [],
     "InternalName": "Augusta",
     "DisplayName": "Augusta"
+  },
+  {
+    "Keys": [
+      "Iuno"
+    ],
+    "ReleaseDate": "2025-09-17T00:00:00",
+    "Image": "Iuno.png",
+    "Rarity": 5,
+    "Element": "Aero",
+    "Class": "Gauntlets",
+    "Region": [
+      "Rinascita"
+    ],
+    "ModFilesName": "Iuno",
+    "InGameSkins": [],
+    "InternalName": "Iuno",
+    "DisplayName": "Iuno"
   },
   {
     "Keys": [
@@ -660,13 +677,13 @@
     "Keys": [
       "Galbrena"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-10-09T00:00:00",
     "Image": "Galbrena.png",
     "Rarity": 5,
     "Element": "Havoc",
     "Class": "Rectifier",
     "Region": [
-      "Rinascita"
+      "Bshores"
     ],
     "ModFilesName": "Galbrena",
     "InGameSkins": [],
@@ -675,32 +692,15 @@
   },
   {
     "Keys": [
-      "Iuno"
-    ],
-    "ReleaseDate": "2026-01-02T00:00:00",
-    "Image": "Iuno.png",
-    "Rarity": 5,
-    "Element": "Havoc",
-    "Class": "Rectifier",
-    "Region": [
-      "Rinascita"
-    ],
-    "ModFilesName": "Iuno",
-    "InGameSkins": [],
-    "InternalName": "Iuno",
-    "DisplayName": "Iuno"
-  },
-  {
-    "Keys": [
       "Qiuyuan"
     ],
-    "ReleaseDate": "2026-01-02T00:00:00",
+    "ReleaseDate": "2025-10-30T00:00:00",
     "Image": "Qiuyuan.png",
     "Rarity": 5,
     "Element": "Havoc",
     "Class": "Rectifier",
     "Region": [
-      "TBA"
+      "Huanglong"
     ],
     "ModFilesName": "Qiuyuan",
     "InGameSkins": [],

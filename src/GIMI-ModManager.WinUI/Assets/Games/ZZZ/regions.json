@@ -34,5 +34,21 @@
     {
       "InternalName": "Lyra",
       "DisplayName": "Stars of Lyra"
+    },
+    {
+      "InternalName": "Mockingbird",
+      "DisplayName": "Mockingbird"
+    },
+    {
+      "InternalName": "YSummit",
+      "DisplayName": "Yunkui Summit"
+    },
+    {
+      "InternalName": "Spook",
+      "DisplayName": "Spook Shack"
+    },
+    {
+      "InternalName": "Krampus",
+      "DisplayName": "Krampus Compliance Authority"
     }
 ]

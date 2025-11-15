@@ -18,6 +18,12 @@
         "Image": "BelleDelicateSunlight.png",
         "InternalName": "BelleDelicateSunlight",
         "DisplayName": "Belle Delicate Sunlight"
+      },
+	  {
+        "ModFilesName": "BelleSummerSkin",
+        "Image": "BelleSummerSkies.png",
+        "InternalName": "BelleSummerSkies",
+        "DisplayName": "Belle Summer Skies"
       }
     ],
     "InternalName": "Belle",
@@ -42,6 +48,12 @@
         "Image": "WiseSoaringCrane.png",
         "InternalName": "WiseSoaringCrane",
         "DisplayName": "Wise Soaring Crane"
+      },
+	  {
+        "ModFilesName": "WiseSummerSkin",
+        "Image": "WisePeacefulWaves.png",
+        "InternalName": "WisePeacefulWaves",
+        "DisplayName": "Wise Peaceful Waves"
       }
     ],
     "InternalName": "Wise",
@@ -620,7 +632,14 @@
       "Mockingbird"
     ],
     "ModFilesName": "Vivian",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "VivianSkin",
+        "Image": "VivianIrisOfTheShore.webp",
+        "InternalName": "IrisOfTheShore",
+        "DisplayName": "Iris of the Shore"
+      }
+    ],
     "InternalName": "Vivian",
     "DisplayName": "Vivian"
   },
@@ -651,7 +670,7 @@
     "Element": "Ether",
     "Class": "Rupture",
     "Region": [
-      "Yunkui Summit"
+      "YSummit"
     ],
     "ModFilesName": "Yixuan",
     "InGameSkins": [
@@ -675,7 +694,7 @@
     "Element": "Physical",
     "Class": "Defense",
     "Region": [
-      "Yunkui Summit"
+      "YSummit"
     ],
     "ModFilesName": "PanYinhu",
     "InGameSkins": [],
@@ -692,7 +711,7 @@
     "Element": "Fire",
     "Class": "Stun",
     "Region": [
-      "Yunkui Summit"
+      "YSummit"
     ],
     "ModFilesName": "Jufufu",
     "InGameSkins": [],
@@ -710,10 +729,17 @@
     "Element": "Physical",
     "Class": "Support",
     "Region": [
-      "Spook Shack"
+      "Spook"
     ],
     "ModFilesName": "Yuzuha",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "YuzuhaSkin",
+        "Image": "YuzuhaTanukiInBroadDaylight.png",
+        "InternalName": "YuzuhaTanukiInBroadDaylight",
+        "DisplayName": "Yuzuha Tanuki in Broad Daylight"
+      }
+    ],
     "InternalName": "Yuzuha",
     "DisplayName": "Yuzuha"
   },
@@ -728,11 +754,148 @@
     "Element": "Physical",
     "Class": "Anomaly",
     "Region": [
-      "Spooky Shack"
+      "Spook"
     ],
     "ModFilesName": "Alice",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "AliceSkin",
+        "Image": "AliceSeaOfThyme.png",
+        "InternalName": "AliceSeaOfThyme",
+        "DisplayName": "Alice Sea of Thyme"
+      }
+    ],
     "InternalName": "Alice",
     "DisplayName": "Alice"
+  },
+  {
+    "Keys": [
+      "Orphie",
+	    "Magnusson"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "OrphieMagnusson.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Attack",
+    "Region": [
+      "OBOL"
+    ],
+    "ModFilesName": "Orphie",
+    "InGameSkins": [],
+    "InternalName": "Orphie",
+    "DisplayName": "Orphie"
+  },
+  {
+    "Keys": [
+      "Seed"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "Seed.png",
+    "Rarity": 5,
+    "Element": "Electric",
+    "Class": "Attack",
+    "Region": [
+      "OBOL"
+    ],
+    "ModFilesName": "Seed",
+    "InGameSkins": [],
+    "InternalName": "Seed",
+    "DisplayName": "Seed"
+  },
+  {
+    "Keys": [
+	    "Manato",
+      "Komano"
+    ],
+    "ReleaseDate": "2025-11-05T00:00:00",
+    "Image": "Manato.png",
+    "Rarity": 4,
+    "Element": "Fire",
+    "Class": "Rupture",
+    "Region": [
+      "Spook"
+    ],
+    "ModFilesName": "Manato",
+    "InGameSkins": [
+      {
+        "ModFilesName": "ManatoSkin",
+        "Image": "ManatoWhiteHeartSilhouette.webp",
+        "InternalName": "WhiteHeartSilhouette",
+        "DisplayName": "White Heart Silhouette"
+      }
+    ],
+    "InternalName": "Manato",
+    "DisplayName": "Manato"
+  },
+  {
+    "Keys": [
+      "Lucia",
+      "Elowen"
+    ],
+    "ReleaseDate": "2025-10-15T00:00:00",
+    "Image": "Lucia.png",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Support",
+    "Region": [
+      "Spook"
+    ],
+    "ModFilesName": "Lucia",
+    "InGameSkins": [],
+    "InternalName": "Lucia",
+    "DisplayName": "Lucia"
+  },
+  {
+    "Keys": [
+      "Yidhari",
+      "Murphy"
+    ],
+    "ReleaseDate": "2025-11-05T00:00:00",
+    "Image": "Yidhari.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Rupture",
+    "Region": [
+      "Spook"
+    ],
+    "ModFilesName": "Yidhari",
+    "InGameSkins": [],
+    "InternalName": "Yidhari",
+    "DisplayName": "Yidhari"
+  },
+  {
+    "Keys": [
+      "Banyue"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "Banyue.webp",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Rupture",
+    "Region": [
+      "Krampus"
+    ],
+    "ModFilesName": "Banyue",
+    "InGameSkins": [],
+    "InternalName": "Banyue",
+    "DisplayName": "Banyue"
+  },
+  {
+    "Keys": [
+      "Dialyn"
+    ],
+    "ReleaseDate": "2026-01-01T00:00:00",
+    "Image": "Dialyn.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Stun",
+    "Region": [
+      "Krampus"
+    ],
+    "ModFilesName": "Dialyn",
+    "InGameSkins": [],
+    "InternalName": "Dialyn",
+    "DisplayName": "Dialyn"
   }
 ]
