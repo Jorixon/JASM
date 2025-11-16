@@ -142,5 +142,35 @@
   {
     "InternalName": "Others",
     "DisplayName": "Другое"
+  },
+  {
+    "InternalName": "Hugo",
+    "DisplayName": "Хуго"
+  },
+  {
+    "InGameSkins": [
+      {
+        "InternalName": "YixuanTrailsofInk",
+        "DisplayName": "Чёрная тушь"
+      }
+    ],
+    "InternalName": "Yixuan",
+    "DisplayName": "Исюань"
+  },
+  {
+    "InternalName": "Jufufu",
+    "DisplayName": "Цзюй Фуфу"
+  },
+  {
+    "InternalName": "Yuzuha",
+    "DisplayName": "Юдзуха"
+  },
+  {
+    "InternalName": "Alice",
+    "DisplayName": "Элис"
+  },
+  {
+    "InternalName": "Panyinhu",
+    "DisplayName": "Пань Иньху"
   }
 ]

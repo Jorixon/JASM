@@ -272,5 +272,33 @@
   {
     "InternalName": "Yunli",
     "DisplayName": "Юньли"
+  },
+  {
+    "InternalName": "Archer",
+    "DisplayName": "Арчер"
+  },
+  {
+    "InternalName": "Cerydra",
+    "DisplayName": "Керидра"
+  },
+  {
+    "InternalName": "Hysilens",
+    "DisplayName": "Гисиленса"
+  },
+  {
+    "InternalName": "Cipher",
+    "DisplayName": "Цифер"
+  },
+  {
+    "InternalName": "Hyacine",
+    "DisplayName": "Гиацина"
+  },
+  {
+    "InternalName": "Phainon",
+    "DisplayName": "Фаенон"
+  },
+  {
+    "InternalName": "Saber",
+    "DisplayName": "Сейбер"
   }
 ]
