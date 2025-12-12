@@ -866,9 +866,26 @@
   },
   {
     "Keys": [
+      "Dialyn"
+    ],
+    "ReleaseDate": "2025-11-26T00:00:00",
+    "Image": "Dialyn.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Stun",
+    "Region": [
+      "Krampus"
+    ],
+    "ModFilesName": "Dialyn",
+    "InGameSkins": [],
+    "InternalName": "Dialyn",
+    "DisplayName": "Dialyn"
+  },
+  {
+    "Keys": [
       "Banyue"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
+    "ReleaseDate": "2025-12-17T00:00:00",
     "Image": "Banyue.webp",
     "Rarity": 5,
     "Element": "Fire",
@@ -883,19 +900,36 @@
   },
   {
     "Keys": [
-      "Dialyn"
+      "Ye Shunguang"
     ],
-    "ReleaseDate": "2026-01-01T00:00:00",
-    "Image": "Dialyn.webp",
+    "ReleaseDate": "2026-12-17T00:00:00",
+    "Image": "YeShunguang.webp",
     "Rarity": 5,
     "Element": "Physical",
-    "Class": "Stun",
+    "Class": "Attack",
+    "Region": [
+      "YSummit"
+    ],
+    "ModFilesName": "YeShunguang",
+    "InGameSkins": [],
+    "InternalName": "YeShunguang",
+    "DisplayName": "Ye Shunguang"
+  },
+  {
+    "Keys": [
+      "Zhao"
+    ],
+    "ReleaseDate": "2026-12-17T00:00:00",
+    "Image": "Zhao.webp",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Defense",
     "Region": [
       "Krampus"
     ],
-    "ModFilesName": "Dialyn",
+    "ModFilesName": "Zhao",
     "InGameSkins": [],
-    "InternalName": "Dialyn",
-    "DisplayName": "Dialyn"
+    "InternalName": "Zhao",
+    "DisplayName": "Zhao"
   }
 ]

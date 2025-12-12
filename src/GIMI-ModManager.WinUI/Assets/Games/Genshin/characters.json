@@ -2017,5 +2017,39 @@
     "InGameSkins": [],
     "InternalName": "Manekin",
     "DisplayName": "Manekin"
+  },
+  {
+    "Keys": [
+      "Jahoda"
+    ],
+    "ReleaseDate": "2025-12-03T00:00:00",
+    "Image": "Jahoda.webp",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Bow",
+    "Region": [
+      "Nod-Krai"
+    ],
+    "ModFilesName": "Jahoda",
+    "InGameSkins": [],
+    "InternalName": "Jahoda",
+    "DisplayName": "Jahoda"
+  },
+  {
+    "Keys": [
+      "Durin"
+    ],
+    "ReleaseDate": "2025-12-03T00:00:00",
+    "Image": "Durin.webp",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Sword",
+    "Region": [
+      "Mondstadt"
+    ],
+    "ModFilesName": "Durin",
+    "InGameSkins": [],
+    "InternalName": "Durin",
+    "DisplayName": "Durin"
   }
 ]

@@ -1277,5 +1277,39 @@
     "InGameSkins": [],
     "InternalName": "Evernight",
     "DisplayName": "Evernight"
+  },
+  {
+    "Keys": [
+      "Cyrene"
+    ],
+    "ReleaseDate": "2025-11-05T00:00:00",
+    "Image": "cyrene.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Remembrance",
+    "Region": [
+      "Amphoreus"
+    ],
+    "ModFilesName": "Cyrene",
+    "InGameSkins": [],
+    "InternalName": "Cyrene",
+    "DisplayName": "Cyrene"
+  },
+  {
+    "Keys": [
+      "The Dahlia"
+    ],
+    "ReleaseDate": "2025-12-17T00:00:00",
+    "Image": "dahlia.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [
+      "Annihilation"
+    ],
+    "ModFilesName": "Dahlia",
+    "InGameSkins": [],
+    "InternalName": "Dahlia",
+    "DisplayName": "The Dahlia"
   }
 ]
