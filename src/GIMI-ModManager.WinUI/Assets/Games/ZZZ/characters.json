@@ -396,7 +396,14 @@
       "ResponseTeam"
     ],
     "ModFilesName": "Jane",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "JaneSummer",
+        "Image": "JaneDoeNocturneOfLight.webp",
+        "InternalName": "Jane Doe Nocturne of Light",
+        "DisplayName": "Jane Doe Nocturne of Light"
+      }
+    ],
     "InternalName": "Jane",
     "DisplayName": "Jane"
   },
@@ -902,7 +909,7 @@
     "Keys": [
       "Ye Shunguang"
     ],
-    "ReleaseDate": "2026-12-17T00:00:00",
+    "ReleaseDate": "2025-12-30T00:00:00",
     "Image": "YeShunguang.webp",
     "Rarity": 5,
     "Element": "Physical",
@@ -911,7 +918,14 @@
       "YSummit"
     ],
     "ModFilesName": "YeShunguang",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "YeShunguangDress",
+        "Image": "YeShunguangTouchOfDawnlight.webp",
+        "InternalName": "Ye Shunguang Touch of Dawnlight",
+        "DisplayName": "Ye Shunguang Touch of Dawnlight"
+      }
+    ],
     "InternalName": "YeShunguang",
     "DisplayName": "Ye Shunguang"
   },
@@ -919,7 +933,7 @@
     "Keys": [
       "Zhao"
     ],
-    "ReleaseDate": "2026-12-17T00:00:00",
+    "ReleaseDate": "2025-12-30T00:00:00",
     "Image": "Zhao.webp",
     "Rarity": 5,
     "Element": "Ice",

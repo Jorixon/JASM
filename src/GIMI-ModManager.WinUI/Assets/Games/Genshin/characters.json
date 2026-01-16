@@ -898,7 +898,14 @@
       "Fontaine"
     ],
     "ModFilesName": "Neuvillette",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "MelusentGift",
+        "Image": "NeuvilletteMelusentGift.webp",
+        "InternalName": "MelusentGift",
+        "DisplayName": "Melusent Gift"
+      }
+    ],
     "InternalName": "Neuvillette",
     "DisplayName": "Neuvillette"
   },
@@ -1220,7 +1227,14 @@
       "Outlander"
     ],
     "ModFilesName": "TravelerGirl",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "LumineSkin",
+        "Image": "LumineAsHeavenAndEarthAreMadeAnew.webp",
+        "InternalName": "Lumine As Heaven and Earth Are Made Anew",
+        "DisplayName": "As Heaven and Earth Are Made Anew"
+      }
+    ],
     "InternalName": "Traveler (Female)",
     "DisplayName": "Lumine"
   },
@@ -1238,7 +1252,14 @@
       "Outlander"
     ],
     "ModFilesName": "TravelerBoy",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "AetherSkin",
+        "Image": "AetherAsHeavenAndEarthAreMadeAnew.webp",
+        "InternalName": "Aether As Heaven and Earth Are Made Anew",
+        "DisplayName": "As Heaven and Earth Are Made Anew"
+      }
+    ],
     "InternalName": "Traveler (Male)",
     "DisplayName": "Aether"
   },
@@ -1408,7 +1429,14 @@
       "Liyue"
     ],
     "ModFilesName": "YaoYao",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "YaoyaoRainlit",
+        "Image": "YaoyaoRainlitBambooReverie.png",
+        "InternalName": "Rainlit Bamboo Reverie",
+        "DisplayName": "Rainlit Bamboo Reverie"
+      }
+    ],
     "InternalName": "Yaoyao",
     "DisplayName": "Yaoyao"
   },
@@ -2051,5 +2079,56 @@
     "InGameSkins": [],
     "InternalName": "Durin",
     "DisplayName": "Durin"
+  },
+  {
+    "Keys": [
+      "Columbina"
+    ],
+    "ReleaseDate": "2026-01-14T00:00:00",
+    "Image": "Columbina.webp",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Nod-Krai"
+    ],
+    "ModFilesName": "Columbina",
+    "InGameSkins": [],
+    "InternalName": "Columbina",
+    "DisplayName": "Columbina"
+  },
+  {
+    "Keys": [
+      "Zibai"
+    ],
+    "ReleaseDate": "2026-02-03T00:00:00",
+    "Image": "Zibai.webp",
+    "Rarity": 5,
+    "Element": "Geo",
+    "Class": "Sword",
+    "Region": [
+      "Liyue"
+    ],
+    "ModFilesName": "Zibai",
+    "InGameSkins": [],
+    "InternalName": "Zibai",
+    "DisplayName": "Zibai"
+  },
+  {
+    "Keys": [
+      "Illuga"
+    ],
+    "ReleaseDate": "2026-02-03T00:00:00",
+    "Image": "Illuga.png",
+    "Rarity": 4,
+    "Element": "Geo",
+    "Class": "Polearm",
+    "Region": [
+      "Nod-Krai"
+    ],
+    "ModFilesName": "Illuga",
+    "InGameSkins": [],
+    "InternalName": "Illuga",
+    "DisplayName": "Illuga"
   }
 ]
