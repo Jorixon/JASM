@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.9](https://github.com/Jorixon/JASM/compare/v2.22.8...v2.22.9) (2026-01-18)
+
+
+### Miscellaneous
+
+* Added characters for Genshin, HSR, WuWa and ZZZ ([#408](https://github.com/Jorixon/JASM/issues/408)) ([ae293bc](https://github.com/Jorixon/JASM/commit/ae293bce2f3c2a1a2c0db2535c48324cf4ea3bc3))
+
 ## [2.22.8](https://github.com/Jorixon/JASM/compare/v2.22.7...v2.22.8) (2025-11-15)
 
 
