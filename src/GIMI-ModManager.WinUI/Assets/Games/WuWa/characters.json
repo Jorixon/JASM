@@ -533,7 +533,14 @@
       "Rinascita"
     ],
     "ModFilesName": "Zani",
-    "InGameSkins": [],
+    "InGameSkins": [
+      {
+        "ModFilesName": "DowntownRepose",
+        "Image": "Downtown_Repose.webp",
+        "InternalName": "DowntownRepose",
+        "DisplayName": "Downtown Repose"
+      }
+	],
     "InternalName": "Zani",
     "DisplayName": "Zani"
   },
@@ -658,23 +665,6 @@
   },
   {
     "Keys": [
-      "Chisa"
-    ],
-    "ReleaseDate": "2026-01-02T00:00:00",
-    "Image": "Chisa.png",
-    "Rarity": 5,
-    "Element": "Havoc",
-    "Class": "Rectifier",
-    "Region": [
-      "TBA"
-    ],
-    "ModFilesName": "Chisa",
-    "InGameSkins": [],
-    "InternalName": "Chisa",
-    "DisplayName": "Chisa"
-  },
-  {
-    "Keys": [
       "Galbrena"
     ],
     "ReleaseDate": "2025-10-09T00:00:00",
@@ -697,8 +687,8 @@
     "ReleaseDate": "2025-10-30T00:00:00",
     "Image": "Qiuyuan.png",
     "Rarity": 5,
-    "Element": "Havoc",
-    "Class": "Rectifier",
+    "Element": "Aero",
+    "Class": "Sword",
     "Region": [
       "Huanglong"
     ],
@@ -706,5 +696,125 @@
     "InGameSkins": [],
     "InternalName": "Qiuyuan",
     "DisplayName": "Qiuyuan"
+  },
+  {
+    "Keys": [
+      "Chisa"
+    ],
+    "ReleaseDate": "2025-11-20T00:00:00",
+    "Image": "Chisa.webp",
+    "Rarity": 5,
+    "Element": "Havoc",
+    "Class": "Broadblade",
+    "Region": [
+      "Ashinohara"
+    ],
+    "ModFilesName": "Chisa",
+    "InGameSkins": [],
+    "InternalName": "Chisa",
+    "DisplayName": "Chisa"
+  },
+  {
+    "Keys": [
+      "Buling"
+    ],
+    "ReleaseDate": "2025-12-11T00:00:00",
+    "Image": "Buling.webp",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Rectifier",
+    "Region": [
+      "Ashinohara"
+    ],
+    "ModFilesName": "Buling",
+    "InGameSkins": [],
+    "InternalName": "Buling",
+    "DisplayName": "Buling"
+  },
+  {
+    "Keys": [
+      "Mornye"
+    ],
+    "ReleaseDate": "2026-01-15T00:00:00",
+    "Image": "Mornye.webp",
+    "Rarity": 5,
+    "Element": "Fusion",
+    "Class": "Broadblade",
+    "Region": [
+      "Lahai"
+    ],
+    "ModFilesName": "Mornye",
+    "InGameSkins": [],
+    "InternalName": "Mornye",
+    "DisplayName": "Mornye"
+  },
+  {
+    "Keys": [
+      "Lynae"
+    ],
+    "ReleaseDate": "2025-12-25T00:00:00",
+    "Image": "Lynae.webp",
+    "Rarity": 5,
+    "Element": "Spectro",
+    "Class": "Pistols",
+    "Region": [
+      "Lahai"
+    ],
+    "ModFilesName": "Lynae",
+    "InGameSkins": [],
+    "InternalName": "Lynae",
+    "DisplayName": "Lynae"
+  },
+  {
+    "Keys": [
+      "Sigrika"
+    ],
+    "ReleaseDate": "2026-12-11T00:00:00",
+    "Image": "Sigrika.webp",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Rectifier",
+    "Region": [
+      "Lahai"
+    ],
+    "ModFilesName": "Sigrika",
+    "InGameSkins": [],
+    "InternalName": "Sigrika",
+    "DisplayName": "Sigrika"
+  },
+  {
+    "Keys": [
+      "Luuk",
+      "Herssen"
+    ],
+    "ReleaseDate": "2026-12-11T00:00:00",
+    "Image": "Luuk.webp",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Rectifier",
+    "Region": [
+      "Lahai"
+    ],
+    "ModFilesName": "Luuk",
+    "InGameSkins": [],
+    "InternalName": "Luuk",
+    "DisplayName": "Luuk Herssen"
+  },
+  {
+    "Keys": [
+      "Lucilla"
+    ],
+    "ReleaseDate": "2026-12-11T00:00:00",
+    "Image": "Lucilla.webp",
+    "Rarity": 5,
+    "Element": "Electro",
+    "Class": "Rectifier",
+    "Region": [
+      "Lahai"
+    ],
+    "ModFilesName": "Lucilla",
+    "InGameSkins": [],
+    "InternalName": "Lucilla",
+    "DisplayName": "Lucilla"
   }
 ]
