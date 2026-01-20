@@ -1909,6 +1909,23 @@
     "InternalName": "Escoffier",
     "DisplayName": "Escoffier"
   },
+    {
+    "Keys": [
+      "Ifa"
+    ],
+    "ReleaseDate": "2025-04-01T00:00:00",
+    "Image": "Ifa.webp",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Ifa",
+    "InGameSkins": [],
+    "InternalName": "Ifa",
+    "DisplayName": "Ifa"
+  },
   {
     "Keys": [
       "Skirk"

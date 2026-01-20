@@ -268,6 +268,12 @@
     "DisplayName": "娜维娅"
   },
   {
+	  "InGameSkins": [
+      {
+        "InternalName": "MelusentGift",
+        "DisplayName": "莘露的赠礼"
+      }
+    ],
     "InternalName": "Neuvillette",
     "DisplayName": "那维莱特"
   },
@@ -354,10 +360,22 @@
     "DisplayName": "提纳里"
   },
   {
+	  "InGameSkins": [
+      {
+        "InternalName": "Lumine As Heaven and Earth Are Made Anew",
+        "DisplayName": "复地重天"
+      }
+    ],
     "InternalName": "Traveler (Female)",
     "DisplayName": "旅行者（女）"
   },
   {
+	  "InGameSkins": [
+      {
+        "InternalName": "Aether As Heaven and Earth Are Made Anew",
+        "DisplayName": "复地重天"
+      }
+    ],
     "InternalName": "Traveler (Male)",
     "DisplayName": "旅行者（男）"
   },
@@ -400,6 +418,12 @@
     "DisplayName": "烟绯"
   },
   {
+	    "InGameSkins": [
+      {
+        "InternalName": "Rainlit Bamboo Reverie",
+        "DisplayName": "聆雨听竹"
+      }
+    ],
     "InternalName": "Yaoyao",
     "DisplayName": "瑶瑶"
   },
@@ -455,72 +479,116 @@
     "InternalName": "Sethos",
     "DisplayName": "赛索斯"
   },
-  {
-    "Keys": [
-      "Emilie"
-    ],
-    "ReleaseDate": "2024-08-06T00:00:00",
-    "Image": "Character_Emilie_Thumb.png",
-    "Rarity": 5,
-    "Element": "Dendro",
-    "Class": "Polearm",
-    "Region": [
-      "Fontaine"
-    ],
-    "ModFilesName": "Emilie",
-    "InGameSkins": [],
+  { 
     "InternalName": "Emilie",
     "DisplayName": "艾梅莉埃"
   },
   {
-    "Keys": [
-      "Mualani"
-    ],
-    "ReleaseDate": "2024-08-28T00:00:00",
-    "Image": "Character_Mualani_Thumb.png",
-    "Rarity": 5,
-    "Element": "Hydro",
-    "Class": "Catalyst",
-    "Region": [
-      "Natlan"
-    ],
-    "ModFilesName": "Mualani",
-    "InGameSkins": [],
     "InternalName": "Mualani",
     "DisplayName": "玛拉妮"
   },
   {
-    "Keys": [
-      "Kinich"
-    ],
-    "ReleaseDate": "2024-09-18T00:00:00",
-    "Image": "Character_Kinich_Thumb.png",
-    "Rarity": 5,
-    "Element": "Dendro",
-    "Class": "Claymore",
-    "Region": [
-      "Natlan"
-    ],
-    "ModFilesName": "Kinich",
-    "InGameSkins": [],
     "InternalName": "Kinich",
     "DisplayName": "基尼奇"
   },
   {
-    "Keys": [
-      "Kachina"
-    ],
-    "ReleaseDate": "2024-08-06T00:00:00",
-    "Image": "Character_Kachina_Thumb.png",
-    "Rarity": 4,
-    "Element": "Geo",
-    "Class": "Polearm",
-    "Region": [
-      "Natlan"
-    ],
-    "ModFilesName": "Kachina",
-    "InGameSkins": [],
     "InternalName": "Kachina",
     "DisplayName": "卡齐娜"
+  },
+  {
+    "InternalName": "Xilonen",
+    "DisplayName": "希诺宁"
+  },
+  { 
+    "InternalName": "Chasca",
+    "DisplayName": "恰斯卡"
+  },
+  {
+    "InternalName": "Ororon",
+    "DisplayName": "欧洛伦"
+  },
+  {
+    "InternalName": "Citlali",
+    "DisplayName": "茜特菈莉"
+  },
+  {
+    "InternalName": "Mavuika",
+    "DisplayName": "玛薇卡"
+  },
+  {
+    "InternalName": "Lan Yan",
+    "DisplayName": "蓝砚"
+  },
+  {
+    "InternalName": "Yumemizuki Mizuki",
+    "DisplayName": "梦见月瑞希"
+  },
+  {
+    "InternalName": "Varesa",
+    "DisplayName": "瓦雷莎"
+  },
+  {
+    "InternalName": "Iansan",
+    "DisplayName": "伊安珊"
+  },
+  {
+    "InternalName": "Escoffier",
+    "DisplayName": "爱可菲"
+  },
+  {
+    "InternalName": "Ifa",
+    "DisplayName": "伊法"
+  },
+  {
+    "InternalName": "Skirk",
+    "DisplayName": "丝柯克"
+  },
+  {
+    "InternalName": "Dahlia",
+    "DisplayName": "塔利雅"
+  },
+  {
+    "InternalName": "Ineffa",
+    "DisplayName": "伊涅芙"
+  },
+  {
+    "InternalName": "Aino",
+    "DisplayName": "爱诺"
+  },
+  {
+    "InternalName": "Flins",
+    "DisplayName": "菲林斯"
+  },
+  {
+    "InternalName": "Lauma",
+    "DisplayName": "菈乌玛"
+  },
+  {
+    "InternalName": "Nefer",
+    "DisplayName": "奈芙尔"
+  },
+    {
+    "InternalName": "Manekin",
+    "DisplayName": "奇偶"
+  },
+    {
+    "InternalName": "Jahoda",
+    "DisplayName": "雅珂达"
+  },
+    {
+    "InternalName": "Durin",
+    "DisplayName": "杜林"
+  },
+  {
+    "InternalName": "Columbina",
+    "DisplayName": "哥伦比娅"
+  },
+  {
+    "InternalName": "Zibai",
+    "DisplayName": "兹白"
+  },
+    {
+    "InternalName": "Illuga",
+    "DisplayName": "叶洛亚"
   }
 ]
