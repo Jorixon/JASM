@@ -50,5 +50,9 @@
     {
       "InternalName": "Krampus",
       "DisplayName": "Krampus Compliance Authority"
+    },
+    {
+      "InternalName": "AOD",
+      "DisplayName": "Angels of Delusion"
     }
 ]

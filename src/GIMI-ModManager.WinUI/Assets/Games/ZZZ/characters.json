@@ -945,5 +945,54 @@
     "InGameSkins": [],
     "InternalName": "Zhao",
     "DisplayName": "Zhao"
+  },
+  {
+    "Keys": [
+      "Sunna"
+    ],
+    "ReleaseDate": "2026-02-06T00:00:00",
+    "Image": "Sunna.webp",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Support",
+    "Region": [
+      "AOD"
+    ],
+    "ModFilesName": "Sunna",
+    "InGameSkins": [
+      {
+        "ModFilesName": "SunnaTeaBreak",
+        "Image": "SunnaAfternoonTeaBreak.png",
+        "InternalName": "Sunna Afternoon Tea Break",
+        "DisplayName": "Sunna Afternoon Tea Break"
+      }
+    ],
+    "InternalName": "Sunna",
+    "DisplayName": "Sunna"
+  },
+  {
+    "Keys": [
+      "Aria"
+    ],
+    "ReleaseDate": "2026-02-30T00:00:00",
+    "Image": "Aria.webp",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Anomaly",
+    "Region": [
+      "AOD"
+    ],
+    "ModFilesName": "Aria",
+    "InGameSkins": [
+      {
+        "ModFilesName": "AriaDiscordantNote",
+        "Image": "AriaDiscordantNote.webp",
+        "InternalName": "Aria Discordant Note",
+        "DisplayName": "Aria Discordant Note"
+      }
+    ],
+    "InternalName": "Aria",
+    "DisplayName": "Aria"
   }
+
 ]
