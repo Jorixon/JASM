@@ -19,7 +19,7 @@
         "InternalName": "BelleDelicateSunlight",
         "DisplayName": "Belle Delicate Sunlight"
       },
-	  {
+      {
         "ModFilesName": "BelleSummerSkin",
         "Image": "BelleSummerSkies.png",
         "InternalName": "BelleSummerSkies",
@@ -49,7 +49,7 @@
         "InternalName": "WiseSoaringCrane",
         "DisplayName": "Wise Soaring Crane"
       },
-	  {
+      {
         "ModFilesName": "WiseSummerSkin",
         "Image": "WisePeacefulWaves.png",
         "InternalName": "WisePeacefulWaves",
@@ -778,7 +778,7 @@
   {
     "Keys": [
       "Orphie",
-	    "Magnusson"
+      "Magnusson"
     ],
     "ReleaseDate": "2026-01-01T00:00:00",
     "Image": "OrphieMagnusson.png",
@@ -812,7 +812,7 @@
   },
   {
     "Keys": [
-	    "Manato",
+      "Manato",
       "Komano"
     ],
     "ReleaseDate": "2025-11-05T00:00:00",
@@ -993,6 +993,24 @@
     ],
     "InternalName": "Aria",
     "DisplayName": "Aria"
+  },
+  {
+    "Keys": [
+      "Nangong Yu"
+    ],
+    "ReleaseDate": "2025-12-30T00:00:00",
+    "Image": "NangongYu.webp",
+    "Rarity": 5,
+    "Element": "Ether",
+    "Class": "Stun",
+    "Region": [
+      "AOD"
+    ],
+    "ModFilesName": "NangongYu",
+    "InGameSkins": [],
+    "InternalName": "NangongYu",
+    "DisplayName": "Nangong Yu"
   }
+
 
 ]
