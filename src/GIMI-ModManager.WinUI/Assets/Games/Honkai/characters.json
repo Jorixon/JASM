@@ -1311,5 +1311,213 @@
     "InGameSkins": [],
     "InternalName": "Dahlia",
     "DisplayName": "The Dahlia"
+  },
+  {
+    "Keys": [
+      "sparxie",
+      "火花"
+    ],
+    "ReleaseDate": "2026-02-13T00:00:00",
+    "Image": "1501.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Sparxie",
+    "InGameSkins": [],
+    "InternalName": "Sparxie",
+    "DisplayName": "Sparxie"
+  },
+  {
+    "Keys": [
+      "yao guang",
+      "爻光"
+    ],
+    "ReleaseDate": "2026-02-13T00:00:00",
+    "Image": "1502.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Yao Guang",
+    "InGameSkins": [],
+    "InternalName": "Yao Guang",
+    "DisplayName": "Yao Guang"
+  },
+  {
+    "Keys": [
+      "ashveil",
+      "不死途"
+    ],
+    "ReleaseDate": "2026-03-25T00:00:00",
+    "Image": "1504.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Hunt",
+    "Region": [],
+    "ModFilesName": "Ashveil",
+    "InGameSkins": [],
+    "InternalName": "Ashveil",
+    "DisplayName": "Ashveil"
+  },
+  {
+    "Keys": [
+      "evanescia",
+      "绯英"
+    ],
+    "ReleaseDate": "2026-04-24T00:00:00",
+    "Image": "1505.png",
+    "Rarity": 5,
+    "Element": "Physical",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Evanescia",
+    "InGameSkins": [],
+    "InternalName": "Evanescia",
+    "DisplayName": "Evanescia"
+  },
+  {
+    "Keys": [
+      "silver wolf lv.999",
+      "银狼LV.999"
+    ],
+    "ReleaseDate": "2026-06-01T00:00:00",
+    "Image": "1506.png",
+    "Rarity": 5,
+    "Element": "Imaginary",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Silver Wolf LV.999",
+    "InGameSkins": [],
+    "InternalName": "Silver Wolf LV.999",
+    "DisplayName": "Silver Wolf LV.999"
+  },
+  {
+    "Keys": [
+      "mortenax blade",
+      "千冶•刃"
+    ],
+    "ReleaseDate": "2026-06-01T00:00:00",
+    "Image": "1507.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Nihility",
+    "Region": [],
+    "ModFilesName": "Mortenax Blade",
+    "InGameSkins": [],
+    "InternalName": "Mortenax Blade",
+    "DisplayName": "Mortenax Blade"
+  },
+  {
+    "Keys": [
+      "rin tohsaka",
+      "远坂凛"
+    ],
+    "ReleaseDate": "2026-07-17T00:00:00",
+    "Image": "1508.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Erudition",
+    "Region": [],
+    "ModFilesName": "Rin Tohsaka",
+    "InGameSkins": [],
+    "InternalName": "Rin Tohsaka",
+    "DisplayName": "Rin Tohsaka"
+  },
+  {
+    "Keys": [
+      "gilgamesh",
+      "吉尔伽美什"
+    ],
+    "ReleaseDate": "2026-07-17T00:00:00",
+    "Image": "1509.png",
+    "Rarity": 5,
+    "Element": "Lightning",
+    "Class": "Destruction",
+    "Region": [],
+    "ModFilesName": "Gilgamesh",
+    "InGameSkins": [],
+    "InternalName": "Gilgamesh",
+    "DisplayName": "Gilgamesh"
+  },
+  {
+    "Keys": [
+      "himeko • nova",
+      "姬子•启行"
+    ],
+    "ReleaseDate": "2026-07-17T00:00:00",
+    "Image": "1510.png",
+    "Rarity": 5,
+    "Element": "Fire",
+    "Class": "Erudition",
+    "Region": [],
+    "ModFilesName": "Himeko • Nova",
+    "InGameSkins": [],
+    "InternalName": "Himeko • Nova",
+    "DisplayName": "Himeko • Nova"
+  },
+  {
+    "Keys": [
+      "robin • summeretto",
+      "知更鸟•晴歌"
+    ],
+    "ReleaseDate": "2026-08-26T00:00:00",
+    "Image": "1512.png",
+    "Rarity": 5,
+    "Element": "Wind",
+    "Class": "Remembrance",
+    "Region": [],
+    "ModFilesName": "Robin • Summeretto",
+    "InGameSkins": [],
+    "InternalName": "Robin • Summeretto",
+    "DisplayName": "Robin • Summeretto"
+  },
+  {
+    "Keys": [
+      "aventurine • waveflair",
+      "砂金•戏浪"
+    ],
+    "ReleaseDate": "2026-08-26T00:00:00",
+    "Image": "1513.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Aventurine • Waveflair",
+    "InGameSkins": [],
+    "InternalName": "Aventurine • Waveflair",
+    "DisplayName": "Aventurine • Waveflair"
+  },
+  {
+    "Keys": [
+      "pearl",
+      "真珠"
+    ],
+    "ReleaseDate": "2026-09-28T00:00:00",
+    "Image": "1503.png",
+    "Rarity": 5,
+    "Element": "Ice",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Pearl",
+    "InGameSkins": [],
+    "InternalName": "Pearl",
+    "DisplayName": "Pearl"
+  },
+  {
+    "Keys": [
+      "aeon ★ aha",
+      "星神★阿哈"
+    ],
+    "ReleaseDate": "2026-11-11T00:00:00",
+    "Image": "1511.png",
+    "Rarity": 5,
+    "Element": "Quantum",
+    "Class": "Elation",
+    "Region": [],
+    "ModFilesName": "Aeon ★ Aha",
+    "InGameSkins": [],
+    "InternalName": "Aeon ★ Aha",
+    "DisplayName": "Aeon ★ Aha"
   }
 ]
