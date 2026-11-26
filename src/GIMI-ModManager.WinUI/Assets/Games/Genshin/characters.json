@@ -2130,5 +2130,190 @@
     "InGameSkins": [],
     "InternalName": "Illuga",
     "DisplayName": "Illuga"
+  },
+  {
+    "Keys": [
+      "ifa"
+    ],
+    "ReleaseDate": "2025-05-07T00:00:00",
+    "Image": "Ifa.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Natlan"
+    ],
+    "ModFilesName": "Ifa",
+    "InGameSkins": [],
+    "InternalName": "Ifa",
+    "DisplayName": "Ifa"
+  },
+  {
+    "Keys": [
+      "varka"
+    ],
+    "ReleaseDate": "2026-02-25T00:00:00",
+    "Image": "Varka.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Claymore",
+    "Region": [
+      "Mondstadt"
+    ],
+    "ModFilesName": "Varka",
+    "InGameSkins": [],
+    "InternalName": "Varka",
+    "DisplayName": "Varka"
+  },
+  {
+    "Keys": [
+      "linnea"
+    ],
+    "ReleaseDate": "2026-04-11T00:00:00",
+    "Image": "Linnea.png",
+    "Rarity": 5,
+    "Element": "Geo",
+    "Class": "Bow",
+    "Region": [
+      "Nod-Krai"
+    ],
+    "ModFilesName": "Linnea",
+    "InGameSkins": [],
+    "InternalName": "Linnea",
+    "DisplayName": "Linnea"
+  },
+  {
+    "Keys": [
+      "lohen"
+    ],
+    "ReleaseDate": "2026-05-21T00:00:00",
+    "Image": "Lohen.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Polearm",
+    "Region": [
+      "Mondstadt"
+    ],
+    "ModFilesName": "Lohen",
+    "InGameSkins": [],
+    "InternalName": "Lohen",
+    "DisplayName": "Lohen"
+  },
+  {
+    "Keys": [
+      "nicole"
+    ],
+    "ReleaseDate": "2026-05-21T00:00:00",
+    "Image": "Nicole.png",
+    "Rarity": 5,
+    "Element": "Pyro",
+    "Class": "Catalyst",
+    "Region": [],
+    "ModFilesName": "Nicole",
+    "InGameSkins": [],
+    "InternalName": "Nicole",
+    "DisplayName": "Nicole"
+  },
+  {
+    "Keys": [
+      "prune"
+    ],
+    "ReleaseDate": "2026-05-21T00:00:00",
+    "Image": "Prune.png",
+    "Rarity": 4,
+    "Element": "Anemo",
+    "Class": "Catalyst",
+    "Region": [
+      "Mondstadt"
+    ],
+    "ModFilesName": "Prune",
+    "InGameSkins": [],
+    "InternalName": "Prune",
+    "DisplayName": "Prune"
+  },
+  {
+    "Keys": [
+      "sandrone"
+    ],
+    "ReleaseDate": "2026-07-01T00:00:00",
+    "Image": "Sandrone.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Claymore",
+    "Region": [
+      "Snezhnaya"
+    ],
+    "ModFilesName": "Sandrone",
+    "InGameSkins": [],
+    "InternalName": "Sandrone",
+    "DisplayName": "Sandrone"
+  },
+  {
+    "Keys": [
+      "alyosha"
+    ],
+    "ReleaseDate": "2026-08-14T00:00:00",
+    "Image": "Alyosha.png",
+    "Rarity": 4,
+    "Element": "Electro",
+    "Class": "Polearm",
+    "Region": [
+      "Snezhnaya"
+    ],
+    "ModFilesName": "Alyosha",
+    "InGameSkins": [],
+    "InternalName": "Alyosha",
+    "DisplayName": "Alyosha"
+  },
+  {
+    "Keys": [
+      "odette"
+    ],
+    "ReleaseDate": "2026-08-14T00:00:00",
+    "Image": "Odette.png",
+    "Rarity": 5,
+    "Element": "Cryo",
+    "Class": "Sword",
+    "Region": [
+      "Snezhnaya"
+    ],
+    "ModFilesName": "Odette",
+    "InGameSkins": [],
+    "InternalName": "Odette",
+    "DisplayName": "Odette"
+  },
+  {
+    "Keys": [
+      "vodyanitsa"
+    ],
+    "ReleaseDate": "2026-09-21T00:00:00",
+    "Image": "Vodyanitsa.png",
+    "Rarity": 5,
+    "Element": "Hydro",
+    "Class": "Catalyst",
+    "Region": [
+      "Snezhnaya"
+    ],
+    "ModFilesName": "Vodyanitsa",
+    "InGameSkins": [],
+    "InternalName": "Vodyanitsa",
+    "DisplayName": "Vodyanitsa"
+  },
+  {
+    "Keys": [
+      "vesna"
+    ],
+    "ReleaseDate": "2026-09-21T00:00:00",
+    "Image": "Vesna.png",
+    "Rarity": 5,
+    "Element": "Anemo",
+    "Class": "Sword",
+    "Region": [
+      "Snezhnaya"
+    ],
+    "ModFilesName": "Vesna",
+    "InGameSkins": [],
+    "InternalName": "Vesna",
+    "DisplayName": "Vesna"
   }
 ]
